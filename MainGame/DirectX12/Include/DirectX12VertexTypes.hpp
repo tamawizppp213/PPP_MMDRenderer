@@ -1,0 +1,5 @@
+#pragma once
+#ifndef DIRECTX12VERTEXTYPES_HPP
+#define DIRECTX12VERTEXTYPES_HPP
+
+#endif
