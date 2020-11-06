@@ -25,9 +25,9 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void GameStart() {};
-	void GameMainLoop() {};
-	void GameEnd() {};
+	void GameStart();
+	void GameMain();
+	void GameEnd();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -55,6 +55,9 @@ private:
 	// Constructor and Destructor
 	GameManager() = default;
 	~GameManager() = default;
+	void Draw();
+	void Update();
+	void LoadGameConfig();
 
 	/****************************************************************************
 	**                Private Member Variables
