@@ -34,6 +34,7 @@
     <ClInclude Include="MainGame\Include\Application.hpp" />
     <ClInclude Include="MainGame\Include\GameCore.hpp" />
     <ClInclude Include="MainGame\Include\GameManager.hpp" />
+    <ClInclude Include="MainGame\Include\Scene.hpp" />
     <ClInclude Include="MainGame\Include\SceneManager.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +54,7 @@
     <ClCompile Include="MainGame\Source\GameCore.cpp" />
     <ClCompile Include="MainGame\Source\GameManager.cpp" />
     <ClCompile Include="MainGame\Source\MainGame.cpp" />
+    <ClCompile Include="MainGame\Source\Scene.cpp" />
     <ClCompile Include="MainGame\Source\SceneManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
