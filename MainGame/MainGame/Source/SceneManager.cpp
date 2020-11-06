@@ -25,7 +25,8 @@ void SceneManager::Initialize()
 
 void SceneManager::TransitScene(ScenePtr scene)
 {
-
+	_currentScene.pop();
+	_currentScene.emplace(scene);
 }
 
 void SceneManager::CallSceneUpdate()

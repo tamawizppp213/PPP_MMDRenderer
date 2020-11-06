@@ -28,9 +28,9 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	void Initialize();
-	void TransitScene(ScenePtr scene);
+	void TransitScene(const ScenePtr scene);
 	void CallSceneUpdate();
-	void PushScene(ScenePtr scene);
+	void PushScene(const ScenePtr scene);
 	void PopScene();
 
 	/****************************************************************************
