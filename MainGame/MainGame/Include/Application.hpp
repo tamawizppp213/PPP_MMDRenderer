@@ -42,16 +42,16 @@ public:
 	}
 
 	// Prohibit move and copy
-	Application(const Application&) = delete;
+	Application(const Application&)            = delete;
 	Application& operator=(const Application&) = delete;
-	Application(Application&&) = delete;
-	Application& operator=(Application&&) = delete;
+	Application(Application&&)                 = delete;
+	Application& operator=(Application&&)      = delete;
 
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	Application() = default;
+	Application()  = default;
 	~Application() = default;
 
 	/****************************************************************************

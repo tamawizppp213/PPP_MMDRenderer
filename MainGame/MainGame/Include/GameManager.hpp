@@ -42,10 +42,10 @@ public:
 
 	// Prohibit move and copy.
 	// Singleton answer (public or private): https://stackoverflow.com/questions/18931133/must-a-deleted-constructor-be-private
-	GameManager(const GameManager&) = delete;
+	GameManager(const GameManager&)            = delete;
 	GameManager& operator=(const GameManager&) = delete;
-	GameManager(GameManager&&) = delete;
-	GameManager& operator=(GameManager&&) = delete;
+	GameManager(GameManager&&)                 = delete;
+	GameManager& operator=(GameManager&&)      = delete;
 
 
 private:
@@ -53,7 +53,7 @@ private:
 	**                Private Function
 	*****************************************************************************/
 	// Constructor and Destructor
-	GameManager() = default;
+	GameManager()  = default;
 	~GameManager() = default;
 	void Draw();
 	void Update();
