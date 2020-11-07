@@ -29,7 +29,10 @@ public:
 	*****************************************************************************/
 	void Initialize();
 	void TransitScene(const ScenePtr scene);
-	void CallSceneUpdate();
+	void CallSceneInitialize() const;
+	void CallSceneUpdate()     const;
+	void CallSceneDraw()       const;
+	void CallSceneTerminate()  const;
 	void PushScene(const ScenePtr scene);
 	void PopScene();
 
