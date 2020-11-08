@@ -2,7 +2,7 @@
 //              Title:  SceneManager.hpp
 //            Content:  Scene Transition Management (Singleton)
 //             Author:  Toide Yutaro
-//             Create:  2020_11_06
+//             Create:  2020_11_07
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef SCENEMANAGER_HPP
@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore.hpp"
 #include <stack>
+#include "MainGame/Include/Scene.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -29,7 +30,10 @@ public:
 	*****************************************************************************/
 	void Initialize();
 	void TransitScene(const ScenePtr scene);
-	void CallSceneUpdate();
+	void CallSceneInitialize() const;
+	void CallSceneUpdate()     const;
+	void CallSceneDraw()       const;
+	void CallSceneTerminate()  const;
 	void PushScene(const ScenePtr scene);
 	void PopScene();
 
