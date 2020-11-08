@@ -19,7 +19,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 void GameManager::GameStart()
 {
-
+	_sceneManager.Initialize();
 }
 
 void GameManager::GameMain()
@@ -36,12 +36,12 @@ void GameManager::GameEnd()
 #pragma region Private Function
 void GameManager::Draw()
 {
-
+	_sceneManager.CallSceneDraw();
 }
 
 void GameManager::Update()
 {
-
+	_sceneManager.CallSceneUpdate();
 }
 
 void GameManager::LoadGameConfig()
