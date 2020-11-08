@@ -11,7 +11,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
+#include "GameCore/Include/GameTimer.hpp"
 #include "GameManager.hpp"
+#include <Windows.h>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -29,6 +31,8 @@ public:
 	bool Initialize();
 	void Run();
 	void Terminate();
+	LRESULT WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -53,11 +57,24 @@ private:
 	*****************************************************************************/
 	Application()  = default;
 	~Application() = default;
+	bool InitializeMainWindow();
+
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
 	GameManager& _gameManager = GameManager::Instance();
+	GameTimer    _gameTimer;
+
+	/*----------------------------------------------------------
+						 Window Handler
+	------------------------------------------------------------*/
+	HINSTANCE _appInstance;       // application instance handler
+	HWND _mainWindow;             // window handler
+	WNDCLASSEX _windowClass = {};
+
+	bool _isApplicationPaused;
+
 };
 
 #endif
