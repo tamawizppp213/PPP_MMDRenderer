@@ -72,6 +72,9 @@
     <ClInclude Include="MainGame\Include\Title.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameCore\Include\Screen.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectX12\Source\DirectX12Base.cpp">
@@ -132,6 +135,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MainGame\Source\MotionTest.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Screen.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
