@@ -12,6 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/GameTimer.hpp"
+#include "GameCore/Include/Screen.hpp"
 #include "GameManager.hpp"
 #include <Windows.h>
 
@@ -69,9 +70,10 @@ private:
 	/*----------------------------------------------------------
 						 Window Handler
 	------------------------------------------------------------*/
-	HINSTANCE _appInstance;       // application instance handler
-	HWND _mainWindow;             // window handler
+	HINSTANCE  _appInstance;       // application instance handler
+	HWND       _mainWindow;        // window handler
 	WNDCLASSEX _windowClass = {};
+	Screen     _screen;
 
 	bool _isApplicationPaused;
 

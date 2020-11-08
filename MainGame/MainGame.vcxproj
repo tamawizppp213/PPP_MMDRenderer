@@ -30,6 +30,7 @@
     <ClInclude Include="GameCore\Include\GameTimer.hpp" />
     <ClInclude Include="GameCore\Include\Keyboard.hpp" />
     <ClInclude Include="GameCore\Include\Mouse.hpp" />
+    <ClInclude Include="GameCore\Include\Screen.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
     <ClInclude Include="MainGame\Include\Application.hpp" />
     <ClInclude Include="MainGame\Include\GameCore.hpp" />
@@ -51,6 +52,7 @@
     <ClCompile Include="GameCore\Source\GameTimer.cpp" />
     <ClCompile Include="GameCore\Source\Keyboard.cpp" />
     <ClCompile Include="GameCore\Source\Mouse.cpp" />
+    <ClCompile Include="GameCore\Source\Screen.cpp" />
     <ClCompile Include="GameCore\Source\TextureLoader.cpp" />
     <ClCompile Include="MainGame\Source\Application.cpp" />
     <ClCompile Include="MainGame\Source\GameCore.cpp" />

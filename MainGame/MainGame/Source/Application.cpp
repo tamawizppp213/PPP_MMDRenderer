@@ -143,7 +143,7 @@ bool Application::InitializeMainWindow()
 						Create Window Object
 	-----------------------------------------------------------------*/
 	DWORD window_style = WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME);
-	RECT  window_rect  = { 0,0,1920,1080 }; 	// Create Window Rect
+	RECT  window_rect  = { 0,0,_screen.GetScreenWidth(),_screen.GetScreenHeight() };
 	AdjustWindowRect(&window_rect, window_style, false);
 
 	// Recreate window size
