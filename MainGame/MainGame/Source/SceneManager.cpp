@@ -10,6 +10,7 @@
 #include "MainGame/Include/SceneManager.hpp"
 #include "MainGame/Include/Scene.hpp"
 #include "MainGame/Include/Title.hpp"
+#include "MainGame/Include/MotionTest.hpp"
 #include <iostream>
 #include <cassert>
 
@@ -26,6 +27,7 @@ void SceneManager::Initialize()
 #ifdef _DEBUG
 	PushScene(new Title());
 #else
+	PushScene(new MotionTest());
 #endif
 }
 
