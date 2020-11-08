@@ -73,7 +73,10 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 {
 	switch (message)
 	{
-	case WM_ACTIVATE:  // WM_ACTIVATE is sent when the windows is activated or deactivated
+		/*-----------------------------------------------------------------
+		  WM_ACTIVATE is sent when the windows is activated or deactivated
+		--------------------------------------------------------------------*/
+	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
 			_isApplicationPaused = true;
@@ -94,17 +97,25 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 
 	case WM_EXITSIZEMOVE:
 		return 0;
-
-	case WM_CLOSE:   // WM_CLOSE is sent when the window is closed
+		/*-----------------------------------------------------------------
+			WM_CLOSE is sent when the window is closed
+		--------------------------------------------------------------------*/
+	case WM_CLOSE:
 		if (MessageBox(hwnd, L"              ゲームを終了しますか?", L" 確認", MB_OKCANCEL | MB_DEFBUTTON2) == IDOK)
 		{
 			DestroyWindow(hwnd);
 		}
 		return 0;
-	case WM_DESTROY: // WM_DESTROY is sent when the window is deleted
+		/*-----------------------------------------------------------------
+			WM_DESTROY is sent when the window is deleted
+		--------------------------------------------------------------------*/
+	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 
+		/*-----------------------------------------------------------------
+			WM_KEYUP is sent when the key is inputed
+		--------------------------------------------------------------------*/
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{
@@ -115,6 +126,7 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 	}
 
 	return DefWindowProc(hwnd, message, wParam, lParam);
+
 }
 
 bool Application::InitializeMainWindow()

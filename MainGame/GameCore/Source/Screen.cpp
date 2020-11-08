@@ -62,5 +62,5 @@ void Screen::SetScreenHeight(int height)
 
 float Screen::AspectRatio() const
 {
-	static_cast<float>(_width / _height);
+	return static_cast<float>(_width / _height);
 }
