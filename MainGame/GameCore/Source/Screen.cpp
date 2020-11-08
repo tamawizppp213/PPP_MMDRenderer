@@ -26,7 +26,7 @@ Screen::Screen()
 Screen::Screen(int width, int height)
 {
 	_width  = width;
-	_height = _height;
+	_height = height;
 }
 
 Screen::~Screen()
