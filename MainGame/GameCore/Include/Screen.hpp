@@ -34,6 +34,7 @@ public:
 	int GetScreenHeight();
 	void SetScreenWidth(int width);
 	void SetScreenHeight(int height);
+	float AspectRatio() const;
 
 private:
 	static int _width;
