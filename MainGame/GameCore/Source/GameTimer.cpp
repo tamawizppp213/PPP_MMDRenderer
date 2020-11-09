@@ -9,7 +9,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/GameTimer.hpp"
-#include <Windows.h>
+#include <string>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -27,7 +27,7 @@ GameTimer::GameTimer() :
 	QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSec);
 	_secondsPerCount = 1.0 / (double)countsPerSec;
 
-	_stopped = true;
+	_stopped = false;
 
 }
 float GameTimer::TotalTime() const
@@ -85,7 +85,7 @@ void GameTimer::Start()
 
 	if (_stopped)
 	{
-		_pausedTime += (startTime - _stopTime);
+		_pausedTime  += (startTime - _stopTime);
 
 		_previousTime = startTime;
 		_stopTime     = 0;
@@ -116,10 +116,10 @@ void GameTimer::Tick()
 
 	__int64 currentTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
-	_currentTime = currentTime;
+	_currentTime  = currentTime;
 
 	// Time difference between this frame and the previous.
-	_deltaTime = (_currentTime - _previousTime) * _secondsPerCount;
+	_deltaTime    = (_currentTime - _previousTime) * _secondsPerCount;
 
 	// Prepare for next frame.
 	_previousTime = _currentTime;
@@ -130,5 +130,34 @@ void GameTimer::Tick()
 	if (_deltaTime < 0.0)
 	{
 		_deltaTime = 0.0;
+	}
+}
+
+void GameTimer::AverageFrame(const HWND& hwnd)
+{
+	// Show Average Frame
+	static int frameCount    = 0;
+	static float timeElapsed = 0.0f;
+
+	frameCount++;
+
+	// Compute averages over one second period]
+	if ((TotalTime() - timeElapsed) >= 1.0f)
+	{
+		float fps  = (float)frameCount;
+		float mspf = 1000.0f / fps;
+
+		std::wstring fpsString  = std::to_wstring(fps);
+		std::wstring mspfString = std::to_wstring(mspf);
+
+		std::wstring windowText =
+			L"    fps: " + fpsString +
+			L"   mspf: " + mspfString;
+
+		SetWindowText(hwnd, windowText.c_str());
+
+		// Reset for next average
+		frameCount   = 0;
+		timeElapsed += 1.0f;
 	}
 }

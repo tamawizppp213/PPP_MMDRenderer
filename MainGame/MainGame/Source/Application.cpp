@@ -55,6 +55,7 @@ void Application::Run()
 
 			if (!_isApplicationPaused)
 			{
+				_gameTimer.AverageFrame(_mainWindow);
 				_gameManager.Instance().GameMain();
 			}
 		}
