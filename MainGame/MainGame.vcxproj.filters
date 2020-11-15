@@ -27,9 +27,6 @@
     <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Utility.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -75,11 +72,7 @@
     <ClInclude Include="GameCore\Include\Screen.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp">
-      <Filter>ヘッダー ファイル</Filter>
+
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -90,9 +83,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectX12\Source\DirectX12Core.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp">
@@ -146,10 +136,7 @@
     <ClCompile Include="GameCore\Source\Screen.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12BaseStruct.cpp">
+
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

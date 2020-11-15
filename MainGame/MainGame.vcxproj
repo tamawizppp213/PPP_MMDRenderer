@@ -25,7 +25,6 @@
     <ClInclude Include="DirectX12\Include\DirectX12Core.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Utility.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp" />
     <ClInclude Include="GameCore\Include\Audio.hpp" />
     <ClInclude Include="GameCore\Include\Camera.hpp" />
@@ -49,7 +48,6 @@
     <ClCompile Include="DirectX12\Source\DirectX12Core.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Utility.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp" />
     <ClCompile Include="GameCore\Source\Audio.cpp" />
     <ClCompile Include="GameCore\Source\Camera.cpp" />
