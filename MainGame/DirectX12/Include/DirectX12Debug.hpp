@@ -5,8 +5,8 @@
 //             Create:  2020_11_10
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef DIRECTX12UTILITY_HPP
-#define DIRECTX12UTILITY_HPP
+#ifndef DIRECTX12_DEBUG_HPP
+#define DIRECTX12_DEBUG_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
@@ -37,7 +37,8 @@ private:
 	const HRESULT _hresult;
 };
 
-#define SAFE_RELEASE(p) if(p) (p)->Release()
+#define SAFE_RELEASE(p) {if(p){(p)->Release(); p = nullptr;}}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                         ThrowIfFailed
@@ -50,4 +51,6 @@ inline void ThrowIfFailed(HRESULT hresult)
 		throw HResultException(hresult);
 	}
 }
+
+
 #endif
