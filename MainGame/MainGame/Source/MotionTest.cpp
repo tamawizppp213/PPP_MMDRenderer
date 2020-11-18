@@ -8,6 +8,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Include/MotionTest.hpp"
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -25,13 +26,9 @@ MotionTest::~MotionTest()
 {
 
 }
-void MotionTest::Initialize()
+void MotionTest::Initialize(const DirectX12& directX12)
 {
-
-}
-
-void MotionTest::Draw()
-{
+	_directX12 = directX12;
 
 }
 
@@ -39,6 +36,13 @@ void MotionTest::Update()
 {
 
 }
+
+void MotionTest::Draw()
+{
+	_directX12.ClearScreen();
+	_directX12.CompleteRendering();
+}
+
 
 void MotionTest::Terminate()
 {

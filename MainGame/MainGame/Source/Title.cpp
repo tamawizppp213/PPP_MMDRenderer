@@ -8,7 +8,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Include/Title.hpp"
-
+#include <iostream>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 Title::Title()
 {
-
+	
 }
 
 Title::~Title()
@@ -26,19 +26,20 @@ Title::~Title()
 
 }
 
-void Title::Initialize()
+void Title::Initialize(const DirectX12& directX12) 
 {
-
+	_directX12 = directX12;
 }
 
 void Title::Draw()
 {
-
+	_directX12.ClearScreen();
+	_directX12.CompleteRendering();
 }
 
 void Title::Update()
 {
-
+	
 }
 
 void Title::Terminate()

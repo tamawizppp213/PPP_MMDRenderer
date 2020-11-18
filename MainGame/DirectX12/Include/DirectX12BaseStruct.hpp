@@ -202,6 +202,7 @@ struct BARRIER : public D3D12_RESOURCE_BARRIER
 		barrier.Transition.StateBefore = before;
 		barrier.Transition.StateAfter  = after;
 		barrier.Transition.Subresource = subResource;
+		return result;
 	}
 
 	/****************************************************************************
@@ -241,5 +242,138 @@ struct BARRIER : public D3D12_RESOURCE_BARRIER
 	operator const D3D12_RESOURCE_BARRIER& () const { return *this; }
 };
 
+//////////////////////////////////////////////////////////////////////////////////
+//            CPU_DESCRIPTOR_HANDLER : D3D12_CPU_DESCRIPTOR_HANDLE
+//////////////////////////////////////////////////////////////////////////////////
+struct CPU_DESC_HANDLER : public D3D12_CPU_DESCRIPTOR_HANDLE
+{
+	CPU_DESC_HANDLER() { ptr = NULL; };
+	explicit CPU_DESC_HANDLER(const D3D12_CPU_DESCRIPTOR_HANDLE& handler) :D3D12_CPU_DESCRIPTOR_HANDLE(handler) {};
+
+	CPU_DESC_HANDLER(_In_ const D3D12_CPU_DESCRIPTOR_HANDLE& other, INT offsetScaledByIncrementSize)
+	{
+		InitOffsetted(other, offsetScaledByIncrementSize);
+	}
+
+	CPU_DESC_HANDLER(_In_ const D3D12_CPU_DESCRIPTOR_HANDLE& other, INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		InitOffsetted(other, offsetInDescriptors, descriptorIncrementSize);
+	}
+
+	CPU_DESC_HANDLER& Offset(INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		ptr += (SIZE_T)offsetInDescriptors * descriptorIncrementSize;
+		return *this;
+	}
+
+	CPU_DESC_HANDLER& Offset(INT offsetScaledByIncrementSize)
+	{
+		ptr += offsetScaledByIncrementSize;
+		return *this;
+	}
+
+	bool operator==(_In_ const D3D12_CPU_DESCRIPTOR_HANDLE& other)
+	{
+		return (ptr == other.ptr);
+	}
+
+	bool operator!=(_In_ const D3D12_CPU_DESCRIPTOR_HANDLE& other)
+	{
+		return (ptr != other.ptr);
+	}
+
+	CPU_DESC_HANDLER& operator=(const D3D12_CPU_DESCRIPTOR_HANDLE& other)
+	{
+		ptr = other.ptr;
+		return *this;
+	}
+
+	inline void InitOffsetted(_In_ const D3D12_CPU_DESCRIPTOR_HANDLE& base, INT offsetScaledByIncrementSize)
+	{
+		InitOffsetted(*this, base, offsetScaledByIncrementSize);
+	}
+
+	inline void InitOffsetted(_In_ const D3D12_CPU_DESCRIPTOR_HANDLE& base, INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		InitOffsetted(*this, base, offsetInDescriptors, descriptorIncrementSize);
+	}
+
+	static inline void InitOffsetted(_Out_ D3D12_CPU_DESCRIPTOR_HANDLE& handle, _In_ const D3D12_CPU_DESCRIPTOR_HANDLE& base, INT offsetScaledByIncrementSize)
+	{
+		handle.ptr = base.ptr + offsetScaledByIncrementSize;
+	}
+
+	static inline void InitOffsetted(_Out_ D3D12_CPU_DESCRIPTOR_HANDLE& handle, _In_ const D3D12_CPU_DESCRIPTOR_HANDLE& base, INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		handle.ptr = base.ptr + (SIZE_T)offsetInDescriptors * descriptorIncrementSize;
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+//            GPU_DESCRIPTOR_HANDLER : D3D12_GPU_DESCRIPTOR_HANDLE
+//////////////////////////////////////////////////////////////////////////////////
+struct GPU_DESC_HANDLER : public D3D12_GPU_DESCRIPTOR_HANDLE
+{
+	GPU_DESC_HANDLER() { ptr = NULL; };
+	explicit GPU_DESC_HANDLER(const D3D12_GPU_DESCRIPTOR_HANDLE& handler) :D3D12_GPU_DESCRIPTOR_HANDLE(handler) {};
+
+	GPU_DESC_HANDLER(_In_ const D3D12_GPU_DESCRIPTOR_HANDLE& other, INT offsetScaledByIncrementSize)
+	{
+		InitOffsetted(other, offsetScaledByIncrementSize);
+	}
+
+	GPU_DESC_HANDLER(_In_ const D3D12_GPU_DESCRIPTOR_HANDLE& other, INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		InitOffsetted(other, offsetInDescriptors, descriptorIncrementSize);
+	}
+
+	GPU_DESC_HANDLER& Offset(INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		ptr += (SIZE_T)offsetInDescriptors * descriptorIncrementSize;
+		return *this;
+	}
+
+	GPU_DESC_HANDLER& Offset(INT offsetScaledByIncrementSize)
+	{
+		ptr += offsetScaledByIncrementSize;
+		return *this;
+	}
+
+	bool operator==(_In_ const D3D12_GPU_DESCRIPTOR_HANDLE& other)
+	{
+		return (ptr == other.ptr);
+	}
+
+	bool operator!=(_In_ const D3D12_GPU_DESCRIPTOR_HANDLE& other)
+	{
+		return (ptr != other.ptr);
+	}
+
+	GPU_DESC_HANDLER& operator=(const D3D12_GPU_DESCRIPTOR_HANDLE& other)
+	{
+		ptr = other.ptr;
+		return *this;
+	}
+
+	inline void InitOffsetted(_In_ const D3D12_GPU_DESCRIPTOR_HANDLE& base, INT offsetScaledByIncrementSize)
+	{
+		InitOffsetted(*this, base, offsetScaledByIncrementSize);
+	}
+
+	inline void InitOffsetted(_In_ const D3D12_GPU_DESCRIPTOR_HANDLE& base, INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		InitOffsetted(*this, base, offsetInDescriptors, descriptorIncrementSize);
+	}
+
+	static inline void InitOffsetted(_Out_ D3D12_GPU_DESCRIPTOR_HANDLE& handle, _In_ const D3D12_GPU_DESCRIPTOR_HANDLE& base, INT offsetScaledByIncrementSize)
+	{
+		handle.ptr = base.ptr + offsetScaledByIncrementSize;
+	}
+
+	static inline void InitOffsetted(_Out_ D3D12_GPU_DESCRIPTOR_HANDLE& handle, _In_ const D3D12_GPU_DESCRIPTOR_HANDLE& base, INT offsetInDescriptors, UINT descriptorIncrementSize)
+	{
+		handle.ptr = base.ptr + (SIZE_T)offsetInDescriptors * descriptorIncrementSize;
+	}
+};
 
 #endif
