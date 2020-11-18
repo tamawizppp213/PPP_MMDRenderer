@@ -5,8 +5,8 @@
 //             Create:  2020_11_06
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef MOTIONTEST_HPP
-#define MOTIONTEST_HPP
+#ifndef MOTION_TEST_HPP
+#define MOTION_TEST_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
@@ -28,7 +28,7 @@ public:
 	*****************************************************************************/
 	MotionTest();
 	~MotionTest();
-	void Initialize() override;
+	void Initialize(const DirectX12& directX12) override;
 	void Draw()       override;
 	void Update()     override;
 	void Terminate()  override;
@@ -41,6 +41,7 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	DirectX12 _directX12;
 
 	/****************************************************************************
 	**                Private Member Variables

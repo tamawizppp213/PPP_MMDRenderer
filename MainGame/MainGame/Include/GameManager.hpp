@@ -5,13 +5,14 @@
 //             Create:  2020_11_06
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef GAMEMANAGER_HPP
+#ifndef GAME_MANAGER_HPP
 #define GAME_MANAGER_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "SceneManager.hpp"
+#include "DirectX12/Include/DirectX12Base.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -29,11 +30,12 @@ public:
 	void GameStart();
 	void GameMain();
 	void GameEnd();
+	void SetHWND(HWND hwnd);
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
 	/*---------------------------------------------------------------------------
-					 Singleton
+	                 Singleton 
 	-----------------------------------------------------------------------------*/
 	static GameManager& Instance()
 	{
@@ -64,6 +66,9 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	SceneManager& _sceneManager = SceneManager::Instance();
+	DirectX12     _directX12;
+	HWND _mainWindow = nullptr;
+	
 
 };
 #endif

@@ -28,7 +28,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 bool Application::Initialize()
 {
 	if (!InitializeMainWindow()) { return false; }
-
+	
 	return true;
 }
 
@@ -37,7 +37,8 @@ void Application::Run()
 	MSG message = { 0 };
 
 	_gameTimer.Reset();
-
+	
+	_gameManager.Instance().SetHWND(_mainWindow);
 	_gameManager.Instance().GameStart();
 	/*---------------------------------------------------------------
 						Main Loop
@@ -74,10 +75,10 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 {
 	switch (message)
 	{
-		/*-----------------------------------------------------------------
-		  WM_ACTIVATE is sent when the windows is activated or deactivated
-		--------------------------------------------------------------------*/
-	case WM_ACTIVATE:
+	/*-----------------------------------------------------------------
+	  WM_ACTIVATE is sent when the windows is activated or deactivated
+	--------------------------------------------------------------------*/
+	case WM_ACTIVATE:  
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
 			_isApplicationPaused = true;
@@ -87,6 +88,7 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 		{
 			_isApplicationPaused = false;
 			_gameTimer.Start();
+
 		}
 		return 0;
 
@@ -95,28 +97,28 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 
 	case WM_ENTERSIZEMOVE:
 		return 0;
-
+	
 	case WM_EXITSIZEMOVE:
 		return 0;
-		/*-----------------------------------------------------------------
-			WM_CLOSE is sent when the window is closed
-		--------------------------------------------------------------------*/
-	case WM_CLOSE:
+	/*-----------------------------------------------------------------
+		WM_CLOSE is sent when the window is closed
+	--------------------------------------------------------------------*/
+	case WM_CLOSE:  
 		if (MessageBox(hwnd, L"              ゲームを終了しますか?", L" 確認", MB_OKCANCEL | MB_DEFBUTTON2) == IDOK)
 		{
 			DestroyWindow(hwnd);
 		}
 		return 0;
-		/*-----------------------------------------------------------------
-			WM_DESTROY is sent when the window is deleted
-		--------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------
+		WM_DESTROY is sent when the window is deleted
+	--------------------------------------------------------------------*/
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 
-		/*-----------------------------------------------------------------
-			WM_KEYUP is sent when the key is inputed
-		--------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------
+		WM_KEYUP is sent when the key is inputed 
+	--------------------------------------------------------------------*/
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{
@@ -127,7 +129,6 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 	}
 
 	return DefWindowProc(hwnd, message, wParam, lParam);
-
 }
 
 bool Application::InitializeMainWindow()
@@ -135,16 +136,16 @@ bool Application::InitializeMainWindow()
 	/*---------------------------------------------------------------
 						Register Window Class
 	-----------------------------------------------------------------*/
-	WNDCLASS wc      = {};
-	wc.style         = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc   = WindowProcedure;
-	wc.cbClsExtra    = 0;
-	wc.cbWndExtra    = 0;
-	wc.hInstance     = _appInstance;
-	wc.hIcon         = LoadIcon(0, IDI_APPLICATION);
-	wc.hCursor       = LoadCursor(0, IDC_ARROW);
+	WNDCLASS wc = {};
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WindowProcedure;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = _appInstance;
+	wc.hIcon = LoadIcon(0, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName  = 0;
+	wc.lpszMenuName = 0;
 	wc.lpszClassName = CLASS_NAME;
 
 	if (!RegisterClass(&wc))
@@ -156,12 +157,14 @@ bool Application::InitializeMainWindow()
 						Create Window Object
 	-----------------------------------------------------------------*/
 	DWORD window_style = WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME);
-	RECT  window_rect  = { 0,0,_screen.GetScreenWidth(),_screen.GetScreenHeight() };
+	RECT  window_rect  = { 0,0,_screen.GetScreenWidth(),_screen.GetScreenHeight() }; 	// Create Window Rect
 	AdjustWindowRect(&window_rect, window_style, false);
 
 	// Recreate window size
 	int window_width  = window_rect.right - window_rect.left;
 	int window_height = window_rect.bottom - window_rect.top;
+	_screen.SetScreenWidth (window_width);
+	_screen.SetScreenHeight(window_height);
 
 	// Acquire desktop resolution
 	int desktop_width  = GetSystemMetrics(SM_CXSCREEN);

@@ -24,10 +24,13 @@ class DirectX12;
 //                         Alias 
 //////////////////////////////////////////////////////////////////////////////////
 using Microsoft::WRL::ComPtr;
-using Device  = ID3D12Device;
-using Factory = IDXGIFactory4;
-using Adapter = IDXGIAdapter;
-using Output  = IDXGIOutput;
+using Device       = ID3D12Device;
+using Factory      = IDXGIFactory4;
+using Adapter      = IDXGIAdapter;
+using Output       = IDXGIOutput;
+using CommandList  = ID3D12GraphicsCommandList5;
+using CommandQueue = ID3D12CommandQueue;
+using Resource     = ID3D12Resource;
 
 using DeviceComPtr           = ComPtr<ID3D12Device>;
 using AdapterComPtr          = ComPtr<IDXGIAdapter>;

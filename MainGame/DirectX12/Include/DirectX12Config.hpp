@@ -1,5 +1,10 @@
 #pragma once
-#ifndef DIRECTX12CONFIG_HPP
-#define DIRECTX12CONFIG_HPP
+#ifndef DIRECTX12_CONFIG_HPP
+#define DIRECTX12_CONFIG_HPP
 
+//////////////////////////////////////////////////////////////////////////////////
+//                             Define Config
+//////////////////////////////////////////////////////////////////////////////////
+#define SWAPCHAIN_BUFFER 2
+#define VSYNC 0 // 0: don't wait, 1: wait (60fps) 
 #endif

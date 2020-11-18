@@ -5,8 +5,8 @@
 //             Create:  2020_11_07
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef SCENEMANAGER_HPP
-#define SCENEMANAGER_HPP
+#ifndef SCENE_MANAGER_HPP
+#define SCENE_MANAGER_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
@@ -28,9 +28,9 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void Initialize();
-	void TransitScene(const ScenePtr scene);
-	void CallSceneInitialize() const;
+	void Initialize(const DirectX12& directX12);
+	void TransitScene(const ScenePtr scene, const DirectX12& directX12);
+	void CallSceneInitialize(const DirectX12& directX12) const;
 	void CallSceneUpdate()     const;
 	void CallSceneDraw()       const;
 	void CallSceneTerminate()  const;

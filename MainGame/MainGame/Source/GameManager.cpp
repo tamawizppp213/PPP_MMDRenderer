@@ -9,6 +9,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Include/GameManager.hpp"
+#include <cassert>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -19,7 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 void GameManager::GameStart()
 {
-	_sceneManager.Initialize();
+	_directX12.Initialize(_mainWindow);
+	_sceneManager.Initialize(_directX12);
 }
 
 void GameManager::GameMain()
@@ -33,6 +35,13 @@ void GameManager::GameEnd()
 
 }
 
+#pragma region Property
+void GameManager::SetHWND(HWND hwnd)
+{
+	assert(hwnd != nullptr);
+	_mainWindow = hwnd;
+}
+#pragma endregion Property
 #pragma region Private Function
 void GameManager::Draw()
 {

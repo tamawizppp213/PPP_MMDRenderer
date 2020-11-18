@@ -28,7 +28,7 @@ public:
 	*****************************************************************************/
 	Title();
 	~Title();
-	void Initialize() override;
+	void Initialize(const DirectX12& directX12) override;
 	void Draw()       override;
 	void Update()     override;
 	void Terminate()  override;
@@ -41,7 +41,7 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-
+	DirectX12 _directX12;
 
 	/****************************************************************************
 	**                Private Member Variables

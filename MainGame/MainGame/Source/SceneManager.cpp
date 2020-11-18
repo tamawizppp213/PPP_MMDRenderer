@@ -22,24 +22,27 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
-void SceneManager::Initialize()
+void SceneManager::Initialize(const DirectX12& directX12)
 {
 #ifdef _DEBUG
-	PushScene(new Title());
-#else
 	PushScene(new MotionTest());
+	CallSceneInitialize(directX12);
+#else
+	PushScene(new Title());
+	CallSceneInitialize(directX12);
 #endif
 }
 
-void SceneManager::TransitScene(ScenePtr scene)
+void SceneManager::TransitScene(const ScenePtr scene, const DirectX12& directX12)
 {
 	_currentScene.pop();
 	_currentScene.emplace(scene);
+	CallSceneInitialize(directX12);
 }
 
-void SceneManager::CallSceneInitialize() const
+void SceneManager::CallSceneInitialize(const DirectX12& directX12) const
 {
-	_currentScene.top()->Initialize();
+	_currentScene.top()->Initialize(directX12);
 }
 void SceneManager::CallSceneUpdate() const
 {
