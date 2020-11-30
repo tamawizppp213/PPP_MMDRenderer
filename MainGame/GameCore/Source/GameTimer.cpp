@@ -21,14 +21,14 @@
 
 GameTimer::GameTimer() :
 	_secondsPerCount(0.0), _deltaTime(-1.0), _baseTime(0), _pausedTime(0),
-	_previousTime(0), _currentTime(0), _stopTime(0)
+	_previousTime(0), _currentTime(0),_stopTime(0)
 {
 	__int64 countsPerSec;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSec);
 	_secondsPerCount = 1.0 / (double)countsPerSec;
 
 	_stopped = false;
-
+	
 }
 float GameTimer::TotalTime() const
 {
@@ -63,7 +63,7 @@ float GameTimer::TotalTime() const
 
 float GameTimer::DeltaTime() const
 {
-	return _deltaTime;
+	return static_cast<float>(_deltaTime);
 }
 
 void GameTimer::Reset()
@@ -71,10 +71,10 @@ void GameTimer::Reset()
 	__int64 currentTime = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
-	_baseTime     = currentTime;
+	_baseTime = currentTime;
 	_previousTime = currentTime;
-	_stopTime     = 0;
-	_stopped      = false;
+	_stopTime = 0;
+	_stopped = false;
 
 }
 
@@ -85,11 +85,11 @@ void GameTimer::Start()
 
 	if (_stopped)
 	{
-		_pausedTime  += (startTime - _stopTime);
+		_pausedTime += (startTime - _stopTime);
 
 		_previousTime = startTime;
-		_stopTime     = 0;
-		_stopped      = false;
+		_stopTime = 0;
+		_stopped = false;
 	}
 }
 
@@ -101,7 +101,7 @@ void GameTimer::Stop()
 		QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
 		_stopTime = currentTime;
-		_stopped  = true;
+		_stopped = true;
 	}
 
 }
@@ -116,10 +116,10 @@ void GameTimer::Tick()
 
 	__int64 currentTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
-	_currentTime  = currentTime;
+	_currentTime = currentTime;
 
 	// Time difference between this frame and the previous.
-	_deltaTime    = (_currentTime - _previousTime) * _secondsPerCount;
+	_deltaTime = (_currentTime - _previousTime) * _secondsPerCount;
 
 	// Prepare for next frame.
 	_previousTime = _currentTime;
@@ -133,7 +133,7 @@ void GameTimer::Tick()
 	}
 }
 
-void GameTimer::AverageFrame(const HWND& hwnd)
+void GameTimer::AverageFrame(const HWND &hwnd)
 {
 	// Show Average Frame
 	static int frameCount    = 0;
@@ -141,7 +141,7 @@ void GameTimer::AverageFrame(const HWND& hwnd)
 
 	frameCount++;
 
-	// Compute averages over one second period]
+	// Compute averages over one second period
 	if ((TotalTime() - timeElapsed) >= 1.0f)
 	{
 		float fps  = (float)frameCount;
@@ -150,7 +150,7 @@ void GameTimer::AverageFrame(const HWND& hwnd)
 		std::wstring fpsString  = std::to_wstring(fps);
 		std::wstring mspfString = std::to_wstring(mspf);
 
-		std::wstring windowText =
+		std::wstring windowText = 
 			L"    fps: " + fpsString +
 			L"   mspf: " + mspfString;
 
