@@ -1,43 +1,33 @@
 //////////////////////////////////////////////////////////////////////////////////
-//              Title:  Screen.hpp
-//            Content:  Screen Config
-//             Author:  Toide Yutaro
-//             Create:  2020_11_09
+///             @file   GameInput.cpp
+///             @brief  GameInput
+///             @author Toide Yutaro
+///             @date   2020_11_29
 //////////////////////////////////////////////////////////////////////////////////
-#pragma once
-#ifndef SCREEN_HPP
-#define SCREEN_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
+#include "GameCore/Include/GameInput.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define DEFAULT_SCREEN_WIDTH  1920
-#define DEFAULT_SCREEN_HEIGHT 1080
 
 //////////////////////////////////////////////////////////////////////////////////
-//                  Window Class (width, height static)
-//                  Default Size  width: 1920 Å~ height: 1080
+//							Implement
 //////////////////////////////////////////////////////////////////////////////////
-class Screen
+void GameInput::Initialize()
 {
-public:
-	Screen();
-	~Screen();
-	Screen(int width, int height);
 
-	Screen& GetScreen();
-	int GetScreenWidth ();
-	int GetScreenHeight();
-	void SetScreenWidth (int width);
-	void SetScreenHeight(int height);
-	float AspectRatio() const;
+}
 
-private:
-	static int _width;
-	static int _height;
-};
-#endif
+void GameInput::Update()
+{
+
+}
+
+void GameInput::Finalize()
+{
+
+}

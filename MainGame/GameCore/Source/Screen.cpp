@@ -31,13 +31,12 @@ Screen::Screen(int width, int height)
 
 Screen::~Screen()
 {
-
+	
 }
 
 Screen& Screen::GetScreen()
 {
-	Screen screen = Screen(_width, _height);
-	return screen;
+	return *this;
 }
 
 int Screen::GetScreenWidth()

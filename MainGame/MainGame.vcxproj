@@ -21,16 +21,24 @@
   <ItemGroup>
     <ClInclude Include="DirectX12\Include\DirectX12Base.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Config.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Core.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp" />
     <ClInclude Include="GameCore\Include\Audio.hpp" />
     <ClInclude Include="GameCore\Include\Camera.hpp" />
+    <ClInclude Include="GameCore\Include\GameInput.hpp" />
+    <ClInclude Include="GameCore\Include\GamePad.hpp" />
     <ClInclude Include="GameCore\Include\GameTimer.hpp" />
     <ClInclude Include="GameCore\Include\Keyboard.hpp" />
+    <ClInclude Include="GameCore\Include\KeyCode.hpp" />
     <ClInclude Include="GameCore\Include\Mouse.hpp" />
+    <ClInclude Include="GameCore\Include\Save.hpp" />
     <ClInclude Include="GameCore\Include\Screen.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
     <ClInclude Include="MainGame\Include\Application.hpp" />
@@ -44,16 +52,22 @@
   <ItemGroup>
     <ClCompile Include="DirectX12\Source\DirectX12Base.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12BaseStruct.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Config.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Core.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp" />
     <ClCompile Include="GameCore\Source\Audio.cpp" />
     <ClCompile Include="GameCore\Source\Camera.cpp" />
+    <ClCompile Include="GameCore\Source\GameInput.cpp" />
+    <ClCompile Include="GameCore\Source\GamePad.cpp" />
     <ClCompile Include="GameCore\Source\GameTimer.cpp" />
     <ClCompile Include="GameCore\Source\Keyboard.cpp" />
     <ClCompile Include="GameCore\Source\Mouse.cpp" />
+    <ClCompile Include="GameCore\Source\Save.cpp" />
     <ClCompile Include="GameCore\Source\Screen.cpp" />
     <ClCompile Include="GameCore\Source\TextureLoader.cpp" />
     <ClCompile Include="MainGame\Source\Application.cpp" />

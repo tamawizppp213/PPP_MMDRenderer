@@ -1,62 +1,78 @@
 //////////////////////////////////////////////////////////////////////////////////
-//              Title:  GameTimer.hpp
-//            Content:  Time Measurement Function 
-//             Author:  Toide Yutaro (Reference: 3DGame Programming with DirectX12)
-//             Create:  2020_11_08
+///             @file   GameInput.hpp
+///             @brief  GameInput (Singleton)
+///             @author Toide Yutaro
+///             @date   2020_11_
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef GAME_TIMER_HPP
-#define GAME_TIMER_HPP
+#ifndef GAMEINPUT_HPP
+#define GAMEINPUT_HPP
+
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <Windows.h>
+#include "GameCore/Include/Keyboard.hpp"
+#include "GameCore/Include/GamePad.hpp"
+#include "GameCore/Include/Mouse.hpp"
+#include "GameCore/Include/KeyCode.hpp"
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////
-//                         GameTimer Class
+//                        Geme Input
 //////////////////////////////////////////////////////////////////////////////////
-class GameTimer
+#pragma region GameInput
+/****************************************************************************
+*				  			GameInput
+*************************************************************************//**
+*  @class     GameInput
+*  @brief     GameInput
+*****************************************************************************/
+class GameInput
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	GameTimer();
-	~GameTimer() = default;
-	
-	float TotalTime() const; // in seconds
-	float DeltaTime() const; // in seconds
-
-	void Reset(); // Call before message loop
-	void Start(); // Call when unpaused
-	void Stop();  // Call when paused
-	void Tick();  // Call every frame
-
-	void AverageFrame(const HWND &hwnd);
+	void Initialize();
+	void Update();
+	void Finalize();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-
+	
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	// Singleton 
+	static GameInput& Instance()
+	{
+		static GameInput gameInput;
+		return gameInput;
+	}
+	GameInput(const GameInput&)            = delete;
+	GameInput& operator=(const GameInput&) = delete;
+	GameInput(GameInput&&)                 = delete;
+	GameInput& operator=(GameInput&&)      = delete;
+	
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	GameInput()  = default;
+	~GameInput() = default;
+
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	double _secondsPerCount;
-	double _deltaTime;
+	Keyboard _keyboard;
+	GamePad  _gamePad;
+	Mouse    _mouse;
 
-	__int64 _baseTime;
-	__int64 _pausedTime;
-	__int64 _stopTime;
-	__int64 _previousTime;
-	__int64 _currentTime;
-
-	bool _stopped;
 };
+
 #endif
+
