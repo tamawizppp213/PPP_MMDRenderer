@@ -39,14 +39,16 @@ public:
 		ThrowIfFailed(_commandAllocator->Reset());
 		ThrowIfFailed(_commandList->Reset(_commandAllocator.Get(), nullptr));
 	}
-
+	
 #pragma region Property
-	Device* GetDevice()              const;
-	CommandList* GetCommandList()    const;
-	CommandQueue* GetCommandQueue()  const;
-	Resource* GetCurrentBackBuffer() const;
+	Device*       GetDevice()         const;
+	CommandList*  GetCommandList()    const;
+	CommandQueue* GetCommandQueue()   const;
+	Resource* GetCurrentBackBuffer()  const;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetConstantBufferView() const;
 	bool Get4xMsaaState() const;
 	void Set4xMsaaState(bool value);
 	void SetHWND(HWND hwnd);
@@ -79,13 +81,14 @@ private:
 	void CreateSwapChain();
 	void CreateDescriptorHeap();
 	void CreateViewport();
+	void CreateDefaultPSO();
 	void CheckMultiSampleQualityLevels();
-
+	
 #pragma endregion
 #pragma region Debug
 	void EnabledDebugLayer();
 	void EnabledGPUBasedValidation();
-
+	
 	void LogAdapters();
 	void LogAdapterOutputs(Adapter* adapter);
 	void LogOutputDisplayModes(Output* output, DXGI_FORMAT format);
@@ -98,30 +101,33 @@ private:
 	Screen _screen;
 
 	// Basic DirectX12 Object
-	DeviceComPtr           _device;             // Device
-	FactoryComPtr          _dxgiFactory;        // DXGI
-	SwapchainComPtr        _swapchain;          // SwapChain
-	CommandQueueComPtr     _commandQueue;       // Command Queue (Command Execution Unit)
-	CommandListComPtr      _commandList;        // Graphics Command List
-	CommandAllocatorComPtr _commandAllocator;   // Command Memory Allocator
-	DescriptorHeapComPtr   _rtvHeap;            // Heap For Render Target View 
-	DescriptorHeapComPtr   _dsvHeap;            // Heap For Depth Stencil View
-	PipelineStateComPtr    _pipelineState;      // Graphic Pipeline State
-	ResourceComPtr         _swapchainBuffer[SWAPCHAIN_BUFFER]; // Swapchain Buffer (0:Front, 1: Back Buffer)
-	ResourceComPtr         _depthStencilBuffer; // DepthStencl Buffer         
+	DeviceComPtr           _device;             /// Device
+	FactoryComPtr          _dxgiFactory;        /// DXGI
+	SwapchainComPtr        _swapchain;          /// SwapChain
+	CommandQueueComPtr     _commandQueue;       /// Command Queue (Command Execution Unit)
+	CommandListComPtr      _commandList;        /// Graphics Command List
+	CommandAllocatorComPtr _commandAllocator;   /// Command Memory Allocator
+	DescriptorHeapComPtr   _rtvHeap;            /// Heap For Render Target View 
+	DescriptorHeapComPtr   _dsvHeap;            /// Heap For Depth Stencil View
+	DescriptorHeapComPtr   _cbvHeap;            /// Heao Fir Constant Buffer View
+	PipelineStateComPtr    _pipelineState;      /// Graphic Pipeline State
+	ResourceComPtr         _swapchainBuffer[SWAPCHAIN_BUFFER]; /// Swapchain Buffer (0:Front, 1: Back Buffer)
+	ResourceComPtr         _depthStencilBuffer; /// DepthStencl Buffer   
 	UINT _rtvDescriptorSize       = 0;
 	UINT _dsvDescriptorSize       = 0;
 	UINT _cbvSrvUavDescriptorSize = 0;
 	INT  _currentBackBuffer       = 0;
 
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC _defaultPSODesc;
+
 	// ViewPort
-	D3D12_VIEWPORT _screenViewport;
-	D3D12_RECT     _scissorRect;
+	D3D12_VIEWPORT _screenViewport = {0,0,0,0,0,0};
+	D3D12_RECT     _scissorRect    = {0,0,0,0};
 
 	// Synchronization Object
 	UINT64      _currentFence = 0; // fence
 	FenceComPtr _fence;
-	HANDLE      _fenceEvent;
+	HANDLE      _fenceEvent   = nullptr;
 
 	// MSAA: One of the Anti-Alias
 	bool _4xMsaaState   = false;
