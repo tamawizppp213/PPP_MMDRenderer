@@ -11,11 +11,12 @@
 #include "DirectX12/Include/DirectX12Base.hpp"
 #include "DirectX12/Include/DirectX12Config.hpp"
 #include "DirectX12/Include/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/DirectX12VertexTypes.hpp"
 #include "GameCore/Include/Screen.hpp"
+#include <DirectXColors.h>
 #include <vector>
 #include <string>
 #include <cassert>
-#include <DirectXColors.h>
 #include <iostream>
 
 #pragma comment(lib,"d3dcompiler.lib")
@@ -66,6 +67,7 @@ void DirectX12::OnResize()
 	-              Flush before chainging any resources
 	---------------------------------------------------------------------*/
 	FlushCommandQueue();
+	//ResetCommandList();
 	ThrowIfFailed(_commandList->Reset(_commandAllocator.Get(), nullptr));
 	
 	/*-------------------------------------------------------------------
@@ -123,10 +125,6 @@ void DirectX12::ClearScreen()
 
 	// Set Render Target 
 	_commandList->OMSetRenderTargets(1, &GetCurrentBackBufferView(), true, &GetDepthStencilView());
-
-	// Indicate a state transition (Render Target -> Present)
-	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 }
 
 /****************************************************************************
@@ -141,8 +139,11 @@ void DirectX12::ClearScreen()
 void DirectX12::CompleteRendering()
 {
 	/*-------------------------------------------------------------------
-	-                   Done recording commands
+	-      // Indicate a state transition (Render Target -> Present)
 	---------------------------------------------------------------------*/
+	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	
 	ThrowIfFailed(_commandList->Close());
 
 	/*-------------------------------------------------------------------
@@ -208,7 +209,10 @@ void DirectX12::LoadPipeLine()
 	-                 Create Descriptor Heap
 	---------------------------------------------------------------------*/
 	CreateDescriptorHeap();
-	
+	/*-------------------------------------------------------------------
+	-                 Create Default PSO
+	---------------------------------------------------------------------*/
+	CreateDefaultPSO();
 }
 
 /****************************************************************************
@@ -223,6 +227,7 @@ void DirectX12::LoadAssets()
 {
 	FlushCommandQueue();
 	OnResize();
+
 }
 
 /****************************************************************************
@@ -376,6 +381,16 @@ void DirectX12::CreateDescriptorHeap()
 	dsvHeapDesc.NodeMask       = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
+
+	/*-------------------------------------------------------------------
+	-			     Set CBV Heap Descriptror Struct
+	---------------------------------------------------------------------*/
+	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+	cbvHeapDesc.NumDescriptors = 1;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.NodeMask = 0;
+	ThrowIfFailed(_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&_cbvHeap)));
 }
 
 /****************************************************************************
@@ -487,7 +502,8 @@ void DirectX12::CreateSwapChain()
 	sd.Stereo      = false;
 	sd.SampleDesc.Count   = _4xMsaaState ? 4 : 1;                     // MSAA: Anti-Alias
 	sd.SampleDesc.Quality = _4xMsaaState ? (_4xMsaaQuality - 1) : 0;  // MSAA: Anti-Alias
-
+	
+	
 	/*-------------------------------------------------------------------
 	-                   Create Swapchain for hwnd
 	---------------------------------------------------------------------*/
@@ -499,6 +515,8 @@ void DirectX12::CreateSwapChain()
 		nullptr,
 		(IDXGISwapChain1**)(_swapchain.GetAddressOf())
 	));
+
+		
 }
 
 
@@ -523,6 +541,33 @@ void DirectX12::CreateViewport()
 
 	_scissorRect = { 0,0, _screen.GetScreenWidth(), _screen.GetScreenHeight() };
 }
+
+/****************************************************************************
+*                     CreateDefaultPSO
+*************************************************************************//**
+*  @fn        void DirectX12::CreateDefaultPSO(void)
+*  @brief     Create default pipeline default object
+*  @param[in] void
+*  @return 　　void @n
+*****************************************************************************/
+void DirectX12::CreateDefaultPSO()
+{
+	VertexPositionNormalTexture vertex;
+
+	ZeroMemory(&_defaultPSODesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	_defaultPSODesc.InputLayout           = vertex.InputLayout;
+	_defaultPSODesc.pRootSignature        = nullptr;
+	_defaultPSODesc.RasterizerState       = RASTERIZER_DESC(D3D12_DEFAULT);
+	_defaultPSODesc.BlendState            = BLEND_DESC(D3D12_DEFAULT);
+	_defaultPSODesc.SampleMask            = UINT_MAX;
+	_defaultPSODesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	_defaultPSODesc.NumRenderTargets      = 1;
+	_defaultPSODesc.RTVFormats[0]         = _backBufferFormat;
+	_defaultPSODesc.SampleDesc.Count      = _4xMsaaState ? 4 : 1;
+	_defaultPSODesc.SampleDesc.Quality    = _4xMsaaState ? (_4xMsaaQuality - 1) : 0;
+	_defaultPSODesc.DSVFormat             = _depthStencilFormat;
+}
+
 
 /****************************************************************************
 *                     MultiSampleQualityLevels
@@ -804,6 +849,33 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetDepthStencilView() const
 }
 
 /****************************************************************************
+*                        GetConstantBufferView
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView(void)
+*  @brief     Get current frame constant buffer view pointer
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
+D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView() const
+{
+	return _cbvHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
+/****************************************************************************
+*                           GetDefaultPSOConfig
+*************************************************************************//**
+*  @fn        D3D12_GRAPHICS_PIPELINE_STATE_DESC DirectX12::GetDefaultPSOConfig() const
+*  @brief     Get default pso config
+*  @param[in] void
+*  @return 　　D3D12_GRAPHICS_PIPELINE_STATE_DESC
+*****************************************************************************/
+D3D12_GRAPHICS_PIPELINE_STATE_DESC DirectX12::GetDefaultPSOConfig() const
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = _defaultPSODesc;
+	return psoDesc;
+}
+
+/****************************************************************************
 *                           Get4xMsaaState
 *************************************************************************//**
 *  @fn        bool DirectX12::Get4xMsaaState(void)
@@ -832,7 +904,7 @@ void DirectX12::Set4xMsaaState(bool value)
 
 		// Recreate the swapchain and buffers with new multisample setting
 		CreateSwapChain();
-		//OnResize();
+		OnResize();
 	}
 }
 
