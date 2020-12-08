@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 ///             @file   DirectX12Base.hpp
-///             @brief  DirectX12 Initialize Å` BackGround
+///             @brief  DirectX12 Initialize ¬Å` BackGround
 ///             @author Toide Yutaro
 ///             @date   2020_11_
 //////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +48,7 @@ public:
 	CommandQueue* GetCommandQueue()              const;
 	CommandAllocator* GetCommandAllocator()      const;
 	Resource* GetCurrentBackBuffer()             const;
+
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;

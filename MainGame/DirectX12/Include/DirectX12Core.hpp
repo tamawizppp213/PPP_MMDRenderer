@@ -36,6 +36,7 @@ using Resource         = ID3D12Resource;
 using PSODesc          = D3D12_GRAPHICS_PIPELINE_STATE_DESC;
 using RootSignature    = ID3D12RootSignature;
 
+
 using DeviceComPtr           = ComPtr<ID3D12Device>;
 using AdapterComPtr          = ComPtr<IDXGIAdapter>;
 using FactoryComPtr          = ComPtr<IDXGIFactory7>;
