@@ -155,6 +155,12 @@
     <ClInclude Include="Pluguins\DirectXTex\scoped.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameMath\Include\GameMathVector.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMSort.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectX12\Source\DirectX12Base.cpp">
@@ -346,6 +352,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </None>
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS.inc">
+      <Filter>ヘッダー ファイル</Filter>
+    </None>
+    <None Include="GameMath\Include\GameMath.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
   </ItemGroup>
