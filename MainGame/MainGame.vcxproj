@@ -41,6 +41,8 @@
     <ClInclude Include="GameCore\Include\Save.hpp" />
     <ClInclude Include="GameCore\Include\Screen.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
+    <ClInclude Include="GameMath\Include\GameMathVector.hpp" />
+    <ClInclude Include="GameMath\Include\GMSort.hpp" />
     <ClInclude Include="MainGame\Include\Application.hpp" />
     <ClInclude Include="MainGame\Include\FrameResources.hpp" />
     <ClInclude Include="MainGame\Include\GameCore.hpp" />
@@ -113,6 +115,7 @@
     <ClCompile Include="Pluguins\DirectXTex\DirectXTexWIC.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="GameMath\Include\GameMath.inl" />
     <None Include="Pluguins\DirectXTex\DirectXTex.inl" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_EncodeBlockCS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_TryModeG10CS.inc" />
@@ -221,6 +224,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\MainGame;..\MainGame/Pluguins</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
