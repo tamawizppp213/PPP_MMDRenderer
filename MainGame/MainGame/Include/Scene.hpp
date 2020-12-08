@@ -47,6 +47,15 @@ public:
 	**                Public Member Variables
 	*****************************************************************************/
 
+protected:
+	virtual void LoadShaders()             = 0;
+	virtual void LoadGeometry()            = 0;
+	virtual void BuildRootSignature()      = 0;
+	virtual void BuildFrameResources()     = 0;
+	virtual void BuildPSOs()               = 0;
+	virtual void BuildRenderItem()         = 0;
+	virtual void BuildDescriptorHeap()     = 0;
+	virtual void BuildConstantBufferView() = 0;
 private:
 	/****************************************************************************
 	**                Private Function

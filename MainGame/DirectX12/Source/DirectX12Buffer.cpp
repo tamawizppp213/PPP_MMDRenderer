@@ -26,10 +26,10 @@ DefaultBuffer::DefaultBuffer(Device* device, CommandList* commandList, const voi
 	-           Create the actual default buffer resource
 	---------------------------------------------------------------------*/
 	ThrowIfFailed(device->CreateCommittedResource(
-		&HEAP_PROPERTY(D3D12_HEAP_TYPE_UPLOAD),
+		&HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&RESOURCE_DESC::Buffer(totalByteSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COMMON,
 		nullptr,
 		IID_PPV_ARGS(_defaultBuffer.GetAddressOf())));
 
@@ -49,8 +49,8 @@ DefaultBuffer::DefaultBuffer(Device* device, CommandList* commandList, const voi
 	-      Describe the data we want to copy into the default buffer.
 	---------------------------------------------------------------------*/
 	D3D12_SUBRESOURCE_DATA subResourceData = {};
-	subResourceData.pData = initData;
-	subResourceData.RowPitch = totalByteSize;
+	subResourceData.pData      = initData;
+	subResourceData.RowPitch   = totalByteSize;
 	subResourceData.SlicePitch = subResourceData.RowPitch;
 
 	/*-------------------------------------------------------------------

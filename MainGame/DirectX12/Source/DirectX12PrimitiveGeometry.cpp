@@ -47,9 +47,9 @@ MeshData GeometryGenerator::Rect(float width, float height, float depth)
 	meshData.Indices[1] = 1;
 	meshData.Indices[2] = 2;
 
-	meshData.Indices[0] = 0;
-	meshData.Indices[1] = 2;
-	meshData.Indices[2] = 3;
+	meshData.Indices[3] = 0;
+	meshData.Indices[4] = 2;
+	meshData.Indices[5] = 3;
 	return meshData;
 }
 
@@ -81,9 +81,9 @@ MeshData GeometryGenerator::Quadrangle(float x, float y, float w, float h, float
 	meshData.Indices[1] = 1;
 	meshData.Indices[2] = 2;
 
-	meshData.Indices[0] = 0;
-	meshData.Indices[1] = 2;
-	meshData.Indices[2] = 3;
+	meshData.Indices[3] = 0;
+	meshData.Indices[4] = 2;
+	meshData.Indices[5] = 3;
 
 	return meshData;
 }

@@ -36,6 +36,10 @@ void GameManager::GameEnd()
 }
 
 #pragma region Property
+DirectX12* GameManager::GetDirectX12()
+{
+	return &_directX12;
+}
 void GameManager::SetHWND(HWND hwnd)
 {
 	assert(hwnd != nullptr);

@@ -31,6 +31,7 @@ public:
 	void GameMain();
 	void GameEnd();
 	void SetHWND(HWND hwnd);
+	DirectX12* GetDirectX12();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

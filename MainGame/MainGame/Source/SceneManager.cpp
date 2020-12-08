@@ -11,6 +11,7 @@
 #include "MainGame/Include/Scene.hpp"
 #include "MainGame/Include/Title.hpp"
 #include "MainGame/Include/MotionTest.hpp"
+#include "MainGame/Include/Test.hpp"
 #include <iostream>
 #include <cassert>
 
@@ -25,7 +26,7 @@
 void SceneManager::Initialize(const DirectX12& directX12)
 {
 #ifdef _DEBUG
-	PushScene(new MotionTest());
+	PushScene(new Test());
 	CallSceneInitialize(directX12);
 #else
 	PushScene(new Title());

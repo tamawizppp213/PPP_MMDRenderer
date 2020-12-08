@@ -33,7 +33,9 @@ public:
 	void Initialize(HWND hwnd);
 	void OnResize();
 	void ClearScreen();
+	void CompleteInitialize();
 	void CompleteRendering();
+	void FlushCommandQueue();
 	inline void ResetCommandList()
 	{
 		ThrowIfFailed(_commandAllocator->Reset());
@@ -41,10 +43,11 @@ public:
 	}
 	
 #pragma region Property
-	Device*       GetDevice()         const;
-	CommandList*  GetCommandList()    const;
-	CommandQueue* GetCommandQueue()   const;
-	Resource* GetCurrentBackBuffer()  const;
+	Device*       GetDevice()                    const;
+	CommandList*  GetCommandList()               const;
+	CommandQueue* GetCommandQueue()              const;
+	CommandAllocator* GetCommandAllocator()      const;
+	Resource* GetCurrentBackBuffer()             const;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
@@ -67,7 +70,7 @@ private:
 	*****************************************************************************/
 	void LoadPipeLine();
 	void LoadAssets();
-	void FlushCommandQueue();
+	
 
 #pragma region View
 	void BuildRenderTargetView();

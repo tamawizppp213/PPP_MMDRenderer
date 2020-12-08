@@ -24,6 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                         HResult Exception Class
 //////////////////////////////////////////////////////////////////////////////////
+inline std::wstring GetExtension(const std::wstring& path)
+{
+	int index = static_cast<UINT>(path.find_last_of(L'.'));
+	return path.substr((UINT64)index + 1, path.length() - index);
+}
+
 inline std::wstring AnsiToWString(const std::string& str)
 {
 	WCHAR buffer[512];

@@ -20,8 +20,10 @@
 #include <iostream>
 
 #pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib, "dxcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -92,7 +94,8 @@ void DirectX12::OnResize()
 
 	BuildRenderTargetView();
 	BuildDepthStencilView();
-	CompleteRendering();
+	CompleteInitialize();
+	FlushCommandQueue();
 	CreateViewport();
 }
 
@@ -225,7 +228,6 @@ void DirectX12::LoadPipeLine()
 *****************************************************************************/
 void DirectX12::LoadAssets()
 {
-	FlushCommandQueue();
 	OnResize();
 
 }
@@ -251,8 +253,12 @@ void DirectX12::FlushCommandQueue()
 		_fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
 		ThrowIfFailed(_fence->SetEventOnCompletion(_currentFence, _fenceEvent));
 
-		WaitForSingleObject(_fenceEvent, INFINITE);
-		CloseHandle(_fenceEvent);
+		if (_fenceEvent != 0)
+		{
+			WaitForSingleObject(_fenceEvent, INFINITE);
+			CloseHandle(_fenceEvent);
+		}
+	
 	}
 	_currentBackBuffer = _swapchain->GetCurrentBackBufferIndex();
 }
@@ -491,8 +497,8 @@ void DirectX12::CreateSwapChain()
 	DXGI_SWAP_CHAIN_DESC1 sd;
 
 	sd.BufferCount = SWAPCHAIN_BUFFER;                       // Current: Double Buffer
-	sd.Width       = _screen.GetScreenWidth();                // Window Size Width
-	sd.Height      = _screen.GetScreenHeight();               // Window Size Height 
+	sd.Width       = _screen.GetScreenWidth();               // Window Size Width
+	sd.Height      = _screen.GetScreenHeight();              // Window Size Height 
 	sd.Format      = _backBufferFormat;                      // Back Buffer Format 
 	sd.AlphaMode   = DXGI_ALPHA_MODE_UNSPECIFIED;            // Alpha Mode => transparency behavior is not specified
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;        // Use the surface or resource as an output render target
@@ -519,6 +525,31 @@ void DirectX12::CreateSwapChain()
 		
 }
 
+/****************************************************************************
+*							CompleteInitialize
+*************************************************************************//**
+*  @fn        void DirectX12::CompleteInitialize(void)
+*  @brief     Finish Initialize
+*  @param[in] void
+*  @return @@void
+*****************************************************************************/
+void DirectX12::CompleteInitialize()
+{
+	ThrowIfFailed(_commandList->Close());
+
+	/*-------------------------------------------------------------------
+	-          Add command list to the queue for execution
+	---------------------------------------------------------------------*/
+	ID3D12CommandList* commandLists[] = { _commandList.Get() };
+	_commandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
+
+	/*-------------------------------------------------------------------
+	-						Flip screen
+	---------------------------------------------------------------------*/
+	ThrowIfFailed(_swapchain->Present(VSYNC, 0));
+	_currentBackBuffer = (_currentBackBuffer + 1) % SWAPCHAIN_BUFFER;
+
+}
 
 /****************************************************************************
 *                     CreateViewport
@@ -559,7 +590,7 @@ void DirectX12::CreateDefaultPSO()
 	_defaultPSODesc.pRootSignature        = nullptr;
 	_defaultPSODesc.RasterizerState       = RASTERIZER_DESC(D3D12_DEFAULT);
 	_defaultPSODesc.BlendState            = BLEND_DESC(D3D12_DEFAULT);
-	_defaultPSODesc.SampleMask            = UINT_MAX;
+	_defaultPSODesc.SampleMask            = D3D12_DEFAULT_SAMPLE_MASK;
 	_defaultPSODesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	_defaultPSODesc.NumRenderTargets      = 1;
 	_defaultPSODesc.RTVFormats[0]         = _backBufferFormat;
@@ -805,6 +836,10 @@ CommandQueue* DirectX12::GetCommandQueue() const
 	return _commandQueue.Get();
 }
 
+CommandAllocator* DirectX12::GetCommandAllocator() const
+{
+	return _commandAllocator.Get();
+}
 /****************************************************************************
 *                        GetCurrentBackBuffer
 *************************************************************************//**

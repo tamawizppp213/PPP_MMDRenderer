@@ -46,3 +46,44 @@ void Title::Terminate()
 {
 
 }
+
+#pragma region Protected Function
+void Title::LoadShaders()
+{
+
+}
+
+void Title::LoadGeometry()
+{
+
+}
+
+void Title::BuildPSOs()
+{
+
+}
+void Title::BuildRootSignature()
+{
+
+}
+
+void Title::BuildRenderItem()
+{
+
+}
+
+void Title::BuildFrameResources()
+{
+
+}
+
+void Title::BuildDescriptorHeap()
+{
+
+}
+
+void Title::BuildConstantBufferView()
+{
+
+}
+#pragma endregion Protected Function

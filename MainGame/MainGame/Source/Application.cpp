@@ -70,7 +70,7 @@ void Application::Terminate()
 }
 
 #pragma region Private Function
-
+#include <iostream>
 LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
@@ -92,13 +92,65 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 		}
 		return 0;
 
+
+	/*-----------------------------------------------------------------
+	  WM_SIZE is sent when the windows size is changed or changing
+	--------------------------------------------------------------------*/
 	case WM_SIZE:
+		_screen.SetScreenWidth (LOWORD(lParam));
+		_screen.SetScreenHeight(HIWORD(lParam));
+
+		if (_gameManager.GetDirectX12()->GetDevice())
+		{
+			switch (wParam)
+			{
+			case SIZE_MINIMIZED:
+				_isApplicationPaused = true;
+				_isMinimized         = true;
+				_isMaximized         = false;
+				break;
+
+			case SIZE_MAXIMIZED:
+				_isApplicationPaused = false;
+				_isMinimized         = false;
+				_isMaximized         = true;
+				break;
+
+			case SIZE_RESTORED:
+				// Restoring from minimized state?
+				if (_isMinimized)
+				{
+					_isApplicationPaused = false;
+					_isMinimized         = false;
+				}
+				// Restoring from maximized state?
+				else if (_isMaximized)
+				{
+					_isApplicationPaused = false;
+					_isMaximized = false;
+				}
+				else if (_isResizing) {}
+				else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
+				{
+					
+				}
+				break;
+			default:
+				break;
+			}
+		}
 		return 0;
 
 	case WM_ENTERSIZEMOVE:
+		_isApplicationPaused = true;
+		_isResizing          = true;
+		_gameTimer.Stop();
 		return 0;
 	
 	case WM_EXITSIZEMOVE:
+		_isApplicationPaused = false;
+		_isResizing          = false;
+		_gameTimer.Start();
 		return 0;
 	/*-----------------------------------------------------------------
 		WM_CLOSE is sent when the window is closed
@@ -156,7 +208,7 @@ bool Application::InitializeMainWindow()
 	/*---------------------------------------------------------------
 						Create Window Object
 	-----------------------------------------------------------------*/
-	DWORD window_style = WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME);
+	DWORD window_style = WS_OVERLAPPEDWINDOW;
 	RECT  window_rect  = { 0,0,_screen.GetScreenWidth(),_screen.GetScreenHeight() }; 	// Create Window Rect
 	AdjustWindowRect(&window_rect, window_style, false);
 

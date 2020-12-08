@@ -37,6 +37,15 @@ public:
 	**                Public Member Variables
 	*****************************************************************************/
 
+protected:
+	void LoadShaders()             override;
+	void LoadGeometry()            override;
+	void BuildPSOs()               override;
+	void BuildRootSignature()      override;
+	void BuildRenderItem()         override;
+	void BuildFrameResources()     override;
+	void BuildDescriptorHeap()     override;
+	void BuildConstantBufferView() override;
 private:
 	/****************************************************************************
 	**                Private Function
