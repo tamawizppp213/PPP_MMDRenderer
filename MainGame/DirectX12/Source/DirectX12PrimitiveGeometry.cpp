@@ -26,7 +26,7 @@ using namespace DirectX;
 *  @param[in]  float width
 *  @param[in]  float height
 *  @param[in]  float depth
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::Rect(float width, float height, float depth)
 {
@@ -46,10 +46,9 @@ MeshData GeometryGenerator::Rect(float width, float height, float depth)
 	meshData.Indices[0] = 0;
 	meshData.Indices[1] = 1;
 	meshData.Indices[2] = 2;
-
-	meshData.Indices[0] = 0;
-	meshData.Indices[1] = 2;
-	meshData.Indices[2] = 3;
+	meshData.Indices[3] = 0;
+	meshData.Indices[4] = 2;
+	meshData.Indices[5] = 3;
 	return meshData;
 }
 
@@ -63,7 +62,7 @@ MeshData GeometryGenerator::Rect(float width, float height, float depth)
 *  @param[in]  float z
 *  @param[in]  float h
 *  @param[in]  float depth
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::Quadrangle(float x, float y, float w, float h, float depth)
 {
@@ -80,10 +79,9 @@ MeshData GeometryGenerator::Quadrangle(float x, float y, float w, float h, float
 	meshData.Indices[0] = 0;
 	meshData.Indices[1] = 1;
 	meshData.Indices[2] = 2;
-
-	meshData.Indices[0] = 0;
-	meshData.Indices[1] = 2;
-	meshData.Indices[2] = 3;
+	meshData.Indices[3] = 0;
+	meshData.Indices[4] = 2;
+	meshData.Indices[5] = 3;
 
 	return meshData;
 }
@@ -98,7 +96,7 @@ MeshData GeometryGenerator::Quadrangle(float x, float y, float w, float h, float
 *  @param[in]  float depth
 *  @param[in]  UINT32 numSubdivisions
 *  @param[in]  bool isInvertNormal
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::Box(float width, float height, float depth, UINT32 numSubdivisions, bool isInvertNormal)
 {
@@ -196,7 +194,7 @@ MeshData GeometryGenerator::Box(float width, float height, float depth, UINT32 n
 *  @param[in]  UINT32 sliceCount
 *  @param[in]  UINT32 stackCount
 *  @param[in]  bool isInvertNormal
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::Sphere(float radius, UINT32 sliceCount, UINT32 stackCount, bool isInvertNormal)
 {
@@ -294,7 +292,7 @@ MeshData GeometryGenerator::Sphere(float radius, UINT32 sliceCount, UINT32 stack
 *  @param[in]  float radius
 *  @param[in]  UINT32 numSubdivisions
 *  @param[in]  bool isInvertNormal
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::GeoSphere(float radius, UINT32 numSubdivisions, bool isInvertNormal)
 {
@@ -379,7 +377,7 @@ MeshData GeometryGenerator::GeoSphere(float radius, UINT32 numSubdivisions, bool
 *  @param[in]  UINT32 sliceCount
 *  @param[in]  UINT32 stackCount
 *  @param[in]  bool isInvertNormal
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::Cylinder(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, bool isInvertNormal)
 {
@@ -458,7 +456,7 @@ MeshData GeometryGenerator::Cylinder(float bottomRadius, float topRadius, float 
 *  @param[in]  UINT32 rows
 *  @param[in]  UINT32 columns
 *  @param[in]  bool isInvertNormal
-*  @return 　　 MeshData
+*  @return 縲縲 MeshData
 *****************************************************************************/
 MeshData GeometryGenerator::Grid(float width, float depth, UINT32 rows, UINT32 columns, bool isInvertNormal)
 {
@@ -532,7 +530,7 @@ MeshData GeometryGenerator::Grid(float width, float depth, UINT32 rows, UINT32 c
 *  @fn         void GeometryGenerator::IsInvertNormal(MeshData& meshData)
 *  @brief      Invert meshData normal vector
 *  @param[out] MeshData& meshData
-*  @return 　　 void
+*  @return 縲縲 void
 *****************************************************************************/
 void GeometryGenerator::IsInvertNormal(MeshData& meshData)
 {
@@ -550,7 +548,7 @@ void GeometryGenerator::IsInvertNormal(MeshData& meshData)
 *  @fn         void GeometryGenerator::SubDivide(MeshData& meshData)
 *  @brief      Divide each mesh 
 *  @param[out] MeshData& meshData
-*  @return 　　 void
+*  @return 縲縲 void
 *****************************************************************************/
 void GeometryGenerator::SubDivide(MeshData& meshData)
 {
@@ -668,7 +666,7 @@ VertexPositionNormalTexture GeometryGenerator::MidPoint(const VertexPositionNorm
 *  @param[in]  UINT32 sliceCount,
 *  @param[in]  UINT32 stackCount,
 *  @param[out] MeshData& meshData,
-*  @return 　　 void
+*  @return 縲縲 void
 *****************************************************************************/
 void GeometryGenerator::BuildCylinderTopCap(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, MeshData& meshData)
 {
@@ -712,7 +710,7 @@ void GeometryGenerator::BuildCylinderTopCap(float bottomRadius, float topRadius,
 *  @param[in]  UINT32 sliceCount,
 *  @param[in]  UINT32 stackCount,
 *  @param[out] MeshData& meshData,
-*  @return 　　 void
+*  @return 縲縲 void
 *****************************************************************************/
 void GeometryGenerator::BuildCylinderBottomCap(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, MeshData& meshData)
 {

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 ///             @file    DirectX12Base.cpp
-///             @brief   DirectX12 Initialize Å` BackGround
+///             @brief   DirectX12 Initialize ÔΩû BackGround
 ///             @author  Toide Yutaro
 ///             @date    2020_11_
 //////////////////////////////////////////////////////////////////////////////////
@@ -20,8 +20,10 @@
 #include <iostream>
 
 #pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib, "dxcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -37,7 +39,7 @@
 *  @fn        void DirectX12::Initialize(void)
 *  @brief     Initialize Back Screen
 *  @param[in] HWND hwnd
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::Initialize(HWND hwnd)
 {
@@ -52,7 +54,7 @@ void DirectX12::Initialize(HWND hwnd)
 *  @fn        void DirectX12::OnResize(void)
 *  @brief     Use when doing screen resizing 
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::OnResize()
 {
@@ -92,7 +94,8 @@ void DirectX12::OnResize()
 
 	BuildRenderTargetView();
 	BuildDepthStencilView();
-	CompleteRendering();
+	CompleteInitialize();
+	FlushCommandQueue();
 	CreateViewport();
 }
 
@@ -103,7 +106,7 @@ void DirectX12::OnResize()
 *  @brief     Clear Screen. Describe in the first of Draw functions for each scene.
 *             The background color is SteelBlue.
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::ClearScreen()
 {
@@ -134,7 +137,7 @@ void DirectX12::ClearScreen()
 *  @brief     End of the drawing process (describe in the last of
 *             Draw functions for each scene)
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::CompleteRendering()
 {
@@ -169,7 +172,7 @@ void DirectX12::CompleteRendering()
 *  @fn        void DirectX12::LoadPipeLine(void)
 *  @brief     Load DirectX Basic PipeLine (for initialize) 
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::LoadPipeLine()
 {
@@ -221,11 +224,10 @@ void DirectX12::LoadPipeLine()
 *  @fn        void DirectX12::LoadAssets(void)
 *  @brief     Load assets
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::LoadAssets()
 {
-	FlushCommandQueue();
 	OnResize();
 
 }
@@ -236,7 +238,7 @@ void DirectX12::LoadAssets()
 *  @fn        void DirectX12::FlushCommandQueue(void)
 *  @brief     Flush Command Queue
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::FlushCommandQueue()
 {
@@ -251,8 +253,12 @@ void DirectX12::FlushCommandQueue()
 		_fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
 		ThrowIfFailed(_fence->SetEventOnCompletion(_currentFence, _fenceEvent));
 
-		WaitForSingleObject(_fenceEvent, INFINITE);
-		CloseHandle(_fenceEvent);
+		if (_fenceEvent != 0)
+		{
+			WaitForSingleObject(_fenceEvent, INFINITE);
+			CloseHandle(_fenceEvent);
+		}
+	
 	}
 	_currentBackBuffer = _swapchain->GetCurrentBackBufferIndex();
 }
@@ -264,7 +270,7 @@ void DirectX12::FlushCommandQueue()
 *  @fn        void DirectX12::CreateDevice(void)
 *  @brief     Create DirectX12 Device
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::CreateDevice()
 {
@@ -305,7 +311,7 @@ void DirectX12::CreateDevice()
 *  @brief     Create command object (command queue, command allocator, and command list)@n 
 *             for initialize.
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::CreateCommandObject()
 {
@@ -349,7 +355,7 @@ void DirectX12::CreateCommandObject()
 *  @fn        void DirectX12::CreateDescriptorHeap(void)
 *  @brief     Create RTV and DSV descriptor heap
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::CreateDescriptorHeap()
 {
@@ -399,7 +405,7 @@ void DirectX12::CreateDescriptorHeap()
 *  @fn        void DirectX12::BuildRenderTargetView(void)
 *  @brief     Create Render Target View
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::BuildRenderTargetView()
 {
@@ -418,7 +424,7 @@ void DirectX12::BuildRenderTargetView()
 *  @fn        void DirectX12::BuildDepthStencilView(void)
 *  @brief     Create Depth / Stencil View
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::BuildDepthStencilView()
 {
@@ -476,7 +482,7 @@ void DirectX12::BuildDepthStencilView()
 *  @fn        void DirectX12::CreateSwapChain(void)
 *  @brief     Create SwapChain
 *  @param[in] void
-*  @return Å@Å@void 
+*  @return „ÄÄ„ÄÄvoid 
 *****************************************************************************/
 void DirectX12::CreateSwapChain()
 {
@@ -491,8 +497,8 @@ void DirectX12::CreateSwapChain()
 	DXGI_SWAP_CHAIN_DESC1 sd;
 
 	sd.BufferCount = SWAPCHAIN_BUFFER;                       // Current: Double Buffer
-	sd.Width       = _screen.GetScreenWidth();                // Window Size Width
-	sd.Height      = _screen.GetScreenHeight();               // Window Size Height 
+	sd.Width       = _screen.GetScreenWidth();               // Window Size Width
+	sd.Height      = _screen.GetScreenHeight();              // Window Size Height 
 	sd.Format      = _backBufferFormat;                      // Back Buffer Format 
 	sd.AlphaMode   = DXGI_ALPHA_MODE_UNSPECIFIED;            // Alpha Mode => transparency behavior is not specified
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;        // Use the surface or resource as an output render target
@@ -519,6 +525,31 @@ void DirectX12::CreateSwapChain()
 		
 }
 
+/****************************************************************************
+*							CompleteInitialize
+*************************************************************************//**
+*  @fn        void DirectX12::CompleteInitialize(void)
+*  @brief     Finish Initialize
+*  @param[in] void
+*  @return „ÄÄ„ÄÄvoid
+*****************************************************************************/
+void DirectX12::CompleteInitialize()
+{
+	ThrowIfFailed(_commandList->Close());
+
+	/*-------------------------------------------------------------------
+	-          Add command list to the queue for execution
+	---------------------------------------------------------------------*/
+	ID3D12CommandList* commandLists[] = { _commandList.Get() };
+	_commandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
+
+	/*-------------------------------------------------------------------
+	-						Flip screen
+	---------------------------------------------------------------------*/
+	ThrowIfFailed(_swapchain->Present(VSYNC, 0));
+	_currentBackBuffer = (_currentBackBuffer + 1) % SWAPCHAIN_BUFFER;
+
+}
 
 /****************************************************************************
 *                     CreateViewport
@@ -526,7 +557,7 @@ void DirectX12::CreateSwapChain()
 *  @fn        void DirectX12::CreateViewport(void)
 *  @brief     Create default viewport
 *  @param[in] void
-*  @return Å@Å@void @n
+*  @return „ÄÄ„ÄÄvoid @n
 *  @details   viewport: we use the viewport when we want to draw the 3D scene @n
               into a subrectangle of the back buffer.
 *****************************************************************************/
@@ -548,7 +579,7 @@ void DirectX12::CreateViewport()
 *  @fn        void DirectX12::CreateDefaultPSO(void)
 *  @brief     Create default pipeline default object
 *  @param[in] void
-*  @return Å@Å@void @n
+*  @return „ÄÄ„ÄÄvoid @n
 *****************************************************************************/
 void DirectX12::CreateDefaultPSO()
 {
@@ -559,7 +590,7 @@ void DirectX12::CreateDefaultPSO()
 	_defaultPSODesc.pRootSignature        = nullptr;
 	_defaultPSODesc.RasterizerState       = RASTERIZER_DESC(D3D12_DEFAULT);
 	_defaultPSODesc.BlendState            = BLEND_DESC(D3D12_DEFAULT);
-	_defaultPSODesc.SampleMask            = UINT_MAX;
+	_defaultPSODesc.SampleMask            = D3D12_DEFAULT_SAMPLE_MASK;
 	_defaultPSODesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	_defaultPSODesc.NumRenderTargets      = 1;
 	_defaultPSODesc.RTVFormats[0]         = _backBufferFormat;
@@ -575,7 +606,7 @@ void DirectX12::CreateDefaultPSO()
 *  @fn        void DirectX12::CheckMultiSampleQualityLevels(void)
 *  @brief     Multi Sample Quality Levels for 4xMsaa (Anti-Alias)
 *  @param[in] void
-*  @return Å@Å@void 
+*  @return „ÄÄ„ÄÄvoid 
 *****************************************************************************/
 void DirectX12::CheckMultiSampleQualityLevels()
 {
@@ -606,7 +637,7 @@ void DirectX12::CheckMultiSampleQualityLevels()
 *  @fn        void DirectX12::EnabledDebugLayer(void)
 *  @brief     Enabled CPU debug layer
 *  @param[in] void
-*  @return Å@Å@void @n
+*  @return „ÄÄ„ÄÄvoid @n
 *  @details   it must be called before the D3D12 device is created. 
 *****************************************************************************/
 void DirectX12::EnabledDebugLayer()
@@ -622,7 +653,7 @@ void DirectX12::EnabledDebugLayer()
 *  @fn        void DirectX12::EnabledGPUBasedValidation(void)
 *  @brief     Enabled GPU debugger 
 *  @param[in] void
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *  @details   GPU-based valiation helps to identify the following errors.@n
 *             1. Use of uninitialized or incompatible descriptors in a shader.@n
 *             2. Use of descriptors referencing deleted Resources in a shader.@n
@@ -646,7 +677,7 @@ void DirectX12::EnabledGPUBasedValidation()
 *  @fn        void DirectX12::LogAdapters(void)
 *  @brief     Show all adapter name (GeForce... )
 *  @param[in] Adapter* adapter
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::LogAdapters()
 {
@@ -689,7 +720,7 @@ void DirectX12::LogAdapters()
 *  @fn        void DirectX12::LogAdapterOutputs(Adapter* adapter)
 *  @brief     Show all display output name
 *  @param[in] Adapter* adapter
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::LogAdapterOutputs(Adapter* adapter)
 {
@@ -727,7 +758,7 @@ void DirectX12::LogAdapterOutputs(Adapter* adapter)
 *  @brief     Show display modes (output screen width, height and refresh rates)
 *  @param[in] Output* output: for display modelist
 *  @param[in] DXGI_FORMAT   : format
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::LogOutputDisplayModes(Output* output, DXGI_FORMAT format)
 {
@@ -772,7 +803,7 @@ void DirectX12::LogOutputDisplayModes(Output* output, DXGI_FORMAT format)
 *  @fn        Device* DirectX12::GetDevice(void)
 *  @brief     Get device pointer
 *  @param[in] void
-*  @return Å@Å@Device*
+*  @return „ÄÄ„ÄÄDevice*
 *****************************************************************************/
 Device* DirectX12::GetDevice() const
 {
@@ -785,7 +816,7 @@ Device* DirectX12::GetDevice() const
 *  @fn        CommandList* DirectX12::GetCommandList(void)
 *  @brief     Get command list pointer
 *  @param[in] void
-*  @return Å@Å@CommandList*
+*  @return „ÄÄ„ÄÄCommandList*
 *****************************************************************************/
 CommandList* DirectX12::GetCommandList() const
 {
@@ -798,20 +829,24 @@ CommandList* DirectX12::GetCommandList() const
 *  @fn        CommandQueue* DirectX12::GetCommandQueue(void)
 *  @brief     Get command queue pointer
 *  @param[in] void
-*  @return Å@Å@CommandQueue*
+*  @return „ÄÄ„ÄÄCommandQueue*
 *****************************************************************************/
 CommandQueue* DirectX12::GetCommandQueue() const
 {
 	return _commandQueue.Get();
 }
 
+CommandAllocator* DirectX12::GetCommandAllocator() const
+{
+	return _commandAllocator.Get();
+}
 /****************************************************************************
 *                        GetCurrentBackBuffer
 *************************************************************************//**
 *  @fn        Resource* DirectX12::GetCurrentBackBuffer(void)
 *  @brief     Get current frame back buffer pointer
 *  @param[in] void
-*  @return Å@Å@Resource*
+*  @return „ÄÄ„ÄÄResource*
 *****************************************************************************/
 Resource* DirectX12::GetCurrentBackBuffer() const
 {
@@ -824,7 +859,7 @@ Resource* DirectX12::GetCurrentBackBuffer() const
 *  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView(void)
 *  @brief     Get current frame back buffer view pointer
 *  @param[in] void
-*  @return Å@Å@D3D12_CPU_DESCRIPTOR_HANDLE
+*  @return „ÄÄ„ÄÄD3D12_CPU_DESCRIPTOR_HANDLE
 *****************************************************************************/
 D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView() const
 {
@@ -841,7 +876,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView() const
 *  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetDepthStencilView(void)
 *  @brief     Get current frame depth/stencil view pointer
 *  @param[in] void
-*  @return Å@Å@D3D12_CPU_DESCRIPTOR_HANDLE
+*  @return „ÄÄ„ÄÄD3D12_CPU_DESCRIPTOR_HANDLE
 *****************************************************************************/
 D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetDepthStencilView() const
 {
@@ -854,7 +889,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetDepthStencilView() const
 *  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView(void)
 *  @brief     Get current frame constant buffer view pointer
 *  @param[in] void
-*  @return Å@Å@D3D12_CPU_DESCRIPTOR_HANDLE
+*  @return „ÄÄ„ÄÄD3D12_CPU_DESCRIPTOR_HANDLE
 *****************************************************************************/
 D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView() const
 {
@@ -867,7 +902,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView() const
 *  @fn        D3D12_GRAPHICS_PIPELINE_STATE_DESC DirectX12::GetDefaultPSOConfig() const
 *  @brief     Get default pso config
 *  @param[in] void
-*  @return Å@Å@D3D12_GRAPHICS_PIPELINE_STATE_DESC
+*  @return „ÄÄ„ÄÄD3D12_GRAPHICS_PIPELINE_STATE_DESC
 *****************************************************************************/
 D3D12_GRAPHICS_PIPELINE_STATE_DESC DirectX12::GetDefaultPSOConfig() const
 {
@@ -881,7 +916,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC DirectX12::GetDefaultPSOConfig() const
 *  @fn        bool DirectX12::Get4xMsaaState(void)
 *  @brief     Whether to use 4xMsaa (Multi-Sampled Anti-Alias)
 *  @param[in] void
-*  @return Å@Å@bool
+*  @return „ÄÄ„ÄÄbool
 *****************************************************************************/
 bool DirectX12::Get4xMsaaState() const
 {
@@ -894,7 +929,7 @@ bool DirectX12::Get4xMsaaState() const
 *  @fn        void DirectX12::Get4xMsaaState(bool value)
 *  @brief     Set 4xMsaa (Multi-Sampled Anti-Alias)
 *  @param[in] bool whether to use 4xMsaa
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::Set4xMsaaState(bool value)
 {
@@ -914,7 +949,7 @@ void DirectX12::Set4xMsaaState(bool value)
 *  @fn        void DirectX12::SetHWND(HWND hwnd)
 *  @brief     Set HWND (Window)
 *  @param[in] HWND window
-*  @return Å@Å@void
+*  @return „ÄÄ„ÄÄvoid
 *****************************************************************************/
 void DirectX12::SetHWND(HWND hwnd)
 {
@@ -928,7 +963,7 @@ void DirectX12::SetHWND(HWND hwnd)
 *  @fn        HWND DirectX12::GetHWND(void)
 *  @brief     Get HWND (Window)
 *  @param[in] void
-*  @return Å@Å@HWND
+*  @return „ÄÄ„ÄÄHWND
 *****************************************************************************/
 HWND DirectX12::GetHWND() const
 {

@@ -76,6 +76,9 @@ private:
 	
 
 	bool _isApplicationPaused;
+	bool _isMinimized;
+	bool _isMaximized;
+	bool _isResizing;
 
 };
 

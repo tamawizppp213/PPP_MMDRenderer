@@ -23,6 +23,7 @@ static inline UINT CalcConstantBufferByteSize(UINT byteSize)
 	return (byteSize + 255) & ~255;
 }
 
+
 /****************************************************************************
 *							 DefaultBuffer
 *************************************************************************//**
@@ -46,12 +47,12 @@ public:
 		return _defaultBuffer.Get();
 	}
 
-	DefaultBuffer(const DefaultBuffer& defaultBuffer)            = delete;
-	DefaultBuffer& operator=(const DefaultBuffer& defaultBuffer) = delete;
+	DefaultBuffer(const DefaultBuffer& defaultBuffer)            = default;
+	DefaultBuffer& operator=(const DefaultBuffer& defaultBuffer) = default;
 	~DefaultBuffer();
 
 private:
-	ResourceComPtr _defaultBuffer;
+	ResourceComPtr _defaultBuffer = nullptr;
 	UINT64         _totalByteSize = 0;
 };
 

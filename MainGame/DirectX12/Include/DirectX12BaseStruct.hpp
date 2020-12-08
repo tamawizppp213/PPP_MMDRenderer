@@ -13,6 +13,8 @@
 #include <d3d12.h>
 #include "DirectX12/Include/DirectX12Core.hpp"
 #include "DirectX12Debug.hpp"
+#include <iostream>
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -592,6 +594,7 @@ inline void MemcpySubresource(
 //////////////////////////////////////////////////////////////////////////////////
 //            TEXTURE_COPY_LOCATION : D3D12_TEXTURE_COPY_LOCATION
 //////////////////////////////////////////////////////////////////////////////////
+
 struct TEXTURE_COPY_LOCATION : public D3D12_TEXTURE_COPY_LOCATION
 {
 	TEXTURE_COPY_LOCATION() {};
@@ -680,7 +683,7 @@ inline UINT64 UpdateSubresources(
 **                    UpdateSubResources
 *****************************************************************************/
 // Heap - allocating UpdateSubresources implementation
-inline UINT64 UpdateSubresource(
+inline UINT64 UpdateSubresources(
 	_In_ CommandList* commandList,
 	_In_ Resource* destinationResource,
 	_In_ Resource* intermediate,
@@ -1234,11 +1237,11 @@ struct ROOT_SIGNATURE_DESC : public D3D12_ROOT_SIGNATURE_DESC
 		desc.Flags             = flags;
 	}
 
-	inline void Create(Device* device, RootSignatureComPtr rootSignature)
+	inline void Create(Device* device, RootSignatureComPtr* rootSignature)
 	{
 		BlobComPtr rootSigBlob = nullptr;
 		BlobComPtr errorBlob   = nullptr;
-
+		
 		HRESULT hresult = D3D12SerializeRootSignature(this, D3D_ROOT_SIGNATURE_VERSION_1, &rootSigBlob, &errorBlob);
 		if (errorBlob != nullptr)
 		{
@@ -1250,8 +1253,7 @@ struct ROOT_SIGNATURE_DESC : public D3D12_ROOT_SIGNATURE_DESC
 			0,
 			rootSigBlob->GetBufferPointer(),
 			rootSigBlob->GetBufferSize(),
-			IID_PPV_ARGS(&rootSignature)));
-
+			IID_PPV_ARGS(rootSignature->GetAddressOf())));
 	}
 };
 
