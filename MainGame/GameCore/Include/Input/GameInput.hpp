@@ -11,10 +11,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "GameCore/Include/Keyboard.hpp"
-#include "GameCore/Include/GamePad.hpp"
-#include "GameCore/Include/Mouse.hpp"
-#include "GameCore/Include/KeyCode.hpp"
+#include "GameCore/Include/Input/Keyboard.hpp"
+#include "GameCore/Include/Input/GamePad.hpp"
+#include "GameCore/Include/Input/Mouse.hpp"
+#include <dinput.h>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -36,9 +36,12 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void Initialize();
+	bool Initialize(HINSTANCE hInstance, HWND hwnd);
 	void Update();
 	void Finalize();
+	Keyboard& GetKeyboard() { return this->_keyboard; }
+	Mouse&    GetMouse()    { return this->_mouse; }
+	GamePad&  GetGamePad()  { return this->_gamePad; }
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -63,14 +66,17 @@ private:
 	*****************************************************************************/
 	GameInput()  = default;
 	~GameInput() = default;
-
+	bool DInputInitialize(HINSTANCE hInstance, HWND hwnd);
+	void DInputFinalize();
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	Keyboard _keyboard;
-	GamePad  _gamePad;
-	Mouse    _mouse;
+	Keyboard& _keyboard    = Keyboard::Instance();
+	Mouse&    _mouse       = Mouse::Instance();
+	GamePad&  _gamePad     = GamePad::Instance();
+	LPDIRECTINPUT8 _dInput = nullptr;
+	
 
 };
 
