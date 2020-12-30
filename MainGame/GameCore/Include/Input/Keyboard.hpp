@@ -1,60 +1,91 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   GamePad.hpp
-///             @brief  GamePad
+///             @file   Keyboard.hpp
+///             @brief  Keyboard
 ///             @author Toide Yutaro
 ///             @date   2020_11_
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef GAMEPAD_HPP
-#define GAMEPAD_HPP
+#ifndef KEYBOARD_HPP
+#define KEYBOARD_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-
+#include <queue>
+#include <dinput.h>
+#include <Windows.h>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+#define MAX_KEY_BUFFER (256)
 
 //////////////////////////////////////////////////////////////////////////////////
-//                         DirectX12 Shader Function (inline)
+//                         Keyboard, class
 //////////////////////////////////////////////////////////////////////////////////
 
-#pragma region GamePad
+
+#pragma region Keyboard
 /****************************************************************************
-*				  			TemplateClass
+*				  			Keyboard (Singleton)
 *************************************************************************//**
-*  @class     GamePad
-*  @brief     GamePad
+*  @class     Keyboard
+*  @brief     Keyboard Input 
 *****************************************************************************/
-class GamePad
+class Keyboard
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-
+	bool Initialize(LPDIRECTINPUT8 dInput, HINSTANCE hInstance, HWND hwnd);
+	void Update();
+	void Finalize();
+	bool IsPress  (int keyCode);
+	bool IsTrigger(int keyCode);
+	bool IsRelease(int keyCode);
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-
+	
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	GamePad() {};
-	GamePad(const GamePad&)            = default;
-	GamePad& operator=(const GamePad&) = default;
-	GamePad(GamePad&&)                 = default;
-	GamePad& operator=(GamePad&&)      = default;
-	~GamePad() {};
+	static Keyboard& Instance()
+	{
+		static Keyboard keyboard;
+		return keyboard;
+	}
+	Keyboard(const Keyboard&)            = delete;
+	Keyboard& operator=(const Keyboard&) = delete;
+	Keyboard(Keyboard&&)                 = delete;
+	Keyboard& operator=(Keyboard&&)      = delete;
+	
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	Keyboard();
+	~Keyboard() = default;
+
+	bool CreateHWND();
+	bool CreateHInstance();
+	bool CreateKeyboardDevice();
+	bool CreateDataFormat();
+	bool CreateCooperativeLevel();
+
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
+	LPDIRECTINPUT8       _dInput    = nullptr;
+	LPDIRECTINPUTDEVICE8 _keyboard  = nullptr;
+	HINSTANCE            _hInstance = nullptr;
+	HWND                 _hwnd      = nullptr;
+	
+	BYTE _keyState[MAX_KEY_BUFFER];
+	BYTE _keyStateTrigger[MAX_KEY_BUFFER];
+	BYTE _keyStateRelease[MAX_KEY_BUFFER];
+
 };
 
 #endif
