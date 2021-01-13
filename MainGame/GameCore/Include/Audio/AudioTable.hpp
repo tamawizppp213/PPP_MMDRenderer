@@ -1,49 +1,67 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   WaveFile.hpp
-///             @brief  Wave File Write and Read
+///             @file   AudioTable.hpp
+///             @brief  Audio Table (Singleton)
 ///             @author Toide Yutaro
-///             @date   2020_12_11
+///             @date   2020_11_
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef WAVE_FILE_HPP
-#define WAVE_FILE_HPP
+#ifndef AUDIO_TABLE_HPP
+#define AUDIO_TABLE_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "GameCore/Include/WavFileConfig.hpp"
-#include "GameCore/Include/SoundFile.hpp"
+#include "AudioClip.hpp"
+#include <string>
+#include <unordered_map>
+#include <memory>
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 
-/*************************************************************************//**
-*  @class     WavFile
-*  @brief     Wave File write and read
+/****************************************************************************
+*				  		AudioTable (Singleton)
+*************************************************************************//**
+*  @class     AudioTable
+*  @brief     Model Table
 *****************************************************************************/
-class WavFile : public SoundFile
+class AudioTableManager
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void LoadSound() override;
-	void WriteSound();
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	std::unordered_map<std::wstring, std::shared_ptr<AudioClip>> AudioTable;
 
-	/****************************************************************************
+	/***************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
+	static AudioTableManager& Instance()
+	{
+		static AudioTableManager audioTable;
+		return audioTable;
+	}
+	// Prohibit move and copy.
+	AudioTableManager(const AudioTableManager&)            = delete;
+	AudioTableManager& operator=(const AudioTableManager&) = delete;
+	AudioTableManager(AudioTableManager&&)                 = delete;
+	AudioTableManager& operator=(AudioTableManager&&)      = delete;
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	AudioTableManager()  = default;
+	~AudioTableManager() = default;
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
+
 };
 
 #endif

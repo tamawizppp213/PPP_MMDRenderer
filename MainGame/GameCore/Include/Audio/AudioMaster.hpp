@@ -1,91 +1,78 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   Keyboard.hpp
-///             @brief  Keyboard
+///             @file   AudioMaster.hpp
+///             @brief  AudioMaster.hpp
 ///             @author Toide Yutaro
-///             @date   2020_12_27
+///             @date   2021_01_03
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef KEYBOARD_HPP
-#define KEYBOARD_HPP
+#ifndef AUDIO_MASTER_HPP
+#define AUDIO_MASTER_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <queue>
-#include <dinput.h>
-#include <Windows.h>
+#include "AudioTable.hpp"
+#include "AudioCore.hpp"
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define MAX_KEY_BUFFER (256)
 
-//////////////////////////////////////////////////////////////////////////////////
-//                         Keyboard, class
-//////////////////////////////////////////////////////////////////////////////////
-
-
-#pragma region Keyboard
 /****************************************************************************
-*				  			Keyboard (Singleton)
+*				  			SoundManager
 *************************************************************************//**
-*  @class     Keyboard
-*  @brief     Keyboard Input 
+*  @class     SoundManager
+*  @brief     temp
 *****************************************************************************/
-class Keyboard
+class AudioMaster
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(LPDIRECTINPUT8 dInput, HINSTANCE hInstance, HWND hwnd);
-	void Update();
+	bool Initialize();
 	void Finalize();
-	bool IsPress  (int keyCode);
-	bool IsTrigger(int keyCode);
-	bool IsRelease(int keyCode);
+	void ClearSound();
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	
+	IXAudio2* GetAudioInterface() const;
+	IXAudio2MasteringVoice* GetMasteringVoice() const;
+	X3DAUDIO_HANDLE& GetX3DAudioInterface() const;
+
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	static Keyboard& Instance()
+	static AudioMaster& Instance()
 	{
-		static Keyboard keyboard;
-		return keyboard;
+		static AudioMaster audioMaster;
+		return audioMaster;
 	}
-	Keyboard(const Keyboard&)            = delete;
-	Keyboard& operator=(const Keyboard&) = delete;
-	Keyboard(Keyboard&&)                 = delete;
-	Keyboard& operator=(Keyboard&&)      = delete;
-	
+	AudioMaster(const AudioMaster&)            = delete;
+	AudioMaster& operator=(const AudioMaster&) = delete;
+	AudioMaster(AudioMaster&&)                 = delete;
+	AudioMaster& operator=(AudioMaster&&)      = delete;
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	Keyboard();
-	~Keyboard() = default;
+	AudioMaster()  = default;
+	~AudioMaster() = default;
 
-	bool CreateHWND();
-	bool CreateHInstance();
-	bool CreateKeyboardDevice();
-	bool CreateDataFormat();
-	bool CreateCooperativeLevel();
-
+	bool CreateXAudio2();
+	bool CreateMasterVoice();
+	bool CreateX3DAudio();
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	LPDIRECTINPUT8       _dInput    = nullptr;
-	LPDIRECTINPUTDEVICE8 _keyboard  = nullptr;
-	HINSTANCE            _hInstance = nullptr;
-	HWND                 _hwnd      = nullptr;
-	
-	BYTE _keyState[MAX_KEY_BUFFER];
-	BYTE _keyStateTrigger[MAX_KEY_BUFFER];
-	BYTE _keyStateRelease[MAX_KEY_BUFFER];
+	static IXAudio2* _xAudio;
+	static IXAudio2MasteringVoice* _masterVoice;
+	static X3DAUDIO_HANDLE _x3dAudio;
 
+	UINT32 _debugFlag = 0;
+
+	AudioTableManager& _audioTable = AudioTableManager::Instance();
 };
-
 #endif
