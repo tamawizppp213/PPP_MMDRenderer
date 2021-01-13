@@ -2,7 +2,7 @@
 ///             @file   TemplateText.hpp
 ///             @brief  TemplateText
 ///             @author Toide Yutaro
-///             @date   2020_11_
+///             @date   2020_12_28
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef MOUSE_HPP

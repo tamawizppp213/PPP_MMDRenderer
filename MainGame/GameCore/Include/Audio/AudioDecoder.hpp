@@ -1,91 +1,48 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   Keyboard.hpp
-///             @brief  Keyboard
+///             @file   AudioDecoder.hpp
+///             @brief  Audio File Decoder abstract class
 ///             @author Toide Yutaro
-///             @date   2020_12_27
+///             @date   2021_01_04
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef KEYBOARD_HPP
-#define KEYBOARD_HPP
+#ifndef SOUND_FILE_HPP
+#define SOUND_FILE_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <queue>
-#include <dinput.h>
-#include <Windows.h>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define MAX_KEY_BUFFER (256)
 
-//////////////////////////////////////////////////////////////////////////////////
-//                         Keyboard, class
-//////////////////////////////////////////////////////////////////////////////////
-
-
-#pragma region Keyboard
 /****************************************************************************
-*				  			Keyboard (Singleton)
+*				  			AudioFileDecoder
 *************************************************************************//**
-*  @class     Keyboard
-*  @brief     Keyboard Input 
+*  @class     AudioFileDecoder
+*  @brief     Audio File Decoder
 *****************************************************************************/
-class Keyboard
+class AudioFileDecoder
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(LPDIRECTINPUT8 dInput, HINSTANCE hInstance, HWND hwnd);
-	void Update();
-	void Finalize();
-	bool IsPress  (int keyCode);
-	bool IsTrigger(int keyCode);
-	bool IsRelease(int keyCode);
+	
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	
+
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	static Keyboard& Instance()
-	{
-		static Keyboard keyboard;
-		return keyboard;
-	}
-	Keyboard(const Keyboard&)            = delete;
-	Keyboard& operator=(const Keyboard&) = delete;
-	Keyboard(Keyboard&&)                 = delete;
-	Keyboard& operator=(Keyboard&&)      = delete;
-	
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	Keyboard();
-	~Keyboard() = default;
-
-	bool CreateHWND();
-	bool CreateHInstance();
-	bool CreateKeyboardDevice();
-	bool CreateDataFormat();
-	bool CreateCooperativeLevel();
-
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	LPDIRECTINPUT8       _dInput    = nullptr;
-	LPDIRECTINPUTDEVICE8 _keyboard  = nullptr;
-	HINSTANCE            _hInstance = nullptr;
-	HWND                 _hwnd      = nullptr;
-	
-	BYTE _keyState[MAX_KEY_BUFFER];
-	BYTE _keyStateTrigger[MAX_KEY_BUFFER];
-	BYTE _keyStateRelease[MAX_KEY_BUFFER];
-
 };
 
 #endif

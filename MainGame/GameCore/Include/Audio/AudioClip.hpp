@@ -1,91 +1,65 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   Keyboard.hpp
-///             @brief  Keyboard
+///             @file   AudioClip.hpp
+///             @brief  Audio Clip for audio play (.wav data)
 ///             @author Toide Yutaro
-///             @date   2020_12_27
+///             @date   2021_01_12
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef KEYBOARD_HPP
-#define KEYBOARD_HPP
+#ifndef AUDIO_CLIP_HPP
+#define AUDIO_CLIP_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <queue>
-#include <dinput.h>
-#include <Windows.h>
+#include "AudioCore.hpp"
+#include <memory>
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define MAX_KEY_BUFFER (256)
-
-//////////////////////////////////////////////////////////////////////////////////
-//                         Keyboard, class
-//////////////////////////////////////////////////////////////////////////////////
 
 
-#pragma region Keyboard
 /****************************************************************************
-*				  			Keyboard (Singleton)
+*				  		AudioClip
 *************************************************************************//**
-*  @class     Keyboard
-*  @brief     Keyboard Input 
+*  @class     Audio Clip
+*  @brief     Save audio data (current .wav only)
 *****************************************************************************/
-class Keyboard
+class AudioClip
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(LPDIRECTINPUT8 dInput, HINSTANCE hInstance, HWND hwnd);
-	void Update();
-	void Finalize();
-	bool IsPress  (int keyCode);
-	bool IsTrigger(int keyCode);
-	bool IsRelease(int keyCode);
+	bool LoadFromFile(const std::wstring& filePath);
+	void Destroy();
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	
+	const std::wstring&            GetFilePath()     const;
+	const size_t                   GetSoundSize()    const;
+	const std::shared_ptr<BYTE[]>& GetSoundData()    const;
+	const WAVEFORMATEX&            GetFileFormatEx() const;
+
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	static Keyboard& Instance()
-	{
-		static Keyboard keyboard;
-		return keyboard;
-	}
-	Keyboard(const Keyboard&)            = delete;
-	Keyboard& operator=(const Keyboard&) = delete;
-	Keyboard(Keyboard&&)                 = delete;
-	Keyboard& operator=(Keyboard&&)      = delete;
-	
+	AudioClip();
+	~AudioClip();
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	Keyboard();
-	~Keyboard() = default;
-
-	bool CreateHWND();
-	bool CreateHInstance();
-	bool CreateKeyboardDevice();
-	bool CreateDataFormat();
-	bool CreateCooperativeLevel();
-
-
+	
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	LPDIRECTINPUT8       _dInput    = nullptr;
-	LPDIRECTINPUTDEVICE8 _keyboard  = nullptr;
-	HINSTANCE            _hInstance = nullptr;
-	HWND                 _hwnd      = nullptr;
-	
-	BYTE _keyState[MAX_KEY_BUFFER];
-	BYTE _keyStateTrigger[MAX_KEY_BUFFER];
-	BYTE _keyStateRelease[MAX_KEY_BUFFER];
-
+	std::wstring _filePath             = L"";
+	size_t       _soundSize            = 0;
+	std::shared_ptr<BYTE[]> _soundData = nullptr;
+	WAVEFORMATEX _waveFormatEx;
 };
+
 
 #endif
