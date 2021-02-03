@@ -13,9 +13,67 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include <Windows.h>
 #include <Xinput.h>
+#include <vector>
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
+//////////////////////////////////////////////////////////////////////////////////
+/****************************************************************************
+*				  			GamePadInput
+*************************************************************************//**
+*  @enum class     GamePadInput
+*  @brief     GamePad
+*****************************************************************************/
+enum class GamePadInput
+{
+	DPAD_UP = 0x0001,
+	DPAD_DOWN = 0x0002,
+	DPAD_LEFT = 0x0004,
+	DPAD_RIGHT = 0x0008,
+
+	START = 0x0010,
+	BACK = 0x0020,
+	LB = 0x0100,
+	RB = 0x0200,
+
+	A = 0x1000,
+	B = 0x2000,
+	X = 0x4000,
+	Y = 0x8000,
+
+	CONNECTED = 0x80000000,
+};
+
+/****************************************************************************
+*				  			GamePadInput
+*************************************************************************//**
+*  @enum class GamePadID
+*  @brief      GamePad Player Num
+*****************************************************************************/
+enum class GamePadID
+{
+	GamePadId_1P,
+	GamePadId_2P,
+	GamePadId_3P,
+	GamePadId_4P,
+	TotalIdNum
+};
+
+/****************************************************************************
+*				  			StickValue
+*************************************************************************//**
+*  @struct    StickValue
+*  @brief     Stick Value (X, Y)
+*****************************************************************************/
+struct StickValue
+{
+	float XAxis;
+	float YAxis;
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+//                          GamePad Class
 //////////////////////////////////////////////////////////////////////////////////
 #pragma region GamePad
 /****************************************************************************
@@ -39,32 +97,34 @@ public:
 #pragma endregion XINPUT
 
 #pragma region BUTTON
-	bool IsPressButton  (int button);
-	bool IsTriggerButton(int button);
-	bool IsReleaseButton(int button);
-	bool IsPressLeftButton   ();
-	bool IsTriggerLeftButton ();
-	bool IsReleaseLeftButton ();
-	bool IsPressRightButton  (); 
-	bool IsTriggerRightButton();
-	bool IsReleaseRightButton();
-	int LeftButtonValue(); // 0 Å` 100
-	int RightButtonValue();// 0 Å` 100
+	bool IsPressButton  (GamePadInput button, int gamePadId = 0);
+	bool IsTriggerButton(GamePadInput button, int gamePadId = 0);
+	bool IsReleaseButton(GamePadInput button, int gamePadId = 0);
+	bool IsPressLeftButton   (int gamePadId = 0);
+	bool IsTriggerLeftButton (int gamePadId = 0);
+	bool IsReleaseLeftButton (int gamePadId = 0);
+	bool IsPressRightButton  (int gamePadId = 0);
+	bool IsTriggerRightButton(int gamePadId = 0);
+	bool IsReleaseRightButton(int gamePadId = 0);
+	int LeftButtonValue (int gamePadId = 0); // 0 Å` 100
+	int RightButtonValue(int gamePadId = 0);// 0 Å` 100
 #pragma endregion BUTTON
 
 #pragma region STICK
-	bool IsPressLStick();
-	bool IsPressRStick();
-	bool IsPressLStick(float threshold);
-	bool IsPressRStick(float threshold);
-	float LStick_X(); // 0 Å` 100
-	float LStick_Y(); // 0 Å` 100
-	float RStick_X(); // 0 Å` 100 
-	float RStick_Y(); // 0 Å` 100
+	bool IsPressLStick(int gamePadId = 0);
+	bool IsPressRStick(int gamePadId = 0);
+	bool IsPressLStick(float threshold, int gamePadId = 0);
+	bool IsPressRStick(float threshold, int gamePadId = 0);
+	float LStick_X(int gamePadId = 0); // 0 Å` 100
+	float LStick_Y(int gamePadId = 0); // 0 Å` 100
+	float RStick_X(int gamePadId = 0); // 0 Å` 100 
+	float RStick_Y(int gamePadId = 0); // 0 Å` 100
+	StickValue LStick(int gamePadId = 0);
+	StickValue RStick(int gamePadId = 0);
 #pragma endregion STICK
 
 #pragma region VIBRATION
-	void SetVibration(float leftMotor, float rightMotor);
+	void SetVibration(float leftMotor, float rightMotor, int gamePadId = 0);
 #pragma endregion VIBRATION
 
 	/****************************************************************************
@@ -79,10 +139,10 @@ public:
 		static GamePad gamePad;
 		return gamePad;
 	}
-	GamePad(const GamePad&)            = delete;
+	GamePad(const GamePad&) = delete;
 	GamePad& operator=(const GamePad&) = delete;
-	GamePad(GamePad&&)                 = delete;
-	GamePad& operator=(GamePad&&)      = delete;
+	GamePad(GamePad&&) = delete;
+	GamePad& operator=(GamePad&&) = delete;
 private:
 	/****************************************************************************
 	**                Private Function
@@ -94,10 +154,11 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	XINPUT_STATE _currentState;
-	XINPUT_STATE _previousState;
-	XINPUT_VIBRATION _vibrationState;
-	
+	std::vector<XINPUT_STATE>     _currentStates;
+	std::vector<XINPUT_STATE>     _previousStates;
+	std::vector<XINPUT_VIBRATION> _vibrationStates;
+	int _maxPlayer;
+
 };
 
 #endif

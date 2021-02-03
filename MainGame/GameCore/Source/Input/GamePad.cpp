@@ -2,7 +2,7 @@
 ///             @file   GamePad.cpp
 ///             @brief  GamePad
 ///             @author Toide Yutaro
-///             @date   2020_12_29
+///             @date   2020_12_29(ver1.0) → 2021_02_04(ver2.0)
 //////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -24,30 +24,35 @@
 #pragma region Public Function
 GamePad::GamePad()
 {
-	_currentState.dwPacketNumber        = 0;
-	_currentState.Gamepad.sThumbLX      = 0;
-	_currentState.Gamepad.sThumbLY      = 0;
-	_currentState.Gamepad.sThumbRX      = 0;
-	_currentState.Gamepad.sThumbRY      = 0;
-	_currentState.Gamepad.bLeftTrigger  = 0;
-	_currentState.Gamepad.bRightTrigger = 0;
-	_currentState.Gamepad.wButtons      = 0;
+	_maxPlayer = (int)GamePadID::TotalIdNum;
+	_currentStates.resize(_maxPlayer);
+	_previousStates.resize(_maxPlayer);
+	_vibrationStates.resize(_maxPlayer);
 
-	_previousState.dwPacketNumber        = 0;
-	_previousState.Gamepad.sThumbLX      = 0;
-	_previousState.Gamepad.sThumbLY      = 0;
-	_previousState.Gamepad.sThumbRX      = 0;
-	_previousState.Gamepad.sThumbRY      = 0;
-	_previousState.Gamepad.bLeftTrigger  = 0;
-	_previousState.Gamepad.bRightTrigger = 0;
-	_previousState.Gamepad.wButtons      = 0;
+	for (int i = 0; i < _maxPlayer; ++i)
+	{
+		_currentStates[i].dwPacketNumber        = 0;
+		_currentStates[i].Gamepad.sThumbLX      = 0;
+		_currentStates[i].Gamepad.sThumbLY      = 0;
+		_currentStates[i].Gamepad.sThumbRX      = 0;
+		_currentStates[i].Gamepad.sThumbRY      = 0;
+		_currentStates[i].Gamepad.bLeftTrigger  = 0;
+		_currentStates[i].Gamepad.bRightTrigger = 0;
+		_currentStates[i].Gamepad.wButtons      = 0;
 
-	_vibrationState.wLeftMotorSpeed  = 0;
-	_vibrationState.wRightMotorSpeed = 0;
+		_previousStates[i].dwPacketNumber        = 0;
+		_previousStates[i].Gamepad.sThumbLX      = 0;
+		_previousStates[i].Gamepad.sThumbLY      = 0;
+		_previousStates[i].Gamepad.sThumbRX      = 0;
+		_previousStates[i].Gamepad.sThumbRY      = 0;
+		_previousStates[i].Gamepad.bLeftTrigger  = 0;
+		_previousStates[i].Gamepad.bRightTrigger = 0;
+		_previousStates[i].Gamepad.wButtons      = 0;
 
-	ZeroMemory(&_currentState,   sizeof(XINPUT_STATE));
-	ZeroMemory(&_previousState,  sizeof(XINPUT_STATE));
-	ZeroMemory(&_vibrationState, sizeof(XINPUT_VIBRATION));
+		_vibrationStates[i].wLeftMotorSpeed  = 0;
+		_vibrationStates[i].wRightMotorSpeed = 0;
+	}
+
 }
 /****************************************************************************
 *							Initialize
@@ -59,15 +64,26 @@ GamePad::GamePad()
 *****************************************************************************/
 bool GamePad::Initialize()
 {
-	DWORD dwResult = XInputGetState(0, &_currentState);
+	/*-------------------------------------------------------------------
+	-               Check connect one controller
+	---------------------------------------------------------------------*/
+	DWORD dwResult = XInputGetState(0, &_currentStates[0]);
 
 	if (dwResult != ERROR_SUCCESS)
 	{
-		MessageBox(NULL, L"XInput can't create", L"Warning", MB_ICONWARNING);
-		return false;
+		MessageBox(NULL, L"Please connect at least one controller that supports xinput.", L"Warning", MB_ICONWARNING);
+	}
+	XInputGetState(0, &_previousStates[0]);
+
+	/*-------------------------------------------------------------------
+	-               Connect other controller
+	---------------------------------------------------------------------*/
+	for (int i = 1; i < _maxPlayer; ++i)
+	{
+		XInputGetState(i, &_currentStates[i]);
+		XInputGetState(i, &_previousStates[i]);
 	}
 
-	XInputGetState(0, &_previousState);
 	return true;
 }
 
@@ -81,8 +97,11 @@ bool GamePad::Initialize()
 *****************************************************************************/
 void GamePad::Update()
 {
-	_previousState = _currentState;
-	XInputGetState(0, &_currentState);
+	for (int i = 0; i < _maxPlayer; ++i)
+	{
+		_previousStates[i] = _currentStates[i];
+		XInputGetState(i, &_currentStates[i]);
+	}
 }
 
 /****************************************************************************
@@ -114,28 +133,36 @@ void GamePad::EnableXInput(bool isEnabled)
 /****************************************************************************
 *							IsPressButton
 *************************************************************************//**
-*  @fn        void GamePad::IsPressButton()
+*  @fn        bool GamePad::IsPressButton(GamePadInput button, int gamePadId)
 *  @brief     Detect pressing button
 *  @param[in] int button
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressButton(int button)
+bool GamePad::IsPressButton(GamePadInput button, int gamePadId)
 {
-	return (_currentState.Gamepad.wButtons & button) ? true : false;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	return (_currentStates[gamePadId].Gamepad.wButtons & (int)button) ? true : false;
 }
 
 /****************************************************************************
 *							IsTriggerButton
 *************************************************************************//**
-*  @fn        void GamePad::IsTriggerButton()
+*  @fn        bool GamePad::IsTriggerButton(GamePadInput button, int gamePadId)
 *  @brief     Detect trigger button
 *  @param[in] int button
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsTriggerButton(int button)
+bool GamePad::IsTriggerButton(GamePadInput button, int gamePadId)
 {
-	if (!(_previousState.Gamepad.wButtons & button) &&
-		(_currentState.Gamepad.wButtons & button))
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	if (!(_previousStates[gamePadId].Gamepad.wButtons & (int)button) &&
+		(_currentStates[gamePadId].Gamepad.wButtons & (int)button))
 	{
 		return true;
 	}
@@ -145,15 +172,19 @@ bool GamePad::IsTriggerButton(int button)
 /****************************************************************************
 *							IsReleaseButton
 *************************************************************************//**
-*  @fn        void GamePad::IsReleaseButton()
+*  @fn        bool GamePad::IsReleaseButton(GamePadInput button, int gamePadId)
 *  @brief     Detect release button
 *  @param[in] int button
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsReleaseButton(int button)
+bool GamePad::IsReleaseButton(GamePadInput button, int gamePadId)
 {
-	if ((_previousState.Gamepad.wButtons & button) &&
-		!(_currentState.Gamepad.wButtons & button))
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	if ((_previousStates[gamePadId].Gamepad.wButtons & (int)button) &&
+		!(_currentStates[gamePadId].Gamepad.wButtons & (int)button))
 	{
 		return true;
 	}
@@ -163,31 +194,37 @@ bool GamePad::IsReleaseButton(int button)
 /****************************************************************************
 *							IsPressLeftButton
 *************************************************************************//**
-*  @fn        bool GamePad::IsPressLeftButton()
+*  @fn        bool GamePad::IsPressLeftButton(int gamePadId)
 *  @brief     Detect press Left button
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressLeftButton()
+bool GamePad::IsPressLeftButton(int gamePadId)
 {
-	BYTE axis = _currentState.Gamepad.bLeftTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	BYTE axis = _currentStates[gamePadId].Gamepad.bLeftTrigger;
 	return (axis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 }
 
 /****************************************************************************
 *							IsTriggerLeftButton
 *************************************************************************//**
-*  @fn        bool GamePad::IsTriggerLeftButton()
+*  @fn        bool GamePad::IsTriggerLeftButton(int gamePadId)
 *  @brief     Detect trigger Left button
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsTriggerLeftButton()
+bool GamePad::IsTriggerLeftButton(int gamePadId)
 {
-	BYTE previousAxis    = _previousState.Gamepad.bLeftTrigger;
-	BYTE currentAxis     = _currentState .Gamepad.bLeftTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bLeftTrigger;
+	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bLeftTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((!previousTrigger) && (currentTrigger))
 	{
@@ -199,17 +236,20 @@ bool GamePad::IsTriggerLeftButton()
 /****************************************************************************
 *							IsReleaseLeftButton
 *************************************************************************//**
-*  @fn        bool GamePad::IsReleaseLeftButton()
+*  @fn        bool GamePad::IsReleaseLeftButton(int gamePadId)
 *  @brief     Detect release Left button
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsReleaseLeftButton()
+bool GamePad::IsReleaseLeftButton(int gamePadId)
 {
-	BYTE previousAxis    = _previousState.Gamepad.bLeftTrigger;
-	BYTE currentAxis     = _currentState.Gamepad.bLeftTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bLeftTrigger;
+	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bLeftTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((previousTrigger) && (!currentTrigger))
 	{
@@ -221,31 +261,37 @@ bool GamePad::IsReleaseLeftButton()
 /****************************************************************************
 *							IsPressRightButton
 *************************************************************************//**
-*  @fn        bool GamePad::IsPressRightButton()
+*  @fn        bool GamePad::IsPressRightButton(int gamePadId)
 *  @brief     Detect press Right button
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressRightButton()
+bool GamePad::IsPressRightButton(int gamePadId)
 {
-	BYTE axis = _currentState.Gamepad.bRightTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	BYTE axis = _currentStates[gamePadId].Gamepad.bRightTrigger;
 	return (axis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 }
 
 /****************************************************************************
 *							IsTriggerRightButton
 *************************************************************************//**
-*  @fn        bool GamePad::IsTriggerRightButton()
+*  @fn        bool GamePad::IsTriggerRightButton(int gamePadId)
 *  @brief     Detect trigger Right button
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsTriggerRightButton()
+bool GamePad::IsTriggerRightButton(int gamePadId)
 {
-	BYTE previousAxis    = _previousState.Gamepad.bRightTrigger;
-	BYTE currentAxis     = _currentState.Gamepad.bRightTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bRightTrigger;
+	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bRightTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((!previousTrigger) && (currentTrigger))
 	{
@@ -257,17 +303,20 @@ bool GamePad::IsTriggerRightButton()
 /****************************************************************************
 *							IsReleaseRightButton
 *************************************************************************//**
-*  @fn        bool GamePad::IsReleaseRightButton()
+*  @fn        bool GamePad::IsReleaseRightButton(int gamePadId)
 *  @brief     Detect release Right button
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsReleaseRightButton()
+bool GamePad::IsReleaseRightButton(int gamePadId)
 {
-	BYTE previousAxis    = _previousState.Gamepad.bRightTrigger;
-	BYTE currentAxis     = _currentState .Gamepad.bRightTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bRightTrigger;
+	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bRightTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((previousTrigger) && (!currentTrigger))
 	{
@@ -279,14 +328,17 @@ bool GamePad::IsReleaseRightButton()
 /****************************************************************************
 *							LeftButtonValue
 *************************************************************************//**
-*  @fn        bool GamePad::LeftButtonValue()
+*  @fn        bool GamePad::LeftButtonValue(int gamePadId)
 *  @brief     Return Left Button Value(Threshold ～ 100) : not pressing 0
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　float
 *****************************************************************************/
-int GamePad::LeftButtonValue()
+int GamePad::LeftButtonValue(int gamePadId)
 {
-	BYTE axis = _currentState.Gamepad.bLeftTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0; }
+
+	BYTE axis = _currentStates[gamePadId].Gamepad.bLeftTrigger;
 	if (axis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 	{
 		float result = axis * 100.0f / 255.0f;
@@ -298,14 +350,17 @@ int GamePad::LeftButtonValue()
 /****************************************************************************
 *							RightButtonValue
 *************************************************************************//**
-*  @fn        bool GamePad::RightButtonValue()
+*  @fn        bool GamePad::RightButtonValue(int gamePadId)
 *  @brief     Return Right Button Value(Threshold ～ 100) : not pressing 0
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　float
 *****************************************************************************/
-int GamePad::RightButtonValue()
+int GamePad::RightButtonValue(int gamePadId)
 {
-	BYTE axis = _currentState.Gamepad.bRightTrigger;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0; }
+
+	BYTE axis = _currentStates[gamePadId].Gamepad.bRightTrigger;
 	if (axis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 	{
 		float result = axis * 100.0f / 255.0f;
@@ -317,24 +372,27 @@ int GamePad::RightButtonValue()
 /****************************************************************************
 *							IsPressLStick
 *************************************************************************//**
-*  @fn        bool GamePad::IsPressLStick()
+*  @fn        bool GamePad::IsPressLStick(int gamePadId)
 *  @brief     Detect press LStick
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressLStick()
+bool GamePad::IsPressLStick(int gamePadId)
 {
-	short x = _currentState.Gamepad.sThumbLX;
-	short y = _currentState.Gamepad.sThumbLY;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	short x = _currentStates[gamePadId].Gamepad.sThumbLX;
+	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 
 	if ((x > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
-		(x <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		(x < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 	{
 		return false;
 	}
 
 	if ((y > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
-		(y <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		(y < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 	{
 		return false;
 	}
@@ -345,24 +403,27 @@ bool GamePad::IsPressLStick()
 /****************************************************************************
 *							IsPressRStick
 *************************************************************************//**
-*  @fn        bool GamePad::IsPressRStick()
+*  @fn        bool GamePad::IsPressRStick(int gamePadId)
 *  @brief     Detect press RStick
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressRStick()
+bool GamePad::IsPressRStick(int gamePadId)
 {
-	short x = _currentState.Gamepad.sThumbRX;
-	short y = _currentState.Gamepad.sThumbRY;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	short x = _currentStates[gamePadId].Gamepad.sThumbRX;
+	short y = _currentStates[gamePadId].Gamepad.sThumbRY;
 
 	if ((x > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
-		(x <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+		(x < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 	{
 		return false;
 	}
 
 	if ((y > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
-		(y <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+		(y < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 	{
 		return false;
 	}
@@ -373,15 +434,19 @@ bool GamePad::IsPressRStick()
 /****************************************************************************
 *							IsPressLStick
 *************************************************************************//**
-*  @fn        bool GamePad::IsPressLStick(float threshold)
+*  @fn        bool GamePad::IsPressLStick(float threshold, int gamePadId)
 *  @brief     Detect press LStick
 *  @param[in] float threshold(0.0～100.0f)
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressLStick(float threshold)
+bool GamePad::IsPressLStick(float threshold, int gamePadId)
 {
-	short x = _currentState.Gamepad.sThumbLX;
-	short y = _currentState.Gamepad.sThumbLY;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	short x = _currentStates[gamePadId].Gamepad.sThumbLX;
+	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 	short deadZone = static_cast<short>(threshold / 100.0f * SHORT_PLUS_MAX);
 
 	if ((-deadZone < x) || (x < deadZone))
@@ -400,15 +465,19 @@ bool GamePad::IsPressLStick(float threshold)
 /****************************************************************************
 *							IsPressRStick
 *************************************************************************//**
-*  @fn        bool GamePad::IsPressRStick(int threshold)
+*  @fn        bool GamePad::IsPressRStick(int threshold, int gamePadId)
 *  @brief     Detect press RStick
 *  @param[in] float threshold(0.0～100.0f)
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　bool
 *****************************************************************************/
-bool GamePad::IsPressRStick(float threshold)
+bool GamePad::IsPressRStick(float threshold, int gamePadId)
 {
-	short x = _currentState.Gamepad.sThumbLX;
-	short y = _currentState.Gamepad.sThumbLY;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
+
+	short x = _currentStates[gamePadId].Gamepad.sThumbLX;
+	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 	short deadZone = static_cast<short>(threshold / 100.0f * SHORT_PLUS_MAX);
 
 	if ((-deadZone < x) || (x < deadZone))
@@ -427,14 +496,17 @@ bool GamePad::IsPressRStick(float threshold)
 /****************************************************************************
 *							LStick_X
 *************************************************************************//**
-*  @fn        float GamePad::LStick_X()
+*  @fn        float GamePad::LStick_X(int gamePadId)
 *  @brief     Return LStick_X Value (0.0f ～ 100.0f)
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　float
 *****************************************************************************/
-float GamePad::LStick_X()
+float GamePad::LStick_X(int gamePadId)
 {
-	short  y      = _currentState.Gamepad.sThumbLX;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
+
+	short  y = _currentStates[gamePadId].Gamepad.sThumbLX;
 	bool   isPlus = (y >= 0) ? true : false;
 	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
 	return result;
@@ -443,14 +515,17 @@ float GamePad::LStick_X()
 /****************************************************************************
 *							LStick_Y
 *************************************************************************//**
-*  @fn        float GamePad::LStick_Y()
+*  @fn        float GamePad::LStick_Y(int gamePadId)
 *  @brief     Return LStick_Y Value (0.0f ～ 100.0f)
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　float
 *****************************************************************************/
-float GamePad::LStick_Y()
+float GamePad::LStick_Y(int gamePadId)
 {
-	short  y      = _currentState.Gamepad.sThumbLY;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
+
+	short  y = _currentStates[gamePadId].Gamepad.sThumbLY;
 	bool   isPlus = (y >= 0) ? true : false;
 	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
 	return result;
@@ -459,14 +534,17 @@ float GamePad::LStick_Y()
 /****************************************************************************
 *							RStick_X
 *************************************************************************//**
-*  @fn        float GamePad::RStick_X()
+*  @fn        float GamePad::RStick_X(int gamePadId)
 *  @brief     Return RStick_X Value (0.0f ～ 100.0f)
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　float
 *****************************************************************************/
-float GamePad::RStick_X()
+float GamePad::RStick_X(int gamePadId)
 {
-	short  y = _currentState.Gamepad.sThumbRX;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
+
+	short  y = _currentStates[gamePadId].Gamepad.sThumbRX;
 	bool   isPlus = (y >= 0) ? true : false;
 	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
 	return result;
@@ -475,41 +553,89 @@ float GamePad::RStick_X()
 /****************************************************************************
 *							RStick_Y
 *************************************************************************//**
-*  @fn        float GamePad::RStick_Y()
+*  @fn        float GamePad::RStick_Y(int gamePadId)
 *  @brief     Return RStick_Y Value (0.0f ～ 100.0f)
-*  @param[in] void
+*  @param[in] int gamePadId (Max 4 people)
 *  @return 　　float
 *****************************************************************************/
-float GamePad::RStick_Y()
+float GamePad::RStick_Y(int gamePadId)
 {
-	short  y      = _currentState.Gamepad.sThumbRY;
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
+
+	short  y = _currentStates[gamePadId].Gamepad.sThumbRY;
 	bool   isPlus = (y >= 0) ? true : false;
-	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f; 
+	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
 	return result;
+}
+
+/****************************************************************************
+*							LStick
+*************************************************************************//**
+*  @fn        float GamePad::LStick(int gamePadId)
+*  @brief     Return LStick Value (0.0f ～ 100.0f)
+*  @param[in] int gamePadId (Max 4 people)
+*  @return 　　StickValue
+*****************************************************************************/
+StickValue GamePad::LStick(int gamePadId)
+{
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { ::OutputDebugString(L"Error! An unspecified id was entered."); }
+
+	StickValue stickValue;
+	stickValue.XAxis = LStick_X(gamePadId);
+	stickValue.YAxis = LStick_Y(gamePadId);
+	return stickValue;
+}
+
+/****************************************************************************
+*							RStick
+*************************************************************************//**
+*  @fn        float GamePad::RStick(int gamePadId)
+*  @brief     Return RStick Value (0.0f ～ 100.0f)
+*  @param[in] int gamePadId (Max 4 people)
+*  @return 　　StickValue
+*****************************************************************************/
+StickValue GamePad::RStick(int gamePadId)
+{
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { ::OutputDebugString(L"Error! An unspecified id was entered."); }
+
+	StickValue stickValue;
+	stickValue.XAxis = RStick_X(gamePadId);
+	stickValue.YAxis = RStick_Y(gamePadId);
+	return stickValue;
 }
 
 /****************************************************************************
 *							SetVibration
 *************************************************************************//**
-*  @fn        void GamePad::SetVibration(float leftMotor, float rightMotor)
+*  @fn        void GamePad::SetVibration(float leftMotor, float rightMotor, int gamePadId)
 *  @brief     Set Motor Vibration(0.0f ～ 1.0f)
-*  @param[in] void
-*  @return 　　float
+*  @param[in] leftMoter (0.0f ～ 1.0f)
+*  @param[in] rightMoter(0.0f ～ 1.0f)
+*  @param[in] gamePadId (Max 4 people)
+*  @return 　　void
 *****************************************************************************/
-void GamePad::SetVibration(float leftMotor, float rightMotor)
+void GamePad::SetVibration(float leftMotor, float rightMotor, int gamePadId)
 {
-	if (leftMotor  > 1.0f) { leftMotor  = 1.0f; }
-	if (leftMotor  < 0.0f) { leftMotor  = 0.0f; }
+	// Range check for gamepad id.
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId)
+	{
+		::OutputDebugString(L"Error! An unspecified id was entered.");
+		return;
+	}
+
+	if (leftMotor > 1.0f) { leftMotor = 1.0f; }
+	if (leftMotor < 0.0f) { leftMotor = 0.0f; }
 	if (rightMotor > 1.0f) { rightMotor = 1.0f; }
 	if (rightMotor < 0.0f) { rightMotor = 0.0f; }
 
-	leftMotor  = leftMotor  * USHORT_MAX;
+	leftMotor = leftMotor * USHORT_MAX;
 	rightMotor = rightMotor * USHORT_MAX;
 
-	_vibrationState.wLeftMotorSpeed  = static_cast<unsigned short>(leftMotor);
-	_vibrationState.wRightMotorSpeed = static_cast<unsigned short>(rightMotor);
+	_vibrationStates[gamePadId].wLeftMotorSpeed = static_cast<unsigned short>(leftMotor);
+	_vibrationStates[gamePadId].wRightMotorSpeed = static_cast<unsigned short>(rightMotor);
 
-	XInputSetState(0, &_vibrationState);
+	XInputSetState(gamePadId, &_vibrationStates[gamePadId]);
 }
 #pragma endregion Public Function
 
