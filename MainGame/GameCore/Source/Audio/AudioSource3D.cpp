@@ -16,6 +16,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+#define STEREO_AUDIO 2
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
@@ -125,7 +126,7 @@ Audio3DParameter& AudioSource3D::Calculate3DSound(const X3DAUDIO_LISTENER* liste
 	X3DAUDIO_DSP_SETTINGS dsp = { 0 };
 	FLOAT32 matrix[12]        = { 0 };
 	dsp.SrcChannelCount       = 1;
-	dsp.DstChannelCount       = 1;
+	dsp.DstChannelCount       = STEREO_AUDIO;
 	dsp.pMatrixCoefficients   = matrix;
 
 	/*-------------------------------------------------------------------
