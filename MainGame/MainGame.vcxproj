@@ -42,6 +42,9 @@
     <ClInclude Include="GameCore\Include\Audio\WavDecoder.hpp" />
     <ClInclude Include="GameCore\Include\BackGround2D.hpp" />
     <ClInclude Include="GameCore\Include\Camera.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
     <ClInclude Include="GameCore\Include\FileUtility.hpp" />
     <ClInclude Include="GameCore\Include\GameInput.hpp" />
     <ClInclude Include="GameCore\Include\GamePad.hpp" />
@@ -100,6 +103,9 @@
     <ClCompile Include="GameCore\Source\Audio\WavDecoder.cpp" />
     <ClCompile Include="GameCore\Source\BackGround2D.cpp" />
     <ClCompile Include="GameCore\Source\Camera.cpp" />
+    <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
+    <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
+    <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
     <ClCompile Include="GameCore\Source\GameInput.cpp" />
     <ClCompile Include="GameCore\Source\GamePad.cpp" />
     <ClCompile Include="GameCore\Source\GameTimer.cpp" />
