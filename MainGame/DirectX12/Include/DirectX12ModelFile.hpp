@@ -1,37 +1,41 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   DirectX12Texture.hpp
-///             @brief  .tga, .dds, ,png, .jpg, .bmp, .hdr
+///             @file   DirectX12ModelFile.hpp
+///             @brief  3D Model File Abstract Class (.obj, .fbx, .pmd...)) 
 ///             @author Toide Yutaro
-///             @date   2020_12_06
+///             @date   2020_12_
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef DIRECTX12_TEXTURE_HPP
-#define DIRECTX12_TEXTURE_HPP
+#ifndef DIRECTX12_MODEL_FILE_HPP
+#define DIRECTX12_MODEL_FILE_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/DirectX12Core.hpp"
-#include <DirectXTex/DirectXTex.h>
 #include <string>
-#include <unordered_map>
+#include <Windows.h>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-std::unordered_map<std::wstring, ResourceComPtr> g_textureTable;
 
 /****************************************************************************
-*				  			    Texture
+*				  			ModelData 
 *************************************************************************//**
-*  @class     Texture
-*  @brief     Texture Manager .tga, .dds, ,png, .jpg, .bmp, .hdr
+*  @class     ModelData
+*  @brief     ModelData Abstract Class
 *****************************************************************************/
-class Texture
+class ModelData
 {
+public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void LoadTexture(DirectX12& directX12, const std::wstring& filePath, ResourceComPtr& buffer);
+	virtual void Load3DModel(const std::wstring& filePath) = 0;
+	
+#pragma region Property
+	virtual UINT32 GetVertexCount()   = 0;
+	virtual UINT32 GetIndexCount()    = 0;
+	virtual UINT32 GetMaterialCount() = 0;
+#pragma endregion Property
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -39,17 +43,25 @@ class Texture
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	Texture() {};
-	~Texture() {};
+protected:
+	/****************************************************************************
+	**                ProtectedFunction
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Protected Member Variables
+	*****************************************************************************/
+	std::string _modelName;
+	UINT32      _vertexCount;
+	UINT32      _indexCount;
+	UINT32      _materialCount;
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	void CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& buffer, bool isDiscreteGPU);
+
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-
 };
-
 #endif

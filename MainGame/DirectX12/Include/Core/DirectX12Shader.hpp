@@ -2,7 +2,7 @@
 ///             @file   DirectX12Sharder.hpp
 ///             @brief  DirectX12 Compile Shader
 ///             @author Toide Yutaro
-///             @date   2020_11_
+///             @date   2020_11_22
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 

@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define Config
 //////////////////////////////////////////////////////////////////////////////////
-#define SWAPCHAIN_BUFFER 2
-#define VSYNC 0 // 0: don't wait, 1: wait (60fps) 
+#define FRAME_BUFFER_COUNT 2 // double buffer
+#define VSYNC 1// 0: don't wait, 1: wait (60fps) 
+#define CSU_HEAP_DESC_COUNT 1024 // CBV, SRV, UAV Heap Size
 #endif

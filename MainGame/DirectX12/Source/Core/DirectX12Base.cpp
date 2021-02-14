@@ -2,16 +2,16 @@
 ///             @file    DirectX12Base.cpp
 ///             @brief   DirectX12 Initialize ～ BackGround
 ///             @author  Toide Yutaro
-///             @date    2020_11_
+///             @date    2021_01_30
 //////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/DirectX12Base.hpp"
-#include "DirectX12/Include/DirectX12Config.hpp"
-#include "DirectX12/Include/DirectX12BaseStruct.hpp"
-#include "DirectX12/Include/DirectX12VertexTypes.hpp"
+#include "DirectX12/Include/Core/DirectX12Base.hpp"
+#include "DirectX12/Include/Core/DirectX12Config.hpp"
+#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #include "GameCore/Include/Screen.hpp"
 #include <DirectXColors.h>
 #include <vector>
@@ -23,6 +23,9 @@
 #pragma comment(lib, "dxcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "xinput.lib")
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -70,14 +73,14 @@ void DirectX12::OnResize()
 	---------------------------------------------------------------------*/
 	FlushCommandQueue();
 	//ResetCommandList();
-	ThrowIfFailed(_commandList->Reset(_commandAllocator.Get(), nullptr));
+	ThrowIfFailed(_commandList->Reset(_commandAllocator[_currentFrameIndex].Get(), nullptr));
 	
 	/*-------------------------------------------------------------------
 	-              Release the previous resources
 	---------------------------------------------------------------------*/
-	for (int i = 0; i < SWAPCHAIN_BUFFER; ++i)
+	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i)
 	{
-		_swapchainBuffer[i].Reset();
+		_renderTargetList[i].Reset();
 	}
 	_depthStencilBuffer.Reset();
 
@@ -85,12 +88,12 @@ void DirectX12::OnResize()
 	-                   Resize Swapchain
 	---------------------------------------------------------------------*/
 	ThrowIfFailed(_swapchain->ResizeBuffers(
-		SWAPCHAIN_BUFFER,
+		FRAME_BUFFER_COUNT,
 		_screen.GetScreenWidth(),
 		_screen.GetScreenHeight(),
 		_backBufferFormat,
 		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));	
-	_currentBackBuffer = 0;
+	_currentFrameIndex = 0;
 
 	BuildRenderTargetView();
 	BuildDepthStencilView();
@@ -114,7 +117,7 @@ void DirectX12::ClearScreen()
 	ResetCommandList();
 
 	// Indicate a state transition (Present -> Render Target)
-	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentBackBuffer(),
+	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentRenderTarget(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	// Set the viewport and scissor rect. 
@@ -123,11 +126,13 @@ void DirectX12::ClearScreen()
 	_commandList->RSSetScissorRects(1, &_scissorRect);
 
 	// Clear the back buffer and depth buffer.
-	_commandList->ClearRenderTargetView(GetCurrentBackBufferView(), DirectX::Colors::SteelBlue, 0, nullptr);
+	_commandList->ClearRenderTargetView(GetCurrentRenderTargetView(), DirectX::Colors::SteelBlue, 0, nullptr);
 	_commandList->ClearDepthStencilView(GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Set Render Target 
-	_commandList->OMSetRenderTargets(1, &GetCurrentBackBufferView(), true, &GetDepthStencilView());
+	_commandList->OMSetRenderTargets(1, &GetCurrentRenderTargetView(), true, &GetDepthStencilView());
+	ID3D12DescriptorHeap* heapList[] = { _cbvSrvUavHeap.Get() };
+	_commandList->SetDescriptorHeaps(_countof(heapList), heapList);
 }
 
 /****************************************************************************
@@ -144,7 +149,7 @@ void DirectX12::CompleteRendering()
 	/*-------------------------------------------------------------------
 	-      // Indicate a state transition (Render Target -> Present)
 	---------------------------------------------------------------------*/
-	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentBackBuffer(),
+	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentRenderTarget(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 	
 	ThrowIfFailed(_commandList->Close());
@@ -159,7 +164,7 @@ void DirectX12::CompleteRendering()
 	-						Flip screen
 	---------------------------------------------------------------------*/
 	ThrowIfFailed(_swapchain->Present(VSYNC, 0));
-	_currentBackBuffer = (_currentBackBuffer + 1) % SWAPCHAIN_BUFFER;
+	_currentFrameIndex = (_currentFrameIndex + 1) % FRAME_BUFFER_COUNT;
 
 	FlushCommandQueue();
 }
@@ -200,6 +205,7 @@ void DirectX12::LoadPipeLine()
 	-                     Create Fence
 	---------------------------------------------------------------------*/
 	ThrowIfFailed(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&_fence)));
+	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i) { _currentFenceValue[i] = 0; }
 	/*-------------------------------------------------------------------
 	-                   Create Command Object
 	---------------------------------------------------------------------*/
@@ -242,16 +248,16 @@ void DirectX12::LoadAssets()
 *****************************************************************************/
 void DirectX12::FlushCommandQueue()
 {
-	_currentFence++;
-	ThrowIfFailed(_commandQueue->Signal(_fence.Get(), _currentFence));
+	++_currentFenceValue[_currentFrameIndex];
+	ThrowIfFailed(_commandQueue->Signal(_fence.Get(), _currentFenceValue[_currentFrameIndex]));
 
 	/*-------------------------------------------------------------------
 	-   Wait until the GPU has completed commands up to this fence point
 	---------------------------------------------------------------------*/
-	if (_fence->GetCompletedValue() < _currentFence)
+	if (_fence->GetCompletedValue() < _currentFenceValue[_currentFrameIndex])
 	{
 		_fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
-		ThrowIfFailed(_fence->SetEventOnCompletion(_currentFence, _fenceEvent));
+		ThrowIfFailed(_fence->SetEventOnCompletion(_currentFenceValue[_currentFrameIndex], _fenceEvent));
 
 		if (_fenceEvent != 0)
 		{
@@ -260,7 +266,7 @@ void DirectX12::FlushCommandQueue()
 		}
 	
 	}
-	_currentBackBuffer = _swapchain->GetCurrentBackBufferIndex();
+	_currentFrameIndex = _swapchain->GetCurrentBackBufferIndex();
 }
 
 #pragma region Initialize
@@ -300,6 +306,7 @@ void DirectX12::CreateDevice()
 			warpAdapter.Get(),
 			D3D_FEATURE_LEVEL_11_0,
 			IID_PPV_ARGS(&_device)));
+		_isWarpAdapter = true;
 	}
 
 }
@@ -320,8 +327,8 @@ void DirectX12::CreateCommandObject()
 	---------------------------------------------------------------------*/
 	D3D12_COMMAND_QUEUE_DESC cmdQDesc = {};
 	cmdQDesc.NodeMask = 0;  // No Adapter Mask
-	cmdQDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-	cmdQDesc.Type     = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	cmdQDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; 
+	cmdQDesc.Type     = D3D12_COMMAND_LIST_TYPE_DIRECT;// enable to execute all command 
 	cmdQDesc.Flags    = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
 	ThrowIfFailed(_device->CreateCommandQueue(&cmdQDesc, IID_PPV_ARGS(&_commandQueue)));
@@ -329,9 +336,13 @@ void DirectX12::CreateCommandObject()
 	/*-------------------------------------------------------------------
 	-                   Create Command Allocator
 	---------------------------------------------------------------------*/
-	ThrowIfFailed(_device->CreateCommandAllocator(
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(_commandAllocator.GetAddressOf())));
+	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i)
+	{
+		ThrowIfFailed(_device->CreateCommandAllocator(
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			IID_PPV_ARGS(&_commandAllocator[i])));
+	}
+	
 
 	/*-------------------------------------------------------------------
 	-                   Create Command List
@@ -340,7 +351,7 @@ void DirectX12::CreateCommandObject()
 	ThrowIfFailed(_device->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		_commandAllocator.Get(), // Associated command allocator
+		_commandAllocator[_currentFrameIndex].Get(), // Associated command allocator
 		nullptr,                 // Initial PipeLine State Object
 		IID_PPV_ARGS(_commandList.GetAddressOf())));
 
@@ -370,7 +381,7 @@ void DirectX12::CreateDescriptorHeap()
 	-			     Set RTV Heap Descriptor Struct
 	---------------------------------------------------------------------*/
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
-	rtvHeapDesc.NumDescriptors = SWAPCHAIN_BUFFER;
+	rtvHeapDesc.NumDescriptors = FRAME_BUFFER_COUNT;
 	rtvHeapDesc.Type           = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags          = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	rtvHeapDesc.NodeMask       = 0;
@@ -391,12 +402,12 @@ void DirectX12::CreateDescriptorHeap()
 	/*-------------------------------------------------------------------
 	-			     Set CBV Heap Descriptror Struct
 	---------------------------------------------------------------------*/
-	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 1;
-	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	cbvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&_cbvHeap)));
+	D3D12_DESCRIPTOR_HEAP_DESC csuHeapDesc;
+	csuHeapDesc.NumDescriptors = CSU_HEAP_DESC_COUNT;
+	csuHeapDesc.Type           = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	csuHeapDesc.Flags          = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	csuHeapDesc.NodeMask       = 0;
+	ThrowIfFailed(_device->CreateDescriptorHeap(&csuHeapDesc, IID_PPV_ARGS(&_cbvSrvUavHeap)));
 }
 
 /****************************************************************************
@@ -410,10 +421,10 @@ void DirectX12::CreateDescriptorHeap()
 void DirectX12::BuildRenderTargetView()
 {
 	CPU_DESC_HANDLER rtvHeapHandle(_rtvHeap->GetCPUDescriptorHandleForHeapStart());
-	for (UINT i = 0; i < SWAPCHAIN_BUFFER; ++i)
+	for (UINT i = 0; i < FRAME_BUFFER_COUNT; ++i)
 	{
-		ThrowIfFailed(_swapchain->GetBuffer(i, IID_PPV_ARGS(&_swapchainBuffer[i])));
-		_device->CreateRenderTargetView(_swapchainBuffer[i].Get(), nullptr, rtvHeapHandle);
+		ThrowIfFailed(_swapchain->GetBuffer(i, IID_PPV_ARGS(&_renderTargetList[i])));
+		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, rtvHeapHandle);
 		rtvHeapHandle.Offset(1, _rtvDescriptorSize);
 	}
 }
@@ -476,6 +487,8 @@ void DirectX12::BuildDepthStencilView()
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 }
 
+
+
 /****************************************************************************
 *							CreateSwapChain
 *************************************************************************//**
@@ -496,7 +509,7 @@ void DirectX12::CreateSwapChain()
 	---------------------------------------------------------------------*/
 	DXGI_SWAP_CHAIN_DESC1 sd;
 
-	sd.BufferCount = SWAPCHAIN_BUFFER;                       // Current: Double Buffer
+	sd.BufferCount = FRAME_BUFFER_COUNT;                       // Current: Double Buffer
 	sd.Width       = _screen.GetScreenWidth();               // Window Size Width
 	sd.Height      = _screen.GetScreenHeight();              // Window Size Height 
 	sd.Format      = _backBufferFormat;                      // Back Buffer Format 
@@ -547,7 +560,7 @@ void DirectX12::CompleteInitialize()
 	-						Flip screen
 	---------------------------------------------------------------------*/
 	ThrowIfFailed(_swapchain->Present(VSYNC, 0));
-	_currentBackBuffer = (_currentBackBuffer + 1) % SWAPCHAIN_BUFFER;
+	_currentFrameIndex = (_currentFrameIndex + 1) % FRAME_BUFFER_COUNT;
 
 }
 
@@ -583,7 +596,7 @@ void DirectX12::CreateViewport()
 *****************************************************************************/
 void DirectX12::CreateDefaultPSO()
 {
-	VertexPositionNormalTexture vertex;
+	VertexPositionNormalColorTexture vertex;
 
 	ZeroMemory(&_defaultPSODesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	_defaultPSODesc.InputLayout           = vertex.InputLayout;
@@ -597,6 +610,10 @@ void DirectX12::CreateDefaultPSO()
 	_defaultPSODesc.SampleDesc.Count      = _4xMsaaState ? 4 : 1;
 	_defaultPSODesc.SampleDesc.Quality    = _4xMsaaState ? (_4xMsaaQuality - 1) : 0;
 	_defaultPSODesc.DSVFormat             = _depthStencilFormat;
+	if (_isWarpAdapter)
+	{
+		_defaultPSODesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
+	}
 }
 
 
@@ -838,7 +855,7 @@ CommandQueue* DirectX12::GetCommandQueue() const
 
 CommandAllocator* DirectX12::GetCommandAllocator() const
 {
-	return _commandAllocator.Get();
+	return _commandAllocator[_currentFrameIndex].Get();
 }
 /****************************************************************************
 *                        GetCurrentBackBuffer
@@ -848,9 +865,9 @@ CommandAllocator* DirectX12::GetCommandAllocator() const
 *  @param[in] void
 *  @return 　　Resource*
 *****************************************************************************/
-Resource* DirectX12::GetCurrentBackBuffer() const
+Resource* DirectX12::GetCurrentRenderTarget() const
 {
-	return _swapchainBuffer[_currentBackBuffer].Get();
+	return _renderTargetList[_currentFrameIndex].Get();
 }
 
 /****************************************************************************
@@ -861,12 +878,12 @@ Resource* DirectX12::GetCurrentBackBuffer() const
 *  @param[in] void
 *  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
 *****************************************************************************/
-D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView() const
+D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentRenderTargetView() const
 {
 	// We need to write it this way because the back buffer is an array
 	return CPU_DESC_HANDLER(
 		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
-		_currentBackBuffer,
+		_currentFrameIndex,
 		_rtvDescriptorSize);
 }
 
@@ -884,18 +901,85 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetDepthStencilView() const
 }
 
 /****************************************************************************
-*                        GetConstantBufferView
+*                        GetCPUCbvSrvUavHeapStart
 *************************************************************************//**
-*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView(void)
-*  @brief     Get current frame constant buffer view pointer
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCPUCbvSrvUavHeapStart() const
+*  @brief     Get current frame CBV / SRV / UAV pointer
 *  @param[in] void
 *  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
 *****************************************************************************/
-D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetConstantBufferView() const
+D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCPUCbvSrvUavHeapStart() const
 {
-	return _cbvHeap->GetCPUDescriptorHandleForHeapStart();
+	return _cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
+/****************************************************************************
+*                        GetGPUCbvSrvUavHeapStart
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetGPUCbvSrvUavHeapStart() const
+*  @brief     Get current frame CBV / SRV / UAV pointer
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
+D3D12_GPU_DESCRIPTOR_HANDLE DirectX12::GetGPUCbvSrvUavHeapStart() const
+{
+	return _cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();
+}
+
+/****************************************************************************
+*                        DirectX12::GetCbvSrvUavHeap
+*************************************************************************//**
+ID3D12DescriptorHeap* DirectX12::GetCbvSrvUavHeap() const
+*  @brief     Get current frame CBV / SRV / UAV pointer
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
+ID3D12DescriptorHeap* DirectX12::GetCbvSrvUavHeap() const
+{
+	return  _cbvSrvUavHeap.Get();
+}
+
+/****************************************************************************
+*                        GetCPUCbvSrvUavHeapPtr
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCbvSrvUavHeapPtr(int offsetIndex) const
+*  @brief     Get current frame constant buffer view pointer
+*  @param[in] int offsetIndex
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
+D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCPUCbvSrvUavHeapPtr(int offsetIndex) const
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = _cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart();
+	handle.ptr += (UINT64)offsetIndex * _cbvSrvUavDescriptorSize;
+	return handle;
+}
+
+/****************************************************************************
+*                        GetCPUCbvSrvUavHeapPtr
+*************************************************************************//**
+*  @fn        D3D12_GPU_DESCRIPTOR_HANDLE DirectX12::GetGPUCbvSrvUavHeapPtr(int offsetIndex) const
+*  @brief     Get current frame constant buffer view pointer
+*  @param[in] int offsetIndex
+*  @return 　　D3D12_GPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
+D3D12_GPU_DESCRIPTOR_HANDLE DirectX12::GetGPUCbvSrvUavHeapPtr(int offsetIndex) const
+{
+	D3D12_GPU_DESCRIPTOR_HANDLE handle = _cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();
+	handle.ptr += (UINT64)offsetIndex * _cbvSrvUavDescriptorSize;
+	return handle;
+}
+/****************************************************************************
+*                        GetCbvSrvUavDescriptorHeapSize
+*************************************************************************//**
+*  @fn        INT DirectX12::GetCbvSrvUavDescriptorHeapSize() const
+*  @brief     GetCbvSrvUav Descriptor Heap Size
+*  @param[in] void
+*  @return 　　INT
+*****************************************************************************/
+INT DirectX12::GetCbvSrvUavDescriptorHeapSize() const
+{
+	return _cbvSrvUavDescriptorSize;
+}
 /****************************************************************************
 *                           GetDefaultPSOConfig
 *************************************************************************//**
@@ -943,6 +1027,64 @@ void DirectX12::Set4xMsaaState(bool value)
 	}
 }
 
+/****************************************************************************
+*                        GetViewport
+*************************************************************************//**
+*  @fn        D3D12_VIEWPORT DirectX12::GetViewport() const
+*  @brief     Get Default viewport
+*  @param[in] void
+*  @return 　　INT
+*****************************************************************************/
+D3D12_VIEWPORT DirectX12::GetViewport() const 
+{
+	return this->_screenViewport;
+}
+
+/****************************************************************************
+*                        GetScissorRect
+*************************************************************************//**
+*  @fn        D3D12_RECT DirectX12::GetScissorRect() const
+*  @brief     Get Current render target frame index
+*  @param[in] void
+*  @return 　　D3D12_RECT
+*****************************************************************************/
+D3D12_RECT DirectX12::GetScissorRect() const
+{
+	return this->_scissorRect;
+}
+
+/****************************************************************************
+*                        GetCurrentFrameIndex
+*************************************************************************//**
+*  @fn        INT DirectX12::GetCurrentFrameIndex() const
+*  @brief     Get Current render target frame index
+*  @param[in] void
+*  @return 　　INT
+*****************************************************************************/
+INT DirectX12::GetCurrentFrameIndex() const
+{
+	return this->_currentFrameIndex;
+}
+
+/****************************************************************************
+*                        GetCurrentBackBufferIndex
+*************************************************************************//**
+*  @fn        INT DirectX12::GetCurrentBackBufferIndex() const
+*  @brief     Get Current BackBufferIndex
+*  @param[in] void
+*  @return 　　INT
+*****************************************************************************/
+INT DirectX12::GetCurrentBackBufferIndex() const
+{
+	if (_currentFrameIndex != FRAME_BUFFER_COUNT - 1)
+	{
+		return _currentFrameIndex + 1; // next Buffer
+	}
+	else
+	{
+		return 0; // 初期フレーム
+	}
+}
 /****************************************************************************
 *                           SetHWND
 *************************************************************************//**
