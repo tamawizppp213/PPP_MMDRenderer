@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
-//              Title:  DirectX12Utility.hpp
-//            Content:  DirectX12 Helper
+//              Title:  DirectX12Debug.hpp
+//            Content:  DirectX12 Debugger Helper
 //             Author:  Toide Yutaro
 //             Create:  2020_11_10
 //////////////////////////////////////////////////////////////////////////////////
@@ -12,10 +12,10 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include <stdexcept>
-#include <d3d12.h>
 #include <Windows.h>
 #include <comdef.h>
 #include <string>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -50,6 +50,18 @@ inline std::string WStringToString(std::wstring wString)
 	return(oRet);
 }
 
+inline FILE* OpenFile(const std::wstring filePath)
+{
+	FILE* filePtr = nullptr;
+	auto error = fopen_s(&filePtr, WStringToString(filePath).c_str(), "rb");
+	assert(filePtr != nullptr);
+	if (filePtr == nullptr)
+	{
+		std::string message = WStringToString(filePath) + " couldn't open.";
+		MessageBoxA(NULL, message.c_str(), "Error", MB_ICONERROR);
+	}
+	return filePtr;
+}
 class DxException
 {
 public:
@@ -82,7 +94,6 @@ public:
 };
 
 #define SAFE_RELEASE(p) {if(p){(p)->Release(); p = nullptr;}}
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //                         ThrowIfFailed

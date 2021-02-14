@@ -19,14 +19,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Core.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12MeshBuffer.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Base.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Config.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Core.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12FBXFile.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12ModelFile.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12ModelLoader.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12OBJFile.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12PMDConfig.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12PMDFile.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Texture.hpp" />
@@ -84,14 +100,27 @@
     <ClInclude Include="Pluguins\DirectXTex\scoped.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Base.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12BaseStruct.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Buffer.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Config.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Core.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Base.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12BaseStruct.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Config.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Core.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12FBXFile.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12ModelLoader.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12OBJFile.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12PMDConfig.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12PMDFile.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Texture.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp" />

@@ -2,7 +2,7 @@
 //              Title:  DirectX12Buffer.hpp
 //            Content:  DirectX12 Buffer Class  
 //             Author:  Toide Yutaro
-//             Create:  2020_11_
+//             Create:  2020_11_16
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef DIRECTX12_BUFFER_HPP
@@ -14,7 +14,7 @@
 #include "DirectX12Core.hpp"
 #include "DirectX12Debug.hpp"
 #include "DirectX12BaseStruct.hpp"
-
+#include <string.h>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -82,12 +82,12 @@ public:
 		ThrowIfFailed(device->CreateCommittedResource(
 			&HEAP_PROPERTY(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
-			&RESOURCE_DESC::Buffer(_elementByteSize * elementCount),
+			&RESOURCE_DESC::Buffer((UINT64)_elementByteSize * elementCount),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
 			IID_PPV_ARGS(&_uploadBuffer)));
 
-		ThrowIfFailed(_uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(_mappedData)));
+		ThrowIfFailed(_uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedData)));
 	}
 
 	UploadBuffer(const UploadBuffer& rhs)            = delete;
@@ -102,7 +102,7 @@ public:
 		_mappedData = nullptr;
 	}
 
-	inline Resource* Resource() const
+	inline ID3D12Resource1* Resource() const
 	{
 		return _uploadBuffer.Get();
 	}

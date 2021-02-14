@@ -11,7 +11,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include <d3d12.h>
-#include "DirectX12/Include/DirectX12Core.hpp"
+#include "DirectX12/Include/Core/DirectX12Core.hpp"
 #include "DirectX12Debug.hpp"
 #include <iostream>
 
