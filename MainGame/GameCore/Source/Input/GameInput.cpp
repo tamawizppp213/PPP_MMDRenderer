@@ -25,7 +25,7 @@ bool GameInput::Initialize(HINSTANCE hInstance, HWND hwnd)
 	result = DInputInitialize(hInstance, hwnd);
 	result = _keyboard.Initialize(_dInput, hInstance, hwnd);
 	result = _mouse   .Initialize(_dInput, hInstance, hwnd);
-//	result = _gamePad .Initialize();
+	result = _gamePad .Initialize();
 
 	return result;
 }
@@ -34,12 +34,12 @@ void GameInput::Update()
 {
 	_keyboard.Update();
 	_mouse   .Update();
-//	_gamePad .Update();
+	_gamePad .Update();
 }
 
 void GameInput::Finalize()
 {
-//	_gamePad .Finalize();
+	_gamePad .Finalize();
 	_mouse   .Finalize();
 	_keyboard.Finalize();
 	DInputFinalize();

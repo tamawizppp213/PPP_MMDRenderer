@@ -10,6 +10,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/GameTimer.hpp"
 #include <string>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -71,10 +72,10 @@ void GameTimer::Reset()
 	__int64 currentTime = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
-	_baseTime = currentTime;
+	_baseTime     = currentTime;
 	_previousTime = currentTime;
-	_stopTime = 0;
-	_stopped = false;
+	_stopTime     = 0;
+	_stopped      = false;
 
 }
 
@@ -131,6 +132,7 @@ void GameTimer::Tick()
 	{
 		_deltaTime = 0.0;
 	}
+
 }
 
 void GameTimer::AverageFrame(const HWND &hwnd)
