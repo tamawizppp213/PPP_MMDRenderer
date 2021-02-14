@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/DirectX12Base.hpp"
+#include "DirectX12/Include/Core/DirectX12Base.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              SceneState
@@ -38,7 +38,7 @@ public:
 	*****************************************************************************/
 	Scene();
 	~Scene();
-	virtual void Initialize(const DirectX12& directX12) = 0;
+	virtual void Initialize() = 0;
 	virtual void Draw()       = 0;
 	virtual void Update()     = 0;
 	virtual void Terminate()  = 0;
@@ -50,6 +50,7 @@ public:
 protected:
 	virtual void LoadShaders()             = 0;
 	virtual void LoadGeometry()            = 0;
+	virtual void LoadTextures()            = 0;
 	virtual void BuildRootSignature()      = 0;
 	virtual void BuildFrameResources()     = 0;
 	virtual void BuildPSOs()               = 0;

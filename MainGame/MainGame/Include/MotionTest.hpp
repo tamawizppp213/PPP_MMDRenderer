@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Scene.hpp"
 #include "DirectX12/Include/DirectX12Geometry.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include "MainGame/Include/FrameResources.hpp"
 #include <vector>
@@ -55,7 +55,7 @@ public:
 	*****************************************************************************/
 	MotionTest();
 	~MotionTest();
-	void Initialize(const DirectX12& directX12) override;
+	void Initialize() override;
 	void Draw()       override;
 	void Update()     override;
 	void Terminate()  override;
@@ -67,6 +67,7 @@ public:
 protected:
 	void LoadShaders()             override;
 	void LoadGeometry()            override;
+	void LoadTextures()            override;
 	void BuildPSOs()               override;
 	void BuildRootSignature()      override;
 	void BuildRenderItem()         override;
@@ -87,7 +88,7 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	DirectX12 _directX12;
+	DirectX12& _directX12 = DirectX12::Instance();
 	
 	RootSignatureComPtr  _rootSignature = nullptr;
 	DescriptorHeapComPtr _cbvHeap       = nullptr;

@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12Core.hpp"
+#include "Core/DirectX12Core.hpp"
 #include <DirectXCollision.h>
 #include <dxgi1_6.h>
 #include <string>
@@ -71,7 +71,7 @@ public:
 	ResourceComPtr IndexBufferUploader  = nullptr;
 
 	UINT VertexByteStride       = 0;
-	UINT VertexBufferByteSize = 0;
+	UINT VertexBufferByteSize   = 0;
 	UINT IndexBufferByteSize    = 0;
 	DXGI_FORMAT IndexFormat     = DXGI_FORMAT_R16_UINT;
 

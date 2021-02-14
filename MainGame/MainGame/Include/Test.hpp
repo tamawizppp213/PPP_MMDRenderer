@@ -13,16 +13,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Scene.hpp"
 #include "DirectX12/Include/DirectX12Geometry.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include <vector>
 #include <memory>
-
-
+#include "DirectX12/Include/DirectX12PMDFile.hpp"
+#include "DirectX12/Include/Core/DirectX12Texture.hpp"
+#include "GameCore/Include/Sprite/SpriteRenderer.hpp"
+#include "GameCore/Include/Sprite/Sprite.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-
 //////////////////////////////////////////////////////////////////////////////////
 //                           MotionTest Class
 //////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,7 @@ public:
 	*****************************************************************************/
 	Test();
 	~Test();
-	void Initialize(const DirectX12& directX12) override;
+	void Initialize() override;
 	void Draw()       override;
 	void Update()     override;
 	void Terminate()  override;
@@ -46,6 +47,7 @@ public:
 protected:
 	void LoadShaders()             override;
 	void LoadGeometry()            override;
+	void LoadTextures()            override;
 	void BuildPSOs()               override;
 	void BuildRootSignature()      override;
 	void BuildRenderItem()         override;
@@ -56,11 +58,12 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	void LoadModels();
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	DirectX12           _directX12;
+	DirectX12&          _directX12 = DirectX12::Instance();
 	DeviceComPtr        _device;
 	CommandListComPtr   _commandList;
 	RootSignatureComPtr _rootSignature  = nullptr;
@@ -69,6 +72,11 @@ private:
 	BlobComPtr _pixelShader  = {};
 	Resource*  _vertexBuffer = nullptr;
 	Resource*  _indexBuffer  = nullptr;
+	Texture _texture;
+	SpriteRenderer _spriteRenderer;
+	std::unique_ptr<UploadBuffer<DirectX::XMMATRIX>> _constantBuffer;
+	DescriptorHeapComPtr _basicDescHeap = nullptr;
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> _geometries;
+	std::shared_ptr<PMDData> _miku = nullptr;
 };
 #endif

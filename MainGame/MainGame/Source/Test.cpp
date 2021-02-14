@@ -8,23 +8,35 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Include/Test.hpp"
-#include "DirectX12/Include/DirectX12Shader.hpp"
+#include "DirectX12/Include/Core/DirectX12Shader.hpp"
 #include "DirectX12/Include/DirectX12PrimitiveGeometry.hpp"
-#include "DirectX12/Include/DirectX12VertexTypes.hpp"
-#include "DirectX12/Include/DirectX12BaseStruct.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/DirectX12MathHelper.hpp"
+#include "DirectX12/Include/Core/DirectX12Texture.hpp"
+#include "DirectX12/Include/DirectX12ModelLoader.hpp"
 #include "GameMath/Include/GMSort.hpp"
+#include "GameMath/Include/GMSearch.hpp"
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 #include <iostream>
 #include <array>
-
-
+#include "DirectX12/Include/DirectX12PMDConfig.hpp"
+#include "DirectX12/Include/DirectX12PMDFile.hpp"
+#include "GameCore/Include/Audio/AudioSource3D.hpp"
+#include "GameCore/Include/Sprite/Sprite.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 
+DirectX::XMMATRIX matrix = DirectX::XMMatrixIdentity();
+float angle = 0.0f;
+std::vector<Sprite> _spriteList;
+std::vector<Sprite> _list;
+std::vector<Sprite> _list2;
+Texture test;
+Texture test2;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Struct
@@ -35,14 +47,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 Test::Test()
 {
-	/*
-	int array[] = { 8,5,104, 19,1,29, 16 , 74, 24,52,14};
-	gm::Sort<int>::ShellSortDescend(array, 11);
-	for (int i = 0; i < 11; ++i)
-	{
-		std::cout << array[i] << std::endl;
-	}
-	*/
+
 }
 
 Test::~Test()
@@ -50,19 +55,45 @@ Test::~Test()
 
 }
 
-void Test::Initialize(const DirectX12& directX12)
+void Test::Initialize()
 {
-	_directX12   = directX12;
 	_device      = _directX12.GetDevice();
 	_commandList = _directX12.GetCommandList();
 
 	_directX12.ResetCommandList();
 
-	BuildRootSignature();
-	LoadShaders();
-	LoadGeometry();
-	BuildPSOs();
-
+	_spriteRenderer.Initialize();
+	LoadTextures();
+	for (int i = 0; i < 10; ++i)
+	{
+		Sprite sprite;
+		sprite.CreateSpriteForTexture(
+			DirectX::XMFLOAT3((float)0.1*i - 0.5f, (float)0.5f, 0.0f),
+			DirectX::XMFLOAT2(0.5f, 0.5f),
+			DirectX::XMFLOAT2(0.0f, 1.0f),
+			DirectX::XMFLOAT2(0.0f, 1.0f));
+		_spriteList.push_back(sprite);
+	}
+	for (int i = 0; i < 2; ++i)
+	{
+		Sprite sprite;
+		sprite.CreateSpriteForTexture(
+			DirectX::XMFLOAT3((float)i - 0.5f, (float)-0.5f, 0.0f),
+			DirectX::XMFLOAT2(0.5f, 0.5f),
+			DirectX::XMFLOAT2(0.0f, 1.0f),
+			DirectX::XMFLOAT2(0.0f, 1.0f));
+		_list.push_back(sprite);
+	}
+	for (int i = 0; i < 2; ++i)
+	{
+		Sprite sprite;
+		sprite.CreateSpriteForTexture(
+			DirectX::XMFLOAT3((float)i * 0.5f, (float)-1.0f, 0.0f),
+			DirectX::XMFLOAT2(0.5f, 0.5f),
+			DirectX::XMFLOAT2(0.0f, 1.0f),
+			DirectX::XMFLOAT2(0.0f, 1.0f));
+		_list2.push_back(sprite);
+	}
 	_directX12.CompleteInitialize();
 	_directX12.FlushCommandQueue();
 
@@ -70,19 +101,31 @@ void Test::Initialize(const DirectX12& directX12)
 
 void Test::Update()
 {
+	using namespace DirectX;
+	angle += 1.0f;
+	_list[0].UpdateSpriteForTexture(XMFLOAT3(0.001f * angle, 0, 0), XMFLOAT2(0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), 0.3f);
 
 }
 
 void Test::Draw()
 {
 	_directX12.ClearScreen();
-	_directX12.GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
+	_spriteRenderer.Draw(_list2, test2, matrix);
+	_spriteRenderer.Draw(_list, test, matrix);
+	_spriteRenderer.Draw(_spriteList, _texture, matrix);
+	/*_directX12.GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
 	_directX12.GetCommandList()->SetPipelineState(_pipelineState.Get());
 	_directX12.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	_directX12.GetCommandList()->IASetVertexBuffers(0, 1, &_geometries["rect"]->VertexBufferView());
 	_directX12.GetCommandList()->IASetIndexBuffer(&_geometries["rect"]->IndexBufferView());
-	_directX12.GetCommandList()->DrawIndexedInstanced(_geometries["rect"]->IndexBufferByteSize / sizeof(UINT16), 1, 0, 0, 0);
-	_directX12.CompleteRendering();
+	_directX12.GetCommandList()->SetDescriptorHeaps(1, _basicDescHeap.GetAddressOf());
+	_directX12.GetCommandList()->SetGraphicsRootDescriptorTable(0, _basicDescHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+	auto heapHandle = _basicDescHeap->GetGPUDescriptorHandleForHeapStart();
+	heapHandle.ptr += _device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	_directX12.GetCommandList()->SetGraphicsRootDescriptorTable(1, heapHandle);
+	_directX12.GetCommandList()->DrawIndexedInstanced(_geometries["rect"]->IndexBufferByteSize / sizeof(UINT16), 1, 0, 0, 0);*/
+	_spriteRenderer.DrawEnd();
+    _directX12.CompleteRendering();
 }
 
 
@@ -101,27 +144,26 @@ void Test::LoadShaders()
 void Test::LoadGeometry()
 {
 	GeometryGenerator  geometryGenerator;
-	MeshData rect = geometryGenerator.Rect(1.0f, 1.0f, 1.0f);
+	MeshData rect = geometryGenerator.Rect(2.0f, 2.0f, 1.0f);
+	MeshData rect2 = geometryGenerator.Rect(1.0f, 1.0f, 1.0f);
 
 	SubMeshGeometry rectSubmesh;
 	rectSubmesh.IndexCount = (UINT)rect.Indices.size();
 	rectSubmesh.StartIndexLocation = 0;
 	rectSubmesh.BaseVertexLocation = 0;
 
-	std::vector<VertexPositionTexture> vertices(rect.Vertices.size());
+	std::vector<VertexPositionNormalColorTexture> vertices(rect.Vertices.size());
 	for (UINT64 i = 0; i < rect.Vertices.size(); ++i)
 	{
 		vertices[i].Position = rect.Vertices[i].Position;
+		vertices[i].UV       = rect.Vertices[i].UV;
 	}
-	vertices[0].UV = DirectX::XMFLOAT2(0.0f,1.0f);
-	vertices[1].UV = DirectX::XMFLOAT2(0.0f, 0.0f);
-	vertices[2].UV = DirectX::XMFLOAT2(1.0f, 0.0f);
-	vertices[3].UV = DirectX::XMFLOAT2(1.0f, 1.0f);
+	
 
 	std::vector<UINT16> indices;
 	indices.insert(indices.end(), std::begin(rect.Indices), std::end(rect.Indices));
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexPositionTexture);
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexPositionNormalColorTexture);
 	const UINT ibByteSize = (UINT)indices.size()  * sizeof(UINT16);
 
 	auto geometry = std::make_unique<MeshGeometry>();
@@ -138,7 +180,7 @@ void Test::LoadGeometry()
 	geometry->IndexBufferGPU  = DefaultBuffer(_directX12.GetDevice(), _directX12.GetCommandList(), indices.data(),  ibByteSize, geometry->IndexBufferUploader ).Resource();
 
 	// for vertex and index buffer view 
-	geometry->VertexByteStride     = sizeof(VertexPositionTexture);
+	geometry->VertexByteStride     = sizeof(VertexPositionNormalColorTexture);
 	geometry->VertexBufferByteSize = vbByteSize;
 	geometry->IndexFormat          = DXGI_FORMAT_R16_UINT;
 	geometry->IndexBufferByteSize  = ibByteSize;
@@ -149,15 +191,49 @@ void Test::LoadGeometry()
 
 }
 
+void Test::LoadTextures()
+{
+	TextureLoader texture;
+	texture.LoadTexture(L"Resources/Texture/Test.jpg", _texture);
+	texture.LoadTexture(L"Resources/Texture/Alora.jpg", test);
+	texture.LoadTexture(L"Resources/Texture/textest.png", test2);
+}
+
 void Test::BuildRootSignature()
 {
-	// A root signature is a collection of descriptor tables 
-	// (which feeds data other than vertices to the shader).
+	/*-------------------------------------------------------------------
+	-			Build texture table
+	---------------------------------------------------------------------*/
+	DESCRIPTOR_RANGE textureTable[2];
+	textureTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0);
+	textureTable[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0);
 
-	// build empty root signature
+	/*-------------------------------------------------------------------
+	-			Build root parameter
+	---------------------------------------------------------------------*/
+	ROOT_PARAMETER rootParameter[2];
+	rootParameter[0].InitAsDescriptorTable(1, &textureTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+	rootParameter[1].InitAsDescriptorTable(1, &textureTable[1], D3D12_SHADER_VISIBILITY_VERTEX);
+
+	/*-------------------------------------------------------------------
+	-			Build sampler desc
+	---------------------------------------------------------------------*/
+	STATIC_SAMPLER_DESC samplerDesc;
+	samplerDesc.Init(0, D3D12_FILTER_MIN_MAG_MIP_POINT,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP);
+	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	/*-------------------------------------------------------------------
+	-			 Build root parameter 
+	---------------------------------------------------------------------*/
+	// A root signature is a collection of descriptor tables 
+    // (which feeds data other than vertices to the shader).
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-	rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	rootSignatureDesc.Init(2, rootParameter, 1, &samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(_device.Get(), &_rootSignature);
+
 }
 
 void Test::BuildPSOs()
@@ -166,7 +242,7 @@ void Test::BuildPSOs()
 	-			PSO for default objects
 	---------------------------------------------------------------------*/
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC defaultPsoDesc = _directX12.GetDefaultPSOConfig();
-	defaultPsoDesc.InputLayout = VertexPositionTexture::InputLayout;
+	defaultPsoDesc.InputLayout = VertexPositionNormalColorTexture::InputLayout;
 	defaultPsoDesc.pRootSignature = _rootSignature.Get();
 	defaultPsoDesc.VS =
 	{
@@ -178,7 +254,6 @@ void Test::BuildPSOs()
 		reinterpret_cast<BYTE*>(_pixelShader->GetBufferPointer()),
 		_pixelShader->GetBufferSize()
 	};
-	defaultPsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	ThrowIfFailed(_directX12.GetDevice()->CreateGraphicsPipelineState(&defaultPsoDesc, IID_PPV_ARGS(&_pipelineState)));
 
 }
@@ -194,15 +269,76 @@ void Test::BuildFrameResources()
 }
 void Test::BuildDescriptorHeap()
 {
+	using namespace DirectX;
 
+	/*-------------------------------------------------------------------
+	-			Build basic desc
+	---------------------------------------------------------------------*/
+	D3D12_DESCRIPTOR_HEAP_DESC basicDesc;
+	basicDesc.NumDescriptors = 2;
+	basicDesc.Type           = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	basicDesc.Flags          = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	basicDesc.NodeMask       = 0;
+
+	ThrowIfFailed(_device->CreateDescriptorHeap(&basicDesc, IID_PPV_ARGS(&_basicDescHeap)));
+
+	/*-------------------------------------------------------------------
+	-			Build texture desc
+	---------------------------------------------------------------------*/
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format                        = _texture.Resource.Get()->GetDesc().Format;
+	srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels           = 1;
+	srvDesc.Texture2D.PlaneSlice          = 0;
+	srvDesc.Texture2D.MostDetailedMip     = 0;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	
+	/*-------------------------------------------------------------------
+	-			Build constant buffer desc
+	---------------------------------------------------------------------*/
+	//XMMATRIX matrix = DirectX::XMMatrixIdentity();
+	_constantBuffer = std::make_unique<UploadBuffer<XMMATRIX>>(_device.Get(), 1, true);
+	_constantBuffer->CopyData(0, matrix);
+	UINT cbSize     = CalcConstantBufferByteSize(sizeof(XMMATRIX));
+
+	// Calcurate constant buffer offset
+	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = _constantBuffer->Resource()->GetGPUVirtualAddress();
+	int baseIndex = 0;
+	cbAddress    += (UINT64)baseIndex * cbSize;
+	
+	/*-------------------------------------------------------------------
+	-			Build Constant Buffer View desc
+	---------------------------------------------------------------------*/
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	cbvDesc.BufferLocation = cbAddress;
+	cbvDesc.SizeInBytes    = cbSize;
+
+	/*-------------------------------------------------------------------
+	-			Build  View 
+	---------------------------------------------------------------------*/
+	auto basicHeapHandle = _basicDescHeap.Get()->GetCPUDescriptorHandleForHeapStart();
+	_device->CreateShaderResourceView(
+		_texture.Resource.Get(),
+		&srvDesc,
+		basicHeapHandle);
+
+	basicHeapHandle.ptr += _device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	_device->CreateConstantBufferView(&cbvDesc, basicHeapHandle);
 }
 void Test::BuildConstantBufferView()
 {
+	using namespace DirectX;
 
 }
 #pragma endregion Protected Function
 
 #pragma region Private Function
+void Test::LoadModels()
+{
+	ModelLoader modelLoader;
+	modelLoader.Load3DModel(L"Resources/Model/Miku/HatsuneMiku.pmd", &_miku);
 
+}
 
 #pragma endregion Private Function

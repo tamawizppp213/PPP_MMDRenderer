@@ -21,7 +21,7 @@
 void GameManager::GameStart()
 {
 	_directX12.Initialize(_mainWindow);
-	_sceneManager.Initialize(_directX12);
+	_sceneManager.Initialize();
 }
 
 void GameManager::GameMain()

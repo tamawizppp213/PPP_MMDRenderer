@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DirectX12\Include\DirectX12Base.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Config.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Core.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp" />
+    <ClInclude Include="GameCore\Include\Audio.hpp" />
+    <ClInclude Include="GameCore\Include\Camera.hpp" />
+    <ClInclude Include="GameCore\Include\GameInput.hpp" />
+    <ClInclude Include="GameCore\Include\GamePad.hpp" />
+    <ClInclude Include="GameCore\Include\GameTimer.hpp" />
+    <ClInclude Include="GameCore\Include\Keyboard.hpp" />
+    <ClInclude Include="GameCore\Include\KeyCode.hpp" />
+    <ClInclude Include="GameCore\Include\Mouse.hpp" />
+    <ClInclude Include="GameCore\Include\Save.hpp" />
+    <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
+    <ClInclude Include="GameCore\Include\Screen.hpp" />
+    <ClInclude Include="GameMath\Include\GameMathVector.hpp" />
+    <ClInclude Include="MainGame\Include\Application.hpp" />
+    <ClInclude Include="MainGame\Include\FrameResources.hpp" />
+    <ClInclude Include="MainGame\Include\GameCore.hpp" />
+    <ClInclude Include="MainGame\Include\GameManager.hpp" />
+    <ClInclude Include="MainGame\Include\MotionTest.hpp" />
+    <ClInclude Include="MainGame\Include\Scene.hpp" />
+    <ClInclude Include="MainGame\Include\SceneManager.hpp" />
+    <ClInclude Include="MainGame\Include\TemplateText.hpp" />
+    <ClInclude Include="MainGame\Include\Test.hpp" />
+    <ClInclude Include="MainGame\Include\Title.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DirectX12\Source\DirectX12Base.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12BaseStruct.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Config.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Core.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp" />
+    <ClCompile Include="GameCore\Source\Audio.cpp" />
+    <ClCompile Include="GameCore\Source\Camera.cpp" />
+    <ClCompile Include="GameCore\Source\GameInput.cpp" />
+    <ClCompile Include="GameCore\Source\GamePad.cpp" />
+    <ClCompile Include="GameCore\Source\GameTimer.cpp" />
+    <ClCompile Include="GameCore\Source\Keyboard.cpp" />
+    <ClCompile Include="GameCore\Source\Mouse.cpp" />
+    <ClCompile Include="GameCore\Source\Save.cpp" />
+    <ClCompile Include="GameCore\Source\TextureLoader.cpp" />
+    <ClCompile Include="GameCore\Source\Screen.cpp" />
+    <ClCompile Include="MainGame\Source\Application.cpp" />
+    <ClCompile Include="MainGame\Source\GameCore.cpp" />
+    <ClCompile Include="MainGame\Source\GameManager.cpp" />
+    <ClCompile Include="MainGame\Source\MainGame.cpp" />
+    <ClCompile Include="MainGame\Source\MotionTest.cpp" />
+    <ClCompile Include="MainGame\Source\Scene.cpp" />
+    <ClCompile Include="MainGame\Source\SceneManager.cpp" />
+    <ClCompile Include="MainGame\Source\Test.cpp" />
+    <ClCompile Include="MainGame\Source\Title.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameMath\Include\GameMath.inl" />
+    <None Include="Shader\ShaderBasicStruct.hlsli" />
+    <None Include="Shader\ShaderConstantBuffer.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\ShaderTestPixel.hlsl" />
+    <FxCompile Include="Shader\ShaderTestVertex.hlsl" />
+    <FxCompile Include="Shader\SharderColorTest.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+    </FxCompile>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{4d10a863-3d35-475b-8a82-6896dd036aac}</ProjectGuid>
+    <RootNamespace>MainGame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\MainGame</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\MainGame\Pluguins</AdditionalLibraryDirectories>
+    </Link>
+    <FxCompile>
+      <ShaderModel>6.4</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>..\MainGame</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\MainGame\Pluguins</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

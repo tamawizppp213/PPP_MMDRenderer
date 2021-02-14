@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/DirectX12Core.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12Core.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include <DirectXMath.h>
 #include <memory>

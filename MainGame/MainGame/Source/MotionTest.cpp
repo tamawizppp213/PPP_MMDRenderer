@@ -8,11 +8,11 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Include/MotionTest.hpp"
-#include "DirectX12/Include/DirectX12Shader.hpp"
+#include "DirectX12/Include/Core/DirectX12Shader.hpp"
 #include "DirectX12/Include/DirectX12PrimitiveGeometry.hpp"
-#include "DirectX12/Include/DirectX12VertexTypes.hpp"
-#include "DirectX12/Include/DirectX12BaseStruct.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include <DirectXMath.h>
 #include <DirectXColors.h>
@@ -43,9 +43,8 @@ MotionTest::~MotionTest()
 {
 
 }
-void MotionTest::Initialize(const DirectX12& directX12)
+void MotionTest::Initialize()
 {
-	_directX12 = directX12;
 	
 	_directX12.ResetCommandList();
 
@@ -90,6 +89,11 @@ void MotionTest::LoadShaders()
 void MotionTest::LoadGeometry()
 {
 	LoadPrimitiveGeometry();
+}
+
+void MotionTest::LoadTextures()
+{
+
 }
 
 void MotionTest::BuildRootSignature()

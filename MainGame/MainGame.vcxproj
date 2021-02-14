@@ -19,52 +19,59 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX12\Include\DirectX12Base.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Config.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Core.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Core.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12MeshBuffer.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12FBXFile.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12ModelFile.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12ModelLoader.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12OBJFile.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12PMDConfig.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12PMDFile.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Texture.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp" />
-    <ClInclude Include="GameCore\Include\Audio.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioDecoder.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioMaster.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioSource.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioSource3D.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioTable.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\WavDecoder.hpp" />
-    <ClInclude Include="GameCore\Include\BackGround2D.hpp" />
-    <ClInclude Include="GameCore\Include\Camera.hpp" />
     <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp" />
-    <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
     <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
-    <ClInclude Include="GameCore\Include\FileUtility.hpp" />
-    <ClInclude Include="GameCore\Include\GameInput.hpp" />
-    <ClInclude Include="GameCore\Include\GamePad.hpp" />
-    <ClInclude Include="GameCore\Include\GameTimer.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
+    <ClInclude Include="GameCore\Include\File\Json.hpp" />
+    <ClInclude Include="GameCore\Include\File\FileUtility.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioSource.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioTable.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioMaster.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Fade.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Font.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Sprite.hpp" />
+    <ClInclude Include="GameCore\Include\Camera.hpp" />
     <ClInclude Include="GameCore\Include\Input\GameInput.hpp" />
     <ClInclude Include="GameCore\Include\Input\GamePad.hpp" />
+    <ClInclude Include="GameCore\Include\GameTimer.hpp" />
     <ClInclude Include="GameCore\Include\Input\Keyboard.hpp" />
     <ClInclude Include="GameCore\Include\Input\Mouse.hpp" />
-    <ClInclude Include="GameCore\Include\Keyboard.hpp" />
-    <ClInclude Include="GameCore\Include\KeyCode.hpp" />
-    <ClInclude Include="GameCore\Include\Mouse.hpp" />
     <ClInclude Include="GameCore\Include\Save.hpp" />
     <ClInclude Include="GameCore\Include\Screen.hpp" />
-    <ClInclude Include="GameCore\Include\SoundFile.hpp" />
-    <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
-    <ClInclude Include="GameCore\Include\WavFile.hpp" />
-    <ClInclude Include="GameCore\Include\WavFileConfig.hpp" />
-    <ClInclude Include="GameMath\Include\GameMathVector.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\SpritePipeLineState.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\SpriteRenderer.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Text.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp" />
+    <ClInclude Include="GameMath\Include\GMQueue.hpp" />
+    <ClInclude Include="GameMath\Include\GMRandom.hpp" />
+    <ClInclude Include="GameMath\Include\GMSearch.hpp" />
     <ClInclude Include="GameMath\Include\GMSort.hpp" />
+    <ClInclude Include="GameMath\Include\GMStack.hpp" />
     <ClInclude Include="MainGame\Include\Application.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioDecoder.hpp" />
+    <ClInclude Include="MainGame\Include\SoundManager.hpp" />
     <ClInclude Include="MainGame\Include\FrameResources.hpp" />
     <ClInclude Include="MainGame\Include\GameCore.hpp" />
     <ClInclude Include="MainGame\Include\GameManager.hpp" />
@@ -74,6 +81,7 @@
     <ClInclude Include="MainGame\Include\TemplateText.hpp" />
     <ClInclude Include="MainGame\Include\Test.hpp" />
     <ClInclude Include="MainGame\Include\Title.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\WavDecoder.hpp" />
     <ClInclude Include="Pluguins\DirectXTex\BC.h" />
     <ClInclude Include="Pluguins\DirectXTex\BCDirectCompute.h" />
     <ClInclude Include="Pluguins\DirectXTex\d3dx12.h" />
@@ -84,41 +92,44 @@
     <ClInclude Include="Pluguins\DirectXTex\scoped.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX12\Source\DirectX12Base.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12BaseStruct.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Config.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Core.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Base.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12BaseStruct.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Buffer.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Config.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Core.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12FBXFile.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12ModelLoader.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12OBJFile.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12PMDConfig.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12PMDFile.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Texture.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp" />
-    <ClCompile Include="GameCore\Source\Audio.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp" />
     <ClCompile Include="GameCore\Source\Audio\AudioClip.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\AudioMaster.cpp" />
     <ClCompile Include="GameCore\Source\Audio\AudioSource.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\AudioMaster.cpp" />
     <ClCompile Include="GameCore\Source\Audio\AudioSource3D.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\WavDecoder.cpp" />
-    <ClCompile Include="GameCore\Source\BackGround2D.cpp" />
-    <ClCompile Include="GameCore\Source\Camera.cpp" />
     <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
-    <ClCompile Include="GameCore\Source\GameInput.cpp" />
-    <ClCompile Include="GameCore\Source\GamePad.cpp" />
-    <ClCompile Include="GameCore\Source\GameTimer.cpp" />
+    <ClCompile Include="GameCore\Source\File\Json.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\Fade.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\Font.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\Sprite.cpp" />
+    <ClCompile Include="GameCore\Source\Camera.cpp" />
     <ClCompile Include="GameCore\Source\Input\GameInput.cpp" />
     <ClCompile Include="GameCore\Source\Input\GamePad.cpp" />
+    <ClCompile Include="GameCore\Source\GameTimer.cpp" />
     <ClCompile Include="GameCore\Source\Input\Keyboard.cpp" />
     <ClCompile Include="GameCore\Source\Input\Mouse.cpp" />
-    <ClCompile Include="GameCore\Source\Keyboard.cpp" />
-    <ClCompile Include="GameCore\Source\Mouse.cpp" />
     <ClCompile Include="GameCore\Source\Save.cpp" />
     <ClCompile Include="GameCore\Source\Screen.cpp" />
-    <ClCompile Include="GameCore\Source\TextureLoader.cpp" />
-    <ClCompile Include="GameCore\Source\WavFile.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\SpritePipeLineState.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\SpriteRenderer.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\TextRenderer.cpp" />
     <ClCompile Include="MainGame\Source\Application.cpp" />
     <ClCompile Include="MainGame\Source\GameCore.cpp" />
     <ClCompile Include="MainGame\Source\GameManager.cpp" />
@@ -128,6 +139,7 @@
     <ClCompile Include="MainGame\Source\SceneManager.cpp" />
     <ClCompile Include="MainGame\Source\Test.cpp" />
     <ClCompile Include="MainGame\Source\Title.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\WavDecoder.cpp" />
     <ClCompile Include="Pluguins\DirectXTex\BC.cpp" />
     <ClCompile Include="Pluguins\DirectXTex\BC4BC5.cpp" />
     <ClCompile Include="Pluguins\DirectXTex\BC6HBC7.cpp" />
@@ -151,7 +163,6 @@
     <ClCompile Include="Pluguins\DirectXTex\DirectXTexWIC.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameMath\Include\GameMath.inl" />
     <None Include="Pluguins\DirectXTex\DirectXTex.inl" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_EncodeBlockCS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_TryModeG10CS.inc" />
@@ -160,6 +171,29 @@
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode02CS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode137CS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS.inc" />
+    <None Include="Shader\ShaderBasicStruct.hlsli" />
+    <None Include="Shader\ShaderConstantBuffer.hlsli" />
+    <None Include="Shader\ShaderModelStruct.hlsli" />
+    <None Include="Shader\ShaderTest.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\ShaderTestPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\ShaderTestVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -266,7 +300,13 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\MainGame\Pluguins</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>
+      </StackReserveSize>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -280,10 +320,14 @@
       <AdditionalIncludeDirectories>..\MainGame</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\MainGame\Pluguins</AdditionalLibraryDirectories>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <NoEntryPoint>false</NoEntryPoint>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

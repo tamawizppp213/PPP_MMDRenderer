@@ -2,7 +2,7 @@
 //              Title:  BasicShaderStruct.hlsli
 //            Content:  Basic Vertex 
 //             Author:  Toide Yutaro
-//             Create:  2020_11_
+//             Create:  2020_12_08
 //////////////////////////////////////////////////////////////////////////////////
 struct VSInputPosition
 {

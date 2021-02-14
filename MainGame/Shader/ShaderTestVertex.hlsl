@@ -2,19 +2,20 @@
 //              Title:  BasicShaderStruct.hlsli
 //            Content:  Basic Vertex 
 //             Author:  Toide Yutaro
-//             Create:  2020_11_
+//             Create:  2020_12_08
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "ShaderBasicStruct.hlsli"
 #include "ShaderConstantBuffer.hlsli"
+#include "ShaderTest.hlsli"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define VertexIn  VSInputPositionTexture
-#define VertexOut VSOutputPositionTexture
+#define VertexIn  VSInputPositionNormalColorTexture
+#define VertexOut VSOutputPositionNormalColorTexture
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +24,10 @@ VertexOut VSMain(VertexIn vertexIn)
     VertexOut result;
     
     result.Position = vertexIn.Position;
-    result.UV   = vertexIn.UV;
+    result.Position = mul(projectionViewMatrix, result.Position);
+    result.UV       = vertexIn.UV;
+    result.Normal   = vertexIn.Normal;
+    result.Color    = vertexIn.Color;
     
     return result;
 }

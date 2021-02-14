@@ -28,10 +28,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 bool Application::Initialize()
 {
 	if (!InitializeMainWindow()) { return false; }
-	
+	if (!InitializeGameInput())  { return false; }
+	if (!InitializeGameAudio())  { return false; }
 	return true;
 }
-
+float counter = 0.0f;
 void Application::Run()
 {
 	MSG message = { 0 };
@@ -57,6 +58,7 @@ void Application::Run()
 			if (!_isApplicationPaused)
 			{
 				_gameTimer.AverageFrame(_mainWindow);
+				_gameInput.Update();
 				_gameManager.Instance().GameMain();
 			}
 		}
@@ -66,11 +68,12 @@ void Application::Run()
 
 void Application::Terminate()
 {
+	_gameAudio.Finalize();
+	_gameInput.Finalize();
 	_gameManager.Instance().GameEnd();
 }
 
 #pragma region Private Function
-#include <iostream>
 LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
@@ -81,11 +84,13 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 	case WM_ACTIVATE:  
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
+			_gameInput.GetGamePad().EnableXInput(FALSE);
 			_isApplicationPaused = true;
 			_gameTimer.Stop();
 		}
 		else
 		{
+			_gameInput.GetGamePad().EnableXInput(TRUE);
 			_isApplicationPaused = false;
 			_gameTimer.Start();
 
@@ -188,6 +193,7 @@ bool Application::InitializeMainWindow()
 	/*---------------------------------------------------------------
 						Register Window Class
 	-----------------------------------------------------------------*/
+	_appInstance = GetModuleHandle(NULL);
 	WNDCLASS wc = {};
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProcedure;
@@ -253,5 +259,18 @@ bool Application::InitializeMainWindow()
 	ShowWindow(_mainWindow, SW_SHOW);
 	UpdateWindow(_mainWindow);
 	return true;
+}
+
+bool Application::InitializeGameInput()
+{
+	bool result = true;
+	result      = _gameInput.Initialize(_appInstance, _mainWindow);
+	return result;
+}
+
+bool Application::InitializeGameAudio()
+{
+	bool result = _gameAudio.Initialize();
+	return result;
 }
 #pragma endregion Private Function

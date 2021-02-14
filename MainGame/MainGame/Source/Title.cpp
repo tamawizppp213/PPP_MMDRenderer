@@ -26,9 +26,9 @@ Title::~Title()
 
 }
 
-void Title::Initialize(const DirectX12& directX12) 
+void Title::Initialize() 
 {
-	_directX12 = directX12;
+
 }
 
 void Title::Draw()
@@ -54,6 +54,11 @@ void Title::LoadShaders()
 }
 
 void Title::LoadGeometry()
+{
+
+}
+
+void Title::LoadTextures()
 {
 
 }
