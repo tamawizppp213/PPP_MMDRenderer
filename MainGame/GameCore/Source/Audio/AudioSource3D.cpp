@@ -21,18 +21,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
-AudioSource3D::AudioSource3D()
+AudioSource3D::AudioSource3D() : AudioSource()
 {
 	memset(&_emitter, 0, sizeof(_emitter));
 	memset(&_listener, 0, sizeof(_listener));
 
-	SetEmitterFront   (DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f));
+	SetEmitterFront   (DirectX::XMFLOAT3(0.0f, 0.0f, -1.0f));
 	SetEmitterUp      (DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
-	SetEmitterPosition(DirectX::XMFLOAT3(0.0f, 0.0f, -1.0f));
+	SetEmitterPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f));
 
-	SetListenerFront   (DirectX::XMFLOAT3(0.0f, 0.0f, -1.0f));
+	SetListenerFront   (DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f));
 	SetListenerUp      (DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
-	SetListenerPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f));
+	SetListenerPosition(DirectX::XMFLOAT3(0.0f, 0.0f, -1.0f));
 
 	_emitter.ChannelCount        = 1;
 	_emitter.CurveDistanceScaler = 1.0f;
@@ -75,7 +75,6 @@ bool AudioSource3D::ApplyChange()
 	/*-------------------------------------------------------------------
 	-              Create Audio Listener
 	---------------------------------------------------------------------*/
-	AudioMaster& xAudio = AudioMaster::Instance();
 	X3DAUDIO_LISTENER listener;
 	memset(&listener, 0, sizeof(listener));
 	

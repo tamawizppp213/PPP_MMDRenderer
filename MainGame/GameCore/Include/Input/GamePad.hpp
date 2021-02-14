@@ -2,7 +2,7 @@
 ///             @file   GamePad.hppÅ@(current 1Player only)
 ///             @brief  GamePad
 ///             @author Toide Yutaro
-///             @date   2020_12_29
+///             @date   2020_12_29: , 2021_02_04(ï°êîêlé¿ëï)
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef GAMEPAD_HPP
@@ -22,20 +22,20 @@
 /****************************************************************************
 *				  			GamePadInput
 *************************************************************************//**
-*  @enum class     GamePadInput
+*  @enum class     GamePadInput 
 *  @brief     GamePad
 *****************************************************************************/
 enum class GamePadInput
 {
-	DPAD_UP = 0x0001,
-	DPAD_DOWN = 0x0002,
-	DPAD_LEFT = 0x0004,
+	DPAD_UP    = 0x0001,
+	DPAD_DOWN  = 0x0002,
+	DPAD_LEFT  = 0x0004,
 	DPAD_RIGHT = 0x0008,
 
 	START = 0x0010,
-	BACK = 0x0020,
-	LB = 0x0100,
-	RB = 0x0200,
+	BACK  = 0x0020,
+	LB    = 0x0100,
+	RB    = 0x0200,
 
 	A = 0x1000,
 	B = 0x2000,
@@ -139,10 +139,10 @@ public:
 		static GamePad gamePad;
 		return gamePad;
 	}
-	GamePad(const GamePad&) = delete;
+	GamePad(const GamePad&)            = delete;
 	GamePad& operator=(const GamePad&) = delete;
-	GamePad(GamePad&&) = delete;
-	GamePad& operator=(GamePad&&) = delete;
+	GamePad(GamePad&&)                 = delete;
+	GamePad& operator=(GamePad&&)      = delete;
 private:
 	/****************************************************************************
 	**                Private Function
@@ -158,7 +158,7 @@ private:
 	std::vector<XINPUT_STATE>     _previousStates;
 	std::vector<XINPUT_VIBRATION> _vibrationStates;
 	int _maxPlayer;
-
+	
 };
 
 #endif

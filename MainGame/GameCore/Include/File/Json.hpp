@@ -1,80 +1,110 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   BackGround2D.hpp
-///             @brief  BackGround 2D
+///             @file   Json.hpp
+///             @brief  Json File Loader and Writer
 ///             @author Toide Yutaro
-///             @date   2020_12_24
+///             @date   2021_02_02
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef BACKGROUND2D_HPP
-#define BACKGROUND2D_HPP
+#ifndef JSON_HPP
+#define JSON_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/DirectX12PrimitiveGeometry.hpp"
-#include "DirectX12/Include/DirectX12Geometry.hpp"
-#include "DirectX12/Include/DirectX12Core.hpp"
-#include "DirectX12/Include/DirectX12Base.hpp"
+#include <string>
+#include <map>
 #include <vector>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+class JsonValue;
+using String = std::string;
+using Number = double;
+using Object = std::map<std::string, JsonValue>;
+using Array  = std::vector<JsonValue>;
+using Bool   = bool;
+
+//////////////////////////////////////////////////////////////////////////////////
+//                         Class, enum
+//////////////////////////////////////////////////////////////////////////////////
+/****************************************************************************
+*				  			JsonValueType
+*************************************************************************//**
+*  @enum      JsonValueType
+*  @brief    Types of json files that can be read
+*****************************************************************************/
+enum class JsonValueType
+{
+	String,
+	Number,
+	Object,
+	Array,
+	Bool
+};
 
 /****************************************************************************
-*				  			TemplateClass
+*				  			JsonValue
 *************************************************************************//**
-*  @class     BackGround2D 
-*  @brief     Show BackGround 
+*  @class     JsonValue
+*  @brief     json file parser and writer.
 *****************************************************************************/
-class BackGround2D
+class JsonValue
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void Initialize(const std::vector<std::wstring>& imagePath, DirectX12& directX12);
-	void Update();
-	void Draw();
-	void Terminate();
+	JsonValue Parse(const char* data);
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-
+	JsonValueType Type;
+	union
+	{
+		String string;
+		Number number;
+		Object object;
+		Array  array;
+		Bool   boolean;
+		
+	};
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	BackGround2D()  = default;
-	~BackGround2D() = default;
+	JsonValue();
+	~JsonValue();
+	JsonValue(const JsonValue& jsonValue);
+	JsonValue(const std::string& str);
+	JsonValue(double value);
+	JsonValue(const Object& obj);
+	JsonValue(const Array& arr);
+	JsonValue(bool b);
 
-protected:
-	/****************************************************************************
-	**                Protected Function
-	*****************************************************************************/
-	
-	/****************************************************************************
-	**                Protected Member Variables
-	*****************************************************************************/
-	DirectX12                   _directX12;
-	GeometryGenerator           _geometryGenerator;
-	MeshData                    _rect;
-	BlobComPtr                  _vertexShader;
-	BlobComPtr                  _pixelShader;
-	std::vector<SubMeshGeometry>_subMeshGeometry;
-	std::vector<MeshGeometry>   _meshGeometry;
-	std::vector<ResourceComPtr> _textureBuffers;
-	
+	template<typename T>
+	JsonValue& operator=(const T& value)
+	{
+		(*this).~JsonValue;
+		new(this) JsonValue(value);
+		return *this;
+	}
+
+
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	void LoadTextures(const std::vector<std::wstring>& imagePath);
-	void LoadShaders();
-	void ResizeVectors(const std::vector<std::wstring>& imagePath);
+	JsonValue ParseJsonValue(const char*& data);
+	JsonValue ParseString(const char*& data);
+	JsonValue ParseNumber(const char*& data);
+	JsonValue ParseObject(const char*& data);
+	JsonValue ParseArray (const char*& data);
+	JsonValue ParseBool  (const char*& data);
+	void SkipSpace(const char*& data);
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
 };
-
 #endif

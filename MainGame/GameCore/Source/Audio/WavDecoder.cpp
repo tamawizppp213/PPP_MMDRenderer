@@ -8,7 +8,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Audio/WavDecoder.hpp"
-#include "DirectX12/Include/DirectX12Debug.hpp"
+#include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include <iostream>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define

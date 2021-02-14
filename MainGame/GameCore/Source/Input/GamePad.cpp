@@ -2,7 +2,7 @@
 ///             @file   GamePad.cpp
 ///             @brief  GamePad
 ///             @author Toide Yutaro
-///             @date   2020_12_29(ver1.0) → 2021_02_04(ver2.0)
+///             @date   2020_12_29(ver1.0), 2021_02_04(複数人実装, デバッグ)
 //////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@
 GamePad::GamePad()
 {
 	_maxPlayer = (int)GamePadID::TotalIdNum;
-	_currentStates.resize(_maxPlayer);
-	_previousStates.resize(_maxPlayer);
+	_currentStates  .resize(_maxPlayer);
+	_previousStates .resize(_maxPlayer);
 	_vibrationStates.resize(_maxPlayer);
 
 	for (int i = 0; i < _maxPlayer; ++i)
@@ -114,7 +114,7 @@ void GamePad::Update()
 *****************************************************************************/
 void GamePad::Finalize()
 {
-
+	
 }
 
 /****************************************************************************
@@ -162,7 +162,7 @@ bool GamePad::IsTriggerButton(GamePadInput button, int gamePadId)
 	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
 
 	if (!(_previousStates[gamePadId].Gamepad.wButtons & (int)button) &&
-		(_currentStates[gamePadId].Gamepad.wButtons & (int)button))
+		(_currentStates[gamePadId].Gamepad.wButtons   & (int)button))
 	{
 		return true;
 	}
@@ -222,9 +222,9 @@ bool GamePad::IsTriggerLeftButton(int gamePadId)
 	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
 
 	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bLeftTrigger;
-	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bLeftTrigger;
+	BYTE currentAxis     = _currentStates[gamePadId] .Gamepad.bLeftTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((!previousTrigger) && (currentTrigger))
 	{
@@ -249,7 +249,7 @@ bool GamePad::IsReleaseLeftButton(int gamePadId)
 	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bLeftTrigger;
 	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bLeftTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((previousTrigger) && (!currentTrigger))
 	{
@@ -291,7 +291,7 @@ bool GamePad::IsTriggerRightButton(int gamePadId)
 	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bRightTrigger;
 	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bRightTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((!previousTrigger) && (currentTrigger))
 	{
@@ -314,9 +314,9 @@ bool GamePad::IsReleaseRightButton(int gamePadId)
 	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return false; }
 
 	BYTE previousAxis    = _previousStates[gamePadId].Gamepad.bRightTrigger;
-	BYTE currentAxis     = _currentStates[gamePadId].Gamepad.bRightTrigger;
+	BYTE currentAxis     = _currentStates[gamePadId] .Gamepad.bRightTrigger;
 	bool previousTrigger = (previousAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
-	bool currentTrigger  = (currentAxis > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
+	bool currentTrigger  = (currentAxis  > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? true : false;
 
 	if ((previousTrigger) && (!currentTrigger))
 	{
@@ -386,13 +386,13 @@ bool GamePad::IsPressLStick(int gamePadId)
 	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 
 	if ((x > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
-		(x < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		(x <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 	{
 		return false;
 	}
 
 	if ((y > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
-		(y < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		(y <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 	{
 		return false;
 	}
@@ -417,13 +417,13 @@ bool GamePad::IsPressRStick(int gamePadId)
 	short y = _currentStates[gamePadId].Gamepad.sThumbRY;
 
 	if ((x > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
-		(x < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+		(x <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 	{
 		return false;
 	}
 
 	if ((y > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
-		(y < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+		(y <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 	{
 		return false;
 	}
@@ -506,7 +506,7 @@ float GamePad::LStick_X(int gamePadId)
 	// Range check for gamepad id.
 	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
 
-	short  y = _currentStates[gamePadId].Gamepad.sThumbLX;
+	short  y      = _currentStates[gamePadId].Gamepad.sThumbLX;
 	bool   isPlus = (y >= 0) ? true : false;
 	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
 	return result;
@@ -525,7 +525,7 @@ float GamePad::LStick_Y(int gamePadId)
 	// Range check for gamepad id.
 	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
 
-	short  y = _currentStates[gamePadId].Gamepad.sThumbLY;
+	short  y      = _currentStates[gamePadId].Gamepad.sThumbLY;
 	bool   isPlus = (y >= 0) ? true : false;
 	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
 	return result;
@@ -563,9 +563,9 @@ float GamePad::RStick_Y(int gamePadId)
 	// Range check for gamepad id.
 	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { return 0.0f; }
 
-	short  y = _currentStates[gamePadId].Gamepad.sThumbRY;
+	short  y      = _currentStates[gamePadId].Gamepad.sThumbRY;
 	bool   isPlus = (y >= 0) ? true : false;
-	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f;
+	float  result = isPlus ? (static_cast<float>(y) / SHORT_PLUS_MAX) * 100.0f : (static_cast<float>(y) / SHORT_MINUS_MAX) * 100.0f; 
 	return result;
 }
 
@@ -579,7 +579,7 @@ float GamePad::RStick_Y(int gamePadId)
 *****************************************************************************/
 StickValue GamePad::LStick(int gamePadId)
 {
-	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { ::OutputDebugString(L"Error! An unspecified id was entered."); }
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId){ ::OutputDebugString(L"Error! An unspecified id was entered.");}
 
 	StickValue stickValue;
 	stickValue.XAxis = LStick_X(gamePadId);
@@ -597,7 +597,7 @@ StickValue GamePad::LStick(int gamePadId)
 *****************************************************************************/
 StickValue GamePad::RStick(int gamePadId)
 {
-	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId) { ::OutputDebugString(L"Error! An unspecified id was entered."); }
+	if (gamePadId < 0 || (int)GamePadID::TotalIdNum < gamePadId){ ::OutputDebugString(L"Error! An unspecified id was entered.");}
 
 	StickValue stickValue;
 	stickValue.XAxis = RStick_X(gamePadId);
@@ -624,15 +624,15 @@ void GamePad::SetVibration(float leftMotor, float rightMotor, int gamePadId)
 		return;
 	}
 
-	if (leftMotor > 1.0f) { leftMotor = 1.0f; }
-	if (leftMotor < 0.0f) { leftMotor = 0.0f; }
+	if (leftMotor  > 1.0f) { leftMotor  = 1.0f; }
+	if (leftMotor  < 0.0f) { leftMotor  = 0.0f; }
 	if (rightMotor > 1.0f) { rightMotor = 1.0f; }
 	if (rightMotor < 0.0f) { rightMotor = 0.0f; }
 
-	leftMotor = leftMotor * USHORT_MAX;
+	leftMotor  = leftMotor  * USHORT_MAX;
 	rightMotor = rightMotor * USHORT_MAX;
 
-	_vibrationStates[gamePadId].wLeftMotorSpeed = static_cast<unsigned short>(leftMotor);
+	_vibrationStates[gamePadId].wLeftMotorSpeed  = static_cast<unsigned short>(leftMotor);
 	_vibrationStates[gamePadId].wRightMotorSpeed = static_cast<unsigned short>(rightMotor);
 
 	XInputSetState(gamePadId, &_vibrationStates[gamePadId]);
