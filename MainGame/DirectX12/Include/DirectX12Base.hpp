@@ -2,7 +2,7 @@
 ///             @file   DirectX12Base.hpp
 ///             @brief  DirectX12 Initialize Å` BackGround
 ///             @author Toide Yutaro
-///             @date   2021_01_30 (for texture)
+///             @date   2020_11_
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef DIRECTX12_BASE_HPP
@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12Core.hpp"
 #include "DirectX12Config.hpp"
-#include "DirectX12Debug.hpp"
+#include "DirectX12/Include/DirectX12Debug.hpp"
 #include "GameCore/Include/Screen.hpp"
 #include <Windows.h>
 
@@ -38,60 +38,36 @@ public:
 	void FlushCommandQueue();
 	inline void ResetCommandList()
 	{
-		ThrowIfFailed(_commandAllocator[_currentFrameIndex]->Reset());
-		ThrowIfFailed(_commandList->Reset(_commandAllocator[_currentFrameIndex].Get(), nullptr));
+		ThrowIfFailed(_commandAllocator->Reset());
+		ThrowIfFailed(_commandList->Reset(_commandAllocator.Get(), nullptr));
 	}
 	
 #pragma region Property
-	Device*       GetDevice()                const;
-	CommandList*  GetCommandList()           const;
-	CommandQueue* GetCommandQueue()          const;
-	CommandAllocator* GetCommandAllocator()  const;
-	Resource* GetCurrentRenderTarget()       const;
+	Device*       GetDevice()                    const;
+	CommandList*  GetCommandList()               const;
+	CommandQueue* GetCommandQueue()              const;
+	CommandAllocator* GetCommandAllocator()      const;
+	Resource* GetCurrentBackBuffer()             const;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRenderTargetView() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView()   const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvSrvUavHeapStart() const;
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUCbvSrvUavHeapStart() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvSrvUavHeapPtr(int offsetIndex) const;
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUCbvSrvUavHeapPtr(int offsetIndex) const;
-	ID3D12DescriptorHeap* GetCbvSrvUavHeap() const;
-	INT GetCbvSrvUavDescriptorHeapSize() const;
-	D3D12_VIEWPORT GetViewport()     const;
-	D3D12_RECT     GetScissorRect()  const;
-	INT  GetCurrentFrameIndex()      const;
-	INT  GetCurrentBackBufferIndex() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetConstantBufferView() const;
 	bool Get4xMsaaState() const;
 	void Set4xMsaaState(bool value);
 	void SetHWND(HWND hwnd);
 	HWND GetHWND() const;
 #pragma endregion Property
+
 	// Constructor
 	//DirectX12() = default;
 	//~DirectX12() = default;
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-
-	/****************************************************************************
-	**                Constructor and Destructor
-	*****************************************************************************/
-	static DirectX12& Instance()
-	{
-		static DirectX12 directX12;
-		return directX12;
-	}
-	DirectX12(const DirectX12&)            = delete;
-	DirectX12& operator=(const DirectX12&) = delete;
-	DirectX12(DirectX12&&)                 = delete;
-	DirectX12& operator=(DirectX12&&)      = delete;
-
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	DirectX12()  = default;
-	~DirectX12() = default;
 	void LoadPipeLine();
 	void LoadAssets();
 	
@@ -133,17 +109,17 @@ private:
 	SwapchainComPtr        _swapchain;          /// SwapChain
 	CommandQueueComPtr     _commandQueue;       /// Command Queue (Command Execution Unit)
 	CommandListComPtr      _commandList;        /// Graphics Command List
-	CommandAllocatorComPtr _commandAllocator[FRAME_BUFFER_COUNT];   /// Command Memory Allocator
+	CommandAllocatorComPtr _commandAllocator;   /// Command Memory Allocator
 	DescriptorHeapComPtr   _rtvHeap;            /// Heap For Render Target View 
 	DescriptorHeapComPtr   _dsvHeap;            /// Heap For Depth Stencil View
-	DescriptorHeapComPtr   _cbvSrvUavHeap;      /// Heap For Constant Buffer View
+	DescriptorHeapComPtr   _cbvHeap;            /// Heao Fir Constant Buffer View
 	PipelineStateComPtr    _pipelineState;      /// Graphic Pipeline State
+	ResourceComPtr         _swapchainBuffer[SWAPCHAIN_BUFFER]; /// Swapchain Buffer (0:Front, 1: Back Buffer)
 	ResourceComPtr         _depthStencilBuffer; /// DepthStencl Buffer   
-	ResourceComPtr         _renderTargetList[FRAME_BUFFER_COUNT];
 	UINT _rtvDescriptorSize       = 0;
 	UINT _dsvDescriptorSize       = 0;
 	UINT _cbvSrvUavDescriptorSize = 0;
-	INT  _currentFrameIndex       = 0;
+	INT  _currentBackBuffer       = 0;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC _defaultPSODesc;
 
@@ -152,7 +128,7 @@ private:
 	D3D12_RECT     _scissorRect    = {0,0,0,0};
 
 	// Synchronization Object
-	UINT64      _currentFenceValue[FRAME_BUFFER_COUNT] = {0,0};
+	UINT64      _currentFence = 0; // fence
 	FenceComPtr _fence;
 	HANDLE      _fenceEvent   = nullptr;
 
@@ -163,9 +139,6 @@ private:
 	// Customize starting value
 	DXGI_FORMAT _backBufferFormat   = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-	bool _isWarpAdapter = false;
-
 };
 
 #endif

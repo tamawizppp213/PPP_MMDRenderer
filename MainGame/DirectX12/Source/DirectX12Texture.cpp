@@ -7,12 +7,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Texture.hpp"
-#include "DirectX12/Include/Core/DirectX12Debug.hpp"
-#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/Core/DirectX12Base.hpp"
+#include "DirectX12/Include/DirectX12Texture.hpp"
+#include "DirectX12/Include/DirectX12Debug.hpp"
+#include "DirectX12/Include/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/DirectX12Base.hpp"
+#include <DirectXTex/DirectXTex.h>
 #include <algorithm>
-#include <iostream>
+
 #ifdef _DEBUG
 #pragma comment(lib, "Pluguins/DirectXTexd.lib")
 #else 
@@ -21,44 +23,33 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Texture 
 //////////////////////////////////////////////////////////////////////////////////
 using namespace DirectX;
-
-/****************************************************************************
-*							  LoadTexture
-*************************************************************************//**
-*  @fn         void TextureLoader::LoadTexture(const std::wstring& filePath, ResourceComPtr& texture)
-*  @brief      Load Texture (.tga, .dds, ,png, .jpg, .bmp, .hdr, .sph, .spa)
-*  @param[out] DirectX12& directX12,
-*  @param[in]  const std::wstring& filePath
-*  @param[out] Texture& texture
-*  @return 　　 int
-*****************************************************************************/
-void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
+void Texture::LoadTexture(DirectX12& directX12, const std::wstring& filePath, ResourceComPtr& buffer)
 {
-	DirectX12& directX12 = DirectX12::Instance();
 	/*-------------------------------------------------------------------
 	-               If the file is loaded once, read from it
 	---------------------------------------------------------------------*/
-	if (_textureTableManager.Instance().TextureTable.find(filePath) != _textureTableManager.Instance().TextureTable.end())
+	if (g_textureTable.find(filePath) != g_textureTable.end())
 	{
-		texture = _textureTableManager.Instance().TextureTable[filePath];
+		buffer = g_textureTable[filePath];
 		return;
 	}
 
 	/*-------------------------------------------------------------------
-	-                Choose Extension and Load Texture Data
+	-                Choose extension and Load Texture Data
 	---------------------------------------------------------------------*/
 	TexMetadata  metaData     = {};
 	ScratchImage scratchImage = {};
 	bool isDXT                = false;
 	std::wstring extension    = GetExtension(filePath);
-	
 	/*-------------------------------------------------------------------
 	-    Select the appropriate texture loading function for each extension
 	---------------------------------------------------------------------*/
+	
 	if (extension == L"tga")
 	{
 		ThrowIfFailed(LoadFromTGAFile(filePath.c_str(), TGA_FLAGS_NONE, &metaData, scratchImage));
@@ -79,14 +70,11 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 	auto image      = scratchImage.GetImage(0, 0, 0);
 	bool isDiscrete = true;
 
-	CreateTextureFromImageData(directX12.GetDevice(), image, texture.Resource, isDiscrete);
+	CreateTextureFromImageData(directX12.GetDevice(), image, buffer, isDiscrete);
 
-	/*-------------------------------------------------------------------
-	-                 Transmit texture buffer to GPU
-	---------------------------------------------------------------------*/
 	if (!isDiscrete)
 	{
-		ThrowIfFailed(texture.Resource->WriteToSubresource(
+		ThrowIfFailed(buffer->WriteToSubresource(
 			0,
 			nullptr,
 			image->pixels,
@@ -95,11 +83,8 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 	}
 	else
 	{
-		/*-------------------------------------------------------------------
-		-                 Create Upload Buffer
-		---------------------------------------------------------------------*/
 		D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_UPLOAD);
-		D3D12_RESOURCE_DESC   resourceDesc = RESOURCE_DESC::Buffer(
+		D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Buffer(
 			AlignmentValue(static_cast<UINT>(image->rowPitch), static_cast<UINT>(D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)) * image->height);
 
 		ResourceComPtr uploadBuffer = nullptr;
@@ -111,11 +96,8 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 			nullptr,
 			IID_PPV_ARGS(uploadBuffer.ReleaseAndGetAddressOf())));
 
-		/*-------------------------------------------------------------------
-		-                   Map Upload Buffer
-		---------------------------------------------------------------------*/
 		BYTE* mappedData = nullptr;
-		uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData));
+		uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(mappedData));
 
 		auto address = image->pixels;
 		UINT32 height = isDXT ? static_cast<UINT32>(image->height / 4) : static_cast<UINT32>(image->height);
@@ -123,7 +105,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 		for (UINT32 i = 0; i < height; ++i)
 		{
 			std::copy_n(address, image->rowPitch, mappedData);
-			address    += image->rowPitch;
+			address += image->rowPitch;
 			mappedData += AlignmentValue(
 				static_cast<UINT>(image->rowPitch),
 				D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
@@ -144,7 +126,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 
 		dst.Type             = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 		dst.SubresourceIndex = 0;
-		dst.pResource        = texture.Resource.Get();
+		dst.pResource        = buffer.Get();
 
 		/*-------------------------------------------------------------------
 		-                Copy Texture Region
@@ -155,7 +137,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 		-                Bariier Transition
 		---------------------------------------------------------------------*/
 		directX12.GetCommandList()->ResourceBarrier(1, &BARRIER::Transition(
-			texture.Resource.Get(),
+			buffer.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 
@@ -170,51 +152,12 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 	}
 
 	/*-------------------------------------------------------------------
-	-                    Create SRV Desc
-	---------------------------------------------------------------------*/
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format                        = texture.Resource.Get()->GetDesc().Format;
-	srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels           = 1;
-	srvDesc.Texture2D.PlaneSlice          = 0;
-	srvDesc.Texture2D.MostDetailedMip     = 0;
-	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-
-	/*-------------------------------------------------------------------
-	-                    Create SRV
-	---------------------------------------------------------------------*/
-	_textureTableManager.Instance().ID++;
-	directX12.GetDevice()->CreateShaderResourceView(texture.Resource.Get(), &srvDesc,
-		CPU_DESC_HANDLER(directX12.GetCPUCbvSrvUavHeapStart(), _textureTableManager.Instance().ID, directX12.GetCbvSrvUavDescriptorHeapSize()));
-
-	/*-------------------------------------------------------------------
-	-                    Describe texture infomation
-	---------------------------------------------------------------------*/
-	Texture addTexture;
-	addTexture.Resource   = texture.Resource;
-	addTexture.Format     = texture.Resource.Get()->GetDesc().Format;
-	addTexture.GPUHandler = GPU_DESC_HANDLER(directX12.GetGPUCbvSrvUavHeapStart(), _textureTableManager.Instance().ID, directX12.GetCbvSrvUavDescriptorHeapSize());
-	addTexture.ImageSize  = DirectX::XMFLOAT2(image->width, image->height);
-	/*-------------------------------------------------------------------
 	-                    Add texture table
 	---------------------------------------------------------------------*/
-	_textureTableManager.Instance().TextureTable[filePath] = addTexture;
-	texture = addTexture;
+	g_textureTable[filePath] = buffer;
 }
 
-/****************************************************************************
-*					    CreateTextureFromImageData
-*************************************************************************//**
-*  @fn         void Texture::CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& textureBuffer, bool isDiscreteGPU)
-*  @brief      Load Texture (.tga, .dds, ,png, .jpg, .bmp, .hdr, .sph, .spa)
-*  @param[out] Device* device
-*  @param[in]  const DirectX::Image* image
-*  @param[out] ResourceComPtr& textureBuffer
-*  @param[in]  bool isDiscreteGPU
-*  @return 　　 void
-*****************************************************************************/
-void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& textureBuffer, bool isDiscreteGPU)
+void Texture::CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& buffer, bool isDiscreteGPU)
 {
 	D3D12_HEAP_PROPERTIES heapProperty = {};
 	
@@ -244,7 +187,7 @@ void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Im
 			&resourceDesc,
 			D3D12_RESOURCE_STATE_COPY_DEST,
 			nullptr,
-			IID_PPV_ARGS(textureBuffer.ReleaseAndGetAddressOf())))
+			IID_PPV_ARGS(buffer.ReleaseAndGetAddressOf())))
 	}
 	else
 	{
@@ -254,7 +197,7 @@ void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Im
 			&resourceDesc,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 			nullptr,
-			IID_PPV_ARGS(textureBuffer.ReleaseAndGetAddressOf())));
+			IID_PPV_ARGS(buffer.ReleaseAndGetAddressOf())));
 	}
 	
 }
