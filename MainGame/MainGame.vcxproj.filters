@@ -15,18 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX12\Include\DirectX12Config.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Core.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
+
     <ClInclude Include="GameCore\Include\Audio.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -70,43 +59,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
 
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\GameInput.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\GamePad.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\KeyCode.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Save.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameCore\Include\GameInput.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -182,9 +134,6 @@
     <ClInclude Include="GameCore\Include\Input\GameInput.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Texture.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -223,21 +172,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX12\Source\DirectX12Base.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Config.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Core.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameCore\Source\Audio.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -284,35 +218,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
 
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\GameInput.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\GamePad.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Save.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameCore\Source\GameInput.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -404,9 +309,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Input\Mouse.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Audio\AudioClip.cpp">
