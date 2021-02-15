@@ -19,18 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX12\Include\DirectX12Base.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Config.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Core.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Debug.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Shader.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Texture.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12VertexTypes.hpp" />
     <ClInclude Include="GameCore\Include\Audio.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />
@@ -84,17 +72,6 @@
     <ClInclude Include="Pluguins\DirectXTex\scoped.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX12\Source\DirectX12Base.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12BaseStruct.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Buffer.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Config.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Core.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Debug.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Texture.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12VertexType.cpp" />
     <ClCompile Include="GameCore\Source\Audio.cpp" />
     <ClCompile Include="GameCore\Source\Audio\AudioClip.cpp" />
     <ClCompile Include="GameCore\Source\Audio\AudioMaster.cpp" />
