@@ -154,10 +154,11 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 		/*-------------------------------------------------------------------
 		-                Bariier Transition
 		---------------------------------------------------------------------*/
-		directX12.GetCommandList()->ResourceBarrier(1, &BARRIER::Transition(
+		auto barrier = BARRIER::Transition(
 			texture.Resource.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST,
-			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		directX12.GetCommandList()->ResourceBarrier(1, &barrier);
 
 		/*-------------------------------------------------------------------
 		-                Execute Command List

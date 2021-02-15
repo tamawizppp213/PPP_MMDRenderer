@@ -79,10 +79,12 @@ public:
 			_elementByteSize = CalcConstantBufferByteSize(sizeof(T));
 		}
 
+		auto heapProp = HEAP_PROPERTY(D3D12_HEAP_TYPE_UPLOAD);
+		auto buffer   = RESOURCE_DESC::Buffer((UINT64)_elementByteSize * elementCount);
 		ThrowIfFailed(device->CreateCommittedResource(
-			&HEAP_PROPERTY(D3D12_HEAP_TYPE_UPLOAD),
+			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
-			&RESOURCE_DESC::Buffer((UINT64)_elementByteSize * elementCount),
+			&buffer,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
 			IID_PPV_ARGS(&_uploadBuffer)));
