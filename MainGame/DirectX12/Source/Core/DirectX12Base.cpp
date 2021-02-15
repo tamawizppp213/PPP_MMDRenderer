@@ -117,8 +117,9 @@ void DirectX12::ClearScreen()
 	ResetCommandList();
 
 	// Indicate a state transition (Present -> Render Target)
-	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	auto barrier = BARRIER::Transition(GetCurrentRenderTarget(),
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	_commandList->ResourceBarrier(1, &barrier);
 
 	// Set the viewport and scissor rect. 
 	// This needs to be reset whenever the command list is reset.
@@ -130,7 +131,9 @@ void DirectX12::ClearScreen()
 	_commandList->ClearDepthStencilView(GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Set Render Target 
-	_commandList->OMSetRenderTargets(1, &GetCurrentRenderTargetView(), true, &GetDepthStencilView());
+	auto rtv = GetCurrentRenderTargetView();
+	auto dsv = GetDepthStencilView();
+	_commandList->OMSetRenderTargets(1, &rtv, true, &dsv);
 	ID3D12DescriptorHeap* heapList[] = { _cbvSrvUavHeap.Get() };
 	_commandList->SetDescriptorHeaps(_countof(heapList), heapList);
 }
@@ -149,8 +152,9 @@ void DirectX12::CompleteRendering()
 	/*-------------------------------------------------------------------
 	-      // Indicate a state transition (Render Target -> Present)
 	---------------------------------------------------------------------*/
-	_commandList->ResourceBarrier(1, &BARRIER::Transition(GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	auto barrier = BARRIER::Transition(GetCurrentRenderTarget(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	_commandList->ResourceBarrier(1, &barrier);
 	
 	ThrowIfFailed(_commandList->Close());
 
@@ -462,8 +466,10 @@ void DirectX12::BuildDepthStencilView()
 	optClear.Format               = _depthStencilFormat;
 	optClear.DepthStencil.Depth   = 1.0f;
 	optClear.DepthStencil.Stencil = 0;
+
+	auto heapProp = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
 	ThrowIfFailed(_device->CreateCommittedResource(
-		&HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT),
+		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&depthStencilDesc,
 		D3D12_RESOURCE_STATE_COMMON,
@@ -483,8 +489,9 @@ void DirectX12::BuildDepthStencilView()
 	/*-------------------------------------------------------------------
 	- Transition the resource from its initial state to be used as a depth buffer.
 	---------------------------------------------------------------------*/
-	_commandList->ResourceBarrier(1, &BARRIER::Transition(_depthStencilBuffer.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+	auto barrier = BARRIER::Transition(_depthStencilBuffer.Get(),
+		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	_commandList->ResourceBarrier(1, &barrier);
 }
 
 
