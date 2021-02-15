@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX12\Include\DirectX12Base.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12BaseStruct.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Buffer.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Config.hpp" />
