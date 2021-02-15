@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    
     <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="DirectX12\Include\DirectX12PMDConfig.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12PMDFile.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
+
     <ClInclude Include="GameCore\Include\Audio.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />
