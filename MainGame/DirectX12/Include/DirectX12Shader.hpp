@@ -34,7 +34,7 @@
 *  @param[in] D3D_SHADER_MACRO& defines
 *  @param[in] std::string& entrypoint,
 *  @param[in] std::string& target (ex. ps5_0, vs5_1...)
-*  @return Å@Å@BlobComPtr
+*  @return ÔøΩ@ÔøΩ@BlobComPtr
 *****************************************************************************/
 inline BlobComPtr CompileShader(
 	const std::wstring& fileName,
@@ -73,7 +73,7 @@ inline BlobComPtr CompileShader(
 *  @param[in] std::wstring& fileName : filePath
 *  @param[in] std::wstring& entrypoint,
 *  @param[in] std::wstring& target (ex. ps6_0, vs6_1...)
-*  @return Å@Å@BlobComPtr
+*  @return ÔøΩ@ÔøΩ@BlobComPtr
 *****************************************************************************/
 inline BlobComPtr CompileShader(
 	const std::wstring& fileName,
@@ -140,7 +140,7 @@ inline BlobComPtr CompileShader(
 *  @fn        BlobComPtr LoadBinary(const std::wstring& fileName)
 *  @brief     Load Binary Data (Done Compile)
 *  @param[in] std::wstring& fileName : filePath
-*  @return Å@Å@BlobComPtr
+*  @return ÔøΩ@ÔøΩ@BlobComPtr
 *****************************************************************************/
 inline BlobComPtr LoadBinary(const std::wstring& filename)
 {

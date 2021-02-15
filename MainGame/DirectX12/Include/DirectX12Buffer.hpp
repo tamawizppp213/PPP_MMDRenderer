@@ -23,10 +23,7 @@ static inline UINT CalcConstantBufferByteSize(UINT byteSize)
 	return (byteSize + 255) & ~255;
 }
 
-static inline UINT AlignmentValue(UINT size, UINT alignment)
-{
-	return (size + alignment - (size % alignment));
-}
+
 /****************************************************************************
 *							 DefaultBuffer
 *************************************************************************//**
