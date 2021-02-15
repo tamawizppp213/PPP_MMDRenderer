@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+
     <ClInclude Include="GameCore\Include\Audio.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
     <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />

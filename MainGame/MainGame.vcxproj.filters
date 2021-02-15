@@ -15,6 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+
     <ClInclude Include="GameCore\Include\Audio.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -57,6 +58,7 @@
     <ClInclude Include="GameCore\Include\Screen.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+
     <ClInclude Include="GameCore\Include\GameInput.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -215,6 +217,7 @@
     <ClCompile Include="GameCore\Source\Screen.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+
     <ClCompile Include="GameCore\Source\GameInput.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
