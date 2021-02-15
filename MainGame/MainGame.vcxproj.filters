@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX12\Include\DirectX12Base.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectX12\Include\DirectX12Config.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
