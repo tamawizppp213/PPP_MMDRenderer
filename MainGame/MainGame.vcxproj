@@ -72,7 +72,11 @@
     <ClInclude Include="GameCore\Include\WavFile.hpp" />
     <ClInclude Include="GameCore\Include\WavFileConfig.hpp" />
     <ClInclude Include="GameMath\Include\GameMathVector.hpp" />
+    <ClInclude Include="GameMath\Include\GMDistribution.hpp" />
+    <ClInclude Include="GameMath\Include\GMQueue.hpp" />
+    <ClInclude Include="GameMath\Include\GMSearch.hpp" />
     <ClInclude Include="GameMath\Include\GMSort.hpp" />
+    <ClInclude Include="GameMath\Include\GMStack.hpp" />
     <ClInclude Include="MainGame\Include\Application.hpp" />
     <ClInclude Include="MainGame\Include\FrameResources.hpp" />
     <ClInclude Include="MainGame\Include\GameCore.hpp" />
