@@ -284,6 +284,855 @@
     <ClInclude Include="GameCore\Include\Model\FBX\FBXFile.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxalloc.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxarch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxdebug.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxnew.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxstdcompliant.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxtypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxarray.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxbitset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxcharptrset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxcontainerallocators.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxdynamicarray.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxfile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxfolder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxhashmap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxintrusivelist.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxmap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxmemorypool.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxmultimap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxpair.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxredblacktree.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxstatus.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxstring.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxstringlist.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxtimecode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxtime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxutils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxaffinematrix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxdualquaternion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxmath.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxmatrix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxquaternion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxtransforms.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxvector2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxvector4.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxatomic.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxclock.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxthread.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxsync.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxclassid.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxconnectionpoint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxdatatypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxemitter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxeventhandler.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxevent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxlistener.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxloadingstrategy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxmanager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxmodule.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxobject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxplugin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxperipheral.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxplugincontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxproperty.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertydef.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertyhandle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertypage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertytypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxqueryevent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxquery.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxscopedloadingdirectory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxscopedloadingfilename.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxstream.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxsymbol.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxsystemunit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxxref.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladaanimationelement.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladaelement.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladaiostream.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladanamespace.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladatokens.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladautils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxreadercollada14.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxwritercollada14.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxreaderfbx5.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxreaderfbx6.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxreaderfbx7.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxwriterfbx5.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxwriterfbx6.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbx\fbxwriterfbx7.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxbase64coder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxcallbacks.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxexporter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxexternaldocreflistener.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxfiletokens.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxglobalcamerasettings.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxgloballightsettings.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxglobalsettings.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxgobo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbximporter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxiobase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxiopluginregistry.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxiosettings.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxiosettingspath.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxprogress.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxreader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxstatistics.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxstatisticsfbx.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\fbxwriter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimcurve.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimcurvebase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimcurvefilters.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimcurvenode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimevalclassic.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimevalstate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimevaluator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimstack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimutilities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxcharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxcharacternodename.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxcharacterpose.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintaim.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintcustom.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintparent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintposition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintrotation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintscale.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintsinglechainik.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxconstraintutils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxcontrolset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxhik2fbxcharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxblendshape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcache.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxblendshapechannel.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcachedeffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcameraswitcher.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcamerastereo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcluster.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxdeformer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxgenericnode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxgeometry.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxgeometrybase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxgeometryweightedmap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxlayercontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxlight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxlimitsutilities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxline.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxlodgroup.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxmarker.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxmesh.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxnode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxnodeattribute.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxnull.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxnurbs.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxnurbscurve.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxnurbssurface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxopticalreference.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxpatch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxproceduralgeometry.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxshape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxskeleton.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxskin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxsubdeformer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxsubdiv.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxtrimnurbssurface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxvertexcachedeformer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxweightedmapping.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxbindingoperator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxbindingsentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxbindingtable.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxbindingtablebase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxbindingtableentry.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxconstantentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxfiletexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbximplementation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbximplementationfilter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbximplementationutils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxlayeredtexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxlayerentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxoperatorentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxproceduraltexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxpropertyentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxsemanticentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxshadingconventions.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxsurfacelambert.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxsurfacematerial.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxsurfacematerialutils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxsurfacephong.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxtexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaudio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaudiolayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaxissystem.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcollection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcollectionexclusive.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcontainertemplate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdisplaylayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdocument.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdocumentinfo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxenvironment.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxgroupname.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxlibrary.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxmediaclip.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectfilter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectmetadata.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectscontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxpose.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxreference.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxscene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxselectionset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxselectionnode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxtakeinfo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxthumbnail.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxvideo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxclonemanager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxdeformationsevaluator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxembeddedfilesaccumulator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxgeometryconverter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxmanipulators.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxmaterialconverter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxnamehandler.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxprocessor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxprocessorshaderdependency.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxprocessorxref.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxprocessorxrefuserlib.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrenamingstrategy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrenamingstrategybase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrenamingstrategyfbx5.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrenamingstrategyfbx6.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrenamingstrategyfbx7.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrenamingstrategyutilities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxrootnodeutility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxscenecheckutility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxusernotification.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_def.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_nsbegin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_nsend.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_version.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\c14n.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\catalog.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\chvalid.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\debugXML.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\dict.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\DOCBparser.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\encoding.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\entities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\globals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\hash.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\HTMLparser.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\HTMLtree.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\list.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\nanoftp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\nanohttp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\parser.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\parserInternals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\pattern.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\relaxng.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\SAX2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\SAX.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\schemasInternals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\schematron.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\threads.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\tree.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\uri.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\valid.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xinclude.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xlink.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlautomata.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlerror.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlexports.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlIO.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlmemory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlmodule.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlreader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlregexp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlsave.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlschemas.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlschemastypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlstring.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlunicode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlversion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlwin32version.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xmlwriter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xpath.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xpathInternals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xpointer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCore\Source\Audio.cpp">
