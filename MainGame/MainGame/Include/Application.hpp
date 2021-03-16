@@ -13,6 +13,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/GameTimer.hpp"
 #include "GameCore/Include/Screen.hpp"
+#include "GameCore/Include/Input/GameInput.hpp"
+#include "GameCore/Include/Audio/AudioMaster.hpp"
 #include "GameManager.hpp"
 #include <Windows.h>
 
@@ -59,11 +61,15 @@ private:
 	Application()  = default;
 	~Application() = default;
 	bool InitializeMainWindow();
+	bool InitializeGameInput();
+	bool InitializeGameAudio();
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
 	GameManager& _gameManager = GameManager::Instance();
+	GameInput&   _gameInput   = GameInput::Instance();
+	AudioMaster& _gameAudio   = AudioMaster::Instance();
 	GameTimer    _gameTimer;
 
 	/*----------------------------------------------------------

@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
+#include "GameCore/Include/Input/GameInput.hpp"
 #include "MainGame/Include/Title.hpp"
 #include <iostream>
 //////////////////////////////////////////////////////////////////////////////////
@@ -26,21 +27,23 @@ Title::~Title()
 
 }
 
-void Title::Initialize(const DirectX12& directX12) 
+void Title::Initialize(GameTimer& gameTimer) 
 {
-	_directX12 = directX12;
-}
-
-void Title::Draw()
-{
-	_directX12.ClearScreen();
-	_directX12.CompleteRendering();
+	_gameTimer = &gameTimer;
 }
 
 void Title::Update()
 {
 	
 }
+
+void Title::Draw()
+{
+	_directX12.ClearScreen();
+
+	_directX12.CompleteRendering();
+}
+
 
 void Title::Terminate()
 {
@@ -54,6 +57,11 @@ void Title::LoadShaders()
 }
 
 void Title::LoadGeometry()
+{
+
+}
+
+void Title::LoadTextures()
 {
 
 }

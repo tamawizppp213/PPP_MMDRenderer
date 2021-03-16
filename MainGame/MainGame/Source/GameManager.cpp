@@ -18,10 +18,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
-void GameManager::GameStart()
+void GameManager::GameStart(GameTimer& gameTimer)
 {
 	_directX12.Initialize(_mainWindow);
-	_sceneManager.Initialize(_directX12);
+	_sceneManager.Initialize(gameTimer);
 }
 
 void GameManager::GameMain()

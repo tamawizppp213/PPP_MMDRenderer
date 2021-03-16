@@ -28,7 +28,7 @@ public:
 	*****************************************************************************/
 	Title();
 	~Title();
-	void Initialize(const DirectX12& directX12) override;
+	void Initialize(GameTimer& gameTimer) override;
 	void Draw()       override;
 	void Update()     override;
 	void Terminate()  override;
@@ -38,19 +38,20 @@ public:
 	*****************************************************************************/
 
 protected:
-	void LoadShaders()             override;
-	void LoadGeometry()            override;
-	void BuildPSOs()               override;
-	void BuildRootSignature()      override;
-	void BuildRenderItem()         override;
-	void BuildFrameResources()     override;
-	void BuildDescriptorHeap()     override;
-	void BuildConstantBufferView() override;
+	void LoadShaders();
+	void LoadGeometry();
+	void LoadTextures();
+	void BuildPSOs();
+	void BuildRootSignature();
+	void BuildRenderItem();
+	void BuildFrameResources();
+	void BuildDescriptorHeap();
+	void BuildConstantBufferView();
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	DirectX12 _directX12;
+	DirectX12& _directX12 = DirectX12::Instance();
 
 	/****************************************************************************
 	**                Private Member Variables
