@@ -114,10 +114,10 @@ typedef int (XMLCALL *xmlOutputCloseCallback) (void * context);
 }
 #endif
 
-#include <libxml/globals.h>
-#include <libxml/tree.h>
-#include <libxml/parser.h>
-#include <libxml/encoding.h>
+#include <libxml2/libxml/globals.h>
+#include <libxml2/libxml/tree.h>
+#include <libxml2/libxml/parser.h>
+#include <libxml2/libxml/encoding.h>
 
 #ifdef __cplusplus
 extern "C" {

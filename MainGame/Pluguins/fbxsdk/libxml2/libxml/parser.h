@@ -807,9 +807,9 @@ typedef xmlParserInputPtr (*xmlExternalEntityLoader) (const char *URL,
 }
 #endif
 
-#include <libxml/encoding.h>
-#include <libxml/xmlIO.h>
-#include <libxml/globals.h>
+#include <libxml2/libxml/encoding.h>
+#include <libxml2/libxml/xmlIO.h>
+#include <libxml2/libxml/globals.h>
 
 #ifdef __cplusplus
 extern "C" {
