@@ -36,7 +36,7 @@ using namespace DirectX;
 *  @param[out] Texture& texture
 *  @return @@ int
 *****************************************************************************/
-void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
+void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, TextureType type)
 {
 	DirectX12& directX12 = DirectX12::Instance();
 	/*-------------------------------------------------------------------
@@ -174,14 +174,26 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture)
 	-                    Create SRV Desc
 	---------------------------------------------------------------------*/
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format                        = texture.Resource.Get()->GetDesc().Format;
-	srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels           = 1;
-	srvDesc.Texture2D.PlaneSlice          = 0;
-	srvDesc.Texture2D.MostDetailedMip     = 0;
-	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-
+	switch (type)
+	{
+		case TextureType::Texture2D:
+			srvDesc.Format                        = texture.Resource.Get()->GetDesc().Format;
+			srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels           = 1;
+			srvDesc.Texture2D.PlaneSlice          = 0;
+			srvDesc.Texture2D.MostDetailedMip     = 0;
+			srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+			break;
+		case TextureType::TextureCube:
+			srvDesc.Format                        = texture.Resource.Get()->GetDesc().Format;
+			srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURECUBE;
+			srvDesc.TextureCube.MipLevels           = 1;
+			srvDesc.TextureCube.MostDetailedMip     = 0;
+			srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+			break;
+	}
 	/*-------------------------------------------------------------------
 	-                    Create SRV
 	---------------------------------------------------------------------*/

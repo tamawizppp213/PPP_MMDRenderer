@@ -49,7 +49,7 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	inline D3D12_VERTEX_BUFFER_VIEW& VertexBufferView() const
+	inline D3D12_VERTEX_BUFFER_VIEW VertexBufferView() const
 	{
 		D3D12_VERTEX_BUFFER_VIEW vbv;
 		vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
@@ -59,7 +59,7 @@ public:
 		return vbv;
 	}
 
-	inline D3D12_INDEX_BUFFER_VIEW& IndexBufferView() const
+	inline D3D12_INDEX_BUFFER_VIEW IndexBufferView() const
 	{
 		D3D12_INDEX_BUFFER_VIEW ibv;
 		ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();

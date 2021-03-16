@@ -89,19 +89,18 @@ public:
 			nullptr,
 			IID_PPV_ARGS(&_uploadBuffer)));
 
-		ThrowIfFailed(_uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedData)));
 	}
 
 	UploadBuffer(const UploadBuffer& rhs)            = delete;
 	UploadBuffer& operator=(const UploadBuffer& rhs) = delete;
 	~UploadBuffer()
 	{
-		if (_uploadBuffer != nullptr)
+		/*if (_uploadBuffer != nullptr)
 		{
 			_uploadBuffer->Unmap(0, nullptr);
 		}
 
-		_mappedData = nullptr;
+		_mappedData = nullptr;*/
 	}
 
 	inline ID3D12Resource1* Resource() const
@@ -109,9 +108,19 @@ public:
 		return _uploadBuffer.Get();
 	}
 
+	inline void CopyStart()
+	{
+		ThrowIfFailed(_uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedData)));
+	}
+
 	inline void CopyData(int elementIndex, const T& data)
 	{
 		memcpy(&_mappedData[elementIndex * _elementByteSize], &data, sizeof(T));
+	}
+
+	inline void CopyEnd()
+	{
+		_uploadBuffer->Unmap(0, nullptr);
 	}
 
 private:

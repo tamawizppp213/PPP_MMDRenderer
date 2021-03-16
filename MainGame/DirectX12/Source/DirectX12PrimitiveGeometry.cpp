@@ -411,7 +411,8 @@ MeshData GeometryGenerator::Cylinder(float bottomRadius, float topRadius, float 
 			float dr = bottomRadius - topRadius;
 			XMFLOAT3 bitangent(dr * c, -height, dr * s);
 
-			XMVECTOR T = XMLoadFloat3(&XMFLOAT3(-s, 0.0f, c));
+			XMFLOAT3 t = XMFLOAT3(-s, 0.0f, c);
+			XMVECTOR T = XMLoadFloat3(&t);
 			XMVECTOR B = XMLoadFloat3(&bitangent);
 			XMVECTOR N = XMVector3Normalize(XMVector3Cross(T, B));
 			XMStoreFloat3(&vertex.Normal, N);

@@ -29,6 +29,22 @@ struct Texture
 	DirectX::XMFLOAT2 ImageSize;
 };
 
+enum class TextureType : UINT
+{
+	Unknown          = 0,
+	Buffer           = 1,
+	Texture1D        = 2,
+	Texture1DArray   = 3,
+	Texture2D        = 4,
+	Texture2DArray   = 5,
+	Texture2DMS      = 6,
+	Texture2DMSArray = 7,
+	Texture3D        = 8,
+	TextureCube      = 9,
+	TextureCubeArray = 10,
+	RayTracing_Acceleration_Structure = 11
+};
+
 /****************************************************************************
 *				  		TextureTable (Singleton) 
 *************************************************************************//**
@@ -87,7 +103,7 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void LoadTexture(const std::wstring& filePath, Texture& texture);
+	void LoadTexture(const std::wstring& filePath, Texture& texture, TextureType type = TextureType::Texture2D );
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
