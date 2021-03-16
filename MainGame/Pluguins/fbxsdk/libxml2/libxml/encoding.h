@@ -160,7 +160,7 @@ struct _xmlCharEncodingHandler {
 #ifdef __cplusplus
 }
 #endif
-#include <libxml/tree.h>
+#include <libxml2/libxml/tree.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

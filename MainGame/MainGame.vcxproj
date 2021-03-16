@@ -586,7 +586,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\MainGame;..\MainGame/Pluguins;..\MainGame/Pluguins/fbxsdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MainGame;..\MainGame/Pluguins;..\MainGame/Pluguins/fbxsdk;..\MainGame/Pluguins/libxml2</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

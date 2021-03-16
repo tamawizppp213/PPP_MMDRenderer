@@ -169,7 +169,7 @@ struct _xmlGlobalState
 #ifdef __cplusplus
 }
 #endif
-#include <libxml/threads.h>
+#include <libxml2/libxml/threads.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

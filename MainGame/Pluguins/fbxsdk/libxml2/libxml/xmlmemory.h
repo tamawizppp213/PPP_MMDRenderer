@@ -215,8 +215,8 @@ XMLPUBFUN char * XMLCALL
 
 #ifndef __XML_GLOBALS_H
 #ifndef __XML_THREADS_H__
-#include <libxml/threads.h>
-#include <libxml/globals.h>
+#include <libxml2/libxml/threads.h>
+#include <libxml2/libxml/globals.h>
 #endif
 #endif
 

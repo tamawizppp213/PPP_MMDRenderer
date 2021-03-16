@@ -39,8 +39,8 @@ typedef xmlRegExecCtxt *xmlRegExecCtxtPtr;
 #ifdef __cplusplus
 }
 #endif
-#include <libxml/tree.h>
-#include <libxml/dict.h>
+#include <libxml2/libxml/tree.h>
+#include <libxml2/libxml/dict.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
