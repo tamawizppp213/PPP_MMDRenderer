@@ -2,7 +2,7 @@
 ///             @file   SpriteRenderer.cpp
 ///             @brief  Sprite Renderer class 
 ///             @author Toide Yutaro
-///             @date   2021_01_22
+///             @date   2021_03_16
 //////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,41 @@ bool SpriteRenderer::Initialize()
 }
 
 
+bool SpriteRenderer::DrawStart()
+{
+	
+	/*-------------------------------------------------------------------
+	-               Prepare variable
+	---------------------------------------------------------------------*/
+	DirectX12& directX12                      = DirectX12::Instance();
+	CommandList* commandList                  = directX12.GetCommandList();
+	SpritePSOManager& spriteManager           = SpritePSOManager::Instance();
+	int currentFrameIndex                     = directX12.GetCurrentFrameIndex();
+	SpriteType spriteType                     = SpriteType::TEXTURE;
+	_textureDescHeap                          = directX12.GetCbvSrvUavHeap();
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = _meshBuffer[currentFrameIndex].VertexBufferView();
+	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = _meshBuffer[currentFrameIndex].IndexBufferView();
+	auto rtv          = directX12.GetCurrentRenderTargetView();
+	auto dsv          = directX12.GetDepthStencilView();
+	auto viewport     = directX12.GetViewport();
+	auto scissorRects = directX12.GetScissorRect();
 
+	/*-------------------------------------------------------------------
+	-               Execute commandlist
+	---------------------------------------------------------------------*/
+	commandList->SetGraphicsRootSignature(spriteManager.GetRootSignature(spriteType).Get());
+	commandList->SetPipelineState(spriteManager.GetPipelineState(spriteType).Get());
+	ID3D12DescriptorHeap* heapList[] = {_textureDescHeap.Get()};
+	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
+	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUCbvSrvUavHeapStart());
+	commandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->IASetVertexBuffers(0,1,&vertexBufferView);
+	commandList->IASetIndexBuffer(&indexBufferView);
+	commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
+	commandList->RSSetViewports(1, &viewport);
+	commandList->RSSetScissorRects(1, &scissorRects);
+	return true;
+}
 bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const DirectX::XMMATRIX& matrix)
 {
 	/*-------------------------------------------------------------------
@@ -72,11 +106,10 @@ bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& 
 	int currentFrameIndex           = directX12.GetCurrentFrameIndex();
 	SpriteType spriteType           = spriteList[0].GetSpriteType();
 	_textureDescHeap                = directX12.GetCbvSrvUavHeap();
-
-	/*-------------------------------------------------------------------
-	-               Reset commandlist
-	---------------------------------------------------------------------*/
-	//directX12.ResetCommandList();
+	auto rtv          = directX12.GetCurrentRenderTargetView();
+	auto dsv          = directX12.GetDepthStencilView();
+	auto viewport     = directX12.GetViewport();
+	auto scissorRects = directX12.GetScissorRect();
 
 	/*-------------------------------------------------------------------
 	-               Check whether spriteList is empty 
@@ -86,38 +119,28 @@ bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& 
 		return true;
 	}
 
-	_projectionViewMatrix = matrix;
-	_constantBuffer->CopyData(0, _projectionViewMatrix);
-
 	/*-------------------------------------------------------------------
-	-               Execute commandlist
+	-               Copy ProjectionViewMatrix
 	---------------------------------------------------------------------*/
-	commandList->SetGraphicsRootSignature(spriteManager.GetRootSignature(spriteType).Get());
-	commandList->SetPipelineState(spriteManager.GetPipelineState(spriteType).Get());
-	ID3D12DescriptorHeap* heapList[] = {_textureDescHeap.Get()};
-	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
-	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUCbvSrvUavHeapStart());
-	commandList->SetGraphicsRootDescriptorTable(1, texture.GPUHandler);
-	commandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->IASetVertexBuffers(0,1,&_meshBuffer[currentFrameIndex].VertexBufferView());
-	commandList->IASetIndexBuffer(&_meshBuffer[currentFrameIndex].IndexBufferView());
-	commandList->OMSetRenderTargets(1, &directX12.GetCurrentRenderTargetView(), FALSE, &directX12.GetDepthStencilView());
-	commandList->RSSetViewports(1, &directX12.GetViewport());
-	commandList->RSSetScissorRects(1, &directX12.GetScissorRect());
+	_projectionViewMatrix = matrix;
+	_constantBuffer->CopyStart();
+	_constantBuffer->CopyData(0, _projectionViewMatrix);
+	_constantBuffer->CopyEnd();
+
 
 	/*-------------------------------------------------------------------
 	-               Add vertex data 
 	---------------------------------------------------------------------*/
-	for (int i = 0; i < min(spriteList.size(), MaxSpriteCount); ++i)
+	_dynamicVertexBuffer[currentFrameIndex]->CopyStart();
+	for (int i = 0; i < min(spriteList.size(), (INT64)MaxSpriteCount - (INT64)_spriteStackCount); ++i)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
 			_dynamicVertexBuffer[currentFrameIndex]->CopyData((i + _spriteStackCount) * 4 + j, spriteList[i].Vertices[j]);
 		}
 	}
-	//commandList->DrawIndexedInstanced((UINT)(6 * _spriteStackCount), 1, _meshBuffer[currentFrameIndex].StartIndexLocation, 0, 0);
-	//commandList->DrawIndexedInstanced((UINT)(6 * spriteList.size()), 1, 6 * _spriteStackCount, 4 * spriteList.size(), 1);
-	//if (FAILED(commandList->Close())) { return false; }
+	_dynamicVertexBuffer[currentFrameIndex]->CopyEnd();
+
 
 	/*-------------------------------------------------------------------
 	-               Count sprite num
@@ -125,6 +148,7 @@ bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& 
 	_drawCallNum++;
 	_spriteStackCount += static_cast<int>(spriteList.size());
 	_spriteCountList.push_back(static_cast<int>(spriteList.size()));
+	_textures.push_back(texture);
 
 	return true;
 }
@@ -141,25 +165,29 @@ bool SpriteRenderer::DrawEnd()
 	/*-------------------------------------------------------------------
 	-                 Draw
 	---------------------------------------------------------------------*/
-	UINT spriteCounter = 0;
-	//for (int i = 0; i < _spriteCountList.size(); ++i)
-	//{
-	//	//commandList->DrawIndexedInstanced(6 * _spriteCountList[i], 1, 6 * spriteCounter, 4 * spriteCounter, 0);
-	//	spriteCounter += _spriteCountList[i];
-	//}
-	commandList->DrawIndexedInstanced((UINT)(6 * _spriteStackCount), 1, _meshBuffer[currentFrameIndex].StartIndexLocation, 0, 0);
+	int spriteCounter = 0;
+	for (int i = 0; i < _drawCallNum; ++i)
+	{
+		commandList->SetGraphicsRootDescriptorTable(1, _textures[i].GPUHandler);
+		commandList->DrawIndexedInstanced((UINT)(6 * _spriteCountList[i]), 1, 6 * spriteCounter, 0, 1);
+		spriteCounter += _spriteCountList[i];
+	}
 
 	/*-------------------------------------------------------------------
 	-               Reset Stack Count 
 	---------------------------------------------------------------------*/
 	_spriteStackCount = 0;
 	_drawCallNum      = 0;
+	spriteCounter     = 0;
 	_spriteCountList.clear();
+	_textures.clear();
+	_vertices.clear();
 	
 	/*-------------------------------------------------------------------
 	-               Reset VertexData
 	---------------------------------------------------------------------*/
 	VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4 * MaxSpriteCount];
+	_dynamicVertexBuffer[currentFrameIndex]->CopyStart();
 	for (int j = 0; j < 4 * min(_spriteStackCount, MaxSpriteCount); ++j)
 	{
 		vertices[j].Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -168,6 +196,7 @@ bool SpriteRenderer::DrawEnd()
 		vertices[j].UV       = DirectX::XMFLOAT2(0.0f, 0.0f);
 		_dynamicVertexBuffer[currentFrameIndex]->CopyData(j, vertices[j]);
 	}
+	_dynamicVertexBuffer[currentFrameIndex]->CopyEnd();
 	delete[] vertices;
 	return true;
 }
@@ -202,6 +231,7 @@ bool SpriteRenderer::PrepareVertexBuffer()
 		VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4 * MaxSpriteCount];
 		_dynamicVertexBuffer[i] = std::make_shared<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), MaxSpriteCount * 4, false);
 
+		_dynamicVertexBuffer[i]->CopyStart();
 		for (int j = 0; j < MaxSpriteCount * 4; ++j)
 		{
 			vertices[j].Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -210,7 +240,7 @@ bool SpriteRenderer::PrepareVertexBuffer()
 			vertices[j].UV       = DirectX::XMFLOAT2(0.0f, 0.0f);
 			_dynamicVertexBuffer[i]->CopyData(j, vertices[j]);
 		}
-
+		_dynamicVertexBuffer[i]->CopyEnd();
 		const UINT vbByteSize = (UINT)MaxSpriteCount * 4 * sizeof(VertexPositionNormalColorTexture);
 
 		/*-------------------------------------------------------------------
@@ -266,6 +296,7 @@ bool SpriteRenderer::PrepareIndexBuffer()
 	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader).Resource();
 	_meshBuffer[0].IndexFormat         = DXGI_FORMAT_R16_UINT;
 	_meshBuffer[0].IndexBufferByteSize = ibByteSize;
+	_meshBuffer[0].IndexCount          = indices.size();
 	if (FAILED(D3DCreateBlob(ibByteSize, &_meshBuffer[0].IndexBufferCPU)))
 	{
 		::OutputDebugString(L"Can't create blob data (index)");
@@ -289,6 +320,14 @@ bool SpriteRenderer::PrepareIndexBuffer()
 	return true;
 }
 
+/****************************************************************************
+*                       PrepareConstantBuffer
+*************************************************************************//**
+*  @fn        bool SpriteRenderer::PrepareConstantBuffer()
+*  @brief     Prepare constant buffer by the amount of the maxSpriteCount
+*  @param[in] void
+*  @return Å@Å@bool
+*****************************************************************************/
 bool SpriteRenderer::PrepareConstantBuffer()
 {
 	using namespace DirectX;
@@ -298,8 +337,9 @@ bool SpriteRenderer::PrepareConstantBuffer()
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
 	_constantBuffer = std::make_shared<UploadBuffer<XMMATRIX>>(directX12.GetDevice(), 1, true);
+	_constantBuffer->CopyStart();
 	_constantBuffer->CopyData(0, _projectionViewMatrix);
-	
+	_constantBuffer->CopyEnd();
 	/*-------------------------------------------------------------------
 	-			Build Constant Buffer View descriptor
 	---------------------------------------------------------------------*/

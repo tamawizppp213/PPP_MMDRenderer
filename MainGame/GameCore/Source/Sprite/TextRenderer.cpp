@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define ASCII_START_CHAR 20 // start from ' '. 
+#define ASCII_START_CHAR 32 // start from ' '. 
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
@@ -35,6 +35,11 @@ bool TextRenderer::Initialize()
 	return true;
 }
 
+bool TextRenderer::DrawStart()
+{
+	if (!SpriteRenderer::DrawStart()) { return false; }
+	return true;
+}
 /****************************************************************************
 *							DrawString
 *************************************************************************//**
@@ -76,13 +81,14 @@ bool TextRenderer::DrawString(FontType fontType, const TextString& text, const D
 			0.0f);
 
 		XMFLOAT2 u = XMFLOAT2(
-			(string[(INT64)i]     - ASCII_START_CHAR) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth),
-			(string[(INT64)i + 1] - ASCII_START_CHAR) * (fontInfo->PixelSizePerChar.y / fontInfo->ImagePixelWidth));
+			(string[i]      - ASCII_START_CHAR) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth),
+			(string[i] + 1  - ASCII_START_CHAR) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth));
 
 		XMFLOAT2 v = XMFLOAT2(0.0f, 1.0f);
 
 		spriteList[i].CreateSprite(centerPosition, text.SizePerChar, color, u, v);
 	}
+	SpriteRenderer::Draw(spriteList, fontInfo->Texture, matrix);
 	return true;
 }
 
@@ -129,8 +135,8 @@ bool TextRenderer::DrawNumber(FontType fontType, const TextNumber& num, const Di
 			0.0f);
 
 		XMFLOAT2 u = XMFLOAT2(
-			values[i] * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth),
-			values[(INT64)i + 1] * (fontInfo->PixelSizePerChar.y / fontInfo->ImagePixelWidth));
+			values[i]       * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth),
+			(values[i] + 1) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth));
 
 		XMFLOAT2 v = XMFLOAT2(0.0f, 1.0f);
 

@@ -66,8 +66,8 @@ bool FontLoader::Finalize()
 *****************************************************************************/
 bool FontLoader::LoadFonts(std::unordered_map<FontType, FontInfo>& fontTable)
 {
-	if (font::CreateFontGennnokakuEnglish(fontTable)){ return false; }
-	if (font::CreateFontGennnokakuNumber(fontTable)) { return false; }
+	if (!font::CreateFontGennnokakuEnglish(fontTable)){ return false; }
+	if (!font::CreateFontGennnokakuNumber(fontTable)) { return false; }
 
 	return true;
 }

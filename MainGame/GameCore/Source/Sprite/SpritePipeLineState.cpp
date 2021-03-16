@@ -12,6 +12,7 @@
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include "DirectX12/Include/Core/DirectX12Shader.hpp"
+#include "DirectX12/Include/Core/DirectX12StaticSampler.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -136,17 +137,11 @@ bool SpritePipelineStateDescriptor::BuildRootSignature()
 	ROOT_PARAMETER rootParameter[2];
 	rootParameter[0].InitAsDescriptorTable(1, &textureTable[0], D3D12_SHADER_VISIBILITY_ALL);
 	rootParameter[1].InitAsDescriptorTable(1, &textureTable[1], D3D12_SHADER_VISIBILITY_PIXEL);
-	//rootParameter[2].InitAsConstants(1 , 0);
 
 	/*-------------------------------------------------------------------
 	-			Build sampler desc
 	---------------------------------------------------------------------*/
-	STATIC_SAMPLER_DESC samplerDesc[1];
-	samplerDesc[0].Init(0, D3D12_FILTER_MIN_MAG_MIP_POINT,
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP);
-	samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	auto samplerDesc = GetStaticSamplers(); // linearsampler
 
 	/*-------------------------------------------------------------------
 	-			 Build root parameter
@@ -154,7 +149,7 @@ bool SpritePipelineStateDescriptor::BuildRootSignature()
 	// A root signature is a collection of descriptor tables 
 	// (which feeds data other than vertices to the shader).
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-	rootSignatureDesc.Init(_countof(rootParameter), rootParameter, _countof(samplerDesc), samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	rootSignatureDesc.Init(_countof(rootParameter), rootParameter, samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
 	return true;
 }
