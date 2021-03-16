@@ -1,8 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   Font.hpp
-///             @brief  Font
+///             @file   TextRenderer.hpp
+///             @brief  TextRenderer
+///                     ‡@ Initialize
+///                     ‡A DrawStart-> DrawString, DrawNum ->DrawEnd
 ///             @author Toide Yutaro
-///             @date   2021_02_10
+///             @date   2021_03_16
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef TEXT_RENDERER_HPP
@@ -38,6 +40,7 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	bool Initialize();
+	bool DrawStart();
 	bool DrawString(FontType fontType, const TextString& text,   const DirectX::XMFLOAT4& color, const DirectX::XMMATRIX& matrix);
 	bool DrawNumber(FontType fontType, const TextNumber& number, const DirectX::XMFLOAT4& color, const DirectX::XMMATRIX& matrix);
 	bool DrawEnd();
