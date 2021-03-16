@@ -27,8 +27,10 @@
     <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12MeshBuffer.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12StaticSampler.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12CubeMap.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12FBXFile.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
     <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
@@ -401,6 +403,7 @@
     <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12CubeMap.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12FBXFile.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
