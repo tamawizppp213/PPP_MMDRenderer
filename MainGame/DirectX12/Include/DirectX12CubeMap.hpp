@@ -1,41 +1,53 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   DirectX12ModelFile.hpp
-///             @brief  3D Model File Abstract Class (.obj, .fbx, .pmd...)) 
+///             @file   TemplateText.hpp
+///             @brief  TemplateText
 ///             @author Toide Yutaro
-///             @date   2020_12_
+///             @date   2020_11_
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef DIRECTX12_MODEL_FILE_HPP
-#define DIRECTX12_MODEL_FILE_HPP
+#ifndef DIRECTX12_CUBE_MAP_HPP
+#define DIRECTX12_CUBE_MAP_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <string>
-#include <Windows.h>
+#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/Core/DirectX12Base.hpp"
+#include "DirectX12/Include/Core/DirectX12Core.hpp"
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////////
+//                             Class
+//////////////////////////////////////////////////////////////////////////////////
+enum class CubemapFace : int
+{
+	Right  = 0,
+	Left   = 1,
+	Top    = 2,
+	Bottom = 3,
+	Front  = 4,
+	Back   = 5
+};
+
 /****************************************************************************
-*				  			ModelData 
+*				  			TemplateClass
 *************************************************************************//**
-*  @class     ModelData
-*  @brief     ModelData Abstract Class
+*  @class     TemplateClass
+*  @brief     temp
 *****************************************************************************/
-class ModelData
+class DynamicCubemap
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	virtual void Load3DModel(const std::wstring& filePath) = 0;
-	
-#pragma region Property
-	virtual UINT32 GetVertexCount()   = 0;
-	virtual UINT32 GetIndexCount()    = 0;
-	virtual UINT32 GetMaterialCount() = 0;
-#pragma endregion Property
+	Resource* Resource();
+	GPU_DESC_HANDLER ShaderResourceView();
+	GPU_DESC_HANDLER RenderTargetView(int faceIndex);
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -43,18 +55,11 @@ public:
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-protected:
-	/****************************************************************************
-	**                ProtectedFunction
-	*****************************************************************************/
-
-	/****************************************************************************
-	**                Protected Member Variables
-	*****************************************************************************/
-	std::string _modelName;
-	UINT32      _vertexCount;
-	UINT32      _indexCount;
-	UINT32      _materialCount;
+	DynamicCubemap();
+	DynamicCubemap(Device* device);
+	DynamicCubemap(const DynamicCubemap& cubemap)            = delete; // prohibit copy
+	DynamicCubemap& operator=(const DynamicCubemap& cubemap) = delete; // prohibit copy
+	~DynamicCubemap();
 private:
 	/****************************************************************************
 	**                Private Function
@@ -63,5 +68,16 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
+	Device* _device = nullptr;
+
+	D3D12_VIEWPORT   _viewPort;
+	D3D12_RECT       _rect;
+
+	CPU_DESC_HANDLER _cpuSrv;
+	GPU_DESC_HANDLER _gpuSrv;
+	CPU_DESC_HANDLER _cpuRtv[6];
+
+	ResourceComPtr _cubemap = nullptr;
 };
+
 #endif
