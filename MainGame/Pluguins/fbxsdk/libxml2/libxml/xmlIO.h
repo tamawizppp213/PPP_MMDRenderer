@@ -11,7 +11,7 @@
 #define __XML_IO_H__
 
 #include <stdio.h>
-#include <libxml/xmlversion.h>
+#include <libxml2/libxml/xmlversion.h>
 
 #ifdef __cplusplus
 extern "C" {

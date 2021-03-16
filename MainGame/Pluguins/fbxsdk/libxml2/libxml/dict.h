@@ -12,7 +12,7 @@
 #define __XML_DICT_H__
 
 #include <stddef.h>
-#include <libxml/xmlversion.h>
+#include <libxml2/libxml/xmlversion.h>
 
 #ifdef __cplusplus
 extern "C" {

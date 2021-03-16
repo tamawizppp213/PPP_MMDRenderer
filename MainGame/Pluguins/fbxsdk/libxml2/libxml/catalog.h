@@ -19,9 +19,9 @@
 
 #include <stdio.h>
 
-#include <libxml/xmlversion.h>
-#include <libxml/xmlstring.h>
-#include <libxml/tree.h>
+#include <libxml2/libxml/xmlversion.h>
+#include <libxml2/libxml/xmlstring.h>
+#include <libxml2/libxml/tree.h>
 
 #ifdef LIBXML_CATALOG_ENABLED
 

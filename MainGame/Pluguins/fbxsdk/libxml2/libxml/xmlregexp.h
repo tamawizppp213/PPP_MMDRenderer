@@ -11,7 +11,7 @@
 #ifndef __XML_REGEXP_H__
 #define __XML_REGEXP_H__
 
-#include <libxml/xmlversion.h>
+#include <libxml2/libxml/xmlversion.h>
 
 #ifdef LIBXML_REGEXP_ENABLED
 

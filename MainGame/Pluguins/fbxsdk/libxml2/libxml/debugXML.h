@@ -11,8 +11,8 @@
 #ifndef __DEBUG_XML__
 #define __DEBUG_XML__
 #include <stdio.h>
-#include <libxml/xmlversion.h>
-#include <libxml/tree.h>
+#include <libxml2/libxml/xmlversion.h>
+#include <libxml2/libxml/tree.h>
 
 #ifdef LIBXML_DEBUG_ENABLED
 

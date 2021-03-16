@@ -14,9 +14,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <libxml/xmlversion.h>
-#include <libxml/parser.h>
-#include <libxml/xlink.h>
+#include <libxml2/libxml/xmlversion.h>
+#include <libxml2/libxml/parser.h>
+#include <libxml2/libxml/xlink.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -14,8 +14,8 @@
 
 #include <stdio.h>
 #include <limits.h>
-#include <libxml/xmlversion.h>
-#include <libxml/xmlstring.h>
+#include <libxml2/libxml/xmlversion.h>
+#include <libxml2/libxml/xmlstring.h>
 
 #ifdef __cplusplus
 extern "C" {
