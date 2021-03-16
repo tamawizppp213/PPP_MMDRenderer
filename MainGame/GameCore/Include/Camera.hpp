@@ -83,8 +83,8 @@ public:
 	float GetFarWindowHeight()  const;
 
 	// Get View / Projection Matrix
-	DirectX::XMMATRIX GetViewMatrix()            const;
-	DirectX::XMMATRIX GetProjectionMatrix()       const;
+	DirectX::XMMATRIX   GetViewMatrix()           const;
+	DirectX::XMMATRIX   GetProjectionMatrix()     const;
 	DirectX::XMFLOAT4X4 GetViewMatrix4x4f()       const;
 	DirectX::XMFLOAT4X4 GetProjectionMatrix4x4f() const;
 
@@ -101,6 +101,7 @@ public:
 	void Strafe(float distance);
 	void Walk  (float distance);
 
+	// After modifying camera position / orientation, call to rebuild the matrix.
 	void UpdateViewMatrix();
 	/****************************************************************************
 	**                Public Member Variables

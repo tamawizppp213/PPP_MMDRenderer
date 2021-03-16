@@ -2,7 +2,7 @@
 ///             @file   PMXFile.hpp
 ///             @brief  PMXFile Loader
 ///             @author Toide Yutaro
-///             @date   2020_12_
+///             @date   2021_02_22
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef PMX_FILE_HPP

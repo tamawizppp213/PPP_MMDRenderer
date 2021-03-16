@@ -55,6 +55,8 @@
     <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
     <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
     <ClInclude Include="GameCore\Include\FileUtility.hpp" />
+    <ClInclude Include="GameCore\Include\File\FileUtility.hpp" />
+    <ClInclude Include="GameCore\Include\File\Json.hpp" />
     <ClInclude Include="GameCore\Include\GameInput.hpp" />
     <ClInclude Include="GameCore\Include\GamePad.hpp" />
     <ClInclude Include="GameCore\Include\GameTimer.hpp" />
@@ -83,6 +85,13 @@
     <ClInclude Include="GameCore\Include\Save.hpp" />
     <ClInclude Include="GameCore\Include\Screen.hpp" />
     <ClInclude Include="GameCore\Include\SoundFile.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Fade.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Font.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Sprite.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\SpritePipeLineState.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\SpriteRenderer.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Text.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
     <ClInclude Include="GameCore\Include\WavFile.hpp" />
     <ClInclude Include="GameCore\Include\WavFileConfig.hpp" />
@@ -423,6 +432,7 @@
     <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
+    <ClCompile Include="GameCore\Source\File\Json.cpp" />
     <ClCompile Include="GameCore\Source\GameInput.cpp" />
     <ClCompile Include="GameCore\Source\GamePad.cpp" />
     <ClCompile Include="GameCore\Source\GameTimer.cpp" />
@@ -445,6 +455,12 @@
     <ClCompile Include="GameCore\Source\Mouse.cpp" />
     <ClCompile Include="GameCore\Source\Save.cpp" />
     <ClCompile Include="GameCore\Source\Screen.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\Fade.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\Font.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\Sprite.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\SpritePipeLineState.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\SpriteRenderer.cpp" />
+    <ClCompile Include="GameCore\Source\Sprite\TextRenderer.cpp" />
     <ClCompile Include="GameCore\Source\TextureLoader.cpp" />
     <ClCompile Include="GameCore\Source\WavFile.cpp" />
     <ClCompile Include="MainGame\Source\Application.cpp" />
