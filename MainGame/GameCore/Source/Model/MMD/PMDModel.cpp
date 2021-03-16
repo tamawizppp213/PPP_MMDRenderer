@@ -80,10 +80,12 @@ bool PMDModel::PrepareVertexBuffer()
 		-			Copy PMD Vertex Data To Mesh Buffer
 		---------------------------------------------------------------------*/
 		_vertexBuffer[i] = std::make_shared<UploadBuffer<PMDVertex>>(directX12.GetDevice(), vertexCount, false);
+		_vertexBuffer[i]->CopyStart();
 		for (int j = 0; j < vertexCount; ++j)
 		{
 			_vertexBuffer[i]->CopyData(j, _pmdData->GetVertex()[j]);
 		}
+		_vertexBuffer[i]->CopyEnd();
 
 		const UINT vbByteSize = (UINT)vertexCount* sizeof(PMDVertex);
 
