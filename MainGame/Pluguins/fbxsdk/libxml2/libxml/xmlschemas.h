@@ -12,11 +12,11 @@
 #ifndef __XML_SCHEMA_H__
 #define __XML_SCHEMA_H__
 
-#include <libxml/xmlversion.h>
+#include <libxml2/libxml/xmlversion.h>
 
 #ifdef LIBXML_SCHEMAS_ENABLED
 
-#include <libxml/tree.h>
+#include <libxml2/libxml/tree.h>
 
 #ifdef __cplusplus
 extern "C" {

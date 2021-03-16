@@ -12,8 +12,8 @@
 #ifndef __XML_XPATH_INTERNALS_H__
 #define __XML_XPATH_INTERNALS_H__
 
-#include <libxml/xmlversion.h>
-#include <libxml/xpath.h>
+#include <libxml2/libxml/xmlversion.h>
+#include <libxml2/libxml/xpath.h>
 
 #ifdef LIBXML_XPATH_ENABLED
 

@@ -17,12 +17,12 @@
 #ifndef __XML_XPTR_H__
 #define __XML_XPTR_H__
 
-#include <libxml/xmlversion.h>
+#include <libxml2/libxml/xmlversion.h>
 
 #ifdef LIBXML_XPTR_ENABLED
 
-#include <libxml/tree.h>
-#include <libxml/xpath.h>
+#include <libxml2/libxml/tree.h>
+#include <libxml2/libxml/xpath.h>
 
 #ifdef __cplusplus
 extern "C" {

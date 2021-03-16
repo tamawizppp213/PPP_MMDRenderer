@@ -10,12 +10,12 @@
 
 #ifndef __DOCB_PARSER_H__
 #define __DOCB_PARSER_H__
-#include <libxml/xmlversion.h>
+#include <libxml2/libxml/xmlversion.h>
 
 #ifdef LIBXML_DOCB_ENABLED
 
-#include <libxml/parser.h>
-#include <libxml/parserInternals.h>
+#include <libxml2/libxml/parser.h>
+#include <libxml2/libxml/parserInternals.h>
 
 #ifndef IN_LIBXML
 #ifdef __GNUC__

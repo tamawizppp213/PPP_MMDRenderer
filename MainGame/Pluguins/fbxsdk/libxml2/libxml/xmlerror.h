@@ -7,7 +7,7 @@
  * Author: Daniel Veillard
  */
 
-#include <libxml/parser.h>
+#include <libxml2/libxml/parser.h>
 
 #ifndef __XML_ERROR_H__
 #define __XML_ERROR_H__
