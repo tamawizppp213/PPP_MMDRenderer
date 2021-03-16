@@ -8,11 +8,11 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Include/MotionTest.hpp"
-#include "DirectX12/Include/DirectX12Shader.hpp"
+#include "DirectX12/Include/Core/DirectX12Shader.hpp"
 #include "DirectX12/Include/DirectX12PrimitiveGeometry.hpp"
-#include "DirectX12/Include/DirectX12VertexTypes.hpp"
-#include "DirectX12/Include/DirectX12BaseStruct.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include <DirectXMath.h>
 #include <DirectXColors.h>
@@ -43,9 +43,8 @@ MotionTest::~MotionTest()
 {
 
 }
-void MotionTest::Initialize(const DirectX12& directX12)
+void MotionTest::Initialize(GameTimer& gameTimer)
 {
-	_directX12 = directX12;
 	
 	_directX12.ResetCommandList();
 
@@ -90,6 +89,11 @@ void MotionTest::LoadShaders()
 void MotionTest::LoadGeometry()
 {
 	LoadPrimitiveGeometry();
+}
+
+void MotionTest::LoadTextures()
+{
+
 }
 
 void MotionTest::BuildRootSignature()
@@ -234,8 +238,8 @@ void MotionTest::BuildFrameResources()
 {
 	for (int i = 0; i < numFrameResources; ++i)
 	{
-		_frameResources.push_back(std::make_unique<FrameResource>(_directX12.GetDevice(),
-			1, (UINT)_allRenderItems.size()));
+		//_frameResources.push_back(std::make_unique<FrameResource>(_directX12.GetDevice(),
+		//	1, (UINT)_allRenderItems.size()));
 	}
 }
 
@@ -261,7 +265,7 @@ void MotionTest::BuildConstantBufferView()
 
 	for (int frameIndex = 0; frameIndex < numFrameResources; ++frameIndex)
 	{
-		auto objectCB = _frameResources[frameIndex]->ObjectCB->Resource();
+		auto objectCB = _frameResources[frameIndex]->ObjectConstantsBuffer->Resource();
 		for (UINT i = 0; i < objectCount; ++i)
 		{
 			D3D12_GPU_VIRTUAL_ADDRESS cbAddress = objectCB->GetGPUVirtualAddress();
@@ -278,12 +282,12 @@ void MotionTest::BuildConstantBufferView()
 		}
 	}
 
-	UINT passCBByteSize = CalcConstantBufferByteSize(sizeof(PassConstants));
+	UINT passCBByteSize = CalcConstantBufferByteSize(sizeof(SceneConstants));
 
 	// Last three descriptors are the pass CBVs for each frame resource.
 	for (int frameIndex = 0; frameIndex < numFrameResources; ++frameIndex)
 	{
-		auto passCB = _frameResources[frameIndex]->PassCB->Resource();
+		auto passCB = _frameResources[frameIndex]->SceneConstantsBuffer->Resource();
 		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = passCB->GetGPUVirtualAddress();
 
 		// Offset to the pass cbv in the descriptor heap.

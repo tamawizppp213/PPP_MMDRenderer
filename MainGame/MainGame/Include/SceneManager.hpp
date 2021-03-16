@@ -28,9 +28,9 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void Initialize(const DirectX12& directX12);
-	void TransitScene(const ScenePtr scene, const DirectX12& directX12);
-	void CallSceneInitialize(const DirectX12& directX12) const;
+	void Initialize         (GameTimer& gameTimer);
+	void TransitScene       (const ScenePtr scene, GameTimer& gameTimer);
+	void CallSceneInitialize(GameTimer& gameTimer) const;
 	void CallSceneUpdate()     const;
 	void CallSceneDraw()       const;
 	void CallSceneTerminate()  const;

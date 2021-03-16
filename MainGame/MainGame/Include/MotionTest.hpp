@@ -13,9 +13,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Scene.hpp"
 #include "DirectX12/Include/DirectX12Geometry.hpp"
-#include "DirectX12/Include/DirectX12Buffer.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/DirectX12MathHelper.hpp"
-#include "MainGame/Include/FrameResources.hpp"
+#include "GameCore/Include/FrameResources.hpp"
 #include <vector>
 #include <unordered_map>
 #include <memory>
@@ -55,7 +55,7 @@ public:
 	*****************************************************************************/
 	MotionTest();
 	~MotionTest();
-	void Initialize(const DirectX12& directX12) override;
+	void Initialize(GameTimer& gameTimer) override;
 	void Draw()       override;
 	void Update()     override;
 	void Terminate()  override;
@@ -65,14 +65,15 @@ public:
 	*****************************************************************************/
 
 protected:
-	void LoadShaders()             override;
-	void LoadGeometry()            override;
-	void BuildPSOs()               override;
-	void BuildRootSignature()      override;
-	void BuildRenderItem()         override;
-	void BuildFrameResources()     override;
-	void BuildDescriptorHeap()     override;
-	void BuildConstantBufferView() override;
+	void LoadShaders()             ;
+	void LoadGeometry()            ;
+	void LoadTextures()            ;
+	void BuildPSOs()               ;
+	void BuildRootSignature()      ;
+	void BuildRenderItem()         ;
+	void BuildFrameResources()     ;
+	void BuildDescriptorHeap()     ;
+	void BuildConstantBufferView() ;
 private:
 	/****************************************************************************
 	**                Private Function
@@ -87,7 +88,7 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	DirectX12 _directX12;
+	DirectX12& _directX12 = DirectX12::Instance();
 	
 	RootSignatureComPtr  _rootSignature = nullptr;
 	DescriptorHeapComPtr _cbvHeap       = nullptr;

@@ -23,27 +23,27 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
-void SceneManager::Initialize(const DirectX12& directX12)
+void SceneManager::Initialize(GameTimer& gameTimer)
 {
 #ifdef _DEBUG
 	PushScene(new Test());
-	CallSceneInitialize(directX12);
+	CallSceneInitialize(gameTimer);
 #else
 	PushScene(new Title());
-	CallSceneInitialize(directX12);
+	CallSceneInitialize(gameTimer);
 #endif
 }
 
-void SceneManager::TransitScene(const ScenePtr scene, const DirectX12& directX12)
+void SceneManager::TransitScene(const ScenePtr scene, GameTimer& gameTimer)
 {
 	_currentScene.pop();
 	_currentScene.emplace(scene);
-	CallSceneInitialize(directX12);
+	CallSceneInitialize(gameTimer);
 }
 
-void SceneManager::CallSceneInitialize(const DirectX12& directX12) const
+void SceneManager::CallSceneInitialize(GameTimer& gameTimer) const
 {
-	_currentScene.top()->Initialize(directX12);
+	_currentScene.top()->Initialize(gameTimer);
 }
 void SceneManager::CallSceneUpdate() const
 {

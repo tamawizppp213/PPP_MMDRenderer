@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <iostream>
 #include <Windows.h>
+#include "GameCore/Include/Audio/AudioSource3D.hpp"
 
-
-#if _DEBUG
+#ifdef _DEBUG
 int main()
 #else
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCommandLine, _In_ int nShowCommand)
+int WINAPI WinMain(HINSTANCE hInstance,  HINSTANCE hPrevInstance, LPSTR lpCommandLine, int nShowCommand)
 #endif
 {
     /********************************************

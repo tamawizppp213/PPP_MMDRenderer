@@ -12,7 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "SceneManager.hpp"
-#include "DirectX12/Include/DirectX12Base.hpp"
+#include "DirectX12/Include/Core/DirectX12Base.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -27,7 +27,7 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	void GameStart();
+	void GameStart(GameTimer& gameTimer);
 	void GameMain();
 	void GameEnd();
 	void SetHWND(HWND hwnd);
@@ -67,7 +67,7 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	SceneManager& _sceneManager = SceneManager::Instance();
-	DirectX12     _directX12;
+	DirectX12&    _directX12    = DirectX12::Instance();
 	HWND _mainWindow = nullptr;
 	
 

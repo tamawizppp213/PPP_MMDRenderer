@@ -1,41 +1,34 @@
 //////////////////////////////////////////////////////////////////////////////////
-//              Title:  Test.hpp
-//            Content:  Test
+//              Title:  MainBattle.hpp
+//            Content:  Battle Scene 
 //             Author:  Toide Yutaro
-//             Create:  2020_12_06
+//             Create:  2021_03_13
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef TEST_HPP
-#define TEST_HPP
+#ifndef MAIN_BATTLE_HPP
+#define MAIN_BATTLE_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "Scene.hpp"
-#include "DirectX12/Include/DirectX12Geometry.hpp"
-#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include <vector>
-#include <memory>
-#include "GameCore/Include/Model/MMD/PMDFile.hpp"
-#include "GameCore/Include/Model/Obj/ObjFile.hpp"
-#include "DirectX12/Include/Core/DirectX12Texture.hpp"
-#include "GameCore/Include/Sprite/SpriteRenderer.hpp"
-#include "GameCore/Include/Sprite/Sprite.hpp"
+#include "GameCore/Include/Camera.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////////////////
-//                           MotionTest Class
+//                           Title Class
 //////////////////////////////////////////////////////////////////////////////////
-class Test final : public Scene
+class MainBattle final : public Scene
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	Test();
-	~Test();
+	MainBattle();
+	~MainBattle();
 	void Initialize(GameTimer& gameTimer) override;
 	void Draw()       override;
 	void Update()     override;
@@ -46,36 +39,21 @@ public:
 	*****************************************************************************/
 
 protected:
-	void LoadShaders() ;
-	void LoadGeometry();
-	void LoadTextures();
-	void BuildPSOs();
-	void BuildRootSignature();
-	void BuildRenderItem();
-	void BuildFrameResources();
-	void BuildDescriptorHeap();
-	void BuildConstantBufferView();
+
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	void LoadModels();
+	void OnGameInput();
+	void OnKeyboardInput();
+	void OnMouseInput();
+	void OnGamePadInput();
+
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	RootSignatureComPtr _rootSignature  = nullptr;
-	PipelineStateComPtr _pipelineState  = nullptr;
-	BlobComPtr _vertexShader = {};
-	BlobComPtr _pixelShader  = {};
-	Resource*  _vertexBuffer = nullptr;
-	Resource*  _indexBuffer  = nullptr;
-	Texture _texture;
-	SpriteRenderer _spriteRenderer;
-	std::unique_ptr<UploadBuffer<DirectX::XMMATRIX>> _constantBuffer;
-	DescriptorHeapComPtr _basicDescHeap = nullptr;
-	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> _geometries;
-	std::shared_ptr<PMDData> _miku = nullptr;
-	std::shared_ptr<OBJData> _cube = nullptr;
+	Camera _fpsCamera;
+	
 };
 #endif
