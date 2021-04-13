@@ -7,5 +7,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 #define FRAME_BUFFER_COUNT 2 // double buffer
 #define VSYNC 1// 0: don't wait, 1: wait (60fps) 
-#define CSU_HEAP_DESC_COUNT 1024 // CBV, SRV, UAV Heap Size
+
+#define CBV_DESC_COUNT 1000
+#define SRV_DESC_COUNT 3800
+#define UAV_DESC_COUNT 100
+#define DSV_DESC_COUNT 100
+#define RTV_DESC_COUNT 1000
+
+//#define USE_HDR 
 #endif

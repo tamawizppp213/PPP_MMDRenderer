@@ -13,6 +13,7 @@
 #include "GameCore/Include/Sprite/SpriteRenderer.hpp"
 #include "GameCore/Include/GameTimer.hpp"
 #include "GameCore/Include/Sprite/Fade.hpp"
+#include "GameCore/Include/Screen.hpp"
 #include <d3dcompiler.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -101,8 +102,8 @@ bool Fader::Draw(const GameTimer& gameTimer, const DirectX::XMMATRIX& projViewMa
 	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = g_FadeBuffer.MeshBuffer[currentFrameIndex].IndexBufferView();
 	auto viewPort     = directX12.GetViewport();
 	auto scissorRects = directX12.GetScissorRect();
-	auto rtv          = directX12.GetCurrentRenderTargetView();
-	auto dsv          = directX12.GetDepthStencilView();
+	auto rtv          = directX12.GetCPUResourceView(HeapType::RTV, currentFrameIndex);
+	auto dsv          = directX12.GetCPUResourceView(HeapType::DSV, 0);
 	
 	/*-------------------------------------------------------------------
 	-               Update fade
@@ -119,7 +120,7 @@ bool Fader::Draw(const GameTimer& gameTimer, const DirectX::XMMATRIX& projViewMa
 	commandList->SetPipelineState(spriteManager.GetPipelineState(spriteType).Get());
 	ID3D12DescriptorHeap* heapList[] = { textureDescHeap.Get() };
 	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
-	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUCbvSrvUavHeapStart());
+	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUResourceView(HeapType::CBV, 0));
 	commandList->SetGraphicsRootDescriptorTable(1, g_FadeBuffer.Texture.GPUHandler);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -198,6 +199,27 @@ void Fader::SetColor(const DirectX::XMFLOAT3& color)
 	_color.x = color.x;
 	_color.y = color.y;
 	_color.z = color.z;
+}
+
+/****************************************************************************
+*                       SetSpriteSize
+*************************************************************************//**
+*  @fn        void Fader::SetSpriteSize(float width, float height)
+*  @brief     Set sprite size
+*  @param[in] float width
+*  @param[in] float height
+*  @return Å@Å@void
+*****************************************************************************/
+void Fader::SetSpriteSize(float width, float height)
+{
+	using namespace DirectX;
+	_color = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	_sprite.CreateSprite(
+		XMFLOAT3(0.0f, 0.0f, 0.0f),
+		XMFLOAT2(width, height),
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+		XMFLOAT2(0.0f, 1.0f),
+		XMFLOAT2(0.0f, 1.0f));
 }
 #pragma endregion Public Function
 

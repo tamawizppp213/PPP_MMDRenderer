@@ -43,7 +43,7 @@ protected:
 	/****************************************************************************
 	**                ProtectedFunction
 	*****************************************************************************/
-	bool PrepareVertexBuffer() { return true; };
+	bool PrepareVertexBuffer() { return true; } ;
 	bool PrepareIndexBuffer() { return true; };
 
 	/****************************************************************************
@@ -51,7 +51,6 @@ protected:
 	*****************************************************************************/
 	std::wstring   _filePath;
 	MeshBuffer     _meshBuffer[FRAME_BUFFER_COUNT];
-	ResourceComPtr _indexBuffer  = nullptr;
 	BlobComPtr     _vertexShader = nullptr;
 	BlobComPtr     _pixelShader  = nullptr;
 };

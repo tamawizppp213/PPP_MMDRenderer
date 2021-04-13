@@ -27,7 +27,6 @@ using MaterialConstantBuffer   = std::unique_ptr<UploadBuffer<MaterialConstants>
 using SceneLightConstantBuffer = std::unique_ptr<UploadBuffer<SceneLightConstants>>;
 
 class Camera;
-class GameTimer;
 
 struct FrameResourceCounter
 {
@@ -51,7 +50,7 @@ public:
 	*****************************************************************************/
 	void UpdateObjectConstants();
 	void UpdateSceneConstants(SceneConstants* scene, const Camera* camera);
-	
+	void UpdateMaterialConstants();
 
 	/****************************************************************************
 	**                Public Member Variables
@@ -85,6 +84,7 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	const GameTimer* _gameTimer = nullptr;
+	
 };
 
 

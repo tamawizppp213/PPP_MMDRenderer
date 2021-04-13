@@ -103,8 +103,6 @@ void Test::Initialize(GameTimer& gameTimer)
 		_spriteList.push_back(sprite);
 	}
 
-	_fader.Initialize();
-	_fader.SetColor(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	_directX12.CompleteInitialize();
 	_directX12.FlushCommandQueue();
 
@@ -125,9 +123,10 @@ void Test::Update()
 void Test::Draw()
 {
 	_directX12.ClearScreen();
-	if (!isStart) { _fader.StartFadeIn(2.0f, 10.0f); isStart = true; }
-	
-	_fader.Draw(*_gameTimer, matrix);
+	_spriteRenderer.DrawStart();
+	_spriteRenderer.Draw(_spriteList, test, matrix);
+	_spriteRenderer.Draw(_list, test2, matrix);
+	_spriteRenderer.DrawEnd();
     _directX12.CompleteRendering();
 }
 

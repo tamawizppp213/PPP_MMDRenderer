@@ -590,6 +590,21 @@ inline void MemcpySubresource(
 	}
 }
 
+inline UINT64 GetRequiredIntermediateSize(
+	_In_ ID3D12Resource* pDestinationResource,
+	_In_range_(0, D3D12_REQ_SUBRESOURCES) UINT FirstSubresource,
+	_In_range_(0, D3D12_REQ_SUBRESOURCES - FirstSubresource) UINT NumSubresources)
+{
+	D3D12_RESOURCE_DESC Desc = pDestinationResource->GetDesc();
+	UINT64 RequiredSize = 0;
+
+	ID3D12Device* pDevice;
+	pDestinationResource->GetDevice(__uuidof(*pDevice), reinterpret_cast<void**>(&pDevice));
+	pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, 0, nullptr, nullptr, nullptr, &RequiredSize);
+	pDevice->Release();
+
+	return RequiredSize;
+}
 //////////////////////////////////////////////////////////////////////////////////
 //            TEXTURE_COPY_LOCATION : D3D12_TEXTURE_COPY_LOCATION
 //////////////////////////////////////////////////////////////////////////////////

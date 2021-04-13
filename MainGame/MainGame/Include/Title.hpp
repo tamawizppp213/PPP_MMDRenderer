@@ -38,20 +38,14 @@ public:
 	*****************************************************************************/
 
 protected:
-	void LoadShaders();
-	void LoadGeometry();
-	void LoadTextures();
-	void BuildPSOs();
-	void BuildRootSignature();
-	void BuildRenderItem();
-	void BuildFrameResources();
-	void BuildDescriptorHeap();
-	void BuildConstantBufferView();
+	
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	DirectX12& _directX12 = DirectX12::Instance();
+	bool InitializeDirectX12(GameTimer& gameTimer);
+	bool InitializeFader();
+	bool InitializeCoordinates(); // orthographicLH
 
 	/****************************************************************************
 	**                Private Member Variables

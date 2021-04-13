@@ -120,7 +120,7 @@ bool AudioSource3D::ApplyChange()
 *  @param[in] const X3DAUDIO_EMITTER* emitter
 *  @return Å@Å@void
 *****************************************************************************/
-Audio3DParameter& AudioSource3D::Calculate3DSound(const X3DAUDIO_LISTENER* listener, const X3DAUDIO_EMITTER* emitter)
+Audio3DParameter AudioSource3D::Calculate3DSound(const X3DAUDIO_LISTENER* listener, const X3DAUDIO_EMITTER* emitter)
 {
 	X3DAUDIO_DSP_SETTINGS dsp = { 0 };
 	FLOAT32 matrix[12]        = { 0 };

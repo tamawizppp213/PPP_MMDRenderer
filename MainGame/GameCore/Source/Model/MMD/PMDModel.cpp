@@ -47,6 +47,10 @@ bool PMDModel::Initialize(const std::wstring& filePath)
 	---------------------------------------------------------------------*/
 	if (!PrepareIndexBuffer()) { MessageBox(NULL, L" Index buffer cannot be prepared.", L"Warning", MB_ICONWARNING); };
 
+	/*-------------------------------------------------------------------
+	-             Prepare Index Buffer
+	---------------------------------------------------------------------*/
+	if (!PrepareMaterialBuffer()) { MessageBox(NULL, L" Material buffer cannot be prepared.", L"Warning", MB_ICONWARNING); };
 	return true;
 }
 
@@ -69,7 +73,7 @@ bool PMDModel::PrepareVertexBuffer()
 	-			Check PMD Vertex is existed
 	---------------------------------------------------------------------*/
 	if (_pmdData->GetVertex().empty()) { ::OutputDebugString(L"Can't read vertex data (vertex)"); return false; }
-	int vertexCount = _pmdData->GetVertex().size();
+	int vertexCount = (int)_pmdData->GetVertex().size();
 
 	/*-------------------------------------------------------------------
 	-			Build CPU and GPU Vertex Buffer
@@ -79,7 +83,7 @@ bool PMDModel::PrepareVertexBuffer()
 		/*-------------------------------------------------------------------
 		-			Copy PMD Vertex Data To Mesh Buffer
 		---------------------------------------------------------------------*/
-		_vertexBuffer[i] = std::make_shared<UploadBuffer<PMDVertex>>(directX12.GetDevice(), vertexCount, false);
+		_vertexBuffer[i] = std::make_unique<UploadBuffer<PMDVertex>>(directX12.GetDevice(), vertexCount, false);
 		_vertexBuffer[i]->CopyStart();
 		for (int j = 0; j < vertexCount; ++j)
 		{
@@ -123,7 +127,7 @@ bool PMDModel::PrepareIndexBuffer()
 	-			Check Index Data
 	---------------------------------------------------------------------*/
 	if (_pmdData->GetIndex().empty()) { ::OutputDebugString(L"Can't read index data (vertex)"); return false; }
-	int indexCount = _pmdData->GetIndex().size();
+	int indexCount = (int)_pmdData->GetIndex().size();
 
 	/*-------------------------------------------------------------------
 	-			Build CPU / GPU Index Buffer
@@ -153,5 +157,62 @@ bool PMDModel::PrepareIndexBuffer()
 		_meshBuffer[i].StartIndexLocation  = _meshBuffer[0].StartIndexLocation;
 		_meshBuffer[i].IndexBufferByteSize = _meshBuffer[0].IndexBufferByteSize;
 	}
+	return true;
+}
+
+/****************************************************************************
+*                       PrepareMaterialBuffer
+*************************************************************************//**
+*  @fn        bool PMDModel::PrepareMaterialBuffer()
+*  @brief     Prepare Index Buffer
+*  @param[in] void
+*  @return @@bool
+*****************************************************************************/
+bool PMDModel::PrepareMaterialBuffer()
+{
+	DirectX12& directX12 = DirectX12::Instance();
+
+	/*-------------------------------------------------------------------
+	-			Check Material Data
+	---------------------------------------------------------------------*/
+	if (_pmdData->GetMaterial().empty()) { ::OutputDebugString(L"Can't read material data"); return false; }
+	int materialCount = (int)_pmdData->GetMaterial().size();
+
+	/*-------------------------------------------------------------------
+	-			Build Material Data
+	---------------------------------------------------------------------*/
+	_materialBuffer = std::make_unique<UploadBuffer<PMDMaterial>>(directX12.GetDevice(), materialCount, true);
+	_materialBuffer->CopyStart();
+	for (int i = 0; i < materialCount; ++i)
+	{
+		_materialBuffer->CopyData(i, _pmdData->GetMaterial()[i]);
+	}
+	_materialBuffer->CopyEnd();
+
+	/*-------------------------------------------------------------------
+	-			Create Constant Buffer View Descriptor
+	---------------------------------------------------------------------*/
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	cbvDesc.BufferLocation = _materialBuffer.get()->Resource()->GetGPUVirtualAddress();
+	cbvDesc.SizeInBytes    = CalcConstantBufferByteSize(sizeof(PMDMaterial));
+
+	/*-------------------------------------------------------------------
+	-			Create Constant Buffer View
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < materialCount; ++i)
+	{
+		/*-------------------------------------------------------------------
+		-			Get Material Name and Issue View ID
+		---------------------------------------------------------------------*/
+		std::string materialName    = _pmdData->GetMaterial()[i].TextureFileName;
+		_materialView[materialName] = directX12.IssueViewID(HeapType::CBV);
+
+		/*-------------------------------------------------------------------
+		-			Create Constant Buffer View
+		---------------------------------------------------------------------*/
+		directX12.GetDevice()->CreateConstantBufferView(
+			&cbvDesc, directX12.GetCPUResourceView(HeapType::CBV, _materialView[materialName]));
+	}
+
 	return true;
 }

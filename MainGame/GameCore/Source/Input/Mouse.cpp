@@ -207,8 +207,8 @@ int Mouse::GetMousePosition_Y()
 DirectX::XMFLOAT2 Mouse::GetMouseVelocity()
 {
 	DirectX::XMFLOAT2 velocity;
-	velocity.x = (float)_currentMouseState.lX;
-	velocity.y = (float)_currentMouseState.lY;
+	velocity.x = (float)_currentMouseState.lX ;
+	velocity.y = (float)_currentMouseState.lY ;
 	return velocity;
 }
 #pragma endregion Public Function

@@ -34,6 +34,11 @@ FrameResource::FrameResource(const FrameResourceCounter& frameResourceCounter, c
 	
 }
 
+void FrameResource::UpdateObjectConstants()
+{
+
+}
+
 void FrameResource::UpdateSceneConstants(SceneConstants* scene, const Camera* camera)
 {
 	using namespace DirectX;
@@ -61,7 +66,7 @@ void FrameResource::UpdateSceneConstants(SceneConstants* scene, const Camera* ca
 
 	Screen screen;
 	scene->EyePosition             = camera->GetPosition3f();
-	scene->RenderTargetSize        = XMFLOAT2(screen.GetScreenWidth(), screen.GetScreenHeight());
+	scene->RenderTargetSize        = XMFLOAT2((float)screen.GetScreenWidth(), (float)screen.GetScreenHeight());
 	scene->InverseRenderTargetSize = XMFLOAT2(1.0f / screen.GetScreenWidth(), 1.0f / screen.GetScreenHeight());
 	scene->NearZ                   = camera->GetNearZ();
 	scene->FarZ                    = camera->GetFarZ();
@@ -72,5 +77,9 @@ void FrameResource::UpdateSceneConstants(SceneConstants* scene, const Camera* ca
 	currentSceneConstantBuffer->CopyStart();
 	currentSceneConstantBuffer->CopyData(0, *scene);
 	currentSceneConstantBuffer->CopyEnd();
+}
+
+void FrameResource::UpdateMaterialConstants()
+{
 
 }

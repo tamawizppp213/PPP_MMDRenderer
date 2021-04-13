@@ -315,4 +315,42 @@ private:
 	static constexpr unsigned int InputElementCount = 4;
 	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
 };
+
+/****************************************************************************
+*					  VertexPositionNormalTextureTangent
+*************************************************************************//**
+*  @struct    VertexPositionNormalTextureTangent
+*  @brief     Vertex struct holding position, normal, uv and tangent information.
+*****************************************************************************/
+struct VertexPositionNormalTextureTangent
+{
+public:
+	DirectX::XMFLOAT3 Position; /// Position
+	DirectX::XMFLOAT3 Normal;   /// Normal
+	DirectX::XMFLOAT2 UV;       /// Texture
+	DirectX::XMFLOAT3 Tangent;  /// Tangent
+
+	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
+
+	VertexPositionNormalTextureTangent() = default;
+	VertexPositionNormalTextureTangent(const VertexPositionNormalTextureTangent&)            = default;
+	VertexPositionNormalTextureTangent& operator=(const VertexPositionNormalTextureTangent&) = default;
+	VertexPositionNormalTextureTangent(VertexPositionNormalTextureTangent&&)                 = default;
+	VertexPositionNormalTextureTangent& operator=(VertexPositionNormalTextureTangent&&)      = default;
+	VertexPositionNormalTextureTangent(DirectX::XMFLOAT3 const& position, DirectX::XMFLOAT3 const& normal, DirectX::XMFLOAT2 const& uv, DirectX::XMFLOAT3 const& tangent)
+		: Position(position), Normal(normal), UV(uv), Tangent(tangent)
+	{
+	};
+	VertexPositionNormalTextureTangent(DirectX::FXMVECTOR position, DirectX::FXMVECTOR normal, DirectX::FXMVECTOR uv, DirectX::FXMVECTOR tangent)
+	{
+		DirectX::XMStoreFloat3(&this->Position, position);
+		DirectX::XMStoreFloat3(&this->Normal, normal);
+		DirectX::XMStoreFloat2(&this->UV, uv);
+		DirectX::XMStoreFloat3(&this->Tangent, tangent);
+	}
+
+private:
+	static constexpr unsigned int InputElementCount = 4;
+	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
+};
 #endif

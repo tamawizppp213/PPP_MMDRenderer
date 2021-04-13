@@ -14,11 +14,12 @@
 #include "GameCore.hpp"
 #include <stack>
 #include "MainGame/Include/Scene.hpp"
+#include "GameCore/Include/Sprite/Fade.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-
+class GameTimer;
 //////////////////////////////////////////////////////////////////////////////////
 //                         SceneManager Class (Singleton)
 //////////////////////////////////////////////////////////////////////////////////
@@ -31,8 +32,8 @@ public:
 	void Initialize         (GameTimer& gameTimer);
 	void TransitScene       (const ScenePtr scene, GameTimer& gameTimer);
 	void CallSceneInitialize(GameTimer& gameTimer) const;
-	void CallSceneUpdate()     const;
-	void CallSceneDraw()       const;
+	void CallSceneUpdate();
+	void CallSceneDraw()  ;
 	void CallSceneTerminate()  const;
 	void PushScene(const ScenePtr scene);
 	void PopScene();
@@ -67,6 +68,8 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	std::stack<SceneSharedPtr> _currentScene;
+	GameTimer* _gameTimer;
+	Fader _fader;
 };
 
 

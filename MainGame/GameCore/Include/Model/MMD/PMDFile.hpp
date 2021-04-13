@@ -35,9 +35,10 @@ public:
 	bool Load3DModel(const std::wstring& filePath) override;
 	
 #pragma region Property
-	const std::vector<PMDVertex>& GetVertex() const { return _vertices; }
-	const std::vector<UINT16>   & GetIndex()  const { return _indices;  }
-	const PMDVertex& GetPMDVertex(int index)  const { return _vertices[index]; }
+	const std::vector<PMDVertex>& GetVertex() const          { return _vertices; }
+	const std::vector<UINT16>   & GetIndex()  const          { return _indices;  }
+	const std::vector<pmd::PMDMaterial>& GetMaterial() const { return _materials; }
+	const PMDVertex& GetPMDVertex(int index)  const          { return _vertices[index]; }
 
 #pragma endregion Property
 	/****************************************************************************

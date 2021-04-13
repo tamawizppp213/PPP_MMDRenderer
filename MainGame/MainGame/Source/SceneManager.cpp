@@ -10,8 +10,9 @@
 #include "MainGame/Include/SceneManager.hpp"
 #include "MainGame/Include/Scene.hpp"
 #include "MainGame/Include/Title.hpp"
-#include "MainGame/Include/MotionTest.hpp"
+#include "MainGame/Include/MainBattle.hpp"
 #include "MainGame/Include/Test.hpp"
+#include "GameCore/Include/GameTimer.hpp"
 #include <iostream>
 #include <cassert>
 
@@ -26,7 +27,7 @@
 void SceneManager::Initialize(GameTimer& gameTimer)
 {
 #ifdef _DEBUG
-	PushScene(new Test());
+	PushScene(new MainBattle());
 	CallSceneInitialize(gameTimer);
 #else
 	PushScene(new Title());
@@ -36,6 +37,7 @@ void SceneManager::Initialize(GameTimer& gameTimer)
 
 void SceneManager::TransitScene(const ScenePtr scene, GameTimer& gameTimer)
 {
+	CallSceneTerminate();
 	_currentScene.pop();
 	_currentScene.emplace(scene);
 	CallSceneInitialize(gameTimer);
@@ -45,15 +47,16 @@ void SceneManager::CallSceneInitialize(GameTimer& gameTimer) const
 {
 	_currentScene.top()->Initialize(gameTimer);
 }
-void SceneManager::CallSceneUpdate() const
+void SceneManager::CallSceneUpdate()
 {
 	_currentScene.top()->Update();
 }
 
-void SceneManager::CallSceneDraw() const
+void SceneManager::CallSceneDraw()
 {
 	_currentScene.top()->Draw();
 }
+
 
 void SceneManager::CallSceneTerminate() const
 {

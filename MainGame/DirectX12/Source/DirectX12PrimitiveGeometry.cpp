@@ -218,15 +218,18 @@ MeshData GeometryGenerator::Sphere(float radius, UINT32 sliceCount, UINT32 stack
 		float phi = i * phiStep;
 
 		// Verteies of ring
-		for (UINT16 j = 0; j < sliceCount; ++j)
+		for (UINT16 j = 0; j <= sliceCount; ++j)
 		{
 			float theta = j * thetaStep;
 
 			Vertex vertex;
 
+			/*-------------------------------------------------------------------
+			-					Spherical to cartesian
+			---------------------------------------------------------------------*/
 			vertex.Position.x = radius * sinf(phi) * cosf(theta);
 			vertex.Position.y = radius * cosf(phi);
-			vertex.Position.z = radius * sinf(phi) * cosf(theta);
+			vertex.Position.z = radius * sinf(phi) * sinf(theta);
 
 			XMVECTOR pos = XMLoadFloat3(&vertex.Position);
 			XMStoreFloat3(&vertex.Normal, XMVector3Normalize(pos));
