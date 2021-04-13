@@ -51,6 +51,7 @@
     <ClInclude Include="GameCore\Include\Screen.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+
     <ClInclude Include="GameCore\Include\Save.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
