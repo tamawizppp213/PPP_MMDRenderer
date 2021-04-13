@@ -35,6 +35,14 @@ FBXData::~FBXData()
 	_fbxManager->Destroy();
 }
 
+/****************************************************************************
+*                       Load3DModel
+*************************************************************************//**
+*  @fn        bool FBXData::Load3DModel(const std::wstring& filePath)
+*  @brief     Load fbx 3d model
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool FBXData::Load3DModel(const std::wstring& filePath)
 {
 	/*-------------------------------------------------------------------
@@ -57,7 +65,10 @@ bool FBXData::Load3DModel(const std::wstring& filePath)
 	---------------------------------------------------------------------*/
 	if(!OpenFBXFile(filePath)){ MessageBox(NULL, L" The file path couldn't be read.", L"Warning", MB_ICONWARNING); }
 
-
+	/*-------------------------------------------------------------------
+	-             Open FBX File
+	---------------------------------------------------------------------*/
+	if(!SetFBXConfig()){ MessageBox(NULL, L" The fbx config couldn't be set.", L"Warning", MB_ICONWARNING); }
 	return true;
 }
 
@@ -73,30 +84,73 @@ bool FBXData::Load3DModel(const std::wstring& filePath)
 #pragma endregion Protected Function
 
 #pragma region Private Function
+/****************************************************************************
+*                       CreateFBXManager
+*************************************************************************//**
+*  @fn        bool FBXData::CreateFBXManager()
+*  @brief     Create FBX Manager Class
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool FBXData::CreateFBXManager()
 {
+	/*-------------------------------------------------------------------
+	-             Create Manager
+	---------------------------------------------------------------------*/
 	_fbxManager = FbxManager::Create();
-	if (_fbxManager == nullptr) 
-	{ 
-		return false; 
-	}
+
+	/*-------------------------------------------------------------------
+	-             Nullptr Check
+	---------------------------------------------------------------------*/
+	if (_fbxManager == nullptr) { return false; }
 	return true;
 }
 
+/****************************************************************************
+*                       CreateFBXImporter
+*************************************************************************//**
+*  @fn        bool FBXData::CreateFBXImporter()
+*  @brief     Create FBX Importer (fbx parser class)
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool FBXData::CreateFBXImporter()
 {
+	/*-------------------------------------------------------------------
+	-             Create Importer
+	---------------------------------------------------------------------*/
 	_fbxImporter = FbxImporter::Create(_fbxManager, "imp");
+
+	/*-------------------------------------------------------------------
+	-             Nullptr Check
+	---------------------------------------------------------------------*/
 	if (_fbxImporter == nullptr)
 	{
 		_fbxManager->Destroy();
 		return false;
 	}
+
 	return true; 
 }
 
+/****************************************************************************
+*                       CreateFBXScene
+*************************************************************************//**
+*  @fn        bool FBXData::CreateFBXScene()
+*  @brief     Create FBX Scene (state after disassembly)
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool FBXData::CreateFBXScene()
 {
-	_fbxScene = FbxScene::Create(_fbxManager, "fbxscene");
+	/*-------------------------------------------------------------------
+	-             Get FBX Scene
+	---------------------------------------------------------------------*/
+	_fbxScene    = FbxScene::Create(_fbxManager, "fbxscene");
+
+	/*-------------------------------------------------------------------
+	-             Nullptr Check
+	---------------------------------------------------------------------*/
 	if (_fbxScene == nullptr)
 	{
 		_fbxImporter->Destroy();
@@ -106,6 +160,14 @@ bool FBXData::CreateFBXScene()
 	return true;
 }
 
+/****************************************************************************
+*                       OpenFBXFile
+*************************************************************************//**
+*  @fn        bool FBXData::OpenFBXFile(const std::wstring& filePath)
+*  @brief     Open File
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool FBXData::OpenFBXFile(const std::wstring& filePath)
 {
 	fbxsdk::FbxString fileName(file::WStringToString(filePath).c_str());
@@ -129,12 +191,76 @@ bool FBXData::OpenFBXFile(const std::wstring& filePath)
 
 }
 
-bool FBXData::LoadFBXVertex()
+/****************************************************************************
+*                       SetFBXConfig
+*************************************************************************//**
+*  @fn        bool FBXData::SetFBXConfig
+*  @brief     Set fbx config (Convert DirectX coordinate)
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
+bool FBXData::SetFBXConfig()
 {
+	/*-------------------------------------------------------------------
+	-             Righthand coordinate -> Left handed coordinate
+	---------------------------------------------------------------------*/
+	FbxAxisSystem axisSystem = _fbxScene->GetGlobalSettings().GetAxisSystem();
+	FbxAxisSystem::DirectX.ConvertScene(_fbxScene);
+
+	/*-------------------------------------------------------------------
+	-             Convert Mesh Triangle
+	---------------------------------------------------------------------*/
 	FbxGeometryConverter converter(_fbxManager);
 	converter.Triangulate(_fbxScene, true);
 
+	/*-------------------------------------------------------------------
+	-             Get RootNode
+	---------------------------------------------------------------------*/
+	_fbxRootNode = _fbxScene->GetRootNode();
 
+	
 	return true;
+}
+
+bool FBXData::LoadFBXVertex()
+{
+	std::map<std::string, FbxNode*> nodeList;
+	CollectMeshNode(_fbxRootNode, nodeList);
+
+	
+	return true;
+}
+
+/****************************************************************************
+*                       CollectMeshNode
+*************************************************************************//**
+*  @fn        void FBXData::CollectMeshNode(FbxNode* node, std::map<std::string, FbxNode*>& nodeList)
+*  @brief     Add mesh node
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void FBXData::CollectMeshNode(FbxNode* node, std::map<std::string, FbxNode*>& nodeList)
+{
+	/*-------------------------------------------------------------------
+	-             Check whether the nodeType is eMesh. 
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < node->GetNodeAttributeCount(); ++i)
+	{
+		FbxNodeAttribute* attribute = node->GetNodeAttributeByIndex(i);
+
+		if (attribute->GetAttributeType() == FbxNodeAttribute::EType::eMesh)
+		{
+			nodeList[node->GetName()] = node;
+			break;
+		}
+	}
+
+	/*-------------------------------------------------------------------
+	-             Recursive Function
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < node->GetChildCount(); ++i)
+	{
+		CollectMeshNode(node->GetChild(i), nodeList);
+	}
 }
 #pragma endregion Private Functoon

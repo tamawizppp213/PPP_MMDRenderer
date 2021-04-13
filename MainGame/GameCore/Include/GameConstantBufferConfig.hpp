@@ -36,7 +36,8 @@
 *****************************************************************************/
 struct ObjectConstants
 {
-	hlsl::matrix World = DirectXMathHelper::Identity4X4();
+	hlsl::matrix World            = DirectXMathHelper::Identity4X4();
+	hlsl::matrix TextureTransform = DirectXMathHelper::Identity4X4();
 };
 
 /****************************************************************************
@@ -72,15 +73,15 @@ struct SceneConstants
 *****************************************************************************/
 struct MaterialConstants
 {
-	hlsl::float3 Diffuse;
-	float        Alpha;
-	hlsl::float3 EmissiveColor;
-	float        EmissiveIntensity;
-	hlsl::float3 Specular;
-	float        Metalness;
-	hlsl::float2 UVScale;
-	float        Roughness;
-	int          TextureConfig;
+	hlsl::float3 Diffuse            = {1.0f,1.0f,1.0f};
+	float        Alpha              = 1.0f;
+	hlsl::float3 EmissiveColor      = {1.0f,1.0f,1.0f};
+	float        EmissiveIntensity  = 0.0f;
+	hlsl::float3 Specular           = { 1.0f,1.0f,1.0f };
+	float        Metalness          = 0.0f;
+	hlsl::float2 UVScale            = {0.0f,0.0f};
+	float        Roughness          = 0.5f;
+	int          TextureConfig      = 0;
 };
 
 /****************************************************************************

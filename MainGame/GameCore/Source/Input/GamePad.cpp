@@ -385,19 +385,19 @@ bool GamePad::IsPressLStick(int gamePadId)
 	short x = _currentStates[gamePadId].Gamepad.sThumbLX;
 	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 
-	if ((x > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
-		(x <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+	if ((x <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
+		(x >=  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 	{
-		return false;
+		return true;
 	}
 
-	if ((y > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
-		(y <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+	if ((y <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
+		(y >=  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 	{
-		return false;
+		return true;
 	}
-
-	return true;
+	
+	return false;
 }
 
 /****************************************************************************
@@ -416,19 +416,19 @@ bool GamePad::IsPressRStick(int gamePadId)
 	short x = _currentStates[gamePadId].Gamepad.sThumbRX;
 	short y = _currentStates[gamePadId].Gamepad.sThumbRY;
 
-	if ((x > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
-		(x <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+	if ((x <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
+		(x >=  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 	{
-		return false;
+		return true;
 	}
 
-	if ((y > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
-		(y <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+	if ((y <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) ||
+		(y >=  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 	{
-		return false;
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 /****************************************************************************
@@ -449,17 +449,17 @@ bool GamePad::IsPressLStick(float threshold, int gamePadId)
 	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 	short deadZone = static_cast<short>(threshold / 100.0f * SHORT_PLUS_MAX);
 
-	if ((-deadZone < x) || (x < deadZone))
+	if (x <= (-deadZone) || (deadZone <= x))
 	{
-		return false;
+		return true;
 	}
 
-	if ((-deadZone < y) || (y < deadZone))
+	if ((y <= -deadZone) || (deadZone <= y))
 	{
-		return false;
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 /****************************************************************************
@@ -480,17 +480,16 @@ bool GamePad::IsPressRStick(float threshold, int gamePadId)
 	short y = _currentStates[gamePadId].Gamepad.sThumbLY;
 	short deadZone = static_cast<short>(threshold / 100.0f * SHORT_PLUS_MAX);
 
-	if ((-deadZone < x) || (x < deadZone))
+	if (x <= (-deadZone) || (deadZone <= x))
 	{
-		return false;
+		return true;
 	}
 
-	if ((-deadZone < y) || (y < deadZone))
+	if ((y <= -deadZone) || (deadZone <= y))
 	{
-		return false;
+		return true;
 	}
-
-	return true;
+	return false;
 }
 
 /****************************************************************************

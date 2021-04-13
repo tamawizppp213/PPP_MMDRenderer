@@ -14,6 +14,7 @@
 #include "DirectX12Core.hpp"
 #include "DirectX12Config.hpp"
 #include "DirectX12Debug.hpp"
+#include "DirectX12BufferAllocator.hpp"
 #include "GameCore/Include/Screen.hpp"
 #include <Windows.h>
 
@@ -49,14 +50,13 @@ public:
 	CommandAllocator* GetCommandAllocator()  const;
 	Resource* GetCurrentRenderTarget()       const;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRenderTargetView() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView()   const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvSrvUavHeapStart() const;
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUCbvSrvUavHeapStart() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvSrvUavHeapPtr(int offsetIndex) const;
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUCbvSrvUavHeapPtr(int offsetIndex) const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUResourceView(HeapType heapType, int offsetIndex) const;
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUResourceView(HeapType heapType, int offsetIndex) const;
 	ID3D12DescriptorHeap* GetCbvSrvUavHeap() const;
 	INT GetCbvSrvUavDescriptorHeapSize() const;
+	UINT IssueViewID(HeapType heapType);
 	D3D12_VIEWPORT GetViewport()     const;
 	D3D12_RECT     GetScissorRect()  const;
 	INT  GetCurrentFrameIndex()      const;
@@ -65,6 +65,7 @@ public:
 	void Set4xMsaaState(bool value);
 	void SetHWND(HWND hwnd);
 	HWND GetHWND() const;
+
 #pragma endregion Property
 	// Constructor
 	//DirectX12() = default;
@@ -99,6 +100,7 @@ private:
 #pragma region View
 	void BuildRenderTargetView();
 	void BuildDepthStencilView();
+	void BuildResourceAllocator();
 
 #pragma endregion View
 
@@ -110,8 +112,13 @@ private:
 	void CreateViewport();
 	void CreateDefaultPSO();
 	void CheckMultiSampleQualityLevels();
-	
 #pragma endregion
+
+#pragma region HDR
+	void EnsureSwapChainColorSpace();
+	bool CheckHDRDisplaySupport();
+	void SetHDRMetaData();
+#pragma endregion HDR
 #pragma region Debug
 	void EnabledDebugLayer();
 	void EnabledGPUBasedValidation();
@@ -128,24 +135,30 @@ private:
 	Screen _screen;
 
 	// Basic DirectX12 Object
-	DeviceComPtr           _device;             /// Device
-	FactoryComPtr          _dxgiFactory;        /// DXGI
-	SwapchainComPtr        _swapchain;          /// SwapChain
-	CommandQueueComPtr     _commandQueue;       /// Command Queue (Command Execution Unit)
-	CommandListComPtr      _commandList;        /// Graphics Command List
-	CommandAllocatorComPtr _commandAllocator[FRAME_BUFFER_COUNT];   /// Command Memory Allocator
-	DescriptorHeapComPtr   _rtvHeap;            /// Heap For Render Target View 
-	DescriptorHeapComPtr   _dsvHeap;            /// Heap For Depth Stencil View
-	DescriptorHeapComPtr   _cbvSrvUavHeap;      /// Heap For Constant Buffer View
-	PipelineStateComPtr    _pipelineState;      /// Graphic Pipeline State
-	ResourceComPtr         _depthStencilBuffer; /// DepthStencl Buffer   
-	ResourceComPtr         _renderTargetList[FRAME_BUFFER_COUNT];
+	DeviceComPtr                 _device;             /// Device
+	FactoryComPtr                _dxgiFactory;        /// DXGI
+	AdapterComPtr                _useAdapter;
+	SwapchainComPtr              _swapchain;          /// SwapChain
+	CommandQueueComPtr           _commandQueue;       /// Command Queue (Command Execution Unit)
+	CommandListComPtr            _commandList;        /// Graphics Command List
+	CommandAllocatorComPtr       _commandAllocator[FRAME_BUFFER_COUNT];   /// Command Memory Allocator
+	DescriptorHeapComPtr         _rtvHeap;            /// Heap For Render Target View 
+	DescriptorHeapComPtr         _dsvHeap;            /// Heap For Depth Stencil View
+	DescriptorHeapComPtr         _cbvSrvUavHeap;      /// Heap For Constant Buffer View
+	PipelineStateComPtr          _pipelineState;      /// Graphic Pipeline State
+	ResourceComPtr               _depthStencilBuffer; /// DepthStencl Buffer   
+	ResourceComPtr               _renderTargetList[FRAME_BUFFER_COUNT];
+	RenderTargetViewAllocator    _rtvAllocator;
+	DepthStencilViewAllocator    _dsvAllocator;
+	ConstantBufferViewAllocator  _cbvAllocator;
+	ShaderResourceViewAllocator  _srvAllocator;
+	UnorderedAccessViewAllocator _uavAllocator;
 	UINT _rtvDescriptorSize       = 0;
 	UINT _dsvDescriptorSize       = 0;
 	UINT _cbvSrvUavDescriptorSize = 0;
 	INT  _currentFrameIndex       = 0;
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC _defaultPSODesc;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC _defaultPSODesc = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
 
 	// ViewPort
 	D3D12_VIEWPORT _screenViewport = {0,0,0,0,0,0};
@@ -166,6 +179,7 @@ private:
 
 	bool _isWarpAdapter = false;
 
+	bool _isHDRSupport  = false;
 };
 
 #endif

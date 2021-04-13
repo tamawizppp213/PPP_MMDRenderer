@@ -9,6 +9,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Camera.hpp"
+#include "GameCore/Include/Screen.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,8 @@ using namespace DirectX;
 //////////////////////////////////////////////////////////////////////////////////
 Camera::Camera()
 {
-	SetLens(0.25f * DirectX::XM_PI, 1.0f, 1.0f, 1000.0f);
+	Screen screen;
+	SetLens(0.25f * DirectX::XM_PI, screen.AspectRatio(), 1.0f, 1000.0f);
 }
 
 Camera::~Camera()
@@ -49,14 +51,15 @@ void Camera::SetPosition(float x, float y, float z)
 	_viewDirty = true;
 }
 
+
 void Camera::RotateRoll(float angle)
 {
-	// Rotate up and look vector about the right vector.
+	// Rotate up and right vector about the look vector.
 
-	XMMATRIX rotate = XMMatrixRotationAxis(XMLoadFloat3(&_right), angle);
+	XMMATRIX rotate = XMMatrixRotationAxis(XMLoadFloat3(&_look), angle);
 
-	XMStoreFloat3(&_up, XMVector3TransformNormal  (XMLoadFloat3(&_up),   rotate));
-	XMStoreFloat3(&_look, XMVector3TransformNormal(XMLoadFloat3(&_look), rotate));
+	XMStoreFloat3(&_up   , XMVector3TransformNormal(XMLoadFloat3(&_up   ), rotate));
+	XMStoreFloat3(&_right, XMVector3TransformNormal(XMLoadFloat3(&_right), rotate));
 
 	_viewDirty = true;
 }
@@ -65,9 +68,9 @@ void Camera::RotatePitch(float angle)
 {
 	// Rotate up and look vector about the right vector.
 
-	XMMATRIX rotate = XMMatrixRotationAxis(XMLoadFloat3(&_up), angle);
+	XMMATRIX rotate = XMMatrixRotationAxis(XMLoadFloat3(&_right), angle);
 
-	XMStoreFloat3(&_up,   XMVector3TransformNormal(XMLoadFloat3(&_right),   rotate));
+	XMStoreFloat3(&_up,   XMVector3TransformNormal(XMLoadFloat3(&_up  ), rotate));
 	XMStoreFloat3(&_look, XMVector3TransformNormal(XMLoadFloat3(&_look), rotate));
 
 	_viewDirty = true;
@@ -75,12 +78,12 @@ void Camera::RotatePitch(float angle)
 
 void Camera::RotateYaw(float angle)
 {
-	// Rotate up and look vector about the right vector.
+	// Rotate right and look vector about the up vector.
 
-	XMMATRIX rotate = XMMatrixRotationAxis(XMLoadFloat3(&_look), angle);
+	XMMATRIX rotate = XMMatrixRotationAxis(XMLoadFloat3(&_up), angle);
 
-	XMStoreFloat3(&_up, XMVector3TransformNormal(XMLoadFloat3(&_right), rotate));
-	XMStoreFloat3(&_look, XMVector3TransformNormal(XMLoadFloat3(&_up), rotate));
+	XMStoreFloat3(&_right, XMVector3TransformNormal(XMLoadFloat3(&_right), rotate));
+	XMStoreFloat3(&_look , XMVector3TransformNormal(XMLoadFloat3(&_look) , rotate));
 
 	_viewDirty = true;
 }
@@ -131,7 +134,7 @@ XMVECTOR Camera::GetRight() const
 
 XMFLOAT3 Camera::GetRight3f() const
 {
-	return _up;
+	return _right;
 }
 
 XMVECTOR Camera::GetUp() const
@@ -177,7 +180,7 @@ float Camera::GetFovVertical() const
 float Camera::GetFovHorizontal() const
 {
 	float halfWidth = 0.5f * GetNearWindowWidth();
-	return 2.0f * atan(halfWidth / frustum.NearZ);
+	return 2.0f * atanf(halfWidth / frustum.NearZ);
 }
 
 float Camera::GetNearWindowWidth() const
@@ -187,7 +190,7 @@ float Camera::GetNearWindowWidth() const
 
 float Camera::GetNearWindowHeight() const
 {
-	return frustum.Aspect * frustum.FarWindowHeight;
+	return frustum.NearWindowHeight;
 }
 
 float Camera::GetFarWindowWidth() const
@@ -202,7 +205,7 @@ float Camera::GetFarWindowHeight() const
 
 XMMATRIX Camera::GetViewMatrix() const
 {
-	assert(!_viewDirty);
+	//assert(!_viewDirty);
 	return XMLoadFloat4x4(&_view);
 }
 
@@ -252,9 +255,9 @@ void Camera::LookAt(FXMVECTOR position, FXMVECTOR target, FXMVECTOR worldUp)
 	XMVECTOR up    = XMVector3Cross(look, right);
 
 	XMStoreFloat3(&_position, position);
-	XMStoreFloat3(&_look,  look);
+	XMStoreFloat3(&_look , look );
 	XMStoreFloat3(&_right, right);
-	XMStoreFloat3(&_up, up);
+	XMStoreFloat3(&_up   , up   );
 
 	_viewDirty = true;
 

@@ -18,11 +18,14 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-using VertexBuffer = std::shared_ptr<UploadBuffer<PMDVertex>>;
+using VertexBuffer   = std::unique_ptr<UploadBuffer<PMDVertex>>;
+using IndexBuffer    = std::unique_ptr<UploadBuffer<UINT16>>;
+using MaterialBuffer = std::unique_ptr<UploadBuffer<PMDMaterial>>;
 class PMDModel : public DefaultModel
 {
 public:
@@ -44,6 +47,7 @@ protected:
 	*****************************************************************************/
 	bool PrepareVertexBuffer();
 	bool PrepareIndexBuffer();
+	bool PrepareMaterialBuffer();
 	
 
 	/****************************************************************************
@@ -53,8 +57,10 @@ private:
 	/****************************************************************************
 	**                PrivateFunction
 	*****************************************************************************/
-	std::shared_ptr<PMDData> _pmdData = nullptr;
-	VertexBuffer _vertexBuffer[FRAME_BUFFER_COUNT];
+	std::shared_ptr<PMDData>              _pmdData = nullptr;
+	VertexBuffer                          _vertexBuffer[FRAME_BUFFER_COUNT];
+	MaterialBuffer                        _materialBuffer;
+	std::unordered_map<std::string, UINT> _materialView;
 	
 	/****************************************************************************
 	**                Protected Member Variables

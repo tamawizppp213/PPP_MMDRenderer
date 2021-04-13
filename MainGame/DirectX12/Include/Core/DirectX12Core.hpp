@@ -39,11 +39,13 @@ using SwapChain        = IDXGISwapChain4;
 using Resource         = ID3D12Resource;
 using PSODesc          = D3D12_GRAPHICS_PIPELINE_STATE_DESC;
 using RootSignature    = ID3D12RootSignature;
+using PipelineState    = ID3D12PipelineState;
 
 using DeviceComPtr           = ComPtr<ID3D12Device>;
-using AdapterComPtr          = ComPtr<IDXGIAdapter>;
+using AdapterComPtr          = ComPtr<IDXGIAdapter1>;
 using FactoryComPtr          = ComPtr<IDXGIFactory7>;
 using SwapchainComPtr        = ComPtr<IDXGISwapChain4>;
+using OutputComPtr           = ComPtr<IDXGIOutput6>;
 using CommandAllocatorComPtr = ComPtr<ID3D12CommandAllocator>;
 using CommandQueueComPtr     = ComPtr<ID3D12CommandQueue>;
 using CommandListComPtr      = ComPtr<ID3D12GraphicsCommandList5>;

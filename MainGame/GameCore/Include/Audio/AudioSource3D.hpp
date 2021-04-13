@@ -85,7 +85,7 @@ public:
 	virtual bool Play() override;
 	bool ApplyChange();
 
-	static Audio3DParameter& Calculate3DSound(
+	static Audio3DParameter Calculate3DSound(
 		const X3DAUDIO_LISTENER* listener,
 		const X3DAUDIO_EMITTER* emitter);
 

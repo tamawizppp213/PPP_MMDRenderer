@@ -46,6 +46,8 @@
     <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp" />
     <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
     <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
+    <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMap.hpp" />
+    <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMapPipeLineState.hpp" />
     <ClInclude Include="GameCore\Include\FileUtility.hpp" />
     <ClInclude Include="GameCore\Include\File\FileUtility.hpp" />
     <ClInclude Include="GameCore\Include\File\Json.hpp" />
@@ -401,9 +403,9 @@
     <ClCompile Include="DirectX12\Source\Core\DirectX12Config.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Core.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12StaticSampler.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12CubeMap.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12MathHelper.cpp" />
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
@@ -416,6 +418,8 @@
     <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
+    <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMap.cpp" />
+    <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMapPipeLineState.cpp" />
     <ClCompile Include="GameCore\Source\File\Json.cpp" />
     <ClCompile Include="GameCore\Source\File\UnicodeUtil.cpp" />
     <ClCompile Include="GameCore\Source\FrameResources.cpp" />

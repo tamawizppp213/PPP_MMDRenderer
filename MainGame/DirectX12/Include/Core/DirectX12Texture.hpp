@@ -115,7 +115,7 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	void CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& textureBuffer, bool isDiscreteGPU);
+	void CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& textureBuffer, bool isDiscreteGPU, const DirectX::TexMetadata* metadata);
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/

@@ -13,10 +13,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Scene.hpp"
 #include "GameCore/Include/Camera.hpp"
-
+#include "GameCore/Include/EnvironmentMap/CubeMap.hpp"
+#include <memory>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+struct FrameResource;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                           Title Class
@@ -27,8 +29,8 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	MainBattle();
-	~MainBattle();
+	MainBattle() {};
+	~MainBattle() {};
 	void Initialize(GameTimer& gameTimer) override;
 	void Draw()       override;
 	void Update()     override;
@@ -44,6 +46,11 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	bool InitializeDirectX12(GameTimer& gameTimer);
+	bool InitializeFrameResources();
+	bool InitializeSceneParameters();
+	bool InitializeFader();
+	bool LoadTextures();
 	void OnGameInput();
 	void OnKeyboardInput();
 	void OnMouseInput();
@@ -54,6 +61,8 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	Camera _fpsCamera;
-	
+	Skybox _skybox;
+	FrameResource* _frameResource     = nullptr;
+	DirectX::XMFLOAT3 _playerPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 };
 #endif

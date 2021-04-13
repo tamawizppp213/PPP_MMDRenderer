@@ -79,7 +79,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	auto image      = scratchImage.GetImage(0, 0, 0);
 	bool isDiscrete = true;
 
-	CreateTextureFromImageData(directX12.GetDevice(), image, texture.Resource, isDiscrete);
+	CreateTextureFromImageData(directX12.GetDevice(), image, texture.Resource, isDiscrete, &metaData);
 
 	/*-------------------------------------------------------------------
 	-                 Transmit texture buffer to GPU
@@ -96,12 +96,23 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	else
 	{
 		/*-------------------------------------------------------------------
+		-                 Prepare Upload Buffer Setting
+		---------------------------------------------------------------------*/
+		std::vector<D3D12_SUBRESOURCE_DATA> subResources;
+		ThrowIfFailed(PrepareUpload(directX12.GetDevice(), image, scratchImage.GetImageCount(), metaData, subResources));
+
+		/*-------------------------------------------------------------------
+		-                 Calculate Upload Buffer Size
+		---------------------------------------------------------------------*/
+		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(
+			texture.Resource.Get(), 0, static_cast<UINT>(subResources.size()));
+
+		/*-------------------------------------------------------------------
 		-                 Create Upload Buffer
 		---------------------------------------------------------------------*/
 		D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_UPLOAD);
-		D3D12_RESOURCE_DESC   resourceDesc = RESOURCE_DESC::Buffer(
-			AlignmentValue(static_cast<UINT>(image->rowPitch), static_cast<UINT>(D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)) * image->height);
-
+		D3D12_RESOURCE_DESC   resourceDesc = RESOURCE_DESC::Buffer(uploadBufferSize);
+		
 		ResourceComPtr uploadBuffer = nullptr;
 		ThrowIfFailed(directX12.GetDevice()->CreateCommittedResource(
 			&heapProperty,
@@ -112,53 +123,12 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 			IID_PPV_ARGS(uploadBuffer.ReleaseAndGetAddressOf())));
 
 		/*-------------------------------------------------------------------
-		-                   Map Upload Buffer
+		-                 Copy Texture Data 
 		---------------------------------------------------------------------*/
-		BYTE* mappedData = nullptr;
-		uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData));
-
-		auto address = image->pixels;
-		UINT32 height = isDXT ? static_cast<UINT32>(image->height / 4) : static_cast<UINT32>(image->height);
-
-		for (UINT32 i = 0; i < height; ++i)
-		{
-			std::copy_n(address, image->rowPitch, mappedData);
-			address    += image->rowPitch;
-			mappedData += AlignmentValue(
-				static_cast<UINT>(image->rowPitch),
-				D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
-		}
-
-		uploadBuffer->Unmap(0, nullptr);
-
-		D3D12_TEXTURE_COPY_LOCATION source = {}, dst = {};
-		source.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
-		source.pResource = uploadBuffer.Get();
-		source.PlacedFootprint.Offset = 0;
-		source.PlacedFootprint.Footprint.Width    = static_cast<UINT>(image->width);
-		source.PlacedFootprint.Footprint.Height   = static_cast<UINT>(image->height);
-		source.PlacedFootprint.Footprint.RowPitch =
-			AlignmentValue(static_cast<UINT>(image->rowPitch), static_cast<UINT>(D3D12_TEXTURE_DATA_PITCH_ALIGNMENT));
-		source.PlacedFootprint.Footprint.Depth    = static_cast<UINT>(metaData.depth);
-		source.PlacedFootprint.Footprint.Format   = image->format;
-
-		dst.Type             = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
-		dst.SubresourceIndex = 0;
-		dst.pResource        = texture.Resource.Get();
-
-		/*-------------------------------------------------------------------
-		-                Copy Texture Region
-		---------------------------------------------------------------------*/
-		directX12.GetCommandList()->CopyTextureRegion(&dst, 0, 0, 0, &source, nullptr);
-
-		/*-------------------------------------------------------------------
-		-                Bariier Transition
-		---------------------------------------------------------------------*/
-		auto barrier = BARRIER::Transition(
-			texture.Resource.Get(),
-			D3D12_RESOURCE_STATE_COPY_DEST,
-			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-		directX12.GetCommandList()->ResourceBarrier(1, &barrier);
+		UpdateSubresources(directX12.GetCommandList(),
+			texture.Resource.Get(), uploadBuffer.Get(),
+			0, 0, static_cast<unsigned int>(subResources.size()),
+			subResources.data());
 
 		/*-------------------------------------------------------------------
 		-                Execute Command List
@@ -186,10 +156,10 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 			srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
 			break;
 		case TextureType::TextureCube:
-			srvDesc.Format                        = texture.Resource.Get()->GetDesc().Format;
-			srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-			srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURECUBE;
-			srvDesc.TextureCube.MipLevels           = 1;
+			srvDesc.Format                          = texture.Resource.Get()->GetDesc().Format;
+			srvDesc.Shader4ComponentMapping         = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srvDesc.ViewDimension                   = D3D12_SRV_DIMENSION_TEXTURECUBE;
+			srvDesc.TextureCube.MipLevels           = texture.Resource.Get()->GetDesc().MipLevels;
 			srvDesc.TextureCube.MostDetailedMip     = 0;
 			srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 			break;
@@ -197,9 +167,9 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	/*-------------------------------------------------------------------
 	-                    Create SRV
 	---------------------------------------------------------------------*/
-	_textureTableManager.Instance().ID++;
+	_textureTableManager.Instance().ID = directX12.IssueViewID(HeapType::SRV);
 	directX12.GetDevice()->CreateShaderResourceView(texture.Resource.Get(), &srvDesc,
-		CPU_DESC_HANDLER(directX12.GetCPUCbvSrvUavHeapStart(), _textureTableManager.Instance().ID, directX12.GetCbvSrvUavDescriptorHeapSize()));
+		directX12.GetCPUResourceView(HeapType::SRV, _textureTableManager.Instance().ID));
 
 	/*-------------------------------------------------------------------
 	-                    Describe texture infomation
@@ -207,8 +177,8 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	Texture addTexture;
 	addTexture.Resource   = texture.Resource;
 	addTexture.Format     = texture.Resource.Get()->GetDesc().Format;
-	addTexture.GPUHandler = GPU_DESC_HANDLER(directX12.GetGPUCbvSrvUavHeapStart(), _textureTableManager.Instance().ID, directX12.GetCbvSrvUavDescriptorHeapSize());
-	addTexture.ImageSize  = DirectX::XMFLOAT2(image->width, image->height);
+	addTexture.GPUHandler = directX12.GetGPUResourceView(HeapType::SRV, _textureTableManager.Instance().ID);
+	addTexture.ImageSize  = DirectX::XMFLOAT2((float)image->width, (float)image->height);
 	/*-------------------------------------------------------------------
 	-                    Add texture table
 	---------------------------------------------------------------------*/
@@ -227,7 +197,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 *  @param[in]  bool isDiscreteGPU
 *  @return @@ void
 *****************************************************************************/
-void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& textureBuffer, bool isDiscreteGPU)
+void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Image* image, ResourceComPtr& textureBuffer, bool isDiscreteGPU, const DirectX::TexMetadata* metadata)
 {
 	D3D12_HEAP_PROPERTIES heapProperty = {};
 	
@@ -247,7 +217,7 @@ void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Im
 	/*-------------------------------------------------------------------
 	-             Setting the final write destination resource
 	---------------------------------------------------------------------*/
-	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(image->format, (UINT64)image->width, (UINT)image->height);
+	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(metadata->format, (UINT64)image->width, (UINT)image->height, metadata->arraySize, metadata->mipLevels);
 
 	if (isDiscreteGPU)
 	{

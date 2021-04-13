@@ -14,6 +14,7 @@
 #include "DirectX12/Include/Core/DirectX12Base.hpp"
 #include "GameCore/Include/Input/GameInput.hpp"
 #include "GameCore/Include/GameTimer.hpp"
+#include "GameCore/Include/Sprite/Fade.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -63,6 +64,7 @@ protected:
 	CommandListComPtr _commandList = nullptr;
 	GameInput&        _gameInput   = GameInput::Instance();
 	GameTimer*        _gameTimer   = nullptr;
+	Fader*            _fader       = nullptr;
 private:
 	/****************************************************************************
 	**                Private Function

@@ -66,8 +66,8 @@ void MotionTest::Draw()
 
 	_directX12.GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
 	_directX12.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	_directX12.GetCommandList()->IASetVertexBuffers(0, 1, &_geometries["rect"]->VertexBufferView());
-	_directX12.GetCommandList()->IASetIndexBuffer(&_geometries["rect"]->IndexBufferView());
+	//_directX12.GetCommandList()->IASetVertexBuffers(0, 1, &_geometries["rect"]->VertexBufferView());
+	//_directX12.GetCommandList()->IASetIndexBuffer(&_geometries["rect"]->IndexBufferView());
 	_directX12.GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 	_directX12.CompleteRendering();

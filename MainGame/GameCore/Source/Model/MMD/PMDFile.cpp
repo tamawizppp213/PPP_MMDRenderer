@@ -305,7 +305,7 @@ bool PMDData::LoadPMDFaceExpression(FILE* filePtr)
 		fread_s(&face.FaceExpressionType, sizeof(face.FaceExpressionType), sizeof(pmd::FacePart), 1 , filePtr);
 		face.Vertices.resize(face.VertexNum);
 		face.Indices .resize(face.VertexNum);
-		for (int i = 0; i < face.VertexNum; ++i)
+		for (UINT i = 0; i < face.VertexNum; ++i)
 		{
 			switch (face.FaceExpressionType)
 			{

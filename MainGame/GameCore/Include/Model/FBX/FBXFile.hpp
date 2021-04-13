@@ -17,6 +17,8 @@
 #include <DirectXMath.h>
 #include <Windows.h>
 #include <vector>
+#include <iostream>
+#include <map>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -55,8 +57,10 @@ private:
 	bool CreateFBXImporter();
 
 	bool OpenFBXFile(const std::wstring& filePath);
+	bool SetFBXConfig();
 	bool LoadFBXVertex();
-
+	
+	void CollectMeshNode(FbxNode* node, std::map<std::string, FbxNode*>& nodeList);
 
 	/****************************************************************************
 	**                Private Member Variables
@@ -66,7 +70,8 @@ private:
 	fbxsdk::FbxScene*    _fbxScene    = nullptr;
 	fbxsdk::FbxNode*     _fbxMeshNode = nullptr;
 	fbxsdk::FbxMesh*     _fbxMesh     = nullptr;
+	fbxsdk::FbxNode*     _fbxRootNode = nullptr;
 
-	std::vector<VertexPositionNormalColorTexture> _vertex;
+	std::vector<VertexPositionNormalTexture> _vertex;
 };
 #endif

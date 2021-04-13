@@ -65,8 +65,8 @@ bool SpriteRenderer::DrawStart()
 	_textureDescHeap                          = directX12.GetCbvSrvUavHeap();
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = _meshBuffer[currentFrameIndex].VertexBufferView();
 	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = _meshBuffer[currentFrameIndex].IndexBufferView();
-	auto rtv          = directX12.GetCurrentRenderTargetView();
-	auto dsv          = directX12.GetDepthStencilView();
+	auto rtv          = directX12.GetCPUResourceView(HeapType::RTV, currentFrameIndex);
+	auto dsv          = directX12.GetCPUResourceView(HeapType::DSV, 0);
 	auto viewport     = directX12.GetViewport();
 	auto scissorRects = directX12.GetScissorRect();
 
@@ -101,15 +101,7 @@ bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& 
 	-               Prepare variable
 	---------------------------------------------------------------------*/
 	DirectX12& directX12            = DirectX12::Instance();
-	CommandList* commandList        = directX12.GetCommandList();
-	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
 	int currentFrameIndex           = directX12.GetCurrentFrameIndex();
-	SpriteType spriteType           = spriteList[0].GetSpriteType();
-	_textureDescHeap                = directX12.GetCbvSrvUavHeap();
-	auto rtv          = directX12.GetCurrentRenderTargetView();
-	auto dsv          = directX12.GetDepthStencilView();
-	auto viewport     = directX12.GetViewport();
-	auto scissorRects = directX12.GetScissorRect();
 
 	/*-------------------------------------------------------------------
 	-               Check whether spriteList is empty 
@@ -132,7 +124,7 @@ bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& 
 	-               Add vertex data 
 	---------------------------------------------------------------------*/
 	_dynamicVertexBuffer[currentFrameIndex]->CopyStart();
-	for (int i = 0; i < min(spriteList.size(), (INT64)MaxSpriteCount - (INT64)_spriteStackCount); ++i)
+	for (int i = 0; i < min((INT64)spriteList.size(), (INT64)MaxSpriteCount - (INT64)_spriteStackCount); ++i)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
@@ -296,7 +288,7 @@ bool SpriteRenderer::PrepareIndexBuffer()
 	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader).Resource();
 	_meshBuffer[0].IndexFormat         = DXGI_FORMAT_R16_UINT;
 	_meshBuffer[0].IndexBufferByteSize = ibByteSize;
-	_meshBuffer[0].IndexCount          = indices.size();
+	_meshBuffer[0].IndexCount          = (UINT)indices.size();
 	if (FAILED(D3DCreateBlob(ibByteSize, &_meshBuffer[0].IndexBufferCPU)))
 	{
 		::OutputDebugString(L"Can't create blob data (index)");

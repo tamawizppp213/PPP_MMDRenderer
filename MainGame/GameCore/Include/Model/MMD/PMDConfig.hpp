@@ -224,5 +224,52 @@ private:
 	static constexpr unsigned int InputElementCount = 6;
 	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
 };
+
+class PMDMaterial
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	DirectX::XMFLOAT4 Diffuse;
+	float             SpecularPower;
+	DirectX::XMFLOAT3 Specular;
+	DirectX::XMFLOAT3 Ambient;
+	UINT8             ToonID;
+	UINT8             EdgeFlag;
+	UINT16            Padding;
+	UINT32            PolygonNum;
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	PMDMaterial()                                = default;
+	~PMDMaterial()                               = default;
+	PMDMaterial(const PMDMaterial&)              = default;
+	PMDMaterial& operator=(const PMDMaterial&)   = default;
+	PMDMaterial(PMDMaterial&&)                   = default;
+	PMDMaterial& operator=(PMDMaterial &&)       = default;
+	PMDMaterial(const pmd::PMDMaterial& material)
+	{
+		this->Diffuse       = material.Diffuse;
+		this->SpecularPower = material.SpecularPower;
+		this->Specular      = material.Specular;
+		this->Ambient       = material.Ambient;
+		this->ToonID        = material.ToonID;
+		this->EdgeFlag      = material.EdgeFlag;
+		this->PolygonNum    = material.PolygonNum;
+	}
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+};
 #pragma pack()
 #endif
