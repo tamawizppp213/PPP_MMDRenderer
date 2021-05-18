@@ -9,15 +9,10 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12/Include/Core/DirectX12Base.hpp"
-#include "DirectX12/Include/Core/DirectX12Config.hpp"
 #include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
-#include "GameCore/Include/Screen.hpp"
 #include <DirectXColors.h>
 #include <vector>
-#include <string>
-#include <cassert>
-#include <iostream>
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "dxcompiler.lib")

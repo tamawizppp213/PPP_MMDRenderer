@@ -11,10 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12Core.hpp"
-#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
+#include "DirectX12BaseStruct.hpp"
 #include <DirectXTex/DirectXTex.h>
-#include <string>
 #include <unordered_map>
 #pragma warning(disable : 26495)
 

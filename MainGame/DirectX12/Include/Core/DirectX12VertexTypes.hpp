@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
+#include "GameMath/Include/GMVector.hpp"
 #include <d3d12.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 struct VertexPosition
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
+	gm::Float3 Position; /// Position
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout; /// Input Layout Descriptor
 
@@ -56,8 +56,8 @@ private:
 struct VertexPositionColor
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT4 Color;    /// Color
+	gm::Float3 Position; /// Position
+	gm::Float4 Color;    /// Color
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -88,8 +88,8 @@ private:
 struct VertexPositionTexture
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT2 UV;       /// UV
+	gm::Float3 Position; /// Position
+	gm::Float2 UV;       /// UV
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -120,9 +120,9 @@ private:
 struct VertexPositionDualTexture
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
- 	DirectX::XMFLOAT2 UV1;      /// UV1
-	DirectX::XMFLOAT2 UV2;      /// UV2
+	gm::Float3 Position; /// Position
+ 	gm::Float2 UV1;      /// UV1
+	gm::Float2 UV2;      /// UV2
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -154,8 +154,8 @@ private:
 struct VertexPositionNormal
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT3 Normal;   /// Normal
+	gm::Float3 Position; /// Position
+	gm::Float3 Normal;   /// Normal
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -186,9 +186,9 @@ private:
 struct VertexPositionColorTexture
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT4 Color;    /// Color
-	DirectX::XMFLOAT2 UV;       /// UV
+	gm::Float3 Position; /// Position
+	gm::Float4 Color;    /// Color
+	gm::Float2 UV;       /// UV
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -220,9 +220,9 @@ private:
 struct VertexPositionNormalColor
 {
 public:
-	DirectX::XMFLOAT3 Position;
-	DirectX::XMFLOAT3 Normal;
-	DirectX::XMFLOAT4 Color;
+	gm::Float3 Position;
+	gm::Float3 Normal;
+	gm::Float4 Color;
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -254,9 +254,9 @@ private:
 struct VertexPositionNormalTexture
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT3 Normal;   /// Normal
-	DirectX::XMFLOAT2 UV;       /// UV
+	gm::Float3 Position; /// Position
+	gm::Float3 Normal;   /// Normal
+	gm::Float2 UV;       /// UV
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -289,10 +289,10 @@ private:
 struct VertexPositionNormalColorTexture
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT3 Normal;   /// Normal
-	DirectX::XMFLOAT4 Color;    /// Color
-	DirectX::XMFLOAT2 UV;       /// UV
+	gm::Float3 Position; /// Position
+	gm::Float3 Normal;   /// Normal
+	gm::Float4 Color;    /// Color
+	gm::Float2 UV;       /// UV
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -325,10 +325,10 @@ private:
 struct VertexPositionNormalTextureTangent
 {
 public:
-	DirectX::XMFLOAT3 Position; /// Position
-	DirectX::XMFLOAT3 Normal;   /// Normal
-	DirectX::XMFLOAT2 UV;       /// Texture
-	DirectX::XMFLOAT3 Tangent;  /// Tangent
+	gm::Float3 Position; /// Position
+	gm::Float3 Normal;   /// Normal
+	gm::Float2 UV;       /// Texture
+	gm::Float3 Tangent;  /// Tangent
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
