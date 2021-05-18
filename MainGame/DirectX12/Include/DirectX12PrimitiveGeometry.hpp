@@ -12,7 +12,6 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "Core/DirectX12VertexTypes.hpp"
-#include <DirectXMath.h>
 #include <vector>
 
 

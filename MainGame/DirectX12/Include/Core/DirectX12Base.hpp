@@ -11,9 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12Core.hpp"
 #include "DirectX12Config.hpp"
-#include "DirectX12Debug.hpp"
 #include "DirectX12BufferAllocator.hpp"
 #include "GameCore/Include/Screen.hpp"
 #include <Windows.h>

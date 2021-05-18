@@ -23,6 +23,7 @@
     <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BufferAllocator.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Core.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp" />
@@ -88,11 +89,19 @@
     <ClInclude Include="GameCore\Include\Sprite\Text.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
+    <ClInclude Include="GameMath\Include\GMColor.hpp" />
     <ClInclude Include="GameMath\Include\GMDistribution.hpp" />
+    <ClInclude Include="GameMath\Include\GMMath.hpp" />
+    <ClInclude Include="GameMath\Include\GMMatrix.hpp" />
+    <ClInclude Include="GameMath\Include\GMQuaternion.hpp" />
     <ClInclude Include="GameMath\Include\GMQueue.hpp" />
+    <ClInclude Include="GameMath\Include\GMScalar.hpp" />
     <ClInclude Include="GameMath\Include\GMSearch.hpp" />
     <ClInclude Include="GameMath\Include\GMSort.hpp" />
     <ClInclude Include="GameMath\Include\GMStack.hpp" />
+    <ClInclude Include="GameMath\Include\GMTransform.hpp" />
+    <ClInclude Include="GameMath\Include\GMVector.hpp" />
+    <ClInclude Include="GameMath\Include\GMVectorUtility.hpp" />
     <ClInclude Include="MainGame\Include\Application.hpp" />
     <ClInclude Include="MainGame\Include\FrameResources.hpp" />
     <ClInclude Include="MainGame\Include\GameCore.hpp" />
@@ -482,6 +491,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GameMath\Include\GameMath.inl" />
+    <None Include="GameMath\Include\GMSimdFunctions.inl" />
     <None Include="Pluguins\DirectXTex\DirectXTex.inl" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_EncodeBlockCS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_TryModeG10CS.inc" />

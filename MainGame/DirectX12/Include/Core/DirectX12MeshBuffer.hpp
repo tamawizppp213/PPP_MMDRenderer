@@ -11,7 +11,6 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12Core.hpp"
-#include <DirectXCollision.h>
 #include <dxgi1_6.h>
 #include <string>
 

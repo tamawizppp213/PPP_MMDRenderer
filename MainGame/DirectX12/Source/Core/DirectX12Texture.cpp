@@ -8,11 +8,9 @@
 //                              Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12/Include/Core/DirectX12Texture.hpp"
-#include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/Core/DirectX12Base.hpp"
 #include <algorithm>
-#include <iostream>
 #ifdef _DEBUG
 #pragma comment(lib, "Pluguins/DirectXTexd.lib")
 #else 
@@ -217,7 +215,7 @@ void TextureLoader::CreateTextureFromImageData(Device* device, const DirectX::Im
 	/*-------------------------------------------------------------------
 	-             Setting the final write destination resource
 	---------------------------------------------------------------------*/
-	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(metadata->format, (UINT64)image->width, (UINT)image->height, metadata->arraySize, metadata->mipLevels);
+	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(metadata->format, (UINT64)image->width, (UINT)image->height, (UINT16)metadata->arraySize, (UINT16)metadata->mipLevels);
 
 	if (isDiscreteGPU)
 	{
