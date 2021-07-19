@@ -72,7 +72,7 @@ inline bool operator!=(const D3D12_BOX& l, const D3D12_BOX& r)
 }
 
 /****************************************************************************
-*			DEPTH_STENCIL_DESC : public  D3D12_DEPTH_STENCIL_DESC
+*			DEPTH_STENCIL_DESC   public  D3D12_DEPTH_STENCIL_DESC
 *************************************************************************//**
 *  @struct    DEPTH_STENCIL_DESC
 *  @brief     easier DEPTH_STENCIL_DESC (This struct is derived from D3D12_DEPTH_STENCIL_DESC)

@@ -19,10 +19,7 @@
 //                         Forward Declaration
 //////////////////////////////////////////////////////////////////////////////////
 class DirectX12;
-class ModelData;
-class PMDData;
-class OBJData;
-class FBXData;
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                         Alias 
@@ -40,6 +37,7 @@ using Resource         = ID3D12Resource;
 using PSODesc          = D3D12_GRAPHICS_PIPELINE_STATE_DESC;
 using RootSignature    = ID3D12RootSignature;
 using PipelineState    = ID3D12PipelineState;
+using DescriptorHeap   = ID3D12DescriptorHeap;
 
 using DeviceComPtr           = ComPtr<ID3D12Device>;
 using AdapterComPtr          = ComPtr<IDXGIAdapter1>;

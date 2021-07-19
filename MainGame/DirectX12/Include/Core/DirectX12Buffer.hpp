@@ -90,15 +90,7 @@ public:
 
 	UploadBuffer(const UploadBuffer& rhs)            = delete;
 	UploadBuffer& operator=(const UploadBuffer& rhs) = delete;
-	~UploadBuffer()
-	{
-		/*if (_uploadBuffer != nullptr)
-		{
-			_uploadBuffer->Unmap(0, nullptr);
-		}
-
-		_mappedData = nullptr;*/
-	}
+	~UploadBuffer(){}
 
 	inline ID3D12Resource1* Resource() const
 	{
@@ -112,7 +104,12 @@ public:
 
 	inline void CopyData(int elementIndex, const T& data)
 	{
-		memcpy(&_mappedData[elementIndex * _elementByteSize], &data, sizeof(T));
+		std::memcpy(&_mappedData[elementIndex * _elementByteSize], &data, sizeof(T));
+	}
+
+	inline void CopyTotalData(const T* data, int dataLength)
+	{
+		std::memcpy(&_mappedData[0], data, sizeof(T) * dataLength);
 	}
 
 	inline void CopyEnd()
@@ -125,5 +122,43 @@ private:
 	BYTE* _mappedData       = nullptr;
 	UINT  _elementByteSize  = 0;
 	bool  _isConstantBuffer = false;
+};
+
+struct StructuredBuffer
+{
+public:
+	~StructuredBuffer();
+
+	void Initialize(int elementByteSize, int elementCount, void* initData);
+	void RegistShaderResourceView(D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
+	void Update(void* data);
+	bool IsInited() const { return _isInitialized; }
+	Resource* GetResource();
+private:
+	Resource* _bufferOnGPU = nullptr;
+	void*     _bufferOnCPU = nullptr;
+	int _elementCount      = 0;
+	int _elementByteSize   = 0;
+	bool _isInitialized    = false;
+};
+
+struct RWStructuredBuffer
+{
+public:
+	~RWStructuredBuffer();
+	
+	void Initialize(int elementByteSize, int elementCount, void* initData);
+	void RegistUnorderAccessView(D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
+	void RegistShaderResourceView(D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
+	bool IsInitialized() const { return _isInitialized; }
+	void* GetResourceOnCPU();
+	Resource* GetResource();
+
+private:
+	Resource* _bufferOnGPU = nullptr;
+	void* _bufferOnCPU     = nullptr;
+	int _elementCount      = 0;
+	int _elementByteSize   = 0;
+	bool _isInitialized     = false;
 };
 #endif
