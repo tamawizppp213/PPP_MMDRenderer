@@ -15,7 +15,7 @@
 #include "GMQuaternion.hpp"
 
 
-#pragma warning(disable: 26812, 26495)
+#pragma warning(disable: 26812 26495)
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -282,7 +282,7 @@ namespace gm
 
 		INLINE Vector4 operator* (Vector3 vec) const        { return Vector4(DirectX::XMVector3Transform(vec, _matrix)); }
 		INLINE Vector4 operator* (Vector4 vec) const        { return Vector4(DirectX::XMVector4Transform(vec, _matrix)); }
-		INLINE Matrix4 operator* (const Matrix4& mat) const { return Matrix4(DirectX::XMMatrixMultiply(mat, _matrix)); }
+		INLINE Matrix4 operator* (const Matrix4& mat) const { return Matrix4(DirectX::XMMatrixMultiply(_matrix, mat)); }
 
 		bool operator == (const Matrix4& M) const noexcept;
 		bool operator != (const Matrix4& M) const noexcept;
@@ -359,9 +359,11 @@ namespace gm
 		return Matrix3(inv0, inv1, inv2) * rDet;
 	}
 
+
 	INLINE Scalar  Determinant(const Matrix4& matrix) { return Scalar(DirectX::XMMatrixDeterminant(matrix)); }
 	INLINE Matrix4 Transpose  (const Matrix4& matrix) { return Matrix4(DirectX::XMMatrixTranspose(matrix)); }
-	INLINE Matrix4 Invert     (const Matrix4& matrix) { return Matrix4(DirectX::XMMatrixInverse(nullptr, matrix)); }
+	INLINE Matrix4 Inverse    (const Matrix4& matrix) { return Matrix4(DirectX::XMMatrixInverse(nullptr, matrix)); }
+	INLINE Matrix4 Inverse    (Vector4& determinant, const Matrix4& matrix) { return Matrix4(DirectX::XMMatrixInverse(determinant.VectorPtr(), matrix)); }
 	INLINE Matrix4 OrthoInvert(const Matrix4& xform)
 	{
 		Matrix3 basis     = Transpose(xform.Get3x3());
@@ -374,7 +376,12 @@ namespace gm
 		if (DirectX::XMMatrixDecompose(&s, &r, &t, matrix)) { return true; }
 		else { return false; }
 	}
-
+	INLINE Matrix4  MatrixIdentity()   { return Matrix4(DirectX::XMMatrixIdentity()); }
+	INLINE Float4x4 MatrixIdentityF()  { return Matrix4(DirectX::XMMatrixIdentity()).ToFloat4x4(); }
+	INLINE Vector3 TransformVector3(Vector3& vector, Matrix4& matrix) { return Vector3(DirectX::XMVector3Transform(vector, matrix)); }
+	INLINE Vector3 TransformCoordinateVector3(Vector3& vector, Matrix4& matrix) { return Vector3(DirectX::XMVector3TransformCoord(vector, matrix)); }
+	INLINE Vector2 TransformNormal(const Vector2& v, const Matrix3& M) { return Vector2(DirectX::XMVector2TransformNormal(v, M)); }
+	INLINE Vector3 TransformNormal(const Vector3& v, const Matrix4& M) { return Vector3(DirectX::XMVector3TransformNormal(v, M)); }
 	INLINE Matrix4 Transform2D  (const Vector2& scaling, float rotation, const Vector2& translation, const Vector2& rotationOrigin = Vector2(0.0f, 0.0f))                 { return Matrix4(DirectX::XMMatrixAffineTransformation2D(scaling, rotationOrigin, rotation, translation)); }
 	INLINE Matrix4 Transform3D  (const Vector3& scaling, const Quaternion& rotation, const Vector3& translation, const Vector3& rotationOrigin = Vector3(0.0f, 0.0f, 0.0f)) { return Matrix4(DirectX::XMMatrixAffineTransformation(scaling, rotationOrigin, rotation, translation)); }
 	INLINE Matrix4 Transform3D  (const Matrix4& matrix, const Quaternion& rotation) { return matrix * Matrix4(DirectX::XMMatrixRotationQuaternion(rotation)); }

@@ -26,6 +26,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GMScalar.hpp"
+
 #pragma warning(disable: 26495)
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -385,6 +386,7 @@ namespace gm
 		INLINE void SetZ(Scalar z) { _vector = DirectX::XMVectorPermute<0, 1, 6, 3>(_vector, z); }
 		INLINE void SetW(Scalar w) { _vector = DirectX::XMVectorPermute<0, 1, 2, 7>(_vector, w); }
 		INLINE void SetXYZ(Vector3 xyz) { _vector = DirectX::XMVectorPermute<0, 1, 2, 7>(xyz, _vector); }
+		INLINE DirectX::XMVECTOR* VectorPtr() { return &_vector; }
 		INLINE Float4 ToFloat4()
 		{
 			Float4 value;
@@ -438,6 +440,10 @@ namespace gm
 	CREATE_SIMD_FUNCTIONS(Vector3);
 	CREATE_SIMD_FUNCTIONS(Vector4);
 
+	INLINE Vector2 ReplicateVector2(float value) { return Vector2(DirectX::XMVectorReplicate(value)); }
+	INLINE Vector3 ReplicateVector3(float value) { return Vector3(DirectX::XMVectorReplicate(value)); }
+	INLINE Vector4 ReplicateVector4(float value) { return Vector4(DirectX::XMVectorReplicate(value)); }
+
 	INLINE Scalar Norm(const Vector2& v)                                          { return Scalar(DirectX::XMVector2Length(v)); }
 	INLINE Scalar Norm(const Vector3& v)                                          { return Scalar(DirectX::XMVector3Length(v)); }
 	INLINE Scalar Norm(const Vector4& v)                                          { return Scalar(DirectX::XMVector4Length(v)); }
@@ -449,6 +455,10 @@ namespace gm
 	INLINE Scalar NormRecip(const Vector2& v)                                     { return Scalar(DirectX::XMVector2ReciprocalLength(v)); }
 	INLINE Scalar NormRecip(const Vector3& v)                                     { return Scalar(DirectX::XMVector3ReciprocalLength(v)); }
 	INLINE Scalar NormRecip(const Vector4& v)                                     { return Scalar(DirectX::XMVector4ReciprocalLength(v)); }
+
+	INLINE Vector2 ClampNorm(const Vector2& v, float minNorm, float maxNorm)      { return Vector2(DirectX::XMVector2ClampLength(v, minNorm, maxNorm)); }
+	INLINE Vector3 ClampNorm(const Vector3& v, float minNorm, float maxNorm)      { return Vector3(DirectX::XMVector3ClampLength(v, minNorm, maxNorm)); }
+	INLINE Vector4 ClampNorm(const Vector4& v, float minNorm, float maxNorm)      { return Vector4(DirectX::XMVector4ClampLength(v, minNorm, maxNorm)); }
 
 	INLINE Scalar Dot(const Vector2& v1, const Vector2& v2)                       { return Scalar(DirectX::XMVector2Dot(v1, v2)); }
 	INLINE Scalar Dot(const Vector3& v1, const Vector3& v2)                       { return Scalar(DirectX::XMVector3Dot(v1, v2)); }
@@ -489,6 +499,30 @@ namespace gm
 	INLINE Vector2 BaryCentric(const Vector2& v1, const Vector2& v2, const Vector2& v3, float wf, float wg)        { return Vector2(DirectX::XMVectorBaryCentric(v1, v2, v3, wf, wg)); }
 	INLINE Vector3 BaryCentric(const Vector3& v1, const Vector3& v2, const Vector3& v3, float wf, float wg)        { return Vector3(DirectX::XMVectorBaryCentric(v1, v2, v3, wf, wg)); }
 	INLINE Vector4 BaryCentric(const Vector4& v1, const Vector4& v2, const Vector4& v3, float wf, float wg)        { return Vector4(DirectX::XMVectorBaryCentric(v1, v2, v3, wf, wg)); }
+	
+	INLINE Vector2 AngleBetweenNormalizeVector(const Vector2& v1, const Vector2& v2) { return Vector2(DirectX::XMVector2AngleBetweenNormals(v1, v2)); }
+	INLINE Vector3 AngleBetweenNormalizeVector(const Vector3& v1, const Vector3& v2) { return Vector3(DirectX::XMVector3AngleBetweenNormals(v1, v2)); }
+	INLINE Vector2 AngleBetweenNormalizeVectorEstimation(const Vector2& v1, const Vector2& v2) { return Vector2(DirectX::XMVector2AngleBetweenNormalsEst(v1, v2)); }
+	INLINE Vector3 AngleBetweenNormalizeVectorEstimation(const Vector3& v1, const Vector3& v2) { return Vector3(DirectX::XMVector3AngleBetweenNormalsEst(v1, v2)); }
+	INLINE Vector2 AngleBetweenVectors(const Vector2& v1, const Vector2& v2) { return Vector2(DirectX::XMVector2AngleBetweenVectors(v1, v2)); }
+	INLINE Vector3 AngleBetweenVectors(const Vector3& v1, const Vector3& v2) { return Vector3(DirectX::XMVector3AngleBetweenVectors(v1, v2)); }
 
+	INLINE bool InBounds(const Vector2& v, const Vector2& bounds) { return DirectX::XMVector2InBounds(v, bounds); }
+	INLINE bool InBounds(const Vector3& v, const Vector3& bounds) { return DirectX::XMVector3InBounds(v, bounds); }
+	INLINE bool InBounds(const Vector4& v, const Vector4& bounds) { return DirectX::XMVector4InBounds(v, bounds); }
+
+	INLINE bool IsInfinite(const Vector2& v) { return DirectX::XMVector2IsInfinite(v); }
+	INLINE bool IsInfinite(const Vector3& v) { return DirectX::XMVector3IsInfinite(v); }
+	INLINE bool IsInfinite(const Vector4& v) { return DirectX::XMVector4IsInfinite(v); }
+
+	INLINE bool IsNAN(const Vector2& v) { return DirectX::XMVector2IsNaN(v); }
+	INLINE bool IsNAN(const Vector3& v) { return DirectX::XMVector3IsNaN(v); }
+	INLINE bool IsNAN(const Vector4& v) { return DirectX::XMVector4IsNaN(v); }
+
+	INLINE Vector2 LinePointDistance(const Vector2& linePoint1, const Vector2& linePoint2, const Vector2& point) { return Vector2(DirectX::XMVector2LinePointDistance(linePoint1, linePoint2, point)); }
+	INLINE Vector3 LinePointDistance(const Vector3& linePoint1, const Vector3& linePoint2, const Vector3& point) { return Vector3(DirectX::XMVector3LinePointDistance(linePoint1, linePoint2, point)); }
+
+	INLINE Vector2 IntersectLine(const Vector2& line1Point1, const Vector2& line1Point2, const Vector2& line2Point1, const Vector2& line2Point2) { return Vector2(DirectX::XMVector2IntersectLine(line1Point1, line1Point2, line2Point1, line2Point2)); }
+	
 }
 #endif

@@ -1195,6 +1195,12 @@
     <ClInclude Include="GameCore\Include\Effect\PostEffect.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameMath\Include\GMCollision.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMInterpolation.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCore\Source\Camera.cpp">
@@ -1488,6 +1494,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </None>
     <None Include="GameMath\Include\GMSimdFunctions.inl">
+      <Filter>ヘッダー ファイル</Filter>
+    </None>
+    <None Include="GameMath\Include\GMCollisionFunctions.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
   </ItemGroup>
