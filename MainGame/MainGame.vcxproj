@@ -96,8 +96,10 @@
     <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Wipe.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
+    <ClInclude Include="GameMath\Include\GMCollision.hpp" />
     <ClInclude Include="GameMath\Include\GMColor.hpp" />
     <ClInclude Include="GameMath\Include\GMDistribution.hpp" />
+    <ClInclude Include="GameMath\Include\GMInterpolation.hpp" />
     <ClInclude Include="GameMath\Include\GMMath.hpp" />
     <ClInclude Include="GameMath\Include\GMMatrix.hpp" />
     <ClInclude Include="GameMath\Include\GMQuaternion.hpp" />
@@ -504,6 +506,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GameMath\Include\GameMath.inl" />
+    <None Include="GameMath\Include\GMCollisionFunctions.inl" />
     <None Include="GameMath\Include\GMSimdFunctions.inl" />
     <None Include="Pluguins\DirectXTex\DirectXTex.inl" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_EncodeBlockCS.inc" />

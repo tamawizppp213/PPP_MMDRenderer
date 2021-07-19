@@ -1,21 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 ///             @file   GMColor.hpp
 ///             @brief  Game Math ()
-///             @author James Stanard : Partially Edit by Toide Yutaro
+///             @author Toide Yutaro
 ///             @date   2021_05_16
 //////////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (c) Microsoft. All rights reserved.
-// This code is licensed under the MIT License (MIT).
-// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
-// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
-// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-//
-// Developed by Minigraph
-//
-// Author:  James Stanard 
-//
+
 #pragma once
 #ifndef GM_COLOR_HPP
 #define GM_COLOR_HPP

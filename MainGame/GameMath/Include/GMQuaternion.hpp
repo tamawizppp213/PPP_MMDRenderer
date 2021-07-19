@@ -51,7 +51,7 @@ namespace gm
 		INLINE Quaternion operator~ (void) const { return Quaternion(DirectX::XMQuaternionConjugate(_vector)); }
 		INLINE Quaternion operator- (void) const { return Quaternion(DirectX::XMVectorNegate(_vector)); }
 
-		INLINE Quaternion operator* (Quaternion rhs) const { return Quaternion(DirectX::XMQuaternionMultiply(rhs, _vector)); }
+		INLINE Quaternion operator* (Quaternion rhs) const { return Quaternion(DirectX::XMQuaternionMultiply(rhs, _vector)); } // from right to left 
 		INLINE Vector3 operator*    (Vector3 rhs)    const { return Vector3(DirectX::XMVector3Rotate(rhs, _vector)); }
 
 		INLINE Quaternion& operator=  (const Quaternion& rhs) { _vector = rhs; return *this; }
@@ -91,11 +91,12 @@ namespace gm
 		*****************************************************************************/
 		DirectX::XMVECTOR _vector;
 	};
-
+	
+	INLINE void AxisAngle(const Quaternion& q, float* rotate, DirectX::XMVECTOR* axis) { return DirectX::XMQuaternionToAxisAngle(axis,rotate,q); }
 	INLINE Quaternion Normalize(const Quaternion& q)                           { return Quaternion(DirectX::XMQuaternionNormalize(q)); }
 	INLINE Quaternion Squad(const Quaternion& a, const Quaternion& b, const Quaternion& c, const Quaternion& d, float t) { return Quaternion(DirectX::XMQuaternionSquad(a, b, c, d, t)); }
-	INLINE Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t) { return Normalize(Quaternion(DirectX::XMQuaternionSlerp(a, b, t))); }
-	INLINE Quaternion Lerp (const Quaternion& a, const Quaternion& b, float t) { return Normalize(Quaternion(DirectX::XMVectorLerp(a, b, t))); }
+	INLINE Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t) { return Quaternion(DirectX::XMQuaternionSlerp(a, b, t)); }
+	INLINE Quaternion Lerp (const Quaternion& a, const Quaternion& b, float t) { return Quaternion(DirectX::XMVectorLerp(a, b, t)); }
 	INLINE Quaternion Norm       (const Quaternion& q)                         { return Quaternion(DirectX::XMQuaternionLength(q)); }
 	INLINE Quaternion NormSquared(const Quaternion& q)                         { return Quaternion(DirectX::XMQuaternionLengthSq(q)); }
 	INLINE Quaternion Conjugate  (const Quaternion& q)                         { return Quaternion(DirectX::XMQuaternionConjugate(q)); }
