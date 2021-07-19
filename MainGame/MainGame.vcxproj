@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BlendState.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12BufferAllocator.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp" />
@@ -408,6 +409,7 @@
   <ItemGroup>
     <ClCompile Include="DirectX12\Source\Core\DirectX12Base.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12BaseStruct.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12BlendState.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Buffer.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Config.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Core.cpp" />

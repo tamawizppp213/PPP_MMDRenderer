@@ -11,7 +11,8 @@
 #include "DirectX12/Include/Core/DirectX12Base.hpp"
 #include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
-#include <DirectXColors.h>
+#include "DirectX12/Include/Core/DirectX12BlendState.hpp"
+#include "GameMath/Include/GMColor.hpp"
 #include <vector>
 
 #pragma comment(lib,"d3dcompiler.lib")
@@ -73,7 +74,7 @@ void DirectX12::OnResize()
 	/*-------------------------------------------------------------------
 	-              Release the previous resources
 	---------------------------------------------------------------------*/
-	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i)
+	for (int i = 0; i < (int)RenderTargetType::CountOfRenderTarget; ++i)
 	{
 		_renderTargetList[i].Reset();
 	}
@@ -122,7 +123,7 @@ void DirectX12::ClearScreen()
 	_commandList->RSSetScissorRects(1, &_scissorRect);
 
 	// Clear the back buffer and depth buffer.
-	_commandList->ClearRenderTargetView(_rtvAllocator.GetCPUDescHandler(_currentFrameIndex), DirectX::Colors::SteelBlue, 0, nullptr);
+	_commandList->ClearRenderTargetView(_rtvAllocator.GetCPUDescHandler(_currentFrameIndex), gm::color::SteelBlue, 0, nullptr);
 	_commandList->ClearDepthStencilView(_dsvAllocator.GetCPUDescHandler(0), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Set Render Target 
@@ -224,6 +225,10 @@ void DirectX12::LoadPipeLine()
 	---------------------------------------------------------------------*/
 	CreateDescriptorHeap();
 	BuildResourceAllocator();
+	for(int i = 0; i < (int)RenderTargetType::CountOfRenderTarget; ++i){ IssueViewID(HeapType::RTV); }
+	IssueViewID(HeapType::DSV);
+
+
 	/*-------------------------------------------------------------------
 	-                 Create Default PSO
 	---------------------------------------------------------------------*/
@@ -241,8 +246,9 @@ void DirectX12::LoadPipeLine()
 *****************************************************************************/
 void DirectX12::LoadAssets()
 {
+	InitializeShaderBlendData();
+	BuildOffScreenRenderingView();
 	OnResize();
-
 }
 
 /****************************************************************************
@@ -478,7 +484,7 @@ void DirectX12::BuildResourceAllocator()
 	uavCpuHandler.ptr += (UINT64)(CBV_DESC_COUNT + SRV_DESC_COUNT) * _cbvSrvUavDescriptorSize;
 	auto uavGpuHandler = _cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();
 	uavGpuHandler.ptr += (UINT64)(CBV_DESC_COUNT + SRV_DESC_COUNT) * _cbvSrvUavDescriptorSize;
-	_srvAllocator.SetResourceAllocator(SRV_DESC_COUNT, _cbvSrvUavDescriptorSize, uavCpuHandler, uavGpuHandler);
+	_uavAllocator.SetResourceAllocator(UAV_DESC_COUNT, _cbvSrvUavDescriptorSize, uavCpuHandler, uavGpuHandler);
 
 }
 
@@ -492,14 +498,196 @@ void DirectX12::BuildResourceAllocator()
 *****************************************************************************/
 void DirectX12::BuildRenderTargetView()
 {
+	// for drawing 
 	CPU_DESC_HANDLER rtvHeapHandle(_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 	for (UINT i = 0; i < FRAME_BUFFER_COUNT; ++i)
 	{
 		ThrowIfFailed(_swapchain->GetBuffer(i, IID_PPV_ARGS(&_renderTargetList[i])));
-		auto rtvID = IssueViewID(HeapType::RTV);
-		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, _rtvAllocator.GetCPUDescHandler(rtvID));
+		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, _rtvAllocator.GetCPUDescHandler(i));
+	}
+	for (int i = FRAME_BUFFER_COUNT; i < (int)RenderTargetType::CountOfRenderTarget; ++i)
+	{
+		ThrowIfFailed(_swapchain->GetBuffer(0, IID_PPV_ARGS(&_renderTargetList[i])));
+		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, _rtvAllocator.GetCPUDescHandler(i));
+	}
+	
+}
+
+/****************************************************************************
+*							BuildOddScreenRenderingView
+*************************************************************************//**
+*  @fn        void DirectX12::BuildRenderTargetView(void)
+*  @brief     Build off screen rendering color buffer
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void DirectX12::BuildOffScreenRenderingView()
+{
+	// for off screen rendering
+	D3D12_RENDER_TARGET_VIEW_DESC colorBufferDesc = {};
+	colorBufferDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	colorBufferDesc.Format        = _backBufferFormat;
+	_device->CreateRenderTargetView(_renderTargetList[(int)RenderTargetType::ColorBuffer].Get(), &colorBufferDesc, _rtvAllocator.GetCPUDescHandler((int)RenderTargetType::ColorBuffer));
+
+	D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
+	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(_backBufferFormat,_screen.GetScreenWidth() , (UINT)_screen.GetScreenHeight(), 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+	for (int i = 0; i < OFF_SCREEN_TEXTURE_NUM; ++i)
+	{
+		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateCommittedResource(
+			&heapProperty,
+			D3D12_HEAP_FLAG_NONE,
+			&resourceDesc,
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&_offScreenRenderTarget[i].Resource)));
+
+		/*-------------------------------------------------------------------
+		-			     Set SRV
+		---------------------------------------------------------------------*/
+		UINT id = IssueViewID(HeapType::SRV);
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		srvDesc.Format = _backBufferFormat;
+		srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels           = 1;
+		srvDesc.Texture2D.PlaneSlice          = 0;
+		srvDesc.Texture2D.MostDetailedMip     = 0;
+		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+		_device->CreateShaderResourceView(
+			_offScreenRenderTarget[i].Resource.Get(), &srvDesc,
+			GetCPUResourceView(HeapType::SRV, id));
+		_offScreenRenderTarget[i].GPUHandler = GetGPUResourceView(HeapType::SRV, id);
+		_offScreenRenderTarget[i].ImageSize.x = _screen.GetScreenWidth();
+		_offScreenRenderTarget[i].ImageSize.y = _screen.GetScreenHeight();
+		_offScreenRenderTarget[i].Format = _backBufferFormat;
+
+		/*-------------------------------------------------------------------
+		-			     Set UAV 
+		---------------------------------------------------------------------*/
+		UINT uavID = IssueViewID(HeapType::UAV);
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+		uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
+		uavDesc.Format               = _backBufferFormat;
+		uavDesc.Texture2D.MipSlice   = 0;
+		uavDesc.Texture2D.PlaneSlice = 0;
+		_device->CreateUnorderedAccessView(
+			_offScreenRenderTarget[i].Resource.Get(), nullptr, 
+			&uavDesc, GetCPUResourceView(HeapType::UAV, uavID));
+	}
+
+}
+
+/****************************************************************************
+*						ResizeOffScreenRenderTarget
+*************************************************************************//**
+*  @fn        Texture DirectX12::ResizeOffScreenRenderTarget(UINT index)
+*  @brief     Resize Off Screen Render Target
+*  @param[in] UINT index
+*  @return 　　void
+*****************************************************************************/
+Texture DirectX12::ResizeOffScreenRenderTarget(UINT index, int width, int height)
+{
+	if (index >= OFF_SCREEN_TEXTURE_NUM)
+	{
+		OutputDebugString(L"Error! max offscreen texture num exceeds.\n");
+		index = OFF_SCREEN_TEXTURE_NUM - 1;
+	}
+	D3D12_RENDER_TARGET_VIEW_DESC colorBufferDesc = {};
+	colorBufferDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	colorBufferDesc.Format = _backBufferFormat;
+	_device->CreateRenderTargetView(_renderTargetList[(int)RenderTargetType::ColorBuffer].Get(), &colorBufferDesc, _rtvAllocator.GetCPUDescHandler((int)RenderTargetType::ColorBuffer));
+
+	D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
+	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(_backBufferFormat, _screen.GetScreenWidth(), (UINT)_screen.GetScreenHeight(), 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+
+	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateCommittedResource(
+		&heapProperty,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_COMMON,
+		nullptr,
+		IID_PPV_ARGS(&_offScreenRenderTarget[index].Resource)));
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = _backBufferFormat;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels  = 1;
+	srvDesc.Texture2D.PlaneSlice = 0;
+	srvDesc.Texture2D.MostDetailedMip     = 0;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	_device->CreateShaderResourceView(
+		_offScreenRenderTarget[index].Resource.Get(), &srvDesc,
+		GetCPUResourceView(HeapType::SRV, index));
+	_offScreenRenderTarget[index].GPUHandler = GetGPUResourceView(HeapType::SRV, index);
+	_offScreenRenderTarget[index].ImageSize.x = _screen.GetScreenWidth();
+	_offScreenRenderTarget[index].ImageSize.y = _screen.GetScreenHeight();
+	_offScreenRenderTarget[index].Format = _backBufferFormat;
+
+	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+	uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
+	uavDesc.Texture2D.MipSlice   = 0;
+	uavDesc.Texture2D.PlaneSlice = 0;
+	uavDesc.Format = _backBufferFormat;
+	_device->CreateUnorderedAccessView(
+		_offScreenRenderTarget[index].Resource.Get(), nullptr,
+		&uavDesc, GetCPUResourceView(HeapType::UAV, index));
+
+	return _offScreenRenderTarget[index];
+}
+
+void DirectX12::ResizeOffScreenRenderTargets()
+{
+
+	D3D12_RENDER_TARGET_VIEW_DESC colorBufferDesc = {};
+	colorBufferDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	colorBufferDesc.Format = _backBufferFormat;
+	_device->CreateRenderTargetView(_renderTargetList[(int)RenderTargetType::ColorBuffer].Get(), &colorBufferDesc, _rtvAllocator.GetCPUDescHandler((int)RenderTargetType::ColorBuffer));
+
+	D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
+	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(_backBufferFormat, _screen.GetScreenWidth(), (UINT)_screen.GetScreenHeight(), 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+	for (int i = 0; i < OFF_SCREEN_TEXTURE_NUM; ++i)
+	{
+		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateCommittedResource(
+			&heapProperty,
+			D3D12_HEAP_FLAG_NONE,
+			&resourceDesc,
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&_offScreenRenderTarget[i].Resource)));
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		srvDesc.Format = _backBufferFormat;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.PlaneSlice = 0;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+		_device->CreateShaderResourceView(
+			_offScreenRenderTarget[i].Resource.Get(), &srvDesc,
+			GetCPUResourceView(HeapType::SRV, i));
+
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+		uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
+		uavDesc.Texture2D.MipSlice   = 0;
+		uavDesc.Texture2D.PlaneSlice = 0;
+		uavDesc.Format = _backBufferFormat;
+		_device->CreateUnorderedAccessView(
+			_offScreenRenderTarget[i].Resource.Get(), nullptr,
+			&uavDesc, GetCPUResourceView(HeapType::UAV, i));
+		_offScreenRenderTarget[i].GPUHandler = GetGPUResourceView(HeapType::SRV, i);
+		_offScreenRenderTarget[i].ImageSize.x = _screen.GetScreenWidth();
+		_offScreenRenderTarget[i].ImageSize.y = _screen.GetScreenHeight();
+		_offScreenRenderTarget[i].Format      = _backBufferFormat;
+
+
 	}
 }
+
 
 /****************************************************************************
 *							BuildDepthStencilView
@@ -514,6 +702,7 @@ void DirectX12::BuildDepthStencilView()
 	/*-------------------------------------------------------------------
 	-				 Set Depth / Stencil Descriptor
 	---------------------------------------------------------------------*/
+
 	D3D12_RESOURCE_DESC depthStencilDesc;
 	depthStencilDesc.Dimension          = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Alignment          = 0;
@@ -552,8 +741,8 @@ void DirectX12::BuildDepthStencilView()
 	dsvDesc.ViewDimension      = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format             = _depthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
-	auto dsvID = IssueViewID(HeapType::DSV);
-	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, _dsvAllocator.GetCPUDescHandler(dsvID));
+	
+	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, _dsvAllocator.GetCPUDescHandler(0));
 
 	/*-------------------------------------------------------------------
 	- Transition the resource from its initial state to be used as a depth buffer.
@@ -585,7 +774,7 @@ void DirectX12::CreateSwapChain()
 	---------------------------------------------------------------------*/
 	DXGI_SWAP_CHAIN_DESC1 sd;
 
-	sd.BufferCount = FRAME_BUFFER_COUNT;                       // Current: Double Buffer
+	sd.BufferCount = FRAME_BUFFER_COUNT;                     // Current: Double Buffer
 	sd.Width       = _screen.GetScreenWidth();               // Window Size Width
 	sd.Height      = _screen.GetScreenHeight();              // Window Size Height 
 	sd.Format      = _backBufferFormat;                      // Back Buffer Format 
@@ -1098,7 +1287,10 @@ Resource* DirectX12::GetCurrentRenderTarget() const
 	return _renderTargetList[_currentFrameIndex].Get();
 }
 
-
+Resource* DirectX12::GetRenderTargetResource(RenderTargetType type) const
+{
+	return _renderTargetList[(int)type].Get();
+}
 /****************************************************************************
 *                        GetCPUCbvSrvUavHeapStart
 *************************************************************************//**
@@ -1110,6 +1302,19 @@ Resource* DirectX12::GetCurrentRenderTarget() const
 D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCPUCbvSrvUavHeapStart() const
 {
 	return _cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
+/****************************************************************************
+*                        GetCPUCbvSrvUavHeapStart
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCPUCbvSrvUavHeapStart() const
+*  @brief     Get current frame CBV / SRV / UAV pointer
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
+ID3D12DescriptorHeap* DirectX12::GetCPURtvHeapStart() const
+{
+	return _rtvHeap.Get();
 }
 
 /****************************************************************************
@@ -1296,6 +1501,16 @@ D3D12_RECT DirectX12::GetScissorRect() const
 	return this->_scissorRect;
 }
 
+D3D12_COMPUTE_PIPELINE_STATE_DESC  DirectX12::GetDefaultComputePSOConfig()
+{
+	D3D12_COMPUTE_PIPELINE_STATE_DESC pipelineState;
+	ZeroMemory(&pipelineState, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
+	pipelineState.pRootSignature = nullptr;
+	pipelineState.NodeMask = 0;
+	pipelineState.Flags    = D3D12_PIPELINE_STATE_FLAG_NONE;
+	
+	return pipelineState;
+}
 /****************************************************************************
 *                        GetCurrentFrameIndex
 *************************************************************************//**

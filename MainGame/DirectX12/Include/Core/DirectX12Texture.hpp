@@ -12,6 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12BaseStruct.hpp"
+#include "GameMath/Include/GMVector.hpp"
 #include <DirectXTex/DirectXTex.h>
 #include <unordered_map>
 #pragma warning(disable : 26495)
@@ -24,7 +25,7 @@ struct Texture
 	ResourceComPtr    Resource;
 	DXGI_FORMAT       Format;
 	GPU_DESC_HANDLER  GPUHandler;
-	DirectX::XMFLOAT2 ImageSize;
+	gm::Float2        ImageSize;
 };
 
 enum class TextureType : UINT

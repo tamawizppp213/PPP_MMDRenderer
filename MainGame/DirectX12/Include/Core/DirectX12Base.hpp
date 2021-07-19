@@ -14,6 +14,7 @@
 #include "DirectX12Config.hpp"
 #include "DirectX12BufferAllocator.hpp"
 #include "GameCore/Include/Screen.hpp"
+#include "DirectX12/Include/Core/DirectX12Texture.hpp"
 #include <Windows.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                         DirectX12 Class
 //////////////////////////////////////////////////////////////////////////////////
+
 class DirectX12
 {
 public:
@@ -47,13 +49,23 @@ public:
 	CommandQueue* GetCommandQueue()          const;
 	CommandAllocator* GetCommandAllocator()  const;
 	Resource* GetCurrentRenderTarget()       const;
+	Resource* GetRenderTargetResource(RenderTargetType type)       const;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
+	D3D12_COMPUTE_PIPELINE_STATE_DESC  GetDefaultComputePSOConfig();
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvSrvUavHeapStart() const;
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUCbvSrvUavHeapStart() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUResourceView(HeapType heapType, int offsetIndex) const;
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUResourceView(HeapType heapType, int offsetIndex) const;
 	ID3D12DescriptorHeap* GetCbvSrvUavHeap() const;
-	INT GetCbvSrvUavDescriptorHeapSize() const;
+	ID3D12DescriptorHeap* GetCPURtvHeapStart() const;
+	Texture GetOffScreenRenderTarget(UINT index) const 
+	{
+		if (index >= OFF_SCREEN_TEXTURE_NUM) { index = OFF_SCREEN_TEXTURE_NUM - 1; }
+		return _offScreenRenderTarget[index]; 
+	}
+	Texture ResizeOffScreenRenderTarget(UINT index, int width, int height);
+	void ResizeOffScreenRenderTargets();
+	INT  GetCbvSrvUavDescriptorHeapSize() const;
 	UINT IssueViewID(HeapType heapType);
 	D3D12_VIEWPORT GetViewport()     const;
 	D3D12_RECT     GetScissorRect()  const;
@@ -98,6 +110,7 @@ private:
 #pragma region View
 	void BuildRenderTargetView();
 	void BuildDepthStencilView();
+	void BuildOffScreenRenderingView();
 	void BuildResourceAllocator();
 
 #pragma endregion View
@@ -145,7 +158,9 @@ private:
 	DescriptorHeapComPtr         _cbvSrvUavHeap;      /// Heap For Constant Buffer View
 	PipelineStateComPtr          _pipelineState;      /// Graphic Pipeline State
 	ResourceComPtr               _depthStencilBuffer; /// DepthStencl Buffer   
-	ResourceComPtr               _renderTargetList[FRAME_BUFFER_COUNT];
+	ResourceComPtr               _renderTargetList[(int)RenderTargetType::CountOfRenderTarget];
+	Texture                      _offScreenRenderTarget[OFF_SCREEN_TEXTURE_NUM];
+	CPU_DESC_HANDLER             _offScreenRenderSourceCPU;
 	RenderTargetViewAllocator    _rtvAllocator;
 	DepthStencilViewAllocator    _dsvAllocator;
 	ConstantBufferViewAllocator  _cbvAllocator;
