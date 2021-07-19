@@ -9,7 +9,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Audio/AudioSource3D.hpp"
 #include "GameCore/Include/Audio/WavDecoder.hpp"
-#include "GameCore/Include/Audio/AudioTable.hpp"
 #include "GameCore/Include/Audio/AudioClip.hpp"
 #include "GameCore/Include/Audio/AudioMaster.hpp"
 
@@ -21,18 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
+using namespace gm;
 AudioSource3D::AudioSource3D() : AudioSource()
 {
 	memset(&_emitter, 0, sizeof(_emitter));
 	memset(&_listener, 0, sizeof(_listener));
 
-	SetEmitterFront   (DirectX::XMFLOAT3(0.0f, 0.0f, -1.0f));
-	SetEmitterUp      (DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
-	SetEmitterPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f));
+	SetEmitterFront   (Float3(0.0f, 0.0f, -1.0f));
+	SetEmitterUp      (Float3(0.0f, 1.0f, 0.0f));
+	SetEmitterPosition(Float3(0.0f, 0.0f, 1.0f));
 
-	SetListenerFront   (DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f));
-	SetListenerUp      (DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
-	SetListenerPosition(DirectX::XMFLOAT3(0.0f, 0.0f, -1.0f));
+	SetListenerFront   (Float3(0.0f, 0.0f, 1.0f));
+	SetListenerUp      (Float3(0.0f, 1.0f, 0.0f));
+	SetListenerPosition(Float3(0.0f, 0.0f, -1.0f));
 
 	_emitter.ChannelCount        = 1;
 	_emitter.CurveDistanceScaler = 1.0f;
@@ -167,7 +167,7 @@ Audio3DParameter AudioSource3D::Calculate3DSound(const X3DAUDIO_LISTENER* listen
 *  @param[in] const DirectX::XMFLOAT3& front
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetListenerFront(const DirectX::XMFLOAT3& front)
+void AudioSource3D::SetListenerFront(const Float3 &front)
 {
 	this->_listener.Front = front;
 }
@@ -180,7 +180,7 @@ void AudioSource3D::SetListenerFront(const DirectX::XMFLOAT3& front)
 *  @param[in] const DirectX::XMFLOAT3& up
 *  @return 　　void: This value must be orthogonal to the front vector.
 *****************************************************************************/
-void AudioSource3D::SetListenerUp(const DirectX::XMFLOAT3& up)
+void AudioSource3D::SetListenerUp(const Float3& up)
 {
 	this->_listener.Up = up;
 }
@@ -193,7 +193,7 @@ void AudioSource3D::SetListenerUp(const DirectX::XMFLOAT3& up)
 *  @param[in] const DirectX::XMFLOAT3& position
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetListenerPosition(const DirectX::XMFLOAT3& position)
+void AudioSource3D::SetListenerPosition(const Float3& position)
 {
 	this->_listener.Position = position;
 }
@@ -206,7 +206,7 @@ void AudioSource3D::SetListenerPosition(const DirectX::XMFLOAT3& position)
 *  @param[in] const DirectX::XMFLOAT3& velocity
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetListenerVelocity(const DirectX::XMFLOAT3& velocity)
+void AudioSource3D::SetListenerVelocity(const Float3& velocity)
 {
 	this->_listener.Velocity = velocity;
 }
@@ -219,7 +219,7 @@ void AudioSource3D::SetListenerVelocity(const DirectX::XMFLOAT3& velocity)
 *  @param[in] const DirectX::XMFLOAT3& front
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetEmitterFront(const DirectX::XMFLOAT3& front)
+void AudioSource3D::SetEmitterFront(const Float3& front)
 {
 	this->_emitter.Front = front;
 }
@@ -232,7 +232,7 @@ void AudioSource3D::SetEmitterFront(const DirectX::XMFLOAT3& front)
 *  @param[in] const DirectX::XMFLOAT3& up
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetEmitterUp(const DirectX::XMFLOAT3& up)
+void AudioSource3D::SetEmitterUp(const Float3& up)
 {
 	this->_emitter.Up = up;
 }
@@ -245,7 +245,7 @@ void AudioSource3D::SetEmitterUp(const DirectX::XMFLOAT3& up)
 *  @param[in] const DirectX::XMFLOAT3& position
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetEmitterPosition(const DirectX::XMFLOAT3& position)
+void AudioSource3D::SetEmitterPosition(const Float3& position)
 {
 	this->_emitter.Position = position;
 }
@@ -258,7 +258,7 @@ void AudioSource3D::SetEmitterPosition(const DirectX::XMFLOAT3& position)
 *  @param[in] const DirectX::XMFLOAT3& velocity
 *  @return 　　void
 *****************************************************************************/
-void AudioSource3D::SetEmitterVelocity(const DirectX::XMFLOAT3& velocity)
+void AudioSource3D::SetEmitterVelocity(const Float3& velocity)
 {
 	this->_emitter.Velocity = velocity;
 }

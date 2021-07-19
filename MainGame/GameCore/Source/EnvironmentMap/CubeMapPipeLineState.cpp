@@ -273,7 +273,7 @@ namespace cubemap
 		// A root signature is a collection of descriptor tables 
 		// (which feeds data other than vertices to the shader).
 		ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, static_cast<UINT>(samplerDesc.size()), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 		rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &cubemap.RootSignature);
 		return true;
 	}

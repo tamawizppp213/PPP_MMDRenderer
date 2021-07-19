@@ -11,17 +11,24 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "DirectX12/Include/Core/DirectX12Texture.hpp"
+#include "GameCore/Include/Model/MMD/VMDFile.hpp"
+#include "GameMath/Include/GMMatrix.hpp"
 #include <Windows.h>
 #include <vector>
-#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #pragma warning(disable : 26495)
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+#define PMD_BONE_MATRIX_SIZE (256)
+
+//////////////////////////////////////////////////////////////////////////////////
+//                              Struct
+//////////////////////////////////////////////////////////////////////////////////
 namespace pmd
 {
-	using namespace DirectX;
+	using namespace gm;
 #pragma pack(1)
 	struct PMDHeader
 	{
@@ -41,10 +48,10 @@ namespace pmd
 
 	struct PMDMaterial
 	{
-		XMFLOAT4 Diffuse;
+		Float4   Diffuse;
 		float    SpecularPower;
-		XMFLOAT3 Specular;
-		XMFLOAT3 Ambient;
+		Float3   Specular;
+		Float3   Ambient;
 		UINT8    ToonID;
 		UINT8    EdgeFlag;
 		UINT32   PolygonNum;
@@ -59,7 +66,7 @@ namespace pmd
 		UINT16   ChildBoneID;
 		UINT8    BoneType;
 		UINT16   IKBoneID;     // If there is no Parent, this value needs to set 0;
-		XMFLOAT3 BoneHeadPosition;
+		Float3   BoneHeadPosition;
 		char     EnglishBoneName[20];
 	};
 
@@ -87,7 +94,7 @@ namespace pmd
 
 	struct PMDFaceExpression
 	{
-		using FaceVertexList = std::vector<XMFLOAT3>;
+		using FaceVertexList = std::vector<Float3>;
 		using FaceIndexList  = std::vector<UINT32>;
 
 		char           FaceExpressionName[20];
@@ -132,9 +139,9 @@ namespace pmd
 		UINT8                 GroupIndex;
 		UINT16                GroupTarget;
 		PMDRigidBodyShape     RigidBodyShapeType;
-		XMFLOAT3              BodyShape;
-		XMFLOAT3              Position;
-		XMFLOAT3              Rotation;
+		Float3                BodyShape;
+		Float3                Position;
+		Float3                Rotation;
 		float                 Mass;
 		float                 DampingTranslate;
 		float                 DampingRotation;
@@ -150,12 +157,12 @@ namespace pmd
 		char     JointName[20];
 		UINT32   RigidBodyA;
 		UINT32   RigidBodyB;
-		XMFLOAT3 JointPosition;
-		XMFLOAT3 JointRotation;
-		XMFLOAT3 LimitPosition[2];
-		XMFLOAT3 LimitRotation[2];
-		XMFLOAT3 SpringPosition;
-		XMFLOAT3 SpringRotation;
+		Float3   JointPosition;
+		Float3   JointRotation;
+		Float3   LimitPosition[2];
+		Float3   LimitRotation[2];
+		Float3   SpringPosition;
+		Float3   SpringRotation;
 	};
 
 	struct PMDLocalizeInfo
@@ -163,6 +170,18 @@ namespace pmd
 		UINT8 LocalizeFlag;
 		char ModelName      [20];
 		char Comment        [256];
+	};
+
+	enum class BoneType
+	{
+		Rotate,
+		RotateAndMove,
+		IK,
+		Undefined,
+		IKChild,
+		RotationChild,
+		IKDestination,
+		Invisible
 	};
 #pragma pack()
 }
@@ -225,22 +244,33 @@ private:
 	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
 };
 
+/****************************************************************************
+*				  			PMDMaterial
+*************************************************************************//**
+*  @class     PMDMaterial
+*  @brief     PMD Material Data
+*****************************************************************************/
 class PMDMaterial
 {
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	DirectX::XMFLOAT4 Diffuse;
-	float             SpecularPower;
-	DirectX::XMFLOAT3 Specular;
-	DirectX::XMFLOAT3 Ambient;
-	UINT8             ToonID;
-	UINT8             EdgeFlag;
-	UINT16            Padding;
-	UINT32            PolygonNum;
+	
 	/****************************************************************************
 	**                Public Member Variables
+	*****************************************************************************/
+	gm::Float4 Diffuse;
+	float      SpecularPower;
+	gm::Float3 Specular;
+	gm::Float3 Ambient;
+	UINT8      ToonID;
+	UINT8      EdgeFlag;
+	UINT16     Padding;
+	UINT32     PolygonNum;
+	
+	/****************************************************************************
+	**                Constructor and Destructor
 	*****************************************************************************/
 	PMDMaterial()                                = default;
 	~PMDMaterial()                               = default;
@@ -258,9 +288,6 @@ public:
 		this->EdgeFlag      = material.EdgeFlag;
 		this->PolygonNum    = material.PolygonNum;
 	}
-	/****************************************************************************
-	**                Constructor and Destructor
-	*****************************************************************************/
 
 private:
 	/****************************************************************************
@@ -270,6 +297,171 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
+};
+
+/****************************************************************************
+*				  			PMDTexture
+*************************************************************************//**
+*  @class     PMD Texture
+*  @brief     PMD Texture Data
+*****************************************************************************/
+using SphereMapMultiply = Texture;
+using SphereMapAddition = Texture;
+using ToonTexture       = Texture;
+class PMDTexture
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	Texture           Texture;
+	SphereMapMultiply SphereMultiply;
+	SphereMapAddition SphereAddition;
+	ToonTexture       ToonTexture;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMDTexture()  = default;
+	~PMDTexture() = default;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+};
+
+/****************************************************************************
+*				  			PMDBoneNode
+*************************************************************************//**
+*  @class     PMD Bone Node
+*  @brief     PMD Bone Data
+*****************************************************************************/
+class PMDBoneNode
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	void AddChild(PMDBoneNode* boneNode) { _children.emplace_back(boneNode); }
+	
+	static void RecursiveBoneMatrixMultiply(std::vector<gm::Matrix4>& boneMatrix, PMDBoneNode* boneNode, const gm::Matrix4& matrix);
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	inline void SetBoneIndex   (int boneIndex)                  { this->_boneIndex    = boneIndex; }
+	inline void SetBasePosition(const gm::Float3& basePosition) { this->_basePosition = basePosition; }
+	inline void SetParent      (PMDBoneNode* parent)            { this->_parent = parent; }
+	inline void SetBoneType(UINT32 type)                         { this->_boneType    = type; }
+	inline void SetIKParentBone(UINT32 ikParentIndex)           { this->_ikParentBone = ikParentIndex; }
+
+	inline int GetBoneIndex()                   { return _boneIndex; }
+	inline gm::Float3 GetBasePosition()         { return _basePosition; }
+	inline  PMDBoneNode* GetParent() { return _parent; }
+	inline int GetIKParentBone()                { return _ikParentBone; }
+ 
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMDBoneNode () = default;
+	~PMDBoneNode() = default;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	// bone config
+	int         _boneIndex = 0;
+	gm::Float3  _basePosition;
+
+	// node 
+	PMDBoneNode*              _parent;
+	std::vector<PMDBoneNode*> _children;
+
+	// boneIK
+	UINT32 _boneType;
+	UINT32 _ikParentBone;
+
+};
+
+class PMDData;
+class VMDFile;
+/****************************************************************************
+*				  			PMDBoneNode
+*************************************************************************//**
+*  @class     PMD Bone Node
+*  @brief     PMD Bone Data
+*****************************************************************************/
+class PMDBoneIK
+{
+	using ChainList = std::vector<UINT16>;
+	using PMDBoneNodeAddressList = std::vector<PMDBoneNode*>;
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	static void SolveIK(int frameNo, PMDData* pmdFile, std::vector<gm::Matrix4>& boneMatrices, VMDFile* vmdFile);
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	inline UINT16 GetIKBoneID()       const { return _ikBoneID; }
+	inline UINT16 GetTargetBoneID()   const { return _ikTargetBoneID; }
+	inline UINT8  GetChainLength()    const { return _ikChainLength; }
+	inline UINT16 GetIterationCount() const { return _iterationCount; }
+	inline float  GetAngleLimit()     const { return _angleLimit; }
+	inline const UINT16* GetChains()  const { return _chains.data(); }
+	inline const std::vector<UINT16>& GetChainsVector()  const { return _chains; }
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMDBoneIK()  = default;
+	PMDBoneIK(pmd::PMDBoneIK& ik)
+	{
+		_ikBoneID       = ik.IKBoneID;
+		_ikTargetBoneID = ik.IKTargetBoneID;
+		_ikChainLength  = ik.IKChainLength;
+		_iterationCount = ik.IterationCount;
+		_angleLimit     = ik.AngleLimit;
+		_chains         = std::move(ik.Chains);
+	}
+	~PMDBoneIK() = default;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+	static void SolveCCDIK (const PMDBoneIK& ik, const PMDBoneNodeAddressList& boneNodeAddressArray, std::vector<gm::Matrix4>& boneMatrices, const std::vector<UINT32>& kneeIndices);
+	static void SolveCosIK (const PMDBoneIK& ik, const PMDBoneNodeAddressList& boneNodeAddressArray, std::vector<gm::Matrix4>& boneMatrices, const std::vector<UINT32>& kneeIndices);
+	static void SolveLookAt(const PMDBoneIK& ik, const PMDBoneNodeAddressList& boneNodeAddressArray, std::vector<gm::Matrix4>& boneMatrices);
+	
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	UINT16    _ikBoneID;       // IK Bone (target bone position)
+	UINT16    _ikTargetBoneID; // Index of bones to get closer to the target.
+	UINT8     _ikChainLength;  // bone node count between IK bone
+	UINT16    _iterationCount; 
+	float     _angleLimit;     // Rotation limit per 1 Frame
+	ChainList _chains;
+};
+
+struct BoneParameter
+{
+	gm::Matrix4 BoneMatrices[PMD_BONE_MATRIX_SIZE];
 };
 #pragma pack()
 #endif

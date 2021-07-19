@@ -18,9 +18,11 @@
 #include "DirectX12/Include/Core/DirectX12MeshBuffer.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "Sprite.hpp"
-#include <vector>
+#include "GameMath/Include/GMMatrix.hpp"
 #include <memory>
-#include <DirectXMath.h>
+#include "GameCore/Include/Effect/PostEffect.hpp"
+
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -36,9 +38,9 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize();
+	bool Initialize(FastBlendStateType type = FastBlendStateType::Normal);
 	bool DrawStart();
-	bool Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const DirectX::XMMATRIX& matrix);
+	bool Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const gm::Matrix4& matrix);
 	bool DrawEnd();
 	bool Finalize();
 
@@ -56,6 +58,8 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
+	bool PrepareRootSignature();
+	bool PreparePipelineState(FastBlendStateType type);
 	bool PrepareVertexBuffer();
 	bool PrepareIndexBuffer();
 	bool PrepareConstantBuffer();
@@ -63,13 +67,15 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
+	PipelineStateComPtr     _pipelineState = nullptr;
+	RootSignatureComPtr     _rootSignature = nullptr;
 	std::vector<MeshBuffer> _meshBuffer;
 	DescriptorHeapComPtr    _textureDescHeap = nullptr;
 	std::vector<Texture>    _textures;
 	std::vector<VertexPositionNormalColorTexture> _vertices;
-	DirectX::XMMATRIX       _projectionViewMatrix;
+	gm::Matrix4       _projectionViewMatrix;
 	std::shared_ptr<UploadBuffer<VertexPositionNormalColorTexture>> _dynamicVertexBuffer[FRAME_BUFFER_COUNT];
-	std::shared_ptr<UploadBuffer<DirectX::XMMATRIX>>                _constantBuffer = nullptr;
+	std::shared_ptr<UploadBuffer<gm::Matrix4>> _constantBuffer = nullptr;
 	
 	int _spriteStackCount = 0;
 	int _drawCallNum = 0;

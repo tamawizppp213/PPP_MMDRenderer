@@ -12,7 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "BoundingPlane.hpp"
-#include <DirectXMath.h>
+#include "GameMath/Include/GMVector.hpp"
 #include <DirectXCollision.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -60,8 +60,8 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	static Collider2D CreateCircleCollider   (DirectX::XMFLOAT2& centerPos, float radius);
-	static Collider2D CreateRectangleCollider(DirectX::XMFLOAT2& centerPos, float width, float height);
+	static Collider2D CreateCircleCollider   (gm::Float2& centerPos, float radius);
+	static Collider2D CreateRectangleCollider(gm::Float2 &centerPos, float width, float height);
 	
 	/****************************************************************************
 	**                Public Member Variables
@@ -78,8 +78,8 @@ public:
 			float height;
 		} rectangle;
 	};
-	void SetCenterPosition(DirectX::XMFLOAT3& center);
-	DirectX::XMFLOAT3 centerPosition;
+	void SetCenterPosition(gm::Float2& center);
+	gm::Float3 centerPosition;
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
@@ -103,14 +103,14 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	static Collider3D CreateBoxCollider        (const DirectX::XMFLOAT3& centerPosition, const DirectX::XMFLOAT3& boxSize);
-	static Collider3D CreateBoxCollider        (const DirectX::XMFLOAT3& centerPosition, float width = 1.0f, float height = 1.0f, float depth = 1.0f);
-	static Collider3D CreateOrientedBoxCollider(const DirectX::XMFLOAT3& centerPosition, const DirectX::XMFLOAT3& boxSize, const DirectX::XMFLOAT4& rotation);
-	static Collider3D CreateSphereCollider     (const DirectX::XMFLOAT3& centerPosition, float radius);
-	static Collider3D CreateFrustumCollider    (const DirectX::XMFLOAT3& originPosition, const DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT4& rltbSlope, float nearPlane = 0, float farPlane = 1.0f);
-	static Collider3D CreateFrustumCollider    (const DirectX::XMFLOAT3& originPosition, const DirectX::XMFLOAT4& orientation, float rightSlope = 1.0f, float leftSlope = -1.0f, float topSlope = 1.0f, float bottomSlope = -1.0f, float nearPlane = 0, float farPlane = 1.0f);
-	static Collider3D CreatePlaneCollider      (const DirectX::XMFLOAT3& pointA, const DirectX::XMFLOAT3& pointB, const DirectX::XMFLOAT3& pointC);
-	static Collider3D CreatePlaneCollider      (const DirectX::XMFLOAT3& planePoint, const DirectX::XMFLOAT3& planeNormal);
+	static Collider3D CreateBoxCollider        (const gm::Float3& centerPosition, const gm::Float3& boxSize);
+	static Collider3D CreateBoxCollider        (const gm::Float3& centerPosition, float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+	static Collider3D CreateOrientedBoxCollider(const gm::Float3& centerPosition, const gm::Float3& boxSize, const gm::Float4& rotation);
+	static Collider3D CreateSphereCollider     (const gm::Float3& centerPosition, float radius);
+	static Collider3D CreateFrustumCollider    (const gm::Float3& originPosition, const gm::Float4& orientation, const gm::Float4& rltbSlope, float nearPlane = 0, float farPlane = 1.0f);
+	static Collider3D CreateFrustumCollider    (const gm::Float3& originPosition, const gm::Float4& orientation, float rightSlope = 1.0f, float leftSlope = -1.0f, float topSlope = 1.0f, float bottomSlope = -1.0f, float nearPlane = 0, float farPlane = 1.0f);
+	static Collider3D CreatePlaneCollider      (const gm::Float3& pointA    , const gm::Float3& pointB, const gm::Float3& pointC);
+	static Collider3D CreatePlaneCollider      (const gm::Float3& planePoint, const gm::Float3& planeNormal);
 	static Collider3D CreatePlaneCollider      (const DirectX::BoundingTriangle& triangle);
 
 	/****************************************************************************

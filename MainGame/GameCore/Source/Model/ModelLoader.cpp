@@ -7,13 +7,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include "GameCore/Include/Model/MMD/PMDFile.hpp"
+#include "GameCore/Include/Model/MMD/PMXModel.hpp"
 #include "GameCore/Include/Model/Obj/OBJFile.hpp"
 #include "GameCore/Include/Model/FBX/FBXFile.hpp"
 #include "GameCore/Include/Model/ModelFile.hpp"
 #include "GameCore/Include/Model/ModelLoader.hpp"
-#include <iostream>
 #include <stdexcept>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -63,6 +62,49 @@ void ModelLoader::Load3DModel(const std::wstring& filePath, std::shared_ptr<PMDD
 	}
 	
 }
+
+/****************************************************************************
+*                       Load3DModel
+*************************************************************************//**
+*  @fn        void ModelLoader::Load3DModel(const std::wstring& filePath, std::shared_ptr<PMDData>* pmdData)
+*  @brief     LoadPMDData
+*  @param[in] const std::wstring& filePath
+*  @param[out]std::shared_ptr<PMDData>* pmdData
+*  @return Å@Å@void
+*****************************************************************************/
+void ModelLoader::Load3DModel(const std::wstring& filePath, std::shared_ptr<PMXData>* pmxData)
+{
+	/*-------------------------------------------------------------------
+	-               If the file is loaded once, read from it
+	---------------------------------------------------------------------*/
+	if (_modelTableManager.Instance().ModelTablePMX.find(filePath) != _modelTableManager.Instance().ModelTablePMX.end())
+	{
+		*pmxData = _modelTableManager.Instance().ModelTablePMX[filePath];
+		return;
+	}
+
+	/*-------------------------------------------------------------------
+	-       Choose extension and load 3Dmodel data
+	---------------------------------------------------------------------*/
+	std::wstring extension = GetExtension(filePath);
+	if (extension == L"pmx")
+	{
+		// Load 3D model data (.pmd)
+		std::shared_ptr<PMXData> pmxDataPtr = std::make_shared<PMXData>();
+		pmxDataPtr->Load3DModel(filePath);
+
+		// Add model table
+		_modelTableManager.Instance().ModelTablePMX[filePath] = pmxDataPtr;
+		*pmxData = pmxDataPtr;
+	}
+	else
+	{
+		auto error = std::invalid_argument("Invalid file path was specified.");
+		std::cout << error.what() << std::endl;
+	}
+
+}
+
 
 /****************************************************************************
 *                       Load3DModel
@@ -143,3 +185,4 @@ void ModelLoader::Load3DModel(const std::wstring& filePath, std::shared_ptr<OBJD
 		std::cout << error.what() << std::endl;
 	}
 }
+

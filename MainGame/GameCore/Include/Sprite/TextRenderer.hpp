@@ -17,7 +17,6 @@
 #include "Font.hpp"
 #include "Text.hpp"
 #include <unordered_map>
-#include <string>
 #include <Windows.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -41,8 +40,8 @@ public:
 	*****************************************************************************/
 	bool Initialize();
 	bool DrawStart();
-	bool DrawString(FontType fontType, const TextString& text,   const DirectX::XMFLOAT4& color, const DirectX::XMMATRIX& matrix);
-	bool DrawNumber(FontType fontType, const TextNumber& number, const DirectX::XMFLOAT4& color, const DirectX::XMMATRIX& matrix);
+	bool DrawString(FontType fontType, const TextString& text,   const gm::Float4& color, const gm::Matrix4& matrix);
+	bool DrawNumber(FontType fontType, const TextNumber& number, const gm::Float4& color, const gm::Matrix4& matrix);
 	bool DrawEnd();
 	bool Finalize();
 

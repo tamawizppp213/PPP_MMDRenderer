@@ -9,20 +9,15 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Sprite/SpriteRenderer.hpp"
-#include "DirectX12/Include/Core/DirectX12Base.hpp"
-#include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include "GameCore/Include/Sprite/SpritePipeLineState.hpp"
-#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/Core/DirectX12Config.hpp"
-#include "DirectX12/Include/Core/DirectX12Texture.hpp"
+#include "DirectX12/Include/Core/DirectX12StaticSampler.hpp"
 #include <d3dcompiler.h>
-#include <iostream>
 
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-
+using namespace gm;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
@@ -31,7 +26,7 @@
 const int SpriteRenderer::MaxSpriteCount = 1024;
 SpriteRenderer::SpriteRenderer()
 {
-	_projectionViewMatrix = DirectX::XMMatrixIdentity();
+	_projectionViewMatrix = gm::MatrixIdentity();
 }
 
 SpriteRenderer::~SpriteRenderer()
@@ -40,12 +35,14 @@ SpriteRenderer::~SpriteRenderer()
 }
 
 
-bool SpriteRenderer::Initialize()
+bool SpriteRenderer::Initialize(FastBlendStateType type)
 {
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
-	if (!PrepareVertexBuffer())   { return false; }
-	if (!PrepareIndexBuffer())    { return false; }
-	if (!PrepareConstantBuffer()) { return false; }
+	if (!PrepareRootSignature())      { return false; }
+	if (!PreparePipelineState(type))  { return false; }
+	if (!PrepareVertexBuffer())       { return false; }
+	if (!PrepareIndexBuffer())        { return false; }
+	if (!PrepareConstantBuffer())     { return false; }
 
 	return true;
 }
@@ -65,28 +62,21 @@ bool SpriteRenderer::DrawStart()
 	_textureDescHeap                          = directX12.GetCbvSrvUavHeap();
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = _meshBuffer[currentFrameIndex].VertexBufferView();
 	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = _meshBuffer[currentFrameIndex].IndexBufferView();
-	auto rtv          = directX12.GetCPUResourceView(HeapType::RTV, currentFrameIndex);
-	auto dsv          = directX12.GetCPUResourceView(HeapType::DSV, 0);
-	auto viewport     = directX12.GetViewport();
-	auto scissorRects = directX12.GetScissorRect();
 
 	/*-------------------------------------------------------------------
 	-               Execute commandlist
 	---------------------------------------------------------------------*/
-	commandList->SetGraphicsRootSignature(spriteManager.GetRootSignature(spriteType).Get());
-	commandList->SetPipelineState(spriteManager.GetPipelineState(spriteType).Get());
+	commandList->SetGraphicsRootSignature(_rootSignature.Get());
+	commandList->SetPipelineState(_pipelineState.Get());
 	ID3D12DescriptorHeap* heapList[] = {_textureDescHeap.Get()};
 	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
 	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUCbvSrvUavHeapStart());
 	commandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0,1,&vertexBufferView);
 	commandList->IASetIndexBuffer(&indexBufferView);
-	commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
-	commandList->RSSetViewports(1, &viewport);
-	commandList->RSSetScissorRects(1, &scissorRects);
 	return true;
 }
-bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const DirectX::XMMATRIX& matrix)
+bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const gm::Matrix4& matrix)
 {
 	/*-------------------------------------------------------------------
 	-               sprite count check
@@ -182,10 +172,10 @@ bool SpriteRenderer::DrawEnd()
 	_dynamicVertexBuffer[currentFrameIndex]->CopyStart();
 	for (int j = 0; j < 4 * min(_spriteStackCount, MaxSpriteCount); ++j)
 	{
-		vertices[j].Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		vertices[j].Normal   = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		vertices[j].Color    = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.0f);
-		vertices[j].UV       = DirectX::XMFLOAT2(0.0f, 0.0f);
+		vertices[j].Position = Float3(0.0f, 0.0f, 0.0f);
+		vertices[j].Normal   = Float3(0.0f, 0.0f, 0.0f);
+		vertices[j].Color    = Float4(1.0f, 1.0f, 1.0f, 0.0f);
+		vertices[j].UV       = Float2(0.0f, 0.0f);
 		_dynamicVertexBuffer[currentFrameIndex]->CopyData(j, vertices[j]);
 	}
 	_dynamicVertexBuffer[currentFrameIndex]->CopyEnd();
@@ -226,10 +216,10 @@ bool SpriteRenderer::PrepareVertexBuffer()
 		_dynamicVertexBuffer[i]->CopyStart();
 		for (int j = 0; j < MaxSpriteCount * 4; ++j)
 		{
-			vertices[j].Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-			vertices[j].Normal   = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-			vertices[j].Color    = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.0f);
-			vertices[j].UV       = DirectX::XMFLOAT2(0.0f, 0.0f);
+			vertices[j].Position = Float3(0.0f, 0.0f, 0.0f);
+			vertices[j].Normal   = Float3(0.0f, 0.0f, 0.0f);
+			vertices[j].Color    = Float4(1.0f, 1.0f, 1.0f, 0.0f);
+			vertices[j].UV       = Float2(0.0f, 0.0f);
 			_dynamicVertexBuffer[i]->CopyData(j, vertices[j]);
 		}
 		_dynamicVertexBuffer[i]->CopyEnd();
@@ -328,7 +318,7 @@ bool SpriteRenderer::PrepareConstantBuffer()
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	_constantBuffer = std::make_shared<UploadBuffer<XMMATRIX>>(directX12.GetDevice(), 1, true);
+	_constantBuffer = std::make_shared<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
 	_constantBuffer->CopyStart();
 	_constantBuffer->CopyData(0, _projectionViewMatrix);
 	_constantBuffer->CopyEnd();
@@ -337,13 +327,69 @@ bool SpriteRenderer::PrepareConstantBuffer()
 	---------------------------------------------------------------------*/
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = _constantBuffer->Resource()->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes    = CalcConstantBufferByteSize(sizeof(XMMATRIX));
+	cbvDesc.SizeInBytes    = CalcConstantBufferByteSize(sizeof(Matrix4));
 
 	/*-------------------------------------------------------------------
 	-			Build Constant Buffer View 
 	---------------------------------------------------------------------*/
-	directX12.GetDevice()->CreateConstantBufferView(&cbvDesc, directX12.GetCPUCbvSrvUavHeapStart());
+	directX12.GetDevice()->CreateConstantBufferView(&cbvDesc, directX12.GetCPUResourceView(HeapType::CBV, directX12.IssueViewID(HeapType::CBV)));
 	return true;
 }
 
+bool SpriteRenderer::PrepareRootSignature()
+{
+	/*-------------------------------------------------------------------
+	-			Build texture table
+	---------------------------------------------------------------------*/
+	DESCRIPTOR_RANGE textureTable[2];
+	textureTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0); // b0
+	textureTable[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0); // s0
+
+	/*-------------------------------------------------------------------
+	-			Build root parameter
+	---------------------------------------------------------------------*/
+	ROOT_PARAMETER rootParameter[2];
+	rootParameter[0].InitAsDescriptorTable(1, &textureTable[0], D3D12_SHADER_VISIBILITY_ALL);
+	rootParameter[1].InitAsDescriptorTable(1, &textureTable[1], D3D12_SHADER_VISIBILITY_PIXEL);
+
+	/*-------------------------------------------------------------------
+	-			Build sampler desc
+	---------------------------------------------------------------------*/
+	auto samplerDesc = GetStaticSamplers(); // linearsampler
+
+	/*-------------------------------------------------------------------
+	-			 Build root parameter
+	---------------------------------------------------------------------*/
+	// A root signature is a collection of descriptor tables 
+	// (which feeds data other than vertices to the shader).
+	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
+	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	return true;
+}
+
+bool SpriteRenderer::PreparePipelineState(FastBlendStateType type)
+{
+
+	/*-------------------------------------------------------------------
+	-			 Build PSO 
+	---------------------------------------------------------------------*/
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipeLineState = DirectX12::Instance().GetDefaultPSOConfig();
+	pipeLineState.InputLayout    = VertexPositionNormalColorTexture::InputLayout;
+	pipeLineState.pRootSignature = _rootSignature.Get();
+	pipeLineState.VS =
+	{
+		reinterpret_cast<BYTE*>(GetShaderBlendData(type).VertexShader->GetBufferPointer()),
+		GetShaderBlendData(type).VertexShader->GetBufferSize()
+	};
+	pipeLineState.PS =
+	{
+		reinterpret_cast<BYTE*>(GetShaderBlendData(type).PixelShader->GetBufferPointer()),
+		GetShaderBlendData(type).PixelShader->GetBufferSize()
+	};
+	pipeLineState.BlendState = GetBlendDesc(type);
+	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelineState)));
+	return true;
+
+}
 #pragma endregion Private Function

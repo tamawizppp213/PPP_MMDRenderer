@@ -60,7 +60,7 @@ private:
 	bool SetFBXConfig();
 	bool LoadFBXVertex();
 	
-	void CollectMeshNode(FbxNode* node, std::map<std::string, FbxNode*>& nodeList);
+	void CollectMeshNode(fbxsdk::FbxNode* node, std::map<std::string, fbxsdk::FbxNode*>& nodeList);
 
 	/****************************************************************************
 	**                Private Member Variables

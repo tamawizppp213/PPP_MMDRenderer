@@ -7,13 +7,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Base.hpp"
-#include "DirectX12/Include/Core/DirectX12Config.hpp"
-#include "DirectX12/Include/Core/DirectX12Texture.hpp"
 #include "GameCore/Include/Sprite/SpriteRenderer.hpp"
 #include "GameCore/Include/GameTimer.hpp"
 #include "GameCore/Include/Sprite/Fade.hpp"
-#include "GameCore/Include/Screen.hpp"
 #include <d3dcompiler.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -21,14 +17,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 namespace fade
 {
-	using namespace DirectX;
-	using MatrixBuffer = std::shared_ptr<UploadBuffer<DirectX::XMMATRIX>>;
+	using namespace gm;
+	using MatrixBuffer = std::shared_ptr<UploadBuffer<Matrix4>>;
 	using VertexBuffer = std::shared_ptr<UploadBuffer<VertexPositionNormalColorTexture>>;
 
 	struct FadeBuffer
 	{
 		Texture                 Texture;
-		XMMATRIX                ProjectionViewMatrix = DirectX::XMMatrixIdentity();
+		Matrix4                 ProjectionViewMatrix = MatrixIdentity();
 		MatrixBuffer            ConstantBuffer       = nullptr;
 		std::vector<MeshBuffer> MeshBuffer;
 		VertexBuffer            DynamicVertexBuffer[FRAME_BUFFER_COUNT];
@@ -42,6 +38,7 @@ namespace fade
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
+using namespace gm;
 #pragma region Public Function
 Fader::Fader()
 {
@@ -84,7 +81,7 @@ bool Fader::Initialize()
 *  @param[in] const DirectX::XMMATRIX projViewMatrix
 *  @return 　　bool
 *****************************************************************************/
-bool Fader::Draw(const GameTimer& gameTimer, const DirectX::XMMATRIX& projViewMatrix)
+bool Fader::Draw(const GameTimer& gameTimer, const Matrix4& projViewMatrix)
 {
 	if (_currentFadeState == FadeState::FADE_STATE_NONE) { return true; }
 
@@ -100,10 +97,6 @@ bool Fader::Draw(const GameTimer& gameTimer, const DirectX::XMMATRIX& projViewMa
 	SpriteType spriteType                     = SpriteType::TEXTURE;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = g_FadeBuffer.MeshBuffer[currentFrameIndex].VertexBufferView();
 	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = g_FadeBuffer.MeshBuffer[currentFrameIndex].IndexBufferView();
-	auto viewPort     = directX12.GetViewport();
-	auto scissorRects = directX12.GetScissorRect();
-	auto rtv          = directX12.GetCPUResourceView(HeapType::RTV, currentFrameIndex);
-	auto dsv          = directX12.GetCPUResourceView(HeapType::DSV, 0);
 	
 	/*-------------------------------------------------------------------
 	-               Update fade
@@ -125,9 +118,7 @@ bool Fader::Draw(const GameTimer& gameTimer, const DirectX::XMMATRIX& projViewMa
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 	commandList->IASetIndexBuffer(&indexBufferView);
-	commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
-	commandList->RSSetViewports(1, &viewPort);
-	commandList->RSSetScissorRects(1, &scissorRects);
+
 
 	/*-------------------------------------------------------------------
 	-               Add vertex data
@@ -189,12 +180,12 @@ bool Fader::Finalize()
 /****************************************************************************
 *                       SetColor
 *************************************************************************//**
-*  @fn        bool Fader::SetColor(const DirectX::XMFLOAT3& color)
+*  @fn        bool Fader::SetColor(const Float3& color)
 *  @brief     Set Fade Color
-*  @param[in] const DirectX::XMFLOAT3& color
+*  @param[in] const Float& color
 *  @return 　　void
 *****************************************************************************/
-void Fader::SetColor(const DirectX::XMFLOAT3& color)
+void Fader::SetColor(const Float3& color)
 {
 	_color.x = color.x;
 	_color.y = color.y;
@@ -235,7 +226,7 @@ void Fader::SetSpriteSize(float width, float height)
 bool Fader::LoadWhiteTexture()
 {
 	TextureLoader textureLoader;
-	textureLoader.LoadTexture(L"Resources/Texture/White.png", fade::g_FadeBuffer.Texture);
+	textureLoader.LoadTexture(L"Resources/Texture/Default/White.png", fade::g_FadeBuffer.Texture);
 	
 	return true;
 }
@@ -266,10 +257,10 @@ bool Fader::PrepareVertexBuffer()
 		g_FadeBuffer.DynamicVertexBuffer[i]->CopyStart();
 		for (int j = 0; j < 4; ++j)
 		{
-			vertices[j].Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-			vertices[j].Normal   = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-			vertices[j].Color    = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-			vertices[j].UV       = DirectX::XMFLOAT2(0.0f, 0.0f);
+			vertices[j].Position = gm::Float3(0.0f, 0.0f, 0.0f);
+			vertices[j].Normal   = gm::Float3(0.0f, 0.0f, 0.0f);
+			vertices[j].Color    = gm::Float4(0.0f, 0.0f, 0.0f, 0.0f);
+			vertices[j].UV       = gm::Float2(0.0f, 0.0f);
 			g_FadeBuffer.DynamicVertexBuffer[i]->CopyData(j, vertices[j]);
 		}
 		g_FadeBuffer.DynamicVertexBuffer[i]->CopyEnd();
@@ -358,14 +349,14 @@ bool Fader::PrepareIndexBuffer()
 *****************************************************************************/
 bool Fader::PrepareConstantBuffer()
 {
-	using namespace DirectX;
+	using namespace gm;
 	using namespace fade;
 	DirectX12& directX12 = DirectX12::Instance();
 
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	g_FadeBuffer.ConstantBuffer = std::make_shared<UploadBuffer<XMMATRIX>>(directX12.GetDevice(), 1, true);
+	g_FadeBuffer.ConstantBuffer = std::make_shared<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
 	g_FadeBuffer.ConstantBuffer->CopyStart();
 	g_FadeBuffer.ConstantBuffer->CopyData(0, g_FadeBuffer.ProjectionViewMatrix);
 	g_FadeBuffer.ConstantBuffer->CopyEnd();
@@ -375,12 +366,12 @@ bool Fader::PrepareConstantBuffer()
 	---------------------------------------------------------------------*/
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = g_FadeBuffer.ConstantBuffer->Resource()->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes = CalcConstantBufferByteSize(sizeof(XMMATRIX));
+	cbvDesc.SizeInBytes = CalcConstantBufferByteSize(sizeof(Matrix4));
 
 	/*-------------------------------------------------------------------
 	-			Build Constant Buffer View
 	---------------------------------------------------------------------*/
-	directX12.GetDevice()->CreateConstantBufferView(&cbvDesc, directX12.GetCPUCbvSrvUavHeapStart());
+	directX12.GetDevice()->CreateConstantBufferView(&cbvDesc, directX12.GetCPUResourceView(HeapType::CBV, directX12.IssueViewID(HeapType::CBV)));
 	return true;
 }
 
@@ -395,13 +386,13 @@ bool Fader::PrepareConstantBuffer()
 bool Fader::PrepareSprite()
 {
 	using namespace DirectX;
-	_color = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	_color = Float4(0.0f, 0.0f, 0.0f, 0.0f);
 	_sprite.CreateSprite(
-		XMFLOAT3(0.0f, 0.0f, 0.0f),
-		XMFLOAT2(2.0f, 2.0f),
-		XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-		XMFLOAT2(0.0f, 1.0f), 
-		XMFLOAT2(0.0f, 1.0f));
+		Float3(0.0f, 0.0f, 0.0f),
+		Float2(2.0f, 2.0f),
+		Float4(0.0f, 0.0f, 0.0f, 0.0f),
+		Float2(0.0f, 1.0f), 
+		Float2(0.0f, 1.0f));
 	
 	return true;
 }

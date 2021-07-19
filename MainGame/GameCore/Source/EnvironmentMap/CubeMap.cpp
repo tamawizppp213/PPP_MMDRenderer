@@ -9,10 +9,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/EnvironmentMap/CubeMap.hpp"
 #include "GameCore/Include/EnvironmentMap/CubeMapPipeLineState.hpp"
-#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/Core/DirectX12MeshBuffer.hpp"
 #include "DirectX12/Include/DirectX12PrimitiveGeometry.hpp"
 #include "GameCore/Include/GameConstantBufferConfig.hpp"
+#include "GameCore/Include/GameTimer.hpp"
 #include <d3dcompiler.h>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -35,17 +34,82 @@ DynamicCubemap::DynamicCubemap(Device* device, UINT width, UINT height, DXGI_FOR
 /****************************************************************************
 *							Initialize
 *************************************************************************//**
-*  @fn        bool DynamicCubemap::Initialize(Device* device, UINT width, UINT height, DXGI_FORMAT format)
+*  @fn        bool DynamicCubemap::Initialize(Device* device, UINT width, UINT height, const DirectX::XMFLOAT3& origin, DXGI_FORMAT format)
 *  @brief     Initialize
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool DynamicCubemap::Initialize(Device* device, UINT width, UINT height, DXGI_FORMAT format)
+bool DynamicCubemap::Initialize(Device* device, UINT width, UINT height, const DirectX::XMFLOAT3& origin, DXGI_FORMAT format)
 {
 	if (device == nullptr) { MessageBox(NULL, L"Device is nullptr. ", L"Warning", MB_ICONWARNING); return false; }
 	SetVariables(device, width, height, format);
+	BuildCubeFaceCamera(origin);
 	return true;
 }
+
+/****************************************************************************
+*							Update
+*************************************************************************//**
+*  @fn        bool DynamicCubemap::Update()
+*  @brief     Update
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
+bool DynamicCubemap::Update(SceneGPUAddress scene, GameTimer& gameTimer)
+{
+	using namespace DirectX;
+
+	for (int i = 0; i < 6; ++i)
+	{
+		SceneConstants cubemapConstants;
+		XMMATRIX view                      = _camera[i].GetViewMatrix();
+		XMMATRIX projection                = _camera[i].GetProjectionMatrix();
+		XMMATRIX viewProjection            = XMMatrixMultiply(view, projection);
+
+		XMVECTOR viewDeterminant           = XMMatrixDeterminant(view);
+		XMVECTOR projectionDeterminant     = XMMatrixDeterminant(projection);
+		XMVECTOR viewProjectionDeterminant = XMMatrixDeterminant(viewProjection);
+
+		XMMATRIX inverseView               = XMMatrixInverse(&viewDeterminant          , view);
+		XMMATRIX inverseProjection         = XMMatrixInverse(&projectionDeterminant    , projection);
+		XMMATRIX inverseViewProjection     = XMMatrixInverse(&viewProjectionDeterminant, viewProjection);
+		// note: Texture and shadow related features will be added later.
+
+		XMStoreFloat4x4(&cubemapConstants.View                 , XMMatrixTranspose(view));
+		XMStoreFloat4x4(&cubemapConstants.InverseView          , XMMatrixTranspose(inverseView));
+		XMStoreFloat4x4(&cubemapConstants.Projection           , XMMatrixTranspose(projection));
+		XMStoreFloat4x4(&cubemapConstants.InverseProjection    , XMMatrixTranspose(inverseProjection));
+		XMStoreFloat4x4(&cubemapConstants.ViewProjection       , XMMatrixTranspose(viewProjection));
+		XMStoreFloat4x4(&cubemapConstants.InverseViewProjection, XMMatrixTranspose(inverseViewProjection));
+
+		Screen screen;
+		cubemapConstants.EyePosition             = _camera[i].GetPosition3f();
+		cubemapConstants.RenderTargetSize        = XMFLOAT2((float)_width, (float)_height);
+		cubemapConstants.InverseRenderTargetSize = XMFLOAT2(1.0f / _width, 1.0f / _height);
+		cubemapConstants.NearZ                   = _camera[i].GetNearZ();
+		cubemapConstants.FarZ                    = _camera[i].GetFarZ();
+		cubemapConstants.TotalTime               = gameTimer.TotalTime();
+		cubemapConstants.DeltaTime               = gameTimer.DeltaTime();
+
+		/*auto currentSceneConstantBuffer = SceneConstantsBuffer.get();
+		currentSceneConstantBuffer->CopyStart();
+		currentSceneConstantBuffer->CopyData(0, *scene);
+		currentSceneConstantBuffer->CopyEnd();*/
+	}
+	return true;
+}
+
+bool DynamicCubemap::Draw()
+{
+	
+	return true;
+}
+
+bool DynamicCubemap::Finalize()
+{
+	return true;
+}
+
 
 /****************************************************************************
 *							SetCubemapSize
@@ -62,7 +126,7 @@ bool DynamicCubemap::SetCubemapSize(UINT width, UINT height)
 		_width  = width;
 		_height = height;
 
-		if (!BuildTextureResource()) { return false; }
+		if (!BuildResource()) { return false; }
 		if (!BuildDescriptors())     { return false; };
 	}
 	return true;
@@ -79,7 +143,7 @@ bool DynamicCubemap::SetCubemapSize(UINT width, UINT height)
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool DynamicCubemap::BuildTextureResource()
+bool DynamicCubemap::BuildResource()
 {
 	if (_device == nullptr) { return false; }
 	/*-------------------------------------------------------------------
@@ -197,8 +261,6 @@ void DynamicCubemap::SetVariables(Device* device, UINT width, UINT height, DXGI_
 	this->_height = height;
 	this->_format = format;
 
-	_viewport     = { 0.0f, 0.0f, (float)width, (float)height };
-	_scissorRect  = { 0,0,(int)width, (int)height };
 }
 
 /****************************************************************************
@@ -211,31 +273,31 @@ void DynamicCubemap::SetVariables(Device* device, UINT width, UINT height, DXGI_
 *****************************************************************************/
 bool DynamicCubemap::BuildCubeFaceCamera(const DirectX::XMFLOAT3& origin)
 {
-	using namespace DirectX;
+	using namespace gm;
 
-	XMFLOAT3 targets[6] =
+	Vector3 targets[6] =
 	{
-		XMFLOAT3(origin.x + 1.0f, origin.y, origin.z),
-		XMFLOAT3(origin.x - 1.0f, origin.y, origin.z),
-		XMFLOAT3(origin.x, origin.y + 1.0f, origin.z),
-		XMFLOAT3(origin.x, origin.y - 1.0f, origin.z),
-		XMFLOAT3(origin.x, origin.y, origin.z + 1.0f),
-		XMFLOAT3(origin.x, origin.y, origin.z - 1.0f)
+		Vector3(origin.x + 1.0f, origin.y, origin.z),
+		Vector3(origin.x - 1.0f, origin.y, origin.z),
+		Vector3(origin.x, origin.y + 1.0f, origin.z),
+		Vector3(origin.x, origin.y - 1.0f, origin.z),
+		Vector3(origin.x, origin.y, origin.z + 1.0f),
+		Vector3(origin.x, origin.y, origin.z - 1.0f)
 	};
-	XMFLOAT3 ups[6] =
+	Vector3 ups[6] =
 	{
-		XMFLOAT3(0.0f, 1.0f,  0.0f),
-		XMFLOAT3(0.0f, 1.0f,  0.0f),
-		XMFLOAT3(0.0f, 0.0f, -1.0f),
-		XMFLOAT3(0.0f, 0.0f, +1.0f),
-		XMFLOAT3(0.0f, 1.0f,  0.0f),
-		XMFLOAT3(0.0f, 1.0f,  0.0f)
+		Vector3(0.0f, 1.0f,  0.0f),
+		Vector3(0.0f, 1.0f,  0.0f),
+		Vector3(0.0f, 0.0f, -1.0f),
+		Vector3(0.0f, 0.0f, +1.0f),
+		Vector3(0.0f, 1.0f,  0.0f),
+		Vector3(0.0f, 1.0f,  0.0f)
 	};
 
 	for (int i = 0; i < 6; ++i)
 	{
-		_camera[i].LookAt(origin, targets[i], ups[i]);
-		_camera[i].SetLens(0.5f * XM_PI, 1.0f, 0.0f, 1000.0f);
+		_camera[i].LookAt(Vector3(origin), targets[i], ups[i]);
+		_camera[i].SetLens(0.5f * DirectX::XM_PI, 1.0f, 0.0f, 1000.0f);
 		_camera[i].UpdateViewMatrix();
 	}
 
@@ -475,8 +537,8 @@ bool Skybox::PrepareSkyObject()
 	-			Set Skydata
 	---------------------------------------------------------------------*/
 	ObjectConstants skyData; // sphere
-	XMStoreFloat4x4(&skyData.World, XMMatrixScaling(SKY_SCALE, SKY_SCALE, SKY_SCALE));
-	skyData.TextureTransform = DirectXMathHelper::Identity4X4();
+	skyData.World = gm::Scaling(SKY_SCALE, SKY_SCALE, SKY_SCALE).ToFloat4x4();
+	skyData.TextureTransform = gm::MatrixIdentityF();
 
 	/*-------------------------------------------------------------------
 	-			Copy Sky object data

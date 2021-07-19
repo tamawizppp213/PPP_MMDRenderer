@@ -11,14 +11,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Core.hpp"
 #include "DirectX12/Include/Core/DirectX12Config.hpp"
-#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
-#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/Core/DirectX12MeshBuffer.hpp"
-#include <memory>
-#include <string>
-#include <vector>
+#include "GameCore/Include/GameConstantBufferConfig.hpp"
+#include "GameMath/Include/GMTransform.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -53,5 +49,11 @@ protected:
 	MeshBuffer     _meshBuffer[FRAME_BUFFER_COUNT];
 	BlobComPtr     _vertexShader = nullptr;
 	BlobComPtr     _pixelShader  = nullptr;
+
+	/*-------------------------------------------------------------------
+	-           Object Property
+	---------------------------------------------------------------------*/
+	ObjectConstants           _worldInfo;
+	gm::Transform             _transform;
 };
 #endif

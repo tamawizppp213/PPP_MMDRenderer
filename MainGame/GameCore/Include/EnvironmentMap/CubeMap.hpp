@@ -11,9 +11,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
-#include "DirectX12/Include/Core/DirectX12Base.hpp"
-#include "DirectX12/Include/Core/DirectX12Core.hpp"
 #include "DirectX12/Include/Core/DirectX12Texture.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "DirectX12/Include/Core/DirectX12MeshBuffer.hpp"
@@ -26,7 +23,7 @@ using  SceneGPUAddress = D3D12_GPU_VIRTUAL_ADDRESS;
 struct ObjectConstants;
 struct SceneConstants;
 struct MaterialConstants;
-
+class  GameTimer;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Class
@@ -90,7 +87,8 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(Device* device, UINT width, UINT height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
+	bool Initialize(Device* device, UINT width, UINT height, const DirectX::XMFLOAT3& origin, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
+	bool Update(SceneGPUAddress scene, GameTimer& gameTimer);
 	bool Draw();
 	bool Finalize();
 
@@ -98,12 +96,8 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	bool             SetCubemapSize(UINT width, UINT height);
-	Resource*        Resource();
-	D3D12_VIEWPORT   Viewport();
-	D3D12_RECT       ScissorRect();
-	GPU_DESC_HANDLER ShaderResourceView();
-	GPU_DESC_HANDLER RenderTargetView(int faceIndex);
+	bool SetCubemapSize(UINT width, UINT height);
+	
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
@@ -117,7 +111,7 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	bool BuildTextureResource();
+	bool BuildResource();
 	bool BuildDescriptors();
 	bool BuildDescriptors(CPU_DESC_HANDLER cpuSrv, GPU_DESC_HANDLER gpuSrv, CPU_DESC_HANDLER cpuRtv[6]);
 	void SetVariables(Device* device, UINT width, UINT height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -130,8 +124,6 @@ private:
 	UINT _width;
 	UINT _height;
 
-	D3D12_VIEWPORT _viewport;
-	D3D12_RECT     _scissorRect;
 	DXGI_FORMAT    _format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	CPU_DESC_HANDLER _cpuSrv;
