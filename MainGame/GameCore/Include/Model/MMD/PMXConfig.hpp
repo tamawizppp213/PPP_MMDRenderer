@@ -11,19 +11,24 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "DirectX12/Include/Core/DirectX12Texture.hpp"
+#include "GameMath/Include/GMTransform.hpp"
+#include "GameMath/Include/GMQuaternion.hpp"
 #include <Windows.h>
+#include <array>
 #include <vector>
 #include <string>
-#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #pragma warning(disable : 26495)
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+// 
 // read pmx format https://github.com/hirakuni45/glfw3_app/blob/master/glfw3_app/docs/PMX_spec.txt
+#define PMX_BONE_MATRIX_SIZE (512)
 namespace pmx
 {
-	using namespace DirectX;
+	using namespace gm;
 #pragma pack(1)
 	enum class PMXEncode : UINT8 
 	{
@@ -65,22 +70,22 @@ namespace pmx
 
 	struct PMXVertex
 	{
-		XMFLOAT3        Position;
-		XMFLOAT3        Normal;
-		XMFLOAT2        UV;
-		XMFLOAT4        AddUV[4];      // mainly use for effect
+		Float3          Position;
+		Float3          Normal;
+		Float2          UV;
+		Float4          AddUV[4];      // mainly use for effect
 		PMXVertexWeight WeightType;
 		INT32           BoneIndices[4];
 		float           BoneWeights[4];
-		XMFLOAT3        SDefC;
-		XMFLOAT3        SDefR0;
-		XMFLOAT3        SDefR1;
+		Float3          SDefC;
+		Float3          SDefR0;
+		Float3          SDefR1;
 
 		float EdgeMagnitude;
 
 	};
 
-	struct PMXFace
+	struct PMXMesh
 	{
 		UINT32 Indices[3];
 	};
@@ -107,7 +112,7 @@ namespace pmx
 		None, 
 		Multiply,
 		Addition, 
-		Substract
+		SubTexture
 	};
 
 	enum class PMXToonTextureMode :UINT8
@@ -120,12 +125,12 @@ namespace pmx
 	{
 		std::string        MaterialName;
 		std::string        EnglishName;
-		XMFLOAT4           Diffuse;
+		Float4             Diffuse;
 		float              SpecularPower;
-		XMFLOAT3           Specular;
-		XMFLOAT3           Ambient;
+		Float3             Specular;
+		Float3             Ambient;
 		PMXDrawModeFlags   DrawMode;
-		XMFLOAT4           EdgeColor;
+		Float4             EdgeColor;
 		float              EdgeSize;
 		INT32              TextureIndex;
 		INT32              SphereMapTextureIndex;
@@ -160,25 +165,25 @@ namespace pmx
 		unsigned char EnableLimit;
 
 		//When Enable Limit is 1, the variations is needed.
-		XMFLOAT3 AngleMin; // radian 
-		XMFLOAT3 AngleMax; // radian
+		Float3   AngleMin; // radian 
+		Float3   AngleMax; // radian
 	};
 
 	struct PMXBone
 	{
 		std::string BoneName;
 		std::string EnglishName;
-		XMFLOAT3    Position;
+		Float3      Position;
 		INT32       ParentBoneIndex;
 		INT32       DeformDepth;
 		PMXBoneFlag BoneFlag;
-		XMFLOAT3    PositionOffset;
+		Float3      PositionOffset;
 		INT32       LinkBoneIndex;
 		INT32       AppendBoneIndex;
 		float       AppendWeight;
-		XMFLOAT3    FixedAxis;         // PMXBoneFlag: FixedAxis is enabled
-		XMFLOAT3    LocalAxis_X;       // PMXBoneFlag: LocalAxis is enabled 
-		XMFLOAT3    LocalAxis_Z;       // PMXBoneFlag: LocalAxis is enabled
+		Float3      FixedAxis;         // PMXBoneFlag: FixedAxis is enabled
+		Float3      LocalAxis_X;       // PMXBoneFlag: LocalAxis is enabled 
+		Float3      LocalAxis_Z;       // PMXBoneFlag: LocalAxis is enabled
 		INT32       KeyValue;          // PMXBoneFlag: DeformAfterPhisics is enabled
 		INT32       IKTargetBoneIndex; // PMXBoneFlag: IKBone is enabled
 		INT32       IKIterationCount;  // PMXBoneFlag: IKBone is enabled
@@ -214,20 +219,20 @@ namespace pmx
 	struct PositionMorph
 	{
 		INT32    VertexIndex;
-		XMFLOAT3 Position;
+		Float3   Position;
 	};
 
 	struct UVMorph
 	{
 		INT32    VertexIndex;
-		XMFLOAT4 UV;
+		Float4   UV;
 	};
 
 	struct BoneMorph
 	{
 		INT32    BoneIndex;
-		XMFLOAT3 Position;
-		XMFLOAT4 Quaternion;
+		Float3   Position;
+		Float4   Quaternion;
 	};
 
 	struct MaterialMorph
@@ -240,15 +245,15 @@ namespace pmx
 
 		INT32    MaterialIndex;
 		OpType   OpType;
-		XMFLOAT4 Diffuse;
-		XMFLOAT3 Specular;
+		Float4   Diffuse;
+		Float3   Specular;
 		float    SpecularPower;
-		XMFLOAT3 Ambient;
-		XMFLOAT4 EdgeColor;
+		Float3   Ambient;
+		Float4   EdgeColor;
 		float    EdgeSize;
-		XMFLOAT4 TextureFactor;
-		XMFLOAT4 SphereMapFactor;
-		XMFLOAT4 ToonTextureFactor;
+		Float4   TextureFactor;
+		Float4   SphereMapFactor;
+		Float4   ToonTextureFactor;
 	};
 
 	struct GroupMorph
@@ -267,8 +272,8 @@ namespace pmx
 	{
 		INT32    RigidBodyIndex;
 		UINT8    LocalFlag;         // 0: off, 1: on
-		XMFLOAT3 TranslateVelocity;
-		XMFLOAT3 RotateTorque;
+		Float3   TranslateVelocity;
+		Float3   RotateTorque;
 	};
 
 	struct PMXFaceExpression
@@ -337,9 +342,9 @@ namespace pmx
 		UINT8                 Group;
 		UINT16                CollisionGroup;
 		PMXRigidBodyShape     Shape;
-		XMFLOAT3              ShapeSize;
-		XMFLOAT3              Translation;
-		XMFLOAT3              Rotation;            // raduan
+		Float3                ShapeSize;
+		Float3                Translation;
+		Float3                Rotation;            // raduan
 		float                 Mass;
 		float                 DampingTranslation;
 		float                 DampingRotation;
@@ -365,14 +370,14 @@ namespace pmx
 		PMXJointType JointType;
 		INT32        RigidBodyIndex_A;
 		INT32        RigidBodyIndex_B;
-		XMFLOAT3     Translation;
-		XMFLOAT3     Rotation;
-		XMFLOAT3     TranslationMin;
-		XMFLOAT3     TranslationMax;
-		XMFLOAT3     RotationMin;             // radian
-		XMFLOAT3     RotationMax;             // radian
-		XMFLOAT3     SpringTranslationFactor;
-		XMFLOAT3     SpringRotationFactor;
+		Float3       Translation;
+		Float3       Rotation;
+		Float3       TranslationMin;
+		Float3       TranslationMax;
+		Float3       RotationMin;             // radian
+		Float3       RotationMax;             // radian
+		Float3       SpringTranslationFactor;
+		Float3       SpringRotationFactor;
 	};
 
 	enum class PMXSoftBodyType : UINT8
@@ -466,5 +471,505 @@ namespace pmx
 		std::vector<INT32>   VertexIndices;
 	};
 #pragma pack()
+
 }
+
+/****************************************************************************
+*				  			PMXBDefVertex
+*************************************************************************//**
+*  @class     PMXBDefVertex
+*  @brief     PMX Format Vertex (for Bone Define)
+*****************************************************************************/
+#pragma pack(1)
+class PMXVertex
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	VertexPositionNormalTexture Vertex;
+	std::array<INT32, 4>        BoneIndices;
+	std::array<float, 4>        BoneWeights;
+	gm::Float3                  SDefC;
+	gm::Float3                  SDefR0;
+	gm::Float3                  SDefR1;
+	UINT8                       WeightType;
+
+	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXVertex()                            = default;
+	PMXVertex(const PMXVertex&)            = default;
+	PMXVertex& operator=(const PMXVertex&) = default;
+	PMXVertex(PMXVertex&&)                 = default;
+	PMXVertex& operator=(PMXVertex&&)      = default;
+	inline PMXVertex(pmx::PMXVertex& vertex)
+	{
+		Vertex = VertexPositionNormalTexture(vertex.Position, vertex.Normal, vertex.UV);
+		for (int i = 0; i < 4; ++i)
+		{
+			BoneIndices[i] = vertex.BoneIndices[i];
+			BoneWeights[i] = vertex.BoneWeights[i];
+		}
+		SDefC  = vertex.SDefC;
+		SDefR0 = vertex.SDefR0;
+		SDefR1 = vertex.SDefR1;
+		WeightType = (UINT8)vertex.WeightType;
+	}
+
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	static constexpr unsigned int InputElementCount = 9;
+	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
+};
+
+/****************************************************************************
+*				  			PMDMaterial
+*************************************************************************//**
+*  @class     PMDMaterial
+*  @brief     PMD Material Data
+*****************************************************************************/
+class PMXMaterial
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	gm::Float4 Diffuse;
+	float      SpecularPower;
+	gm::Float3 Specular;
+	gm::Float3 Ambient;
+	UINT32     PolygonNum;
+	
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXMaterial()                                = default;
+	~PMXMaterial()                               = default;
+	PMXMaterial(const PMXMaterial&)              = default;
+	PMXMaterial& operator=(const PMXMaterial&)   = default;
+	PMXMaterial(PMXMaterial&&)                   = default;
+	PMXMaterial& operator=(PMXMaterial &&)       = default;
+	PMXMaterial(const pmx::PMXMaterial& material)
+	{
+		this->Diffuse       = material.Diffuse;
+		this->SpecularPower = material.SpecularPower;
+		this->Specular      = material.Specular;
+		this->Ambient       = material.Ambient;
+		this->PolygonNum    = material.FaceIndicesCount;
+	}
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+};
+
+using SphereMapMultiply  = Texture;
+using SphereMapAddition  = Texture;
+using SpehreMapSubstract = Texture;
+using ToonTexture        = Texture;
+class PMXTexture
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	Texture           Texture;
+	SphereMapMultiply SphereMultiply;
+	SphereMapAddition SphereAddition;
+	ToonTexture       ToonTexture;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXTexture()  = default;
+	~PMXTexture() = default;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+};
+
+class PMXBoneIK;
+/****************************************************************************
+*				  			PMDBoneNode
+*************************************************************************//**
+*  @class     PMD Bone Node
+*  @brief     PMD Bone Data
+*****************************************************************************/
+class PMXBoneNode
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	void SaveInitialSRT() { _initialTransform = _transform; } // initialize
+	void LoadInitialSRT() { _transform = _initialTransform; }; // reset (per frame)
+
+	void UpdateLocalMatrix();
+	void UpdateGlobalMatrix();
+	void UpdateSelfandChildMatrix();
+	void UpdateAppendMatrix(); // use before global matrix 
+	void BeforeUpdateMatrix();
+
+
+	void AddChild(PMXBoneNode* boneNode) { _children.emplace_back(boneNode); }
+	static void RecursiveBoneMatrixMultiply(std::vector<gm::Matrix4>& boneMatrix, PMXBoneNode* boneNode, const gm::Matrix4& matrix);
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	/*-------------------------------------------------------------------
+	-							Transform
+	---------------------------------------------------------------------*/
+	inline void SetTransform   (const gm::Transform& transform)  { _transform = transform; }
+	inline void SetTranslate   (const gm::Vector3& translate)    { _transform.LocalPosition = translate; }
+	inline void SetScale       (const gm::Vector3& scale)        { _transform.LocalScale    = scale; }
+	inline void SetRotate      (const gm::Quaternion quaternion) { _transform.LocalRotation = quaternion; }
+	inline void SetAnimateTransform(const gm::Transform& transform) { _animateTransform     = transform; }
+	inline void SetAnimateTranslate (const gm::Vector3& translate)   { _animateTransform.LocalPosition = translate; }
+	inline void SetAnimateRotate   (const gm::Quaternion& rotate)      { _animateTransform.LocalRotation = rotate; }
+	inline void SetAppendTransform (const gm::Transform& transform)   { _appendTransform                = transform; }
+	inline void SetAppendRotate    (const gm::Vector3& translate)     { _appendTransform.LocalPosition  = translate; }
+	inline void SetIKRotate        (const gm::Quaternion& quaternion) { _ikRotation = quaternion; }
+	inline gm::Transform  GetTransform () { return _transform; }
+	inline gm::Vector3    GetTranslate () const { return _transform.LocalPosition; }
+	inline gm::Vector3    GetScale     () const { return _transform.LocalScale; }
+	inline gm::Quaternion GetRotate    () const { return _transform.LocalRotation; }
+	inline gm::Transform  GetInitialTransform() const { return _initialTransform; }
+	inline gm::Vector3    GetInitialTranslate() const { return _initialTransform.LocalPosition; }
+	inline gm::Vector3    GetInitialScale    () const { return _initialTransform.LocalScale; }
+	inline gm::Quaternion GetInitialRotate   () const { return _initialTransform.LocalRotation; }
+	inline gm::Transform  GetAppendTransform() const { return _appendTransform; }
+	inline gm::Vector3    GetAppendTranslate() const { return _appendTransform.LocalPosition; }
+	inline gm::Quaternion GetAppendRotate () const { return _appendTransform.LocalRotation; }
+	inline gm::Quaternion GetIKRotate     () const { return _ikRotation; }
+	inline gm::Vector3    AnimateTranslate() const { return _animateTransform.LocalPosition + _transform.LocalPosition; }
+	inline gm::Quaternion AnimateRotate()    const { return  _transform.LocalRotation * _animateTransform.LocalRotation; }
+
+	/*-------------------------------------------------------------------
+	-							Bone Matrix
+	---------------------------------------------------------------------*/
+	inline void SetLocalMatrix      (const gm::Matrix4& matrix) { _localBoneMatrix = matrix; }
+	inline void SetGlobalMatrix     (const gm::Matrix4& matrix) { _globalBoneMatrix = matrix; }
+	inline void SetInverseBindMatrix(const gm::Matrix4& matrix) { _inverseBindMatrix = matrix; }
+	const  gm::Matrix4& GetLocalMatrix      () const { return _localBoneMatrix; }
+	const  gm::Matrix4& GetGlobalMatrix     () const { return _globalBoneMatrix; }
+	const  gm::Matrix4& GetInverseBindMatrix() const { return _inverseBindMatrix; }
+	
+	/*-------------------------------------------------------------------
+	-							Property
+	---------------------------------------------------------------------*/
+	inline void SetBoneName(const std::string& name) { this->_name = name; }
+	inline void SetBoneIndex(int boneIndex)                     { this->_boneIndex = boneIndex; }
+	inline void SetDeformationDepth(int deformDepth)            { this->_deformationDepth = deformDepth; }
+	inline void SetAppendWeight(float weight) { this->_appendWeight = weight; }
+
+	inline float GetAppendWeight() { return _appendWeight; }
+	inline int GetBoneIndex()   { return _boneIndex; }
+	inline int GetDeformationDepth() { return _deformationDepth; }
+
+	/*-------------------------------------------------------------------
+	-							Bone flag
+	---------------------------------------------------------------------*/
+	void EnableIK             (bool enable) { _enableIK = enable; }
+	void EnableAppendRotate   (bool enable) { _isAppendRotate    = enable; }
+	void EnableAppendTranslate(bool enable) { _isAppendTranslate = enable; }
+	void EnableAppendLocal    (bool enable) { _isAppendLocal     = enable; }
+	void EnableDeformationAfterPhysics(bool enable) { _isDeformationAfterPhysics = enable; }
+	bool IsDeformationAfterPhysics()                { return _isDeformationAfterPhysics; }
+
+	/*-------------------------------------------------------------------
+	-							Bone Node
+	---------------------------------------------------------------------*/
+	inline void         SetParent(PMXBoneNode* parent)       { this->_parent = parent; }
+	inline void         SetChild(PMXBoneNode* child, int index) { _children[index] = child; }
+	inline void         SetAppendNode(PMXBoneNode* boneNode) { _appendNode = boneNode; }
+	inline PMXBoneNode* GetAppendNode() const                { return _appendNode; }
+	inline PMXBoneNode* GetParent()                          { return _parent; }
+	inline std::vector<PMXBoneNode*>& GetChildren() { return _children; }
+	inline std::string GetBoneName() { return _name; }
+ 
+	inline void        SetBoneIK(PMXBoneIK* ik) { _boneIK = ik; }
+	inline PMXBoneIK* GetBoneIK() { return _boneIK; }
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXBoneNode () = default;
+	~PMXBoneNode() = default;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	/*-------------------------------------------------------------------
+	-							Transform 
+	---------------------------------------------------------------------*/
+	gm::Transform _initialTransform;
+	gm::Transform _transform;
+	gm::Transform _appendTransform;
+	gm::Transform _animateTransform; // offset
+
+	/*-------------------------------------------------------------------
+	-							Bone matrix
+	---------------------------------------------------------------------*/
+	gm::Matrix4 _localBoneMatrix;   // Relative coordinates to the direct parent bone
+	gm::Matrix4 _globalBoneMatrix;  // Global matrix to the root bone.
+	gm::Matrix4 _inverseBindMatrix; // inverse bind pose convertion
+
+	/*-------------------------------------------------------------------
+	-							Bone Config
+	---------------------------------------------------------------------*/
+	int         _boneIndex;
+	int         _deformationDepth;
+	float       _appendWeight;
+	gm::Quaternion _ikRotation;
+
+	/*-------------------------------------------------------------------
+	-							Bone flag
+	---------------------------------------------------------------------*/
+	bool _enableIK;
+	bool _isAppendRotate;
+	bool _isAppendTranslate;
+	bool _isAppendLocal;
+	bool _isDeformationAfterPhysics;
+
+	/*-------------------------------------------------------------------
+	-							Bone node
+	---------------------------------------------------------------------*/
+	std::string               _name;
+	PMXBoneNode*              _parent;
+	std::vector<PMXBoneNode*> _children;
+	PMXBoneNode*              _appendNode;
+
+	PMXBoneIK* _boneIK = nullptr;
+};
+
+
+struct PMXBoneParameter
+{
+	gm::Matrix4 BoneMatrices[PMX_BONE_MATRIX_SIZE];
+};
+
+struct PMXBoneQuaternion
+{
+	gm::Float4 BoneQuaternions[PMX_BONE_MATRIX_SIZE];
+};
+
+struct PMXBoneLocalPosition
+{
+	gm::Float3 BonePositions[PMX_BONE_MATRIX_SIZE];
+};
+/****************************************************************************
+*				  			PMDBoneNode
+*************************************************************************//**
+*  @class     PMD Bone Node
+*  @brief     PMD Bone Data
+*****************************************************************************/
+class PMXMorph
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	std::vector<pmx::PositionMorph> PositionMorphs;
+	std::vector<pmx::UVMorph>       UVMorphs;
+	std::vector<pmx::BoneMorph>     BoneMorphs;
+	std::vector<pmx::MaterialMorph> MaterialMorphs;
+	std::vector<pmx::GroupMorph>    GroupMorphs;
+	std::vector<pmx::FlipMorph>     FlipMorphs;
+	std::vector<pmx::ImpulseMorph>  ImpulseMorphs;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXMorph()  = default;
+	PMXMorph(pmx::PMXFaceExpression& face)
+	{
+		PositionMorphs = std::move(face.PositionMorphs);
+		UVMorphs       = std::move(face.UVMorphs);
+		BoneMorphs     = std::move(face.BoneMorphs);
+		MaterialMorphs = std::move(face.MaterialMorphs);
+		GroupMorphs    = std::move(face.GroupMorphs);
+		FlipMorphs     = std::move(face.FlipMorphs);
+		ImpulseMorphs  = std::move(face.ImpulseMorphs);
+	}
+	~PMXMorph() = default;
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+};
+
+class PMXData;
+class VMDFile;
+class PMXIKChain
+{
+public:
+	PMXBoneNode* IKBone;
+	unsigned char EnableLimit;
+
+	//When Enable Limit is 1, the variations is needed.
+	gm::Float3   AngleMin; // radian 
+	gm::Float3   AngleMax; // radian
+
+	gm::Quaternion SaveIKRotation;
+	gm::Float3     PreviousAngle;
+	float          PlaneModeAngle;
+
+	PMXIKChain() = default;
+	PMXIKChain(const pmx::PMXIKLink& ikLink)
+	{
+		IKBone      = nullptr;
+		EnableLimit = ikLink.EnableLimit;
+		AngleMin    = ikLink.AngleMin;
+		AngleMax    = ikLink.AngleMax;
+	}
+	PMXIKChain(const PMXIKChain& ikLink)
+	{
+		IKBone      = ikLink.IKBone;
+		EnableLimit = ikLink.EnableLimit;
+		AngleMin    = ikLink.AngleMin;
+		AngleMax    = ikLink.AngleMax;
+	}
+};
+
+enum class SolveAxis
+{
+	X,
+	Y,
+	Z
+};
+/****************************************************************************
+*				  			PMDBoneNode
+*************************************************************************//**
+*  @class     PMD Bone Node
+*  @brief     PMD Bone Data
+*****************************************************************************/
+class PMXBoneIK
+{
+	using PMXBoneNodeAddressList = std::vector<PMXBoneNode*>;
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	static void SolveIK(int frameNo, PMXData* pmxFile, const PMXBoneNodeAddressList& boneAddressList, VMDFile* vmdFile);
+	void InitializeChildNode();
+	void SolveIK(int frameNo, VMDFile* vmdFile);
+	void AddIKChain(PMXBoneNode* boneNode, bool axisLimit, const gm::Float3& limitMin, const gm::Float3& limitMax);
+	void SetIKChains(std::vector<PMXIKChain>& ikChains) 
+	{
+		_ikChains = std::move(ikChains);
+		_ikChainLength = _ikChains.size();
+	}
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	inline PMXBoneNode* GetIKBoneNode()         const { return _ikBone; }
+	inline PMXBoneNode* GetIKParentBoneNode()   const { return _ikParent; }
+	inline PMXBoneNode* GetTargetBoneNode()     const { return _ikTargetBone; }
+	inline size_t       GetChainLength()        const { return _ikChainLength; }
+	inline size_t       GetIterationCount()     const { return _iterationCount; }
+	inline float        GetAngleLimit()         const { return _angleLimit; }
+	std::string GetIKName() const
+	{
+		if (_ikBone != nullptr) { return _ikBone->GetBoneName(); }
+		else { return ""; }
+	}
+
+	void SetIKBone      (PMXBoneNode* boneNode) { _ikBone       = boneNode; }
+	void SetIKParentBone(PMXBoneNode* boneNode) { _ikParent     = boneNode; }
+	void SetTargetBone  (PMXBoneNode* boneNode) { _ikTargetBone = boneNode; }
+	void SetChainNode(int index, PMXBoneNode* boneNode) { _ikChains.at(index).IKBone = boneNode; }
+	void SetChainNode(int index, PMXBoneNode* boneNode, bool axisLimit, const gm::Float3& limitMin, const gm::Float3& limitMax)
+	{
+		_ikChains.at(index).IKBone = boneNode;
+		_ikChains.at(index).EnableLimit = axisLimit;
+		_ikChains.at(index).AngleMax = limitMax;
+		_ikChains.at(index).AngleMin = limitMin;
+	}
+	void SetIterationCount(size_t count) { _iterationCount = count; }
+	void SetLimitAngle    (float angle)  { _angleLimit = angle; }
+
+	inline const std::vector<PMXIKChain>& GetChainsVector()  const { return _ikChains; }
+	inline const PMXIKChain* GetChains()  const { return _ikChains.data(); }
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXBoneIK()  = default;
+	~PMXBoneIK() = default;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+	void SolveLookAt();
+	void SolveCosIK();
+	void SolveCCDIK();
+	void SolvePlane(int cycle, int chainIndex, SolveAxis solveAxis);
+	static void SolveCCDIK (const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray);
+	static void SolveCosIK (const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray);
+	static void SolveLookAt(const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray);
+	
+	void AddIKChain(PMXIKChain&& chain);
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	PMXBoneNode*    _ikBone;       // IK Bone (target bone position)
+	PMXBoneNode*    _ikTargetBone; // Index of bones to get closer to the target.
+	PMXBoneNode*    _ikParent;
+	UINT64          _ikChainLength;  // bone node count between IK bone
+	UINT16          _iterationCount; 
+	float           _angleLimit;     // Rotation limit per 1 Frame
+	std::vector<PMXIKChain> _ikChains;
+};
+
+#pragma pack()
 #endif

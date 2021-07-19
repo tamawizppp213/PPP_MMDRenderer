@@ -1,97 +1,88 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   Fade.hpp
-///             @brief  Fade
+///             @file   PostEffect.hpp
+///             @brief  Default Post Effect
 ///                     ① Initialize
-///                     ② StartFadeIn(call once)
-///                     ③ Draw
-///                     ④ Check scene change (AllowedGoToNextScene) 
+///                     ② Draw
 ///             @author Toide Yutaro
-///             @date   2021_03_17
+///             @date   2021_07_13
 //////////////////////////////////////////////////////////////////////////////////
-#pragma once 
-#ifndef FADE_HPP
-#define FADE_HPP
+#pragma once
+#ifndef POST_EFFECT_HPP
+#define POST_EFFECT_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Sprite/Sprite.hpp"
-#include "GameMath/Include/GMMatrix.hpp"
-
+#include "DirectX12/Include/Core/DirectX12BlendState.hpp"
+#include "GameCore/Include/Sprite/SpriteRenderer.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-struct Texture;
-class GameTimer;
 
 //////////////////////////////////////////////////////////////////////////////////
-//                             Class
+//                            Class
 //////////////////////////////////////////////////////////////////////////////////
-enum class FadeState
-{
-	FADE_STATE_NONE,
-	FADE_STATE_IN,
-	FADE_STATE_PAUSE,
-	FADE_STATE_OUT
-};
-
 /****************************************************************************
-*				  			Fade
+*				  			PostEffect
 *************************************************************************//**
-*  @class     Fade
-*  @brief     Fade
+*  @class     Post Effect
+*  @brief     Post Effect (Apply to the entire screen)
 *****************************************************************************/
-class Fader
+class PostEffect
 {
+	using VertexBufferPtr = std::unique_ptr<UploadBuffer<VertexPositionNormalColorTexture>>;
+	using MeshBufferPtr   = std::unique_ptr<MeshBuffer>;
+	using MatrixBufferPtr = std::unique_ptr<UploadBuffer<gm::Matrix4>>;
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(); 
-	void StartFadeIn(float inOutTime, float pauseTime);
-	bool Draw(const GameTimer& gameTimer, const gm::Matrix4& projViewMatrix);
-	bool AllowedGoToNextScene();
-	bool Finalize();
+	bool Initialize(PostEffectBlendStateType type);
+	virtual bool OnResize();
+	virtual bool Draw(); // バックバッファにテクスチャを書き込む.
 
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	void SetSpriteSize(float width = 2.0f, float height = 2.0f); // default NDC
-	void SetColor(const gm::Float3& color);
 
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	Fader();
-	Fader(const Fader&)            = default;
-	Fader& operator=(const Fader&) = default;
-	Fader(Fader&&)                 = default;
-	Fader& operator=(Fader&&)      = default;
-	~Fader();
+	PostEffect()                             = default;
+	PostEffect(const PostEffect&)            = default;
+	PostEffect& operator=(const PostEffect&) = default;
+	PostEffect(PostEffect&&)                 = default;
+	PostEffect& operator=(PostEffect&&)      = default;
+	~PostEffect() = default;
+
 protected:
 	/****************************************************************************
-	**                Private Function
+	**                Protected Function
 	*****************************************************************************/
-	bool LoadWhiteTexture(); 
+	bool PrepareRootSignature(PostEffectBlendStateType type);
+	bool PreparePipelineState(PostEffectBlendStateType type);
 	bool PrepareVertexBuffer();
 	bool PrepareIndexBuffer();
 	bool PrepareConstantBuffer();
 	bool PrepareSprite();
-	bool UpdateFade     (const GameTimer& gameTimer);
-	bool FadeInAction   (const GameTimer& gameTimer);
-	bool FadePauseAction(const GameTimer& gameTimer);
-	bool FadeOutAction  (const GameTimer& gameTimer);
+	bool PrepareResources();
+	bool PrepareDescriptors();
 
 	/****************************************************************************
-	**                Private Member Variables
+	**                Protected Member Variables
 	*****************************************************************************/
-	Sprite             _sprite;
-	gm::Float4         _color;
-	FadeState          _currentFadeState;
-	float              _inOutTime   = 0.0f;
-	float              _pauseTime   = 0.0f;
-	bool               _allowedNextScene = false;
-
+	Sprite              _sprite;
+	std::vector<Texture> _colorBuffer;
+	VertexBufferPtr     _vertexBuffer[FRAME_BUFFER_COUNT];
+	MeshBufferPtr       _meshBuffer  [FRAME_BUFFER_COUNT];
+	MatrixBufferPtr     _constantBuffer;
+	
+	RootSignatureComPtr _rootSignature = nullptr;
+	PipelineStateComPtr _pipelineState = nullptr;
+	static RootSignatureComPtr _defaultRootSignature;
+	static PipelineStateComPtr _defaultPipelineState;
 };
+
 
 #endif

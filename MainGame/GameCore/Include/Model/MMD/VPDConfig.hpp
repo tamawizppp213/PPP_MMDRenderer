@@ -11,23 +11,23 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "GameMath/Include/GMVector.hpp"
 #include <Windows.h>
 #include <string>
-#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+
 #pragma warning(disable : 26495)
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 namespace vpd
 {
-	using namespace DirectX;
 #pragma pack(1)
 	struct VPDBone
 	{
 		std::string BoneName;
-		XMFLOAT3    Translation;
-		XMFLOAT4    Quaternion;
+		gm::Float3    Translation;
+		gm::Float4    Quaternion;
 	};
 
 	struct VPDMorph

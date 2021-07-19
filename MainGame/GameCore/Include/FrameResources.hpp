@@ -11,13 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Core.hpp"
-#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include "GameCore/Include/GameConstantBufferConfig.hpp"
 #include "GameCore/Include/GameTimer.hpp"
-#include <DirectXMath.h>
-#include <memory>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +79,7 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	const GameTimer* _gameTimer = nullptr;
-	
+	Screen _screen;
 };
 
 

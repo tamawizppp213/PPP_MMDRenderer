@@ -18,6 +18,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	using namespace gm;
+	Vector4 GetBezierParameter(int index, const vmd::VMDKeyFrame& keyFrame)
+	{
+		Vector4 result;
+		result.SetX(float(keyFrame.Interpolation[4 * 0 + index]) / 127.0f);
+		result.SetY(float(keyFrame.Interpolation[4 * 1 + index]) / 127.0f);
+		result.SetZ(float(keyFrame.Interpolation[4 * 2 + index]) / 127.0f);
+		result.SetW(float(keyFrame.Interpolation[4 * 3 + index]) / 127.0f);
+		return result;
+	}
+}
 #pragma region Public Function
 /****************************************************************************
 *							LoadVMDFile
@@ -108,13 +121,52 @@ bool VMDFile::LoadVMDMotion(FILE* filePtr)
 	fread_s(&motionCount, sizeof(motionCount), sizeof(UINT32), 1, filePtr);
 
 	/*-------------------------------------------------------------------
-	-             Load Motion Data
+	-             Load Motion (Key Frame)Data
 	---------------------------------------------------------------------*/
-	_motions.resize(motionCount);
-	for (auto& motion : _motions)
+	std::vector<vmd::VMDKeyFrame> keyFrames;
+	keyFrames.resize(motionCount);
+	
+	for (auto& keyFrame : keyFrames)
 	{
-		fread_s(&motion, sizeof(motion), sizeof(vmd::VMDMotion), 1, filePtr);
+		fread_s(&keyFrame.BoneName     , sizeof(keyFrame.BoneName)     , sizeof(char)      , 15, filePtr);
+		fread_s(&keyFrame.Frame        , sizeof(keyFrame.Frame)        , sizeof(UINT32)    , 1 , filePtr);
+		fread_s(&keyFrame.Translation  , sizeof(keyFrame.Translation)  , sizeof(gm::Float3), 1 , filePtr);
+		fread_s(&keyFrame.Quarternion  , sizeof(keyFrame.Quarternion)  , sizeof(gm::Float4), 1 , filePtr);
+		fread_s(&keyFrame.Interpolation, sizeof(keyFrame.Interpolation), sizeof(UINT8)     , 64, filePtr);
 	}
+
+	/*-------------------------------------------------------------------
+	-             Set KeyFrame Motion Map, (for Bone Rotation)
+	---------------------------------------------------------------------*/
+	for (auto& keyFrame : keyFrames)
+	{
+		std::string boneName = keyFrame.BoneName;
+		_motionMap[boneName].emplace_back(
+			keyFrame.Frame,
+			gm::Quaternion(gm::Vector4(keyFrame.Quarternion)),
+			gm::Vector3(keyFrame.Translation),
+			GetBezierParameter(0, keyFrame),
+			GetBezierParameter(1, keyFrame),
+			GetBezierParameter(2, keyFrame),
+			GetBezierParameter(3, keyFrame)
+		);
+		_animationDuration = max(keyFrame.Frame, _animationDuration);
+	}
+
+	/*-------------------------------------------------------------------
+	-             Sort key frame data (for each bone)
+	---------------------------------------------------------------------*/
+	int count = 0;
+	for (auto& motion : _motionMap)
+	{
+		std::sort(motion.second.begin(), motion.second.end(),
+			[](const VMDKeyFrame& leftValue, const VMDKeyFrame& rightValue)
+		{
+			return leftValue.Frame < rightValue.Frame;
+		});
+	}
+
+
 	return true;
 }
 
@@ -137,13 +189,33 @@ bool VMDFile::LoadVMDBlendShape(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load BlendShape Data
 	---------------------------------------------------------------------*/
-	_morphs.resize(blendShapeCount);
-	for (auto& morph : _morphs)
+	std::vector<vmd::VMDMorph> morphs;
+	morphs.resize(blendShapeCount);
+	for (auto& morph : morphs)
 	{
-		fread_s(&morph, sizeof(morph), sizeof(vmd::VMDMorph), 1, filePtr);
+		fread_s(&morph.Name  , sizeof(morph.Name  ), sizeof(char)  , 15, filePtr);
+		fread_s(&morph.Frame , sizeof(morph.Frame ), sizeof(UINT32), 1 , filePtr);
+		fread_s(&morph.Weight, sizeof(morph.Weight), sizeof(float) , 1 , filePtr);
+
+		std::string morphName = morph.Name;
+		_morphingMap[morphName].emplace_back(morph);
+	}
+
+
+	/*-------------------------------------------------------------------
+	-             Sort key frame morphing data 
+	---------------------------------------------------------------------*/
+	int count = 0;
+	for (auto& morph : _morphingMap)
+	{
+		std::sort(morph.second.begin(), morph.second.end(),
+			[](const VMDKeyFrameMorph& leftValue, const VMDKeyFrameMorph& rightValue)
+		{
+			return leftValue.Frame < rightValue.Frame;
+		});
 	}
 	return true;
-}
+ }
 
 /****************************************************************************
 *							LoadVMDCamera
@@ -167,7 +239,13 @@ bool VMDFile::LoadVMDCamera(FILE* filePtr)
 	_cameras.resize(cameraCount);
 	for (auto& camera : _cameras)
 	{
-		fread_s(&camera, sizeof(camera), sizeof(vmd::VMDCamera), 1, filePtr);
+		fread_s(&camera.Frame        , sizeof(camera.Frame)        , sizeof(UINT32)    , 1 , filePtr);
+		fread_s(&camera.Distance     , sizeof(camera.Distance)     , sizeof(float)     , 1 , filePtr);
+		fread_s(&camera.Interest     , sizeof(camera.Interest)     , sizeof(gm::Float3), 1 , filePtr);
+		fread_s(&camera.Rotation     , sizeof(camera.Rotation)     , sizeof(gm::Float3), 1 , filePtr);
+		fread_s(&camera.Interpolation, sizeof(camera.Interpolation), sizeof(UINT8)     , 24, filePtr);
+		fread_s(&camera.ViewAngle    , sizeof(camera.ViewAngle)    , sizeof(UINT32)    , 1 , filePtr);
+		fread_s(&camera.IsPerspective, sizeof(camera.IsPerspective), sizeof(UINT8)     , 1 , filePtr);
 	}
 	return true;
 }
@@ -194,7 +272,10 @@ bool VMDFile::LoadVMDLight(FILE* filePtr)
 	_lights.resize(lightCount);
 	for (auto& light : _lights)
 	{
-		fread_s(&light, sizeof(light), sizeof(vmd::VMDLight), 1, filePtr);
+		fread_s(&light.Frame   , sizeof(light.Frame)   , sizeof(UINT32)    , 1, filePtr);
+		fread_s(&light.Color   , sizeof(light.Color)   , sizeof(gm::Float3), 1, filePtr);
+		fread_s(&light.Position, sizeof(light.Position), sizeof(gm::Float3), 1, filePtr);
+
 	}
 	return true;
 }
@@ -245,8 +326,9 @@ bool VMDFile::LoadVMDIK(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load IK Data
 	---------------------------------------------------------------------*/
-	_iks.resize(ikCount);
-	for (auto& ik : _iks)
+	std::vector<vmd::VMDIK> iks;
+	iks.resize(ikCount);
+	for (auto& ik : iks)
 	{
 		/*-------------------------------------------------------------------
 		-             Load Frame, and IsShow Data
@@ -269,7 +351,33 @@ bool VMDFile::LoadVMDIK(FILE* filePtr)
 			fread_s(&ikInfo.IKName   , sizeof(ikInfo.IKName)   , sizeof(char) , 20, filePtr);
 			fread_s(&ikInfo.IsEnabled, sizeof(ikInfo.IsEnabled), sizeof(UINT8), 1, filePtr);
 		}
+
+		_iks.push_back(ik);
 	}
 	return true;
+}
+
+float VMDFile::GetYFromXOnBezier(float x, const gm::Float4& controlPoints, UINT8 loop)
+{
+	if (controlPoints.x == controlPoints.y && controlPoints.z == controlPoints.w) { return x; }
+
+	float t = x;
+	const float k0 = 1 + 3 * controlPoints.x - 3 * controlPoints.z;
+	const float k1 = 3 * controlPoints.z - 6 * controlPoints.x;
+	const float k2 = 3 * controlPoints.x;
+
+	constexpr float epsilon = 0.0005f;
+
+	for (int i = 0; i < loop; ++i)
+	{
+		auto ft = k0 * t * t * t + k1 * t * t + k2 * t - x;
+
+		if (ft <= epsilon && ft >= -epsilon)break;
+
+		t -= ft / 2;
+	}
+
+	auto r = 1 - t;
+	return t * t * t + 3 * t * t * r * controlPoints.w + 3 * t * r * r * controlPoints.y;
 }
 #pragma endregion Private Function

@@ -19,8 +19,8 @@ int Screen::_height = DEFAULT_SCREEN_HEIGHT;
 
 Screen::Screen()
 {
-	_width  = DEFAULT_SCREEN_WIDTH;
-	_height = DEFAULT_SCREEN_HEIGHT;
+	//_width  = DEFAULT_SCREEN_WIDTH;
+	//_height = DEFAULT_SCREEN_HEIGHT;
 }
 
 Screen::Screen(int width, int height)
@@ -61,5 +61,5 @@ void Screen::SetScreenHeight(int height)
 
 float Screen::AspectRatio() const
 {
-	return static_cast<float>(_width / _height);
+	return (float)_width / (float)_height;
 }

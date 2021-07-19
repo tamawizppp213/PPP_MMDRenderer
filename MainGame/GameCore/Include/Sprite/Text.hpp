@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
+#include "GameMath/Include/GMMatrix.hpp"
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@
 struct TextString
 {
 	std::wstring      String;
-	DirectX::XMFLOAT2 SizePerChar;
-	DirectX::XMFLOAT3 StartPosition; // rect left upper point
+	gm::Float2        SizePerChar;
+	gm::Float3        StartPosition; // rect left upper point
 	float             Space;
 
 };
@@ -34,8 +34,8 @@ struct TextNumber
 {
 	UINT              Number;
 	INT               Digit;
-	DirectX::XMFLOAT2 SizePerDigit;
-	DirectX::XMFLOAT3 StartPosition; // rect left upper point
+	gm::Float2        SizePerDigit;
+	gm::Float3        StartPosition; // rect left upper point
 	float             Space;
 };
 

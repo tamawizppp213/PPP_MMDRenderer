@@ -14,7 +14,7 @@
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 #define ASCII_START_CHAR 32 // start from ' '. 
-
+using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
@@ -51,12 +51,11 @@ bool TextRenderer::DrawStart()
 *  @param[in] const DirectX::XMMATRIX matrix(projectionView)
 *  @return 　　bool
 *****************************************************************************/
-bool TextRenderer::DrawString(FontType fontType, const TextString& text, const DirectX::XMFLOAT4& color, const DirectX::XMMATRIX& matrix)
+bool TextRenderer::DrawString(FontType fontType, const TextString& text, const Float4& color, const Matrix4& matrix)
 {
 	/*-------------------------------------------------------------------
 	-              Variable definition
 	---------------------------------------------------------------------*/
-	using namespace DirectX;
 	FontLoader           fontLoader;
 	std::vector<char>    string(text.String.length());
 	std::vector<Sprite>  spriteList(text.String.length());
@@ -75,16 +74,16 @@ bool TextRenderer::DrawString(FontType fontType, const TextString& text, const D
 	---------------------------------------------------------------------*/
 	for (int i = 0; i < text.String.length(); ++i)
 	{
-		XMFLOAT3 centerPosition = XMFLOAT3(
+		Float3 centerPosition = Float3(
 			text.StartPosition.x + (i + 0.5f) * text.SizePerChar.x + i * text.Space,
 			text.StartPosition.y - text.SizePerChar.y,
 			0.0f);
 
-		XMFLOAT2 u = XMFLOAT2(
+		Float2 u = Float2(
 			(string[i]      - ASCII_START_CHAR) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth),
 			(string[i] + 1  - ASCII_START_CHAR) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth));
 
-		XMFLOAT2 v = XMFLOAT2(0.0f, 1.0f);
+		Float2 v = Float2(0.0f, 1.0f);
 
 		spriteList[i].CreateSprite(centerPosition, text.SizePerChar, color, u, v);
 	}
@@ -103,7 +102,7 @@ bool TextRenderer::DrawString(FontType fontType, const TextString& text, const D
 *  @param[in] const DirectX::XMMATRIX matrix(projectionView)
 *  @return 　　bool
 *****************************************************************************/
-bool TextRenderer::DrawNumber(FontType fontType, const TextNumber& num, const DirectX::XMFLOAT4& color, const DirectX::XMMATRIX& matrix)
+bool TextRenderer::DrawNumber(FontType fontType, const TextNumber& num, const Float4& color, const Matrix4& matrix)
 {
 	/*-------------------------------------------------------------------
 	-              Variable definition
@@ -129,16 +128,16 @@ bool TextRenderer::DrawNumber(FontType fontType, const TextNumber& num, const Di
 	---------------------------------------------------------------------*/
 	for (int i = 0; i < num.Digit; ++i)
 	{
-		XMFLOAT3 centerPosition = XMFLOAT3(
+		Float3 centerPosition = Float3(
 			num.StartPosition.x + (i + 0.5f) * num.SizePerDigit.x + i * num.Space,
 			num.StartPosition.y - num.SizePerDigit.y,
 			0.0f);
 
-		XMFLOAT2 u = XMFLOAT2(
+		Float2 u = Float2(
 			values[i]       * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth),
 			(values[i] + 1) * (fontInfo->PixelSizePerChar.x / fontInfo->ImagePixelWidth));
 
-		XMFLOAT2 v = XMFLOAT2(0.0f, 1.0f);
+		Float2 v = Float2(0.0f, 1.0f);
 
 		spriteList[i].CreateSprite(centerPosition, num.SizePerDigit, color, u, v);
 	}

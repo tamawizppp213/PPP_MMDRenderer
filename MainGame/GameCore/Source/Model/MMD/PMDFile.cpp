@@ -9,9 +9,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Model/MMD/PMDFile.hpp"
 #include "GameCore/Include/File/FileUtility.hpp"
-#include <iostream>
-#include <sstream>
-#include <ostream>
 #include <iomanip>
 #include <filesystem>
 
@@ -116,6 +113,7 @@ bool PMDData::Load3DModel(const std::wstring& filePath)
 
 
 #pragma region Property
+
 #pragma endregion Property
 #pragma endregion Public Function
 
@@ -208,8 +206,121 @@ bool PMDData::LoadPMDMaterial(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Material Data
 	---------------------------------------------------------------------*/
+	std::vector<pmd::PMDMaterial> materials;
+	materials.resize(materialCount);
+	fread_s(materials.data(), sizeof(pmd::PMDMaterial) * materials.size(), sizeof(pmd::PMDMaterial), materials.size(), filePtr);
+
+	/*-------------------------------------------------------------------
+	-             Copy Material Data
+	---------------------------------------------------------------------*/
 	_materials.resize(materialCount);
-	fread_s(_materials.data(), sizeof(pmd::PMDMaterial) * _materials.size(), sizeof(pmd::PMDMaterial), _materials.size(), filePtr);
+	_textures.resize(materialCount);
+	TextureLoader textureLoader;
+	for (int i = 0; i < _materials.size(); ++i)
+	{
+		_materials[i] = PMDMaterial(materials[i]);
+		LoadPMDTextures(materials[i], i);
+	}
+
+	return true;
+}
+
+/****************************************************************************
+*							LoadPMDTexture
+*************************************************************************//**
+*  @fn        bool PMDData::LoadPMDTextures(const pmd::PMDMaterial& material, int index)
+*  @brief     Load PMD Textures Data
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
+bool PMDData::LoadPMDTextures(const pmd::PMDMaterial& material, int index)
+{
+	TextureLoader textureLoader;
+	std::string textureName = material.TextureFileName;
+	std::string sphName     = "";
+	std::string spaName     = "";
+
+	if (strlen(material.TextureFileName) != 0) // Whether the file exists or not
+	{
+
+		/*-------------------------------------------------------------------
+		-             Exist Check Splitter and Get FilePath Name
+		---------------------------------------------------------------------*/
+		/*-------------------------------------------------------------------
+		-             In case existance splitter
+		---------------------------------------------------------------------*/
+		if (std::count(textureName.begin(), textureName.end(), '*') > 0)
+		{
+			auto fileNamePair = file::SplitString(textureName);
+			/*-------------------------------------------------------------------
+			-             Get FilePath Name
+			---------------------------------------------------------------------*/
+			if (file::GetExtension(file::AnsiToWString(fileNamePair.first)) == L"sph")
+			{
+				textureName = _directory + "/" + fileNamePair.second;
+				sphName     = _directory + "/" + fileNamePair.first;
+			}
+			else if (file::GetExtension(file::AnsiToWString(fileNamePair.first)) == L"spa")
+			{
+				textureName = _directory + "/" + fileNamePair.second;
+				spaName     = _directory + "/" + fileNamePair.first;
+			}
+			else
+			{
+				textureName = _directory + "/" + fileNamePair.first;
+				if (GetExtension(file::AnsiToWString(fileNamePair.second)) == L"sph")
+				{
+					sphName = _directory + "/" + fileNamePair.second;
+				}
+				else if (file::GetExtension(file::AnsiToWString(fileNamePair.second)) == L"spa")
+				{
+					spaName = _directory + "/" + fileNamePair.second;
+				}
+				else
+				{
+					::OutputDebugString(L"Couldn't read second textures");
+					return false;
+				}
+			}
+		}
+		/*-------------------------------------------------------------------
+		-             In case no-existance splitter
+		---------------------------------------------------------------------*/
+		else
+		{
+			/*-------------------------------------------------------------------
+			-             Get FilePath Name
+			---------------------------------------------------------------------*/
+			if (file::GetExtension(file::AnsiToWString(textureName)) == L"sph")
+			{
+				sphName     = _directory + "/" + textureName;
+				textureName = "";
+			}
+			else if (file::GetExtension(file::AnsiToWString(textureName)) == L"spa")
+			{
+				spaName = _directory + "/" + textureName;
+				textureName = "";
+			}
+			else
+			{
+				textureName = _directory + "/" + material.TextureFileName;
+			}
+		}
+	}
+
+	/*-------------------------------------------------------------------
+	-             NULL String Check
+	---------------------------------------------------------------------*/
+	if (textureName == "") { textureName = "Resources/Texture/Default/White.png"; }
+	if (sphName == "")     { sphName     = "Resources/Texture/Default/White.png"; }
+	if (spaName == "")     { spaName     = "Resources/Texture/Default/Black.png"; }
+	
+	/*-------------------------------------------------------------------
+	-             LoadTextures
+	---------------------------------------------------------------------*/
+	textureLoader.LoadTexture(file::AnsiToWString(textureName), _textures[index].Texture);
+	textureLoader.LoadTexture(file::AnsiToWString(sphName)    , _textures[index].SphereMultiply);
+	textureLoader.LoadTexture(file::AnsiToWString(spaName)    , _textures[index].SphereAddition);
 	
 	return true;
 }
@@ -233,9 +344,57 @@ bool PMDData::LoadPMDBone(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Bone Data
 	---------------------------------------------------------------------*/
-	_bones.resize(boneCount);
-	fread_s(_bones.data(), sizeof(pmd::PMDBone) * _bones.size(), sizeof(pmd::PMDBone), _bones.size(), filePtr);
+	std::vector<pmd::PMDBone> bones;
+	bones.resize(boneCount);
 
+	for (auto& bone : bones)
+	{
+		fread_s(&bone.BoneName, sizeof(bone.BoneName), sizeof(char), sizeof(bone.BoneName), filePtr);
+		fread_s(&bone.ParentBoneID    , sizeof(bone.ParentBoneID)    , sizeof(UINT16)    , 1, filePtr);
+		fread_s(&bone.ChildBoneID     , sizeof(bone.ChildBoneID)     , sizeof(UINT16)    , 1, filePtr);
+		fread_s(&bone.BoneType        , sizeof(bone.BoneType)        , sizeof(UINT8)     , 1, filePtr);
+		fread_s(&bone.IKBoneID        , sizeof(bone.IKBoneID)        , sizeof(UINT16)    , 1, filePtr);
+		fread_s(&bone.BoneHeadPosition, sizeof(bone.BoneHeadPosition), sizeof(gm::Float3), 1, filePtr);
+	}
+	
+	/*-------------------------------------------------------------------
+	-       Build the correspondence between indexes and bone names
+	---------------------------------------------------------------------*/
+	_boneNames.resize(boneCount);
+	_boneNodeAddress.resize(boneCount);
+	
+	// Load bone node data
+	for (int i = 0; i < boneCount; ++i)
+	{
+		_boneNames[i]   = bones[i].BoneName;
+
+		auto& boneNode = _boneNodeTable[bones[i].BoneName];    // acquire bone node
+		boneNode.SetBoneIndex(i);                              // order of loading
+		boneNode.SetBasePosition(bones[i].BoneHeadPosition);   // substitute base position of each bone
+		boneNode.SetBoneType((UINT32)bones[i].BoneType);
+		boneNode.SetIKParentBone(bones[i].IKBoneID);
+
+
+		_boneNodeAddress[i] = &boneNode; // set bone node address
+
+		// use for IK angle limits 
+		if (_boneNames[i].find("ひざ") != std::string::npos) { _kneeIndices.emplace_back(i); }
+
+	}
+
+	// Building parent-child relationships.
+	for (auto& bone : bones)
+	{
+		// overloading check:  parent index
+		if (bone.ParentBoneID >= bones.size()) { continue; }
+
+		auto parentName = _boneNames[bone.ParentBoneID];
+		_boneNodeTable[bone.BoneName].SetParent(&_boneNodeTable[parentName]); // set parent bone 
+		_boneNodeTable[parentName].AddChild(&_boneNodeTable[bone.BoneName]);  // set child bone
+
+	}
+
+	 
 	return true;
 }
 
@@ -258,8 +417,8 @@ bool PMDData::LoadPMDBoneIK(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Bone IK
 	---------------------------------------------------------------------*/
-	_boneIKs.resize(boneIKCount);
-	for (auto& ik : _boneIKs)
+	std::vector<pmd::PMDBoneIK> boneIKs(boneIKCount);
+	for (auto& ik : boneIKs)
 	{
 		fread_s(&ik.IKBoneID      , sizeof(ik.IKBoneID)      , sizeof(UINT16), 1, filePtr);
 		fread_s(&ik.IKTargetBoneID, sizeof(ik.IKTargetBoneID), sizeof(UINT16), 1, filePtr);
@@ -272,7 +431,18 @@ bool PMDData::LoadPMDBoneIK(FILE* filePtr)
 		{
 			fread_s(&chain, sizeof(chain), sizeof(UINT16), 1, filePtr);
 		}
+
+		_boneIKs.emplace_back(PMDBoneIK(ik));
 	}
+
+	/*-------------------------------------------------------------------
+	-             Build Bone Node Map 
+	---------------------------------------------------------------------*/
+#if _DEBUG
+	DebugPMDBoneIKList();
+#endif
+
+
 	return true;
 }
 
@@ -286,7 +456,7 @@ bool PMDData::LoadPMDBoneIK(FILE* filePtr)
 *****************************************************************************/
 bool PMDData::LoadPMDFaceExpression(FILE* filePtr)
 {
-	using namespace DirectX;
+	using namespace gm;
 
 	/*-------------------------------------------------------------------
 	-             Load Face Count
@@ -310,11 +480,11 @@ bool PMDData::LoadPMDFaceExpression(FILE* filePtr)
 			switch (face.FaceExpressionType)
 			{
 			case pmd::FacePart::Base: // index, vertex Position
-				fread_s(&face.Vertices[i], sizeof(face.Vertices[i]), sizeof(XMFLOAT3), 1, filePtr);
+				fread_s(&face.Vertices[i], sizeof(face.Vertices[i]), sizeof(Float3), 1, filePtr);
 				fread_s(&face.Indices [i], sizeof(face.Indices[i]) , sizeof(UINT32)  , 1, filePtr);
 				break;
 			default: // index => index about FacePart::Base, vertex => offset Position
-				fread_s(&face.Vertices[i], sizeof(face.Vertices[i]), sizeof(XMFLOAT3), 1, filePtr);
+				fread_s(&face.Vertices[i], sizeof(face.Vertices[i]), sizeof(Float3), 1, filePtr);
 				fread_s(&face.Indices [i], sizeof(face.Indices[i] ), sizeof(UINT32)  , 1, filePtr);
 				break;
 			}
@@ -427,7 +597,9 @@ bool PMDData::LoadPMDLocalizeData(FILE* filePtr)
 		/*-------------------------------------------------------------------
 		-             Load Bone Name
 		---------------------------------------------------------------------*/
-		for (auto& bone : _bones)
+		std::vector<pmd::PMDBone> bones;
+		bones.resize(GetBoneCount());
+		for (auto& bone : bones)
 		{
 			fread_s(&bone.EnglishBoneName, sizeof(bone.EnglishBoneName), sizeof(char), sizeof(bone.EnglishBoneName), filePtr);
 		}
@@ -468,32 +640,61 @@ bool PMDData::LoadPMDToonTextureList(FILE* filePtr)
 	size_t toonTextureIndex = 1;
 
 	/*-------------------------------------------------------------------
-	-             Load Toon Texture Names (default Name)
+	-             Load Toon Texture Names
 	---------------------------------------------------------------------*/
-	for (auto& toonTextureName : _toonTextureNames)
+	if (feof(filePtr) != 0)
 	{
-		std::stringstream stringStream;
-		stringStream << "toon" << std::setfill('0') << std::setw(2) << toonTextureIndex << ".bmp";
-
-		std::string fileName = _directory + "/" + stringStream.str();
-		for (int i = 0; i < fileName.size(); ++i)
+		/*-------------------------------------------------------------------
+		-             Load Toon Texture Names (default Name)
+		---------------------------------------------------------------------*/
+		for (auto& toonTextureName : _toonTextureNames)
 		{
-			toonTextureName[i] = fileName[i];
+			std::stringstream stringStream;
+			stringStream << "toon" << std::setfill('0') << std::setw(2) << toonTextureIndex << ".bmp";
+
+			std::string fileName = _directory + "/toon/" + stringStream.str();
+			toonTextureName      = fileName;
+			toonTextureIndex++;
 		}
-		toonTextureIndex++;
 	}
+	else
+	{
+		/*-------------------------------------------------------------------
+		-             Load Toon Texture Names (extended)
+		---------------------------------------------------------------------*/
+		for (auto& toonTextureName : _toonTextureNames)
+		{
+			char temp[100];
+			fread_s(&temp, sizeof(temp), sizeof(char), sizeof(temp), filePtr);
+			
+			std::string filePath = _directory + "/";
+			for (int i = 0; temp[i] != '\0' && i < 100; ++i)
+			{
+				filePath += temp[i];
+			}
 
-
-	if (feof(filePtr) != 0) { return true; }
+			toonTextureName = filePath;
+		}
+	}
 
 	/*-------------------------------------------------------------------
-	-             Load Toon Texture Names (extended)
+	-             Load Toon Texture
 	---------------------------------------------------------------------*/
-	for (auto& toonTextureName : _toonTextureNames)
+	TextureLoader textureLoader;
+	for (int i = 0; i < _materials.size(); ++i)
 	{
-		fread_s(&toonTextureName, sizeof(toonTextureName), sizeof(char), sizeof(toonTextureName), filePtr);
-	}
+		UINT8 index = _materials[i].ToonID + 1;
+		
+		if (index != 0)
+		{
+			textureLoader.LoadTexture(file::AnsiToWString(_toonTextureNames[index - 1]), _textures[i].ToonTexture);
+		}
+		else
+		{
+			textureLoader.LoadTexture(file::AnsiToWString("Resources/Texture/Default/GrayGradation.png"), _textures[i].ToonTexture);
+		}
 
+	}
 	return true;
 }
 
@@ -556,4 +757,29 @@ bool PMDData::LoadPMDJointList(FILE* filePtr)
 	return true;
 }
 
+bool PMDData::DebugPMDBoneIKList()
+{
+	auto getNameFromIndex = [&](UINT16 index)->std::string
+	{
+		auto iterator = std::find_if(_boneNodeTable.begin(), _boneNodeTable.end(),
+			[index](std::pair<std::string, PMDBoneNode> boneNodeList)
+		{
+			return boneNodeList.second.GetBoneIndex() == index;
+		});
+		if (iterator != _boneNodeTable.end()) { return iterator->first; }
+		else { return ""; }
+	};
+
+	for (auto& ik : _boneIKs)
+	{
+		std::ostringstream outStringStream;
+		outStringStream << "IKボーン番号 =  " << ik.GetIKBoneID() << getNameFromIndex(ik.GetIKBoneID()) << std::endl;
+		for (int i = 0; i < ik.GetChainLength(); ++i)
+		{
+			outStringStream << "\tノードボーン=" << ik.GetChains()[i] << ":" << getNameFromIndex(ik.GetChains()[i]) << std::endl;
+		}
+		OutputDebugStringA(outStringStream.str().c_str());
+	}
+	return true;
+}
 #pragma endregion Private Functoon

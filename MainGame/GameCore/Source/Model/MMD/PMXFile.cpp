@@ -10,15 +10,14 @@
 #include "GameCore/Include/Model/MMD/PMXFile.hpp"
 #include "GameCore/Include/File/FileUtility.hpp"
 #include "GameCore/Include/File/UnicodeUtility.hpp"
-#include <iostream>
-#include <sstream>
-#include <ostream>
 #include <iomanip>
 #include <filesystem>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+using namespace gm;
+#define INVALID_ID (-1)
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
@@ -61,12 +60,12 @@ bool PMXData::Load3DModel(const std::wstring& filePath)
 	/*-------------------------------------------------------------------
 	-             Load Face Data
 	---------------------------------------------------------------------*/
-	if (!LoadPMXFace(filePtr)) { MessageBox(NULL, L" PMXFace cannot be read.", L"Warning", MB_ICONWARNING); };
+	if (!LoadPMXMeshIndex(filePtr)) { MessageBox(NULL, L" PMXFace cannot be read.", L"Warning", MB_ICONWARNING); };
 	
 	/*-------------------------------------------------------------------
 	-             Load Texture Data
 	---------------------------------------------------------------------*/
-	if (!LoadPMXTexture(filePtr)) { MessageBox(NULL, L" PMXTexture cannot be read.", L"Warning", MB_ICONWARNING); };
+	if (!LoadPMXTextureName(filePtr)) { MessageBox(NULL, L" PMXTexture cannot be read.", L"Warning", MB_ICONWARNING); };
 	
 	/*-------------------------------------------------------------------
 	-             Load Material Data
@@ -148,7 +147,6 @@ bool PMXData::LoadPMXInfo(FILE* filePtr)
 *****************************************************************************/
 bool PMXData::LoadPMXVertex(FILE* filePtr)
 {
-	using namespace DirectX;
 	using namespace pmx;
 
 	/*-------------------------------------------------------------------
@@ -160,19 +158,20 @@ bool PMXData::LoadPMXVertex(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Vertex Data
 	---------------------------------------------------------------------*/
-	_vertices.resize(vertexCount);
-	for (auto vertex : _vertices)
+	std::vector<pmx::PMXVertex> vertices;
+	vertices.resize(vertexCount);
+	for (auto& vertex : vertices)
 	{
 		/*-------------------------------------------------------------------
 		-             Load Position , Normal, UV, and Add UV
 		---------------------------------------------------------------------*/
-		fread_s(&vertex.Position, sizeof(vertex.Position), sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&vertex.Normal  , sizeof(vertex.Normal  ), sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&vertex.UV      , sizeof(vertex.UV      ), sizeof(XMFLOAT2), 1, filePtr);
+		fread_s(&vertex.Position, sizeof(vertex.Position), sizeof(Float3), 1, filePtr);
+		fread_s(&vertex.Normal  , sizeof(vertex.Normal  ), sizeof(Float3), 1, filePtr);
+		fread_s(&vertex.UV      , sizeof(vertex.UV      ), sizeof(Float2), 1, filePtr);
 
 		for (UINT8 i = 0; i < _header.AddUVCount; ++i)
 		{
-			fread_s(&vertex.AddUV[i], sizeof(vertex.AddUV[i]), sizeof(XMFLOAT4), 1, filePtr);
+			fread_s(&vertex.AddUV[i], sizeof(vertex.AddUV[i]), sizeof(Float4), 1, filePtr);
 		}
 
 		fread_s(&vertex.WeightType, sizeof(vertex.WeightType), sizeof(UINT8), 1, filePtr);
@@ -193,7 +192,7 @@ bool PMXData::LoadPMXVertex(FILE* filePtr)
 			{
 				ReadPMXIndex(filePtr, &vertex.BoneIndices[0], _header.BoneIndexSize);
 				ReadPMXIndex(filePtr, &vertex.BoneIndices[1], _header.BoneIndexSize);
-				fread_s(&vertex.BoneWeights[0], sizeof(vertex.BoneWeights[0]), sizeof(float), 1, filePtr);
+				fread_s(&vertex.BoneWeights[0], sizeof(vertex.BoneWeights), sizeof(float), 1, filePtr);
 				break;
 			}
 			/*-------------------------------------------------------------------
@@ -216,9 +215,24 @@ bool PMXData::LoadPMXVertex(FILE* filePtr)
 				ReadPMXIndex(filePtr, &vertex.BoneIndices[0], _header.BoneIndexSize);
 				ReadPMXIndex(filePtr, &vertex.BoneIndices[1], _header.BoneIndexSize);
 				fread_s(&vertex.BoneWeights[0], sizeof(vertex.BoneWeights[0]), sizeof(float)   , 1, filePtr);
-				fread_s(&vertex.SDefC         , sizeof(vertex.SDefC)         , sizeof(XMFLOAT3), 1, filePtr);
-				fread_s(&vertex.SDefR0        , sizeof(vertex.SDefR0)        , sizeof(XMFLOAT3), 1, filePtr);
-				fread_s(&vertex.SDefR1        , sizeof(vertex.SDefR1)        , sizeof(XMFLOAT3), 1, filePtr);
+				fread_s(&vertex.SDefC         , sizeof(vertex.SDefC)         , sizeof(Float3), 1, filePtr);
+				fread_s(&vertex.SDefR0        , sizeof(vertex.SDefR0)        , sizeof(Float3), 1, filePtr);
+				fread_s(&vertex.SDefR1        , sizeof(vertex.SDefR1)        , sizeof(Float3), 1, filePtr);
+				
+				auto w0 = vertex.BoneWeights[0];
+				auto w1 = 1.0f - w0;
+				auto center = Vector3(vertex.SDefC);
+				auto r0     = Vector3(vertex.SDefR0);
+				auto r1     = Vector3(vertex.SDefR1);
+
+				auto rw = r0 * w0 + r1 * w1;
+				r0 = center + r0 - rw;
+				r1 = center + r1 - rw;
+				auto cr0 = (center + r0) * 0.5f;
+				auto cr1 = (center + r1) * 0.5f;
+
+				vertex.SDefR0 = cr0.ToFloat3();
+				vertex.SDefR1 = cr1.ToFloat3();
 				break;
 			}
 			/*-------------------------------------------------------------------
@@ -239,6 +253,8 @@ bool PMXData::LoadPMXVertex(FILE* filePtr)
 			}
 		}
 		fread_s(&vertex.EdgeMagnitude, sizeof(vertex.EdgeMagnitude), sizeof(float), 1, filePtr);
+
+		_vertices.emplace_back(vertex);
 	}
 	return true;
 }
@@ -251,55 +267,45 @@ bool PMXData::LoadPMXVertex(FILE* filePtr)
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool PMXData::LoadPMXFace(FILE* filePtr)
+bool PMXData::LoadPMXMeshIndex(FILE* filePtr)
 {
 	/*-------------------------------------------------------------------
 	-             Load Face Count
 	---------------------------------------------------------------------*/
-	INT32 faceCount = 0;
-	fread_s(&faceCount, sizeof(faceCount), sizeof(INT32), 1, filePtr);
-	faceCount /= 3;
+	INT32 indexCount = 0;
+	fread_s(&indexCount, sizeof(indexCount), sizeof(INT32), 1, filePtr);
 
 	/*-------------------------------------------------------------------
 	-             Load Face Data
 	---------------------------------------------------------------------*/
-	_faces.resize(faceCount);
+	_indices.resize(indexCount);
 	switch (_header.VertexIndexSize)
 	{
 		case 1:
 		{
-			std::vector<UINT8> vertices((UINT64)faceCount * 3);
-			fread_s(vertices.data(), sizeof(UINT8) * vertices.size(), sizeof(UINT8), vertices.size(), filePtr);
-			for (INT32 faceIndex = 0; faceIndex < faceCount; ++faceIndex)
+			std::vector<UINT8> indices(indexCount);
+			fread_s(indices.data(), sizeof(UINT8) * indices.size(), sizeof(UINT8), indices.size(), filePtr);
+			for (int i = 0; i < indexCount; ++i)
 			{
-				_faces[faceIndex].Indices[0] = vertices[(UINT64)faceIndex * 3 + 0];
-				_faces[faceIndex].Indices[1] = vertices[(UINT64)faceIndex * 3 + 1];
-				_faces[faceIndex].Indices[2] = vertices[(UINT64)faceIndex * 3 + 2];
+				_indices[i] = indices[i];
 			}
 			break;
 		}
 		case 2:
 		{
-			std::vector<UINT16> vertices((UINT64)faceCount * 3);
-			fread_s(vertices.data(), sizeof(UINT16) * vertices.size(), sizeof(UINT16), vertices.size(), filePtr);
-			for (INT32 faceIndex = 0; faceIndex < faceCount; ++faceIndex)
+			std::vector<UINT16> indices(indexCount);
+			fread_s(indices.data(), sizeof(UINT16) * indices.size(), sizeof(UINT16), indices.size(), filePtr);
+			for (int i = 0; i < indexCount; ++i)
 			{
-				_faces[faceIndex].Indices[0] = vertices[(UINT64)faceIndex * 3 + 0];
-				_faces[faceIndex].Indices[1] = vertices[(UINT64)faceIndex * 3 + 1];
-				_faces[faceIndex].Indices[2] = vertices[(UINT64)faceIndex * 3 + 2];
+				_indices[i] = indices[i];
 			}
 			break;
 		}
 		case 4:
 		{
-			std::vector<UINT32> vertices((UINT64)faceCount * 3);
-			fread_s(vertices.data(), sizeof(UINT32) * vertices.size(), sizeof(UINT32), vertices.size(), filePtr);
-			for (INT32 faceIndex = 0; faceIndex < faceCount; ++faceIndex)
-			{
-				_faces[faceIndex].Indices[0] = vertices[(UINT64)faceIndex * 3 + 0];
-				_faces[faceIndex].Indices[1] = vertices[(UINT64)faceIndex * 3 + 1];
-				_faces[faceIndex].Indices[2] = vertices[(UINT64)faceIndex * 3 + 2];
-			}
+			std::vector<UINT32> indices(indexCount);
+			fread_s(indices.data(), sizeof(UINT32) * indices.size(), sizeof(UINT32), indices.size(), filePtr);
+			_indices = std::move(indices);
 			break;
 		}
 		default:
@@ -318,7 +324,7 @@ bool PMXData::LoadPMXFace(FILE* filePtr)
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool PMXData::LoadPMXTexture(FILE* filePtr)
+bool PMXData::LoadPMXTextureName(FILE* filePtr)
 {
 	/*-------------------------------------------------------------------
 	-             Load Texture Count
@@ -329,10 +335,11 @@ bool PMXData::LoadPMXTexture(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Texture Data
 	---------------------------------------------------------------------*/
-	_textures.resize(textureCount);
-	for (auto& texture : _textures)
+	_texturePathList.resize(textureCount);
+	for (auto& texture : _texturePathList)
 	{
-		ReadPMXString(filePtr, &texture.TextureName);
+		ReadPMXString(filePtr, &texture);
+		texture = _directory + "/" + texture;
 	}
 	return true;
 }
@@ -347,7 +354,6 @@ bool PMXData::LoadPMXTexture(FILE* filePtr)
 *****************************************************************************/
 bool PMXData::LoadPMXMaterial(FILE* filePtr)
 {
-	using namespace DirectX;
 	/*-------------------------------------------------------------------
 	-             Load Material Count
 	---------------------------------------------------------------------*/
@@ -357,8 +363,9 @@ bool PMXData::LoadPMXMaterial(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Material Data
 	---------------------------------------------------------------------*/
-	_materials.resize(materialCount);
-	for (auto& material : _materials)
+	std::vector<pmx::PMXMaterial>materials;
+	materials.resize(materialCount);
+	for (auto& material : materials)
 	{
 		/*-------------------------------------------------------------------
 		-             Material Name
@@ -369,18 +376,18 @@ bool PMXData::LoadPMXMaterial(FILE* filePtr)
 		/*-------------------------------------------------------------------
 		-             Material Config
 		---------------------------------------------------------------------*/
-		fread_s(&material.Diffuse      , sizeof(material.Diffuse)      , sizeof(XMFLOAT4), 1, filePtr);
-		fread_s(&material.Specular     , sizeof(material.Specular)     , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&material.SpecularPower, sizeof(material.SpecularPower), sizeof(float)   , 1, filePtr);
-		fread_s(&material.Ambient      , sizeof(material.Ambient)      , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&material.DrawMode     , sizeof(material.DrawMode)     , sizeof(UINT8)   , 1, filePtr);
-		fread_s(&material.EdgeColor    , sizeof(material.EdgeColor)    , sizeof(XMFLOAT4), 1, filePtr);
-		fread_s(&material.EdgeSize     , sizeof(material.EdgeSize)     , sizeof(float)   , 1, filePtr);
+		fread_s(&material.Diffuse      , sizeof(material.Diffuse)      , sizeof(Float4), 1, filePtr);
+		fread_s(&material.Specular     , sizeof(material.Specular)     , sizeof(Float3), 1, filePtr);
+		fread_s(&material.SpecularPower, sizeof(material.SpecularPower), sizeof(float) , 1, filePtr);
+		fread_s(&material.Ambient      , sizeof(material.Ambient)      , sizeof(Float3), 1, filePtr);
+		fread_s(&material.DrawMode     , sizeof(material.DrawMode)     , sizeof(UINT8) , 1, filePtr);
+		fread_s(&material.EdgeColor    , sizeof(material.EdgeColor)    , sizeof(Float4), 1, filePtr);
+		fread_s(&material.EdgeSize     , sizeof(material.EdgeSize)     , sizeof(float) , 1, filePtr);
 
 		ReadPMXIndex(filePtr, &material.TextureIndex, _header.TextureIndexSize);
 		ReadPMXIndex(filePtr, &material.SphereMapTextureIndex, _header.TextureIndexSize);
 
-		fread_s(&material.SphereMapMode, sizeof(material.SphereMapMode), sizeof(UINT8), 1, filePtr);
+		fread_s(&material.SphereMapMode , sizeof(material.SphereMapMode), sizeof(UINT8), 1, filePtr);
 		fread_s(&material.ToonTextureMode, sizeof(material.ToonTextureMode), sizeof(UINT8), 1, filePtr);
 		switch (material.ToonTextureMode)
 		{
@@ -411,9 +418,97 @@ bool PMXData::LoadPMXMaterial(FILE* filePtr)
 		-             Face Index Count
 		---------------------------------------------------------------------*/
 		fread_s(&material.FaceIndicesCount, sizeof(material.FaceIndicesCount), sizeof(INT32), 1, filePtr);
+
+	}
+
+	_materials.resize(materialCount);
+	_textures.resize(materialCount);
+	for (int i = 0; i < _materials.size(); ++i)
+	{
+		_materials[i] = PMXMaterial(materials[i]);
+		LoadPMXTextures(materials[i], i);
 	}
 	return true;
 }
+
+/****************************************************************************
+*							LoadPMDTexture
+*************************************************************************//**
+*  @fn        bool PMDData::LoadPMDTextures(const pmd::PMDMaterial& material, int index)
+*  @brief     Load PMD Textures Data
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
+bool PMXData::LoadPMXTextures(const pmx::PMXMaterial& material, int index)
+{
+	TextureLoader textureLoader;
+
+	std::string textureName = "";
+	std::string sphName = "";
+	std::string spaName = "";
+	std::string toonName = "";
+
+	/*-------------------------------------------------------------------
+	-             Check Texture Path
+	---------------------------------------------------------------------*/
+	if (material.TextureIndex != INVALID_ID) { textureName = _texturePathList[material.TextureIndex]; }
+	else                                     { textureName = "Resources/Texture/Default/White.png";}
+
+	/*-------------------------------------------------------------------
+	-             Check Sphere Map Path
+	---------------------------------------------------------------------*/
+	switch (material.SphereMapMode)
+	{
+		case pmx::PMXSphereMapMode::Addition:
+		{
+			if (material.SphereMapTextureIndex != INVALID_ID) { spaName = _texturePathList[material.SphereMapTextureIndex]; }
+			else { ::OutputDebugString(L"Couldn't read addition type textures\n"); }
+			break;
+		}
+		case pmx::PMXSphereMapMode::Multiply:
+		{
+			if (material.SphereMapTextureIndex != INVALID_ID) { sphName = _texturePathList[material.SphereMapTextureIndex]; }
+			else { ::OutputDebugString(L"Couldn't read multiply type textures\n"); }
+			break;
+		}
+		case pmx::PMXSphereMapMode::SubTexture:
+		{
+			
+			break;
+		}
+		case pmx::PMXSphereMapMode::None:
+		{
+			break;
+		}
+		default:
+		{
+			::OutputDebugString(L"Couldn't read textures");
+			return false;
+		}
+	}
+
+	/*-------------------------------------------------------------------
+	-             Check Toon Texture Path
+	---------------------------------------------------------------------*/
+	if (material.ToonTextureIndex != INVALID_ID) { toonName = _texturePathList[material.ToonTextureIndex]; }
+
+	/*-------------------------------------------------------------------
+	-             NULL String Check
+	---------------------------------------------------------------------*/
+	if (sphName == "")  { sphName  = "Resources/Texture/Default/White.png"; }
+	if (spaName == "")  { spaName  = "Resources/Texture/Default/Black.png"; }
+	if (toonName == "") { toonName = "Resources/Texture/Default/White.png"; }
+
+	/*-------------------------------------------------------------------
+	-             LoadTextures
+	---------------------------------------------------------------------*/
+	textureLoader.LoadTexture(file::AnsiToWString(textureName), _textures[index].Texture);
+	textureLoader.LoadTexture(file::AnsiToWString(sphName), _textures[index].SphereMultiply);
+	textureLoader.LoadTexture(file::AnsiToWString(spaName), _textures[index].SphereAddition);
+	textureLoader.LoadTexture(file::AnsiToWString(toonName), _textures[index].ToonTexture);
+	return true;
+}
+
 
 /****************************************************************************
 *							LoadPMXBone
@@ -425,7 +520,6 @@ bool PMXData::LoadPMXMaterial(FILE* filePtr)
 *****************************************************************************/
 bool PMXData::LoadPMXBone(FILE* filePtr)
 {
-	using namespace DirectX;
 	using namespace pmx;
 
 	/*-------------------------------------------------------------------
@@ -437,8 +531,9 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Bone Data
 	---------------------------------------------------------------------*/
-	_bones.resize(boneCount);
-	for (auto& bone : _bones)
+	std::vector<pmx::PMXBone> bones;
+	bones.resize(boneCount);
+	for (auto& bone : bones)
 	{
 		/*-------------------------------------------------------------------
 		-             Bone Name
@@ -449,7 +544,7 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 		/*-------------------------------------------------------------------
 		-             Bone Config
 		---------------------------------------------------------------------*/
-		fread_s(&bone.Position   , sizeof(bone.Position)   , sizeof(XMFLOAT3)   , 1, filePtr);
+		fread_s(&bone.Position   , sizeof(bone.Position)   , sizeof(Float3)   , 1, filePtr);
 		ReadPMXIndex(filePtr     , &bone.ParentBoneIndex   , _header.BoneIndexSize);
 		fread_s(&bone.DeformDepth, sizeof(bone.DeformDepth), sizeof(INT32)      , 1, filePtr);
 		fread_s(&bone.BoneFlag   , sizeof(bone.BoneFlag)   , sizeof(PMXBoneFlag), 1, filePtr);
@@ -458,7 +553,7 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 		---------------------------------------------------------------------*/
 		if (((UINT16)bone.BoneFlag & (UINT16)PMXBoneFlag::TargetShowMode) == 0)
 		{
-			fread_s(&bone.PositionOffset, sizeof(bone.PositionOffset), sizeof(XMFLOAT3), 1, filePtr);
+			fread_s(&bone.PositionOffset, sizeof(bone.PositionOffset), sizeof(Float3), 1, filePtr);
 		}
 		else
 		{
@@ -480,7 +575,7 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 		---------------------------------------------------------------------*/
 		if ((UINT16)bone.BoneFlag & (UINT16)PMXBoneFlag::FixedAxis)
 		{
-			fread_s(&bone.FixedAxis, sizeof(bone.FixedAxis), sizeof(XMFLOAT3), 1, filePtr);
+			fread_s(&bone.FixedAxis, sizeof(bone.FixedAxis), sizeof(Float3), 1, filePtr);
 		}
 
 		/*-------------------------------------------------------------------
@@ -488,8 +583,8 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 		---------------------------------------------------------------------*/
 		if ((UINT16)bone.BoneFlag & (UINT16)PMXBoneFlag::LocalAxis)
 		{
-			fread_s(&bone.LocalAxis_X, sizeof(bone.LocalAxis_X), sizeof(XMFLOAT3), 1, filePtr);
-			fread_s(&bone.LocalAxis_Z, sizeof(bone.LocalAxis_Z), sizeof(XMFLOAT3), 1, filePtr);
+			fread_s(&bone.LocalAxis_X, sizeof(bone.LocalAxis_X), sizeof(Float3), 1, filePtr);
+			fread_s(&bone.LocalAxis_Z, sizeof(bone.LocalAxis_Z), sizeof(Float3), 1, filePtr);
 		}
 
 		/*-------------------------------------------------------------------
@@ -526,12 +621,125 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 
 				if (ikLink.EnableLimit != 0)
 				{
-					fread_s(&ikLink.AngleMin, sizeof(ikLink.AngleMin), sizeof(XMFLOAT3), 1, filePtr);
-					fread_s(&ikLink.AngleMax, sizeof(ikLink.AngleMax), sizeof(XMFLOAT3), 1, filePtr);
+					fread_s(&ikLink.AngleMin, sizeof(ikLink.AngleMin), sizeof(Float3), 1, filePtr);
+					fread_s(&ikLink.AngleMax, sizeof(ikLink.AngleMax), sizeof(Float3), 1, filePtr);
 				}
 			}
 		}
 
+	}
+
+	/*-------------------------------------------------------------------
+	-             Load Bone Node
+	---------------------------------------------------------------------*/
+	_boneNames.resize(boneCount);
+	_boneNodeAddress.resize(boneCount);
+
+	for (int i = 0; i < boneCount; ++i)
+	{
+		auto boneName = file::WStringToString(unicode::ToWString(bones[i].BoneName));
+		_boneNames[i] = boneName;
+
+		auto& boneNode = _boneNodeTable[_boneNames[i]]; // acquire bone node
+		boneNode.SetBoneName(boneName);
+		boneNode.SetBoneIndex(i);
+
+		_boneNodeAddress[i] = &boneNode;
+	}
+
+	// build parent  - child relationships
+	for (auto& bone : bones)
+	{
+		// overload check: parent index
+		if (bone.ParentBoneIndex >= bones.size()) { continue; }
+
+		auto parentName = _boneNames[bone.ParentBoneIndex];
+		auto boneName   = file::WStringToString(unicode::ToWString(bone.BoneName));
+		_boneNodeTable[boneName].SetParent(&_boneNodeTable[parentName]); // set parent
+		_boneNodeTable[parentName].AddChild(&_boneNodeTable[boneName]);  // set child
+	}
+
+	/*-------------------------------------------------------------------
+	-             Load Bone Node Config
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < boneCount; ++i)
+	{
+		auto& boneNode = _boneNodeAddress[i];
+
+		if (boneNode->GetParent() != nullptr)
+		{
+			auto localPosition = Vector3(bones[i].Position) - Vector3(bones[bones[i].ParentBoneIndex].Position);
+			boneNode->SetTransform(Transform(localPosition));
+		}
+		else
+		{
+			auto localPosition = Vector3(bones[i].Position);
+			boneNode->SetTransform(Transform(localPosition));
+		}
+
+		boneNode->SetDeformationDepth(bones[i].DeformDepth);
+		boneNode->SetGlobalMatrix    (Transform(Vector3(bones[i].Position)).GetMatrix());
+		boneNode->SetInverseBindMatrix(Inverse(Translation(bones[i].Position)));
+		boneNode->SaveInitialSRT();
+
+		bool deformAfterPhysics = !!((uint16_t)bones[i].BoneFlag & (uint16_t)PMXBoneFlag::DeformAfterPhisics);
+		bool appendRotate       = ((uint16_t)bones[i].BoneFlag & (uint16_t)PMXBoneFlag::AppendRotate)    != 0;
+		bool appendTranslate    = ((uint16_t)bones[i].BoneFlag & (uint16_t)PMXBoneFlag::AppendTranslate) != 0;
+		boneNode->EnableDeformationAfterPhysics(deformAfterPhysics);
+		boneNode->EnableAppendRotate(appendRotate);
+		boneNode->EnableAppendTranslate(appendTranslate);
+
+		if ((appendRotate || appendTranslate) && (bones[i].AppendBoneIndex != -1))
+		{
+			bool appendLocal = ((uint16_t)bones[i].BoneFlag & (uint16_t)PMXBoneFlag::AppendLocal) != 0;
+			auto appendNode = _boneNodeTable[file::WStringToString(unicode::ToWString(bones[bones[i].AppendBoneIndex].BoneName))];
+			boneNode->EnableAppendLocal(appendLocal);
+			boneNode->SetAppendNode    (&appendNode);
+
+			boneNode->SetAppendWeight  (bones[i].AppendWeight);
+		
+		}
+
+	}
+	
+	
+	/*-------------------------------------------------------------------
+	-             Load IK Bone
+	---------------------------------------------------------------------*/
+	int boneIndex = 0;
+	for (auto& ik : bones)
+	{
+		if ((UINT16)ik.BoneFlag & (UINT16)PMXBoneFlag::IKBone)
+		{
+			std::vector<PMXIKChain> ikChain;
+			// set ik link bone (chain)
+			for (const auto& ikLink : ik.IKLinks)
+			{
+				_boneNodeAddress[ikLink.IKBoneIndex]->EnableIK(true);
+				PMXIKChain chain;
+				chain.IKBone      = _boneNodeAddress[ikLink.IKBoneIndex];
+				chain.EnableLimit = ikLink.EnableLimit;
+				chain.AngleMax    = ikLink.AngleMax;
+				chain.AngleMin    = ikLink.AngleMin;
+
+				ikChain.emplace_back(chain);
+			}
+
+			// add bone ik
+			PMXBoneIK boneIK;
+			boneIK.SetIKChains(ikChain);
+			boneIK.SetIKBone        (_boneNodeAddress[boneIndex]);
+			boneIK.SetIKParentBone  (_boneNodeAddress[ik.LinkBoneIndex]);
+			boneIK.SetIterationCount(ik.IKIterationCount);
+			boneIK.SetLimitAngle    (ik.IKAngleLimit);
+			boneIK.SetTargetBone    (_boneNodeAddress[ik.IKTargetBoneIndex]);
+			
+			auto& boneNode = _boneNodeAddress[boneIndex];
+			boneNode->SetBoneIK(&boneIK);
+			boneNode->EnableIK(true);
+			_boneIKs.emplace_back(boneIK);
+		}
+		boneIndex++;
 	}
 	return true;
 }
@@ -547,7 +755,6 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 {
 	using namespace pmx;
-	using namespace DirectX;
 
 	/*-------------------------------------------------------------------
 	-             Load Morph Count
@@ -558,8 +765,9 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 	/*-------------------------------------------------------------------
 	-             Load Face Morph Data
 	---------------------------------------------------------------------*/
-	_faceExpressions.resize(morphCount);
-	for (auto& faceExpression : _faceExpressions)
+	std::vector<pmx::PMXFaceExpression> faceExpressions;
+	faceExpressions.resize(morphCount);
+	for (auto& faceExpression : faceExpressions)
 	{
 		/*-------------------------------------------------------------------
 		-             Load Name
@@ -567,6 +775,8 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 		ReadPMXString(filePtr, &faceExpression.Name);
 		ReadPMXString(filePtr, &faceExpression.EnglishName);
 
+		faceExpression.Name = file::WStringToString(unicode::ToWString(faceExpression.Name));
+		
 		fread_s(&faceExpression.FacePart, sizeof(faceExpression.FacePart), sizeof(pmx::PMXFacePart), 1, filePtr);
 		fread_s(&faceExpression.MorphType, sizeof(faceExpression.MorphType), sizeof(pmx::PMXMorphType), 1, filePtr);
 		
@@ -587,7 +797,7 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 				for (auto& positionMorph : faceExpression.PositionMorphs)
 				{
 					ReadPMXIndex(filePtr, &positionMorph.VertexIndex, _header.VertexIndexSize);
-					fread_s(&positionMorph.Position, sizeof(positionMorph.Position), sizeof(XMFLOAT3), 1, filePtr);
+					fread_s(&positionMorph.Position, sizeof(positionMorph.Position), sizeof(Float3), 1, filePtr);
 				}
 				break;
 			}
@@ -616,8 +826,8 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 				for (auto& boneMorph : faceExpression.BoneMorphs)
 				{
 					ReadPMXIndex(filePtr, &boneMorph.BoneIndex, _header.BoneIndexSize);
-					fread_s(&boneMorph.Position  , sizeof(boneMorph.Position)  , sizeof(XMFLOAT3), 1, filePtr);
-					fread_s(&boneMorph.Quaternion, sizeof(boneMorph.Quaternion), sizeof(XMFLOAT4), 1, filePtr);
+					fread_s(&boneMorph.Position  , sizeof(boneMorph.Position)  , sizeof(Float3), 1, filePtr);
+					fread_s(&boneMorph.Quaternion, sizeof(boneMorph.Quaternion), sizeof(Float4), 1, filePtr);
 				}
 				break;
 			}
@@ -631,15 +841,15 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 				{
 					ReadPMXIndex(filePtr, &materialMorph.MaterialIndex, _header.MaterialIndexSize);
 					fread_s(&materialMorph.OpType           , sizeof(materialMorph.OpType)           , sizeof(UINT8)   , 1, filePtr);
-					fread_s(&materialMorph.Diffuse          , sizeof(materialMorph.Diffuse)          , sizeof(XMFLOAT4), 1, filePtr);
-					fread_s(&materialMorph.Specular         , sizeof(materialMorph.Specular)         , sizeof(XMFLOAT3), 1, filePtr);
+					fread_s(&materialMorph.Diffuse          , sizeof(materialMorph.Diffuse)          , sizeof(Float4), 1, filePtr);
+					fread_s(&materialMorph.Specular         , sizeof(materialMorph.Specular)         , sizeof(Float3), 1, filePtr);
 					fread_s(&materialMorph.SpecularPower    , sizeof(materialMorph.SpecularPower)    , sizeof(float)   , 1, filePtr);
-					fread_s(&materialMorph.Ambient          , sizeof(materialMorph.Ambient)          , sizeof(XMFLOAT3), 1, filePtr);
-					fread_s(&materialMorph.EdgeColor        , sizeof(materialMorph.EdgeColor)        , sizeof(XMFLOAT4), 1, filePtr);
+					fread_s(&materialMorph.Ambient          , sizeof(materialMorph.Ambient)          , sizeof(Float3), 1, filePtr);
+					fread_s(&materialMorph.EdgeColor        , sizeof(materialMorph.EdgeColor)        , sizeof(Float4), 1, filePtr);
 					fread_s(&materialMorph.EdgeSize         , sizeof(materialMorph.EdgeSize)         , sizeof(float)   , 1, filePtr);
-					fread_s(&materialMorph.TextureFactor    , sizeof(materialMorph.TextureFactor)    , sizeof(XMFLOAT4), 1, filePtr);
-					fread_s(&materialMorph.SphereMapFactor  , sizeof(materialMorph.SphereMapFactor)  , sizeof(XMFLOAT4), 1, filePtr);
-					fread_s(&materialMorph.ToonTextureFactor, sizeof(materialMorph.ToonTextureFactor), sizeof(XMFLOAT4), 1, filePtr);
+					fread_s(&materialMorph.TextureFactor    , sizeof(materialMorph.TextureFactor)    , sizeof(Float4), 1, filePtr);
+					fread_s(&materialMorph.SphereMapFactor  , sizeof(materialMorph.SphereMapFactor)  , sizeof(Float4), 1, filePtr);
+					fread_s(&materialMorph.ToonTextureFactor, sizeof(materialMorph.ToonTextureFactor), sizeof(Float4), 1, filePtr);
 				}
 				break;
 			}
@@ -679,8 +889,8 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 				{
 					ReadPMXIndex(filePtr, &impulseMorph.RigidBodyIndex, _header.RigidBodyIndexSize);
 					fread_s(&impulseMorph.LocalFlag        , sizeof(impulseMorph.LocalFlag)        , sizeof(UINT8)   , 1, filePtr);
-					fread_s(&impulseMorph.TranslateVelocity, sizeof(impulseMorph.TranslateVelocity), sizeof(XMFLOAT3), 1, filePtr);
-					fread_s(&impulseMorph.RotateTorque     , sizeof(impulseMorph.RotateTorque)     , sizeof(XMFLOAT3), 1, filePtr);
+					fread_s(&impulseMorph.TranslateVelocity, sizeof(impulseMorph.TranslateVelocity), sizeof(Float3), 1, filePtr);
+					fread_s(&impulseMorph.RotateTorque     , sizeof(impulseMorph.RotateTorque)     , sizeof(Float3), 1, filePtr);
 				}
 				break;
 			}
@@ -688,8 +898,10 @@ bool PMXData::LoadPMXFaceExpression(FILE* filePtr)
 			{
 				return false;
 			}
+			
 		}
-
+		
+		_morphingMap[faceExpression.Name] = faceExpression;
 	}
 	return true;
 }
@@ -774,7 +986,6 @@ bool PMXData::LoadPMXDisplayFrame(FILE* filePtr)
 *****************************************************************************/
 bool PMXData::LoadPMXRigidBody(FILE* filePtr)
 {
-	using namespace DirectX;
 	using namespace pmx;
 	
 	/*-------------------------------------------------------------------
@@ -796,9 +1007,9 @@ bool PMXData::LoadPMXRigidBody(FILE* filePtr)
 		fread_s(&rigidBody.Group             , sizeof(rigidBody.Group)             , sizeof(UINT8)   , 1, filePtr);
 		fread_s(&rigidBody.CollisionGroup    , sizeof(rigidBody.CollisionGroup)    , sizeof(UINT16)  , 1, filePtr);
 		fread_s(&rigidBody.Shape             , sizeof(rigidBody.Shape)             , sizeof(UINT8)   , 1, filePtr);
-		fread_s(&rigidBody.ShapeSize         , sizeof(rigidBody.ShapeSize)         , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&rigidBody.Translation       , sizeof(rigidBody.Translation)       , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&rigidBody.Rotation          , sizeof(rigidBody.Rotation)          , sizeof(XMFLOAT3), 1, filePtr);
+		fread_s(&rigidBody.ShapeSize         , sizeof(rigidBody.ShapeSize)         , sizeof(Float3)  , 1, filePtr);
+		fread_s(&rigidBody.Translation       , sizeof(rigidBody.Translation)       , sizeof(Float3)  , 1, filePtr);
+		fread_s(&rigidBody.Rotation          , sizeof(rigidBody.Rotation)          , sizeof(Float3)  , 1, filePtr);
 		fread_s(&rigidBody.Mass              , sizeof(rigidBody.Mass)              , sizeof(float)   , 1, filePtr);
 		fread_s(&rigidBody.DampingTranslation, sizeof(rigidBody.DampingTranslation), sizeof(float)   , 1, filePtr);
 		fread_s(&rigidBody.DampingRotation   , sizeof(rigidBody.DampingRotation)   , sizeof(float)   , 1, filePtr);
@@ -819,7 +1030,6 @@ bool PMXData::LoadPMXRigidBody(FILE* filePtr)
 *****************************************************************************/
 bool PMXData::LoadPMXJoint(FILE* filePtr)
 {
-	using namespace DirectX;
 	using namespace pmx;
 
 	/*-------------------------------------------------------------------
@@ -839,14 +1049,14 @@ bool PMXData::LoadPMXJoint(FILE* filePtr)
 		fread_s(&joint.JointType              , sizeof(joint.JointType)              , sizeof(UINT8)   , 1, filePtr);
 		ReadPMXIndex(filePtr, &joint.RigidBodyIndex_A, _header.RigidBodyIndexSize);
 		ReadPMXIndex(filePtr, &joint.RigidBodyIndex_B, _header.RigidBodyIndexSize);
-		fread_s(&joint.Translation            , sizeof(joint.Translation)            , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.Rotation               , sizeof(joint.Rotation)               , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.TranslationMin         , sizeof(joint.TranslationMin)         , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.TranslationMax         , sizeof(joint.TranslationMax)         , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.RotationMin            , sizeof(joint.RotationMin)            , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.RotationMax            , sizeof(joint.RotationMax)            , sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.SpringTranslationFactor, sizeof(joint.SpringTranslationFactor), sizeof(XMFLOAT3), 1, filePtr);
-		fread_s(&joint.SpringRotationFactor   , sizeof(joint.SpringRotationFactor)   , sizeof(XMFLOAT3), 1, filePtr);
+		fread_s(&joint.Translation            , sizeof(joint.Translation)            , sizeof(Float3), 1, filePtr);
+		fread_s(&joint.Rotation               , sizeof(joint.Rotation)               , sizeof(Float3), 1, filePtr);
+		fread_s(&joint.TranslationMin         , sizeof(joint.TranslationMin)         , sizeof(Float3), 1, filePtr);
+		fread_s(&joint.TranslationMax         , sizeof(joint.TranslationMax)         , sizeof(Float3), 1, filePtr);
+		fread_s(&joint.RotationMin            , sizeof(joint.RotationMin)            , sizeof(Float3), 1, filePtr);
+		fread_s(&joint.RotationMax            , sizeof(joint.RotationMax)            , sizeof(Float3), 1, filePtr);
+		fread_s(&joint.SpringTranslationFactor, sizeof(joint.SpringTranslationFactor), sizeof(Float3), 1, filePtr);
+		fread_s(&joint.SpringRotationFactor   , sizeof(joint.SpringRotationFactor)   , sizeof(Float3), 1, filePtr);
 
 	}
 	return true;
@@ -862,7 +1072,6 @@ bool PMXData::LoadPMXJoint(FILE* filePtr)
 *****************************************************************************/
 bool PMXData::LoadPMXSoftBody(FILE* filePtr)
 {
-	using namespace DirectX;
 	using namespace pmx;
 
 	/*-------------------------------------------------------------------

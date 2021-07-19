@@ -14,7 +14,6 @@
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #include "GameCore/Include/Sprite/SpritePipeLineState.hpp"
 #include "DirectX12/Include/Core/DirectX12Texture.hpp"
-#include <vector>
 #include <array>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -38,48 +37,49 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	void CreateSpriteForTexture(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT2& rectSize,
-		const DirectX::XMFLOAT4& uv);
+		const gm::Float3& position,
+		const gm::Float2& rectSize,
+		const gm::Float4& uv);
 	void CreateSpriteForTexture(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT2& rectSize,
-		const DirectX::XMFLOAT2& u,
-		const DirectX::XMFLOAT2& v);
-	void CreateSpriteForColor(const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT2& rectSize,
-		const DirectX::XMFLOAT4& color);
+		const gm::Float3& position,
+		const gm::Float2& rectSize,
+		const gm::Float2& u,
+		const gm::Float2& v);
+	void CreateSpriteForColor(
+		const gm::Float3& position,
+		const gm::Float2& rectSize,
+		const gm::Float4& color);
 	void CreateSprite(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT2& rectSize,
-		const DirectX::XMFLOAT4& color,
-		const DirectX::XMFLOAT4& uv);
+		const gm::Float3& position,
+		const gm::Float2& rectSize,
+		const gm::Float4& color,
+		const gm::Float4& uv);
 	void CreateSprite(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT2& rectSize,
-		const DirectX::XMFLOAT4& color,
-		const DirectX::XMFLOAT2& u,
-		const DirectX::XMFLOAT2& v);
+		const gm::Float3& position,
+		const gm::Float2& rectSize,
+		const gm::Float4& color,
+		const gm::Float2& u,
+		const gm::Float2& v);
 	bool UpdateSprite(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT4& color,
-		const DirectX::XMFLOAT4& uv);
+		const gm::Float3& position,
+		const gm::Float4& color,
+		const gm::Float4& uv);
 	bool UpdateSprite(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT4& color,
-		const DirectX::XMFLOAT2& u,
-		const DirectX::XMFLOAT2& v);
+		const gm::Float3& position,
+		const gm::Float4& color,
+		const gm::Float2& u,
+		const gm::Float2& v);
 	bool UpdateSpriteForColor(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT4& color);
+		const gm::Float3& position,
+		const gm::Float4& color);
 	bool UpdateSpriteForTexture(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT4& uv,
+		const gm::Float3& position,
+		const gm::Float4& uv,
 		float alpha = 1.0f);
 	bool UpdateSpriteForTexture(
-		const DirectX::XMFLOAT3& position,
-		const DirectX::XMFLOAT2& u,
-		const DirectX::XMFLOAT2& v,
+		const gm::Float3& position,
+		const gm::Float2& u,
+		const gm::Float2& v,
 		float alpha = 1.0f);
 	
 	
@@ -93,7 +93,7 @@ public:
 	SpriteType GetSpriteType() const;
 	void SetWidth(float width);
 	void SetHeight(float height);
-	void SetSize(const DirectX::XMFLOAT2& rectSize);
+	void SetSize(const gm::Float2& rectSize);
 	void SetSize(float width, float height);
 	void SetAlpha(float alpha);
 
@@ -112,16 +112,16 @@ private:
 	**                Private Function
 	*****************************************************************************/
 	void LoadTexture(const std::wstring& imagePath);
-	void CreateRect(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& rectSize, const DirectX::XMFLOAT4& color, const DirectX::XMFLOAT4& uv);
-	void CreateRect(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& rectSize, const DirectX::XMFLOAT2& u, const DirectX::XMFLOAT2& v);
-	void CreateRect(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& rectSize, const DirectX::XMFLOAT4& color, const DirectX::XMFLOAT2& u, const DirectX::XMFLOAT2& v);
-	void CreateRect(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& rectSize, const DirectX::XMFLOAT4& color);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, const gm::Float4& uv);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float2& u    , const gm::Float2& v);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, const gm::Float2& u, const gm::Float2& v);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color);
 	
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
 	SpriteType        _spriteType;
-	DirectX::XMFLOAT2 _size;
+	gm::Float2 _size;
 	//float _angle  = 0.0f;
 };
 

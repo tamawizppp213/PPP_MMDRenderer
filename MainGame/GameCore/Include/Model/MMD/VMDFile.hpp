@@ -12,10 +12,13 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "VMDConfig.hpp"
+#include "GameMath/Include/GMVector.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+using MotionMap = std::unordered_map<std::string, std::vector<VMDKeyFrame>>;
+using MorphingMap = std::unordered_map<std::string, std::vector<VMDKeyFrameMorph>>;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                               Class
@@ -33,11 +36,18 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	bool LoadVMDFile(const std::wstring& filePath);
+	static float GetYFromXOnBezier(float x, const gm::Float4& controlPoints, UINT8 loop);
 
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-
+	UINT32 GetAnimationDuration()                    { return _animationDuration;}
+	const MotionMap&          GetMotionMap()   const { return _motionMap; }
+	const MorphingMap&        GetMorphingMap() const { return _morphingMap; }
+	std::vector<VMDKeyFrame>* GetMotionData(const std::string& boneName) { return &_motionMap.at(boneName); }
+	const std::vector<VMDIK>& GetEnableIKData() { return _iks; }
+	
+	bool IsExistedMorphingMap() { return !_morphingMap.empty(); }
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
@@ -58,12 +68,14 @@ private:
 	*****************************************************************************/
 	std::string _directory;
 	vmd::VMDHeader _header;
-	std::vector<vmd::VMDMotion> _motions;
-	std::vector<vmd::VMDMorph>  _morphs;
+	MotionMap      _motionMap;
+	MorphingMap    _morphingMap;
 	std::vector<vmd::VMDCamera> _cameras;
 	std::vector<vmd::VMDLight>  _lights;
 	std::vector<vmd::VMDShadow> _shadows;
-	std::vector<vmd::VMDIK>     _iks;
+	std::vector<VMDIK>          _iks;
+
+	UINT32 _animationDuration = 0;
 
 };
 #endif

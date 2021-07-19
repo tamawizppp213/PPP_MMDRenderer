@@ -14,7 +14,6 @@
 #include "GameCore/Include/Input/Keyboard.hpp"
 #include "GameCore/Include/Input/GamePad.hpp"
 #include "GameCore/Include/Input/Mouse.hpp"
-#include <dinput.h>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define

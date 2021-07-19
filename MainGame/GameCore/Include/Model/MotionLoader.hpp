@@ -1,81 +1,31 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   SpritePipeLineState.hpp
-///             @brief  Sprite PipeLine State
+///             @file   MotionLoader.hpp
+///             @brief  Load Model
 ///             @author Toide Yutaro
-///             @date   2021_01_20
+///             @date   2021_05_31
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef SPLITE_PIPELINE_STATE_HPP
-#define SPLITE_PIPELINE_STATE_HPP
+#ifndef MOTION_LOADER_HPP
+#define MOTION_LOADER_HPP
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Base.hpp"
-#include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
-#include <vector>
-
+#include "DirectX12/Include/Core/DirectX12Core.hpp"
+#include <string>
+#include <unordered_map>
+#include <memory>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-enum class SpriteType
-{
-	TEXTURE,
-	COLOR,
-	SPRITE_TYPE_COUNT
-};
-
+class VMDFile;
 /****************************************************************************
-*					SpritePipelineStateDescriptor
+*				  		ModelTable (Singleton)
 *************************************************************************//**
-*  @struct    SpritePipelineStateDescriptor
-*  @brief     SpritePipelineState Descriptor
+*  @class     ModelTableManager
+*  @brief     Model Table
 *****************************************************************************/
-struct SpritePipelineStateDescriptor
-{
-public:
-	/****************************************************************************
-	**                Public Function
-	*****************************************************************************/
-	bool BuildSpritePipeline();
-	bool BuildRootSignature();
-
-	/****************************************************************************
-	**                Public Member Variables
-	*****************************************************************************/
-	bool SetShaders(SpriteType spriteType);
-	PipelineStateComPtr& GetPipelineState() { return this->_pipeLineState; }
-	RootSignatureComPtr& GetRootSignature() { return this->_rootSignature; }
-
-	/****************************************************************************
-	**                Constructor and Destructor
-	*****************************************************************************/
-	SpritePipelineStateDescriptor()  = default;
-	~SpritePipelineStateDescriptor() = default;
-	
-
-private:
-	/****************************************************************************
-	**                Private Function
-	*****************************************************************************/
-	D3D12_BLEND_DESC BuildBlendDescriptor();
-	/****************************************************************************
-	**                Private Member Variables
-	*****************************************************************************/
-	PipelineStateComPtr _pipeLineState = nullptr;
-	RootSignatureComPtr _rootSignature = nullptr;
-	BlobComPtr _vertexShader           = nullptr;
-	BlobComPtr _pixelShader            = nullptr;
-	
-};
-
-/****************************************************************************
-*				  			SpritePSOManager
-*************************************************************************//**
-*  @class     SpritePSOManager
-*  @brief     Create Sprite PSO Manager
-*****************************************************************************/
-class SpritePSOManager
+class MotionTableManager
 {
 public:
 	/****************************************************************************
@@ -85,30 +35,65 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	const PipelineStateComPtr& GetPipelineState(SpriteType type);
-	const RootSignatureComPtr& GetRootSignature(SpriteType type);
-	/****************************************************************************
+	std::unordered_map<std::wstring, std::shared_ptr<VMDFile>> MotionTableVMD;
+
+	/***************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	static SpritePSOManager& Instance()
+	static MotionTableManager& Instance()
 	{
-		static SpritePSOManager spritePSOManager;
-		return spritePSOManager;
+		static MotionTableManager motionTable;
+		return motionTable;
 	}
-	SpritePSOManager(const SpritePSOManager&)            = delete;
-	SpritePSOManager& operator=(const SpritePSOManager&) = delete;
-	SpritePSOManager(SpritePSOManager&&)                 = delete;
-	SpritePSOManager& operator=(SpritePSOManager&&)      = delete;
+	// Prohibit move and copy.
+	MotionTableManager(const MotionTableManager&) = delete;
+	MotionTableManager& operator=(const MotionTableManager&) = delete;
+	MotionTableManager(MotionTableManager&&) = delete;
+	MotionTableManager& operator=(MotionTableManager&&) = delete;
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	SpritePSOManager();
-	~SpritePSOManager();
+	MotionTableManager() = default;
+	~MotionTableManager() = default;
+
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	std::vector<SpritePipelineStateDescriptor> _psoList;
+
+};
+
+/****************************************************************************
+*				  		Model Loader
+*************************************************************************//**
+*  @class     Model Loader
+*  @brief     Model Loader
+*****************************************************************************/
+class MotionLoader
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	void LoadMotion(const std::wstring& filePath, std::shared_ptr<VMDFile>* vmdData);
+
+	/***************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	MotionTableManager& _motionTableManager = MotionTableManager::Instance();
+
 };
 #endif
-

@@ -11,19 +11,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
+#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+#include "GameMath/Include/GMQuaternion.hpp"
+#include <unordered_map>
 #include <Windows.h>
 #include <array>
 #include <string>
 #include <vector>
-#include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
+
 #pragma warning(disable : 26495)
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 namespace vmd
 {
-	using namespace DirectX;
 #pragma pack(1)
 	struct VMDHeader
 	{
@@ -31,13 +32,13 @@ namespace vmd
 		char ModelName[20];
 	};
 
-	struct VMDMotion
+	struct VMDKeyFrame
 	{
 		char                  BoneName[15];
 		UINT32                Frame;
-		XMFLOAT3              Translation;
-		XMFLOAT4              Quarternion;
-		std::array<UINT8, 64> Interpolation;
+		gm::Float3            Translation;
+		gm::Float4            Quarternion;   
+		std::array<UINT8, 64> Interpolation; // bezier
 	};
 
 	struct VMDMorph
@@ -51,8 +52,8 @@ namespace vmd
 	{
 		UINT32                Frame;
 		float                 Distance;
-		XMFLOAT3              Interest;
-		XMFLOAT3              Rotation;
+		gm::Float3            Interest;
+		gm::Float3            Rotation;
 		std::array<UINT8, 24> Interpolation;
 		UINT32                ViewAngle;
 		UINT8                 IsPerspective;
@@ -60,9 +61,9 @@ namespace vmd
 
 	struct VMDLight
 	{
-		UINT32   Frame;
-		XMFLOAT3 Color;
-		XMFLOAT3 Position;
+		UINT32     Frame;
+		gm::Float3 Color;
+		gm::Float3 Position;
 	};
 
 	enum class VMDShadowType : UINT8
@@ -93,4 +94,132 @@ namespace vmd
 	};
 #pragma pack()
 }
+
+/****************************************************************************
+*				  			VMDMotion
+*************************************************************************//**
+*  @class     VMDMotion
+*  @brief     VMD Motion Data
+*****************************************************************************/
+class VMDKeyFrame
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	UINT32                     Frame;
+	gm::Quaternion             Quaternion;
+	gm::Vector3                Location;
+	std::array<gm::Vector4, 4> ControlPointForBezier; // xyzRotate
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	VMDKeyFrame(UINT32 frame, const gm::Quaternion& quaternion, const gm::Vector3& location,
+		const gm::Vector4& controlPointX, const gm::Vector4& controlPointY, const gm::Vector4& controlPointZ, const gm::Vector4& controlPointR )
+	{
+		Frame      = frame;
+		Quaternion = quaternion;
+		Location   = location;
+		ControlPointForBezier[0] = controlPointX;
+		ControlPointForBezier[1] = controlPointY;
+		ControlPointForBezier[2] = controlPointZ;
+		ControlPointForBezier[3] = controlPointR;
+	}
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+
+};
+
+/****************************************************************************
+*				  			VMDMorph
+*************************************************************************//**
+*  @class     VMD Morph
+*  @brief     VMD IK
+*****************************************************************************/
+class VMDKeyFrameMorph
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	UINT32 Frame;
+	float  Weight;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	VMDKeyFrameMorph(const vmd::VMDMorph morph)
+	{
+		Frame  = morph.Frame;
+		Weight = morph.Weight;
+	}
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+
+};
+/****************************************************************************
+*				  			VMDIK
+*************************************************************************//**
+*  @class     VMDIK
+*  @brief     VMD IK
+*****************************************************************************/
+class VMDIK
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	UINT32 FrameNo;
+	UINT8  IsShow;
+	std::unordered_map<std::string, bool> IKEnableTable;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	VMDIK(const vmd::VMDIK& ik)
+	{
+		FrameNo = ik.Frame;
+		IsShow  = ik.IsShow;
+		for (int i = 0; i < ik.IKInfo.size(); ++i)
+		{
+			IKEnableTable[ik.IKInfo[i].IKName] = ik.IKInfo[i].IsEnabled;
+		}
+	}
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	
+};
 #endif

@@ -13,6 +13,7 @@
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable : 26495)
+using namespace gm;
 
 //////////////////////////////////////////////////////////////////////////////////
 //								Implement
@@ -47,11 +48,11 @@ Collider2D::Collider2D(const Collider2D& collider)
 *  @param[in] float radius
 *  @return 　　Collider2D
 *****************************************************************************/
-Collider2D Collider2D::CreateCircleCollider(DirectX::XMFLOAT2& centerPos, float radius)
+Collider2D Collider2D::CreateCircleCollider(Float2& centerPos, float radius)
 {
 	Collider2D collider;
 
-	collider.centerPosition = DirectX::XMFLOAT3(centerPos.x, centerPos.y, 0.0f);
+	collider.centerPosition = Float3(centerPos.x, centerPos.y, 0.0f);
 	collider.shapeType2D    = ColliderShape2D::Circle;
 	collider.circle.radius  = radius;
 	return collider;
@@ -67,10 +68,10 @@ Collider2D Collider2D::CreateCircleCollider(DirectX::XMFLOAT2& centerPos, float 
 *  @param[in] float height
 *  @return 　　Collider2D
 *****************************************************************************/
-Collider2D Collider2D::CreateRectangleCollider(DirectX::XMFLOAT2& centerPos, float width, float height)
+Collider2D Collider2D::CreateRectangleCollider(Float2& centerPos, float width, float height)
 {
 	Collider2D collider;
-	collider.centerPosition   = DirectX::XMFLOAT3(centerPos.x, centerPos.y, 0.0f);
+	collider.centerPosition   = Float3(centerPos.x, centerPos.y, 0.0f);
 	collider.shapeType2D      = ColliderShape2D::Rectangle;
 	collider.rectangle.width  = width;
 	collider.rectangle.height = height;
@@ -85,17 +86,17 @@ Collider2D Collider2D::CreateRectangleCollider(DirectX::XMFLOAT2& centerPos, flo
 *  @param[in] DirectX::XMFLOAT3& center
 *  @return 　　void
 *****************************************************************************/
-void Collider2D::SetCenterPosition(DirectX::XMFLOAT3& center)
+void Collider2D::SetCenterPosition(Float2& center)
 {
-	this->centerPosition = center;
+	this->centerPosition = Float3(center.x, center.y, 0.0f);
 }
 #pragma endregion 2D
 
 #pragma region 3D
 Collider3D::Collider3D()
 {
-	this->shapeType3D = ColliderShape3D::Sphere;
-	this->sphere.Center = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->shapeType3D   = ColliderShape3D::Sphere;
+	this->sphere.Center = Float3(0.0f, 0.0f, 0.0f);
 	this->sphere.Radius = 0.1f;
 }
 
@@ -131,11 +132,11 @@ Collider3D::Collider3D(const Collider3D& collider)
 *  @param[in] const DirectX::XMFLOAT3& boxSize
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreateBoxCollider(const DirectX::XMFLOAT3& centerPosition, const DirectX::XMFLOAT3& boxSize)
+Collider3D Collider3D::CreateBoxCollider(const Float3& centerPosition, const Float3& boxSize)
 {
 	Collider3D collider;
-	collider.box.Center = centerPosition;
-	collider.box.Extents = DirectX::XMFLOAT3(boxSize.x / 2, boxSize.y / 2, boxSize.z / 2);
+	collider.box.Center  = centerPosition;
+	collider.box.Extents = Float3(boxSize.x / 2, boxSize.y / 2, boxSize.z / 2);
 	return collider;
 }
 
@@ -150,11 +151,11 @@ Collider3D Collider3D::CreateBoxCollider(const DirectX::XMFLOAT3& centerPosition
 *  @param[in] float depth
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreateBoxCollider(const DirectX::XMFLOAT3& centerPosition, float width, float height, float depth)
+Collider3D Collider3D::CreateBoxCollider(const Float3& centerPosition, float width, float height, float depth)
 {
 	Collider3D collider;
 	collider.box.Center  = centerPosition;
-	collider.box.Extents = DirectX::XMFLOAT3(width / 2, height / 2, depth / 2);
+	collider.box.Extents = Float3(width / 2, height / 2, depth / 2);
 	return collider;
 }
 
@@ -168,11 +169,11 @@ Collider3D Collider3D::CreateBoxCollider(const DirectX::XMFLOAT3& centerPosition
 *  @param[in] const DirectX::XMFLOAT4& rotation
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreateOrientedBoxCollider(const DirectX::XMFLOAT3& centerPosition, const DirectX::XMFLOAT3& boxSize, const DirectX::XMFLOAT4& rotation)
+Collider3D Collider3D::CreateOrientedBoxCollider(const Float3& centerPosition, const Float3& boxSize, const Float4& rotation)
 {
 	Collider3D collider;
 	collider.orientedBox.Center      = centerPosition;
-	collider.orientedBox.Extents     = DirectX::XMFLOAT3(boxSize.x / 2, boxSize.y / 2, boxSize.z / 2);
+	collider.orientedBox.Extents     = Float3 (boxSize.x / 2, boxSize.y / 2, boxSize.z / 2);
 	collider.orientedBox.Orientation = rotation; // unit rotation quaternion (object->world).
 	return collider;
 }
@@ -186,7 +187,7 @@ Collider3D Collider3D::CreateOrientedBoxCollider(const DirectX::XMFLOAT3& center
 *  @param[in] float radius
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreateSphereCollider(const DirectX::XMFLOAT3& centerPosition, float radius)
+Collider3D Collider3D::CreateSphereCollider(const Float3& centerPosition, float radius)
 {
 	Collider3D collider;
 	collider.sphere.Center = centerPosition;
@@ -206,7 +207,7 @@ Collider3D Collider3D::CreateSphereCollider(const DirectX::XMFLOAT3& centerPosit
 *  @param[in] float farPlane
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreateFrustumCollider(const DirectX::XMFLOAT3& originPosition, const DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT4& rltbSlope, float nearPlane, float farPlane)
+Collider3D Collider3D::CreateFrustumCollider(const Float3& originPosition, const Float4& orientation, const Float4& rltbSlope, float nearPlane, float farPlane)
 {
 	Collider3D collider;
 	collider.frustum.Origin      = originPosition;
@@ -233,7 +234,7 @@ Collider3D Collider3D::CreateFrustumCollider(const DirectX::XMFLOAT3& originPosi
 *  @param[in] float farPlane
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreateFrustumCollider(const DirectX::XMFLOAT3& originPosition, const DirectX::XMFLOAT4& orientation, float rightSlope, float leftSlope, float topSlope, float bottomSlope, float nearPlane, float farPlane)
+Collider3D Collider3D::CreateFrustumCollider(const Float3& originPosition, const Float4& orientation, float rightSlope, float leftSlope, float topSlope, float bottomSlope, float nearPlane, float farPlane)
 {
 	Collider3D collider;
 	collider.frustum.Origin      = originPosition;
@@ -255,7 +256,7 @@ Collider3D Collider3D::CreateFrustumCollider(const DirectX::XMFLOAT3& originPosi
 *  @param[in] const DirectX::XMFLOAT3& pointC
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreatePlaneCollider(const DirectX::XMFLOAT3& pointA, const DirectX::XMFLOAT3& pointB, const DirectX::XMFLOAT3& pointC)
+Collider3D Collider3D::CreatePlaneCollider(const Float3& pointA, const Float3& pointB, const Float3& pointC)
 {
 	Collider3D collider;
 	collider.plane.CreatePlane(pointA, pointB, pointC);
@@ -271,7 +272,7 @@ Collider3D Collider3D::CreatePlaneCollider(const DirectX::XMFLOAT3& pointA, cons
 *  @param[in] const DirectX::XMFLOAT3& planeNormal
 *  @return 　　Collider3D
 *****************************************************************************/
-Collider3D Collider3D::CreatePlaneCollider(const DirectX::XMFLOAT3& planePoint, const DirectX::XMFLOAT3& planeNormal)
+Collider3D Collider3D::CreatePlaneCollider(const Float3& planePoint, const Float3& planeNormal)
 {
 	Collider3D collider;
 	collider.plane.CreatePlane(planePoint, planeNormal);

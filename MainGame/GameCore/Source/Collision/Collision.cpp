@@ -10,7 +10,6 @@
 #include "GameCore/Include/Collision/Collision.hpp"
 #include "GameCore/Include/Collision/Collider.hpp"
 #include <algorithm>
-#include <DirectXCollision.h>
 #include <Windows.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -19,6 +18,8 @@
 #define MAX_COLLISION_2D_TYPE 2
 #define MAX_COLLISION_3D_TYPE 5
 #pragma warning(disable : 4805)
+
+using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //								Implement
 //////////////////////////////////////////////////////////////////////////////////
@@ -109,13 +110,12 @@ bool Collision::IsContainedObjectInFrustum(const Collider3D& frustum, const Coll
 *****************************************************************************/
 bool Collision::Circle_vs_Circle(const Collider2D& first, const Collider2D& second)
 {
-	using namespace DirectX;
 	/*-------------------------------------------------------------------
 	-        distance = || (first.centerPos - second.centerPos) ||;
 	---------------------------------------------------------------------*/
 	float distance = 0.0f;
-	DirectX::XMStoreFloat(&distance,XMVector3Length(XMVectorSubtract(XMLoadFloat3(&first.centerPosition), XMLoadFloat3(&first.centerPosition))));
-	float rSum = first.circle.radius + second.circle.radius;
+	distance       = Norm(Vector3(first.centerPosition) - Vector3(second.centerPosition));
+	float rSum     = first.circle.radius + second.circle.radius;
 
 	return (distance < rSum) ? true : false;
 }
@@ -131,14 +131,12 @@ bool Collision::Circle_vs_Circle(const Collider2D& first, const Collider2D& seco
 *****************************************************************************/
 bool Collision::Rect_vs_Circle(const Collider2D& first, const Collider2D& second)
 {
-	using namespace DirectX;
-	
-	const XMFLOAT2 rectLeftTop     (first.centerPosition.x  - first. rectangle.width / 2, first. centerPosition.y + first.rectangle.height / 2);
-	const XMFLOAT2 rectRightBottom (first.centerPosition.x  + first. rectangle.width / 2, first. centerPosition.y - first.rectangle.height / 2);
-	const XMFLOAT2 circlePos    = XMFLOAT2(second.centerPosition.x, second.centerPosition.y);
-	const XMFLOAT2 dLeftTop     = XMFLOAT2(circlePos.x - rectLeftTop.x,     circlePos.y - rectLeftTop.y);
-	const XMFLOAT2 dRightBottom = XMFLOAT2(circlePos.x - rectRightBottom.x, circlePos.y - rectRightBottom.y);
-	const float radius          = second.circle.radius;
+	const Float2 rectLeftTop(first.centerPosition.x - first.rectangle.width / 2, first.centerPosition.y + first.rectangle.height / 2);
+	const Float2 rectRightBottom (first.centerPosition.x  + first. rectangle.width / 2, first. centerPosition.y - first.rectangle.height / 2);
+	const Float2 circlePos    = Float2(second.centerPosition.x, second.centerPosition.y);
+	const Float2 dLeftTop     = Float2(circlePos.x - rectLeftTop.x,     circlePos.y - rectLeftTop.y);
+	const Float2 dRightBottom = Float2(circlePos.x - rectRightBottom.x, circlePos.y - rectRightBottom.y);
+	const float radius        = second.circle.radius;
 
 	/*-------------------------------------------------------------------
 	-        Rectangle Collision Detection
@@ -199,12 +197,10 @@ bool Collision::Circle_vs_Rect(const Collider2D& first, const Collider2D& second
 
 bool Collision::Rect_vs_Rect(const Collider2D& first, const Collider2D& second)
 {
-	using namespace DirectX;
-
-	const XMFLOAT2 firstLeftTop     (first. centerPosition.x - first. rectangle.width / 2, first. centerPosition.y + first. rectangle.height / 2);
-	const XMFLOAT2 firstRightBottom (first. centerPosition.x + first. rectangle.width / 2, first. centerPosition.y - first. rectangle.height / 2);
-	const XMFLOAT2 secondLeftTop    (second.centerPosition.x - second.rectangle.width / 2, second.centerPosition.y + second.rectangle.height / 2);
-	const XMFLOAT2 secondRightBottom(second.centerPosition.x + second.rectangle.width / 2, second.centerPosition.y - second.rectangle.height / 2);
+	const Float2 firstLeftTop     (first. centerPosition.x - first. rectangle.width / 2, first. centerPosition.y + first. rectangle.height / 2);
+	const Float2 firstRightBottom (first. centerPosition.x + first. rectangle.width / 2, first. centerPosition.y - first. rectangle.height / 2);
+	const Float2 secondLeftTop    (second.centerPosition.x - second.rectangle.width / 2, second.centerPosition.y + second.rectangle.height / 2);
+	const Float2 secondRightBottom(second.centerPosition.x + second.rectangle.width / 2, second.centerPosition.y - second.rectangle.height / 2);
 	
 	if (firstRightBottom.x < secondLeftTop.x || firstLeftTop.x > secondRightBottom.x) { return false; }
 	if (firstRightBottom.y > secondLeftTop.y || firstLeftTop.y < secondRightBottom.y) { return false; }
@@ -281,9 +277,8 @@ bool Collision::Box_vs_Frustum(const Collider3D& first, const Collider3D& second
 *****************************************************************************/
 bool Collision::Box_vs_Plane(const Collider3D& first, const Collider3D& second)
 {
-	using namespace DirectX;
-	XMVECTOR plane = XMLoadFloat4(&second.plane.PlaneEquation);
-	return (first.box.Intersects(plane) == PlaneIntersectionType::INTERSECTING) ? true : false;
+	Vector4 plane = Vector4(second.plane.PlaneEquation);
+	return (first.box.Intersects(plane) == DirectX::PlaneIntersectionType::INTERSECTING) ? true : false;
 }
 #pragma endregion Box
 #pragma region OrientedBox

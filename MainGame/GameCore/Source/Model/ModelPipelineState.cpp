@@ -11,21 +11,22 @@
 #include "GameCore/Include/Model/ModelPipelineState.hpp"
 #include "DirectX12/Include/Core/DirectX12StaticSampler.hpp"
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
-#include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include "DirectX12/Include/Core/DirectX12Shader.hpp"
 #include "GameCore/Include/Model/MMD/PMDConfig.hpp"
-
+#include "GameCore/Include/Model/MMD/PMXConfig.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 
 namespace model
 {
 
-	bool BuildMMDPipeline(ModelPipeline& model);
+	bool BuildPMDPipeline(ModelPipeline& model);
+	bool BuildPMXPipeline(ModelPipeline& model);
 	bool BuildFBXPipeline(ModelPipeline& model);
 	bool BuildObjPipeline(ModelPipeline& model);
 
-	bool BuildMMDRootSignature(ModelPipeline& model);
+	bool BuildPMDRootSignature(ModelPipeline& model);
+	bool BuildPMXRootSignature(ModelPipeline& model);
 	bool BuildFBXRootSignature(ModelPipeline& model);
 	bool BuildObjRootSignature(ModelPipeline& model);
 
@@ -33,7 +34,6 @@ namespace model
 	void BuildMMDRenderTarget(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline);
 	void BuildMMDBlendState  (D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline);
 	void BuildMMDDepthStencil(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline);
-	
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -60,11 +60,20 @@ bool ModelPSOManager::BuildModelPipelines()
 	using namespace model;
 
 	/*-------------------------------------------------------------------
-	-			Build MMD pipeline
+	-			Build PMD pipeline
 	---------------------------------------------------------------------*/
-	if (!BuildMMDPipeline(_model[(int)ModelType::MMD])) 
+	if (!BuildPMDPipeline(_model[(int)ModelType::PMD])) 
 	{ 
 		MessageBox(NULL, L"Could not create a mmd pipeline.", L"Warning", MB_ICONWARNING); 
+		return false;
+	}
+
+	/*-------------------------------------------------------------------
+	-			Build PMD pipeline
+	---------------------------------------------------------------------*/
+	if (!BuildPMXPipeline(_model[(int)ModelType::PMX]))
+	{
+		MessageBox(NULL, L"Could not create a mmd pipeline.", L"Warning", MB_ICONWARNING);
 		return false;
 	}
 
@@ -90,7 +99,7 @@ bool ModelPSOManager::BuildModelPipelines()
 }
 
 /****************************************************************************
-*                            BuildCubemapRootSignatures
+*                            BuildModelRootSignatures
 *************************************************************************//**
 *  @fn        bool CubemapPSOManager::BuildCubemapRootSignatures()
 *  @brief     build cubemap rootSignature
@@ -104,7 +113,16 @@ bool ModelPSOManager::BuildModelRootSignatures()
 	/*-------------------------------------------------------------------
 	-			Build MMD rootSignature
 	---------------------------------------------------------------------*/
-	if (!BuildMMDRootSignature(_model[(int)ModelType::MMD]))
+	if (!BuildPMDRootSignature(_model[(int)ModelType::PMD]))
+	{
+		MessageBox(NULL, L"Could not create a mmd rootSignature.", L"Warning", MB_ICONWARNING);
+		return false;
+	}
+
+	/*-------------------------------------------------------------------
+	-			Build MMD rootSignature
+	---------------------------------------------------------------------*/
+	if (!BuildPMXRootSignature(_model[(int)ModelType::PMX]))
 	{
 		MessageBox(NULL, L"Could not create a mmd rootSignature.", L"Warning", MB_ICONWARNING);
 		return false;
@@ -146,9 +164,14 @@ bool ModelPSOManager::SetShaders()
 	/*-------------------------------------------------------------------
 	-			Build MMD Shader
 	---------------------------------------------------------------------*/
-	_model[(int)ModelType::MMD].VertexShader   = CompileShader(L"Shader\\EnvironmentMap\\ShaderStaticCubemap.hlsl", nullptr, "VSMain", "vs_5_1");
-	_model[(int)ModelType::MMD].PixelShader    = CompileShader(L"Shader\\EnvironmentMap\\ShaderStaticCubemap.hlsl", nullptr, "PSMain", "ps_5_1");
+	_model[(int)ModelType::PMD].VertexShader   = CompileShader(L"Shader\\Model\\ShaderModelRenderer.hlsl", nullptr, "PMD_VSMain", "vs_5_1");
+	_model[(int)ModelType::PMD].PixelShader    = CompileShader(L"Shader\\Model\\ShaderModelRenderer.hlsl", nullptr, "PMD_PSMain", "ps_5_1");
 
+	/*-------------------------------------------------------------------
+	-			Build MMD Shader
+	---------------------------------------------------------------------*/
+	_model[(int)ModelType::PMX].VertexShader = CompileShader(L"Shader\\Model\\ShaderModelRenderer.hlsl", nullptr, "PMX_VSMain", "vs_5_1");
+	_model[(int)ModelType::PMX].PixelShader = CompileShader(L"Shader\\Model\\ShaderModelRenderer.hlsl", nullptr, "PMX_PSMain", "ps_5_1");
 	/*-------------------------------------------------------------------
 	-			Build FBX Shader
 	---------------------------------------------------------------------*/
@@ -198,24 +221,19 @@ namespace model
 
 #pragma region MMD
 	/****************************************************************************
-	*                       BuildMMDPipeline
+	*                       BuildPMDPipeline
 	*************************************************************************//**
-	*  @fn        bool BuildMMDPipeline(ModelPipeline& model)
-	*  @brief     Build MMD Pipeline
+	*  @fn        bool BuildPMDPipeline(ModelPipeline& model)
+	*  @brief     Build PMD Pipeline
 	*  @param[in] void
 	*  @return 　　bool
 	*****************************************************************************/
-	bool BuildMMDPipeline(ModelPipeline& model)
+	bool BuildPMDPipeline(ModelPipeline& model)
 	{
 		/*-------------------------------------------------------------------
-		-			 Check Model Type
+		-			 Substitute Model Type
 		---------------------------------------------------------------------*/
-		if (model.Type == ModelType::MMD) { return false; }
-
-		/*-------------------------------------------------------------------
-		-			 Build RootSignature
-		---------------------------------------------------------------------*/
-		if (!BuildMMDRootSignature(model)) { return false; }
+		if (model.Type != ModelType::PMD) { return false; }
 
 		/*-------------------------------------------------------------------
 		-			 Build PSO
@@ -243,35 +261,87 @@ namespace model
 	}
 
 	/****************************************************************************
-	*                            BuildMMDRootSignature
+	*                       BuildPMDPipeline
 	*************************************************************************//**
-	*  @fn        bool BuildMMDRootSignature(CubemapPipeline& cubemap)
-	*  @brief     Prepare Skybox RootSignature
+	*  @fn        bool BuildPMDPipeline(ModelPipeline& model)
+	*  @brief     Build PMD Pipeline
 	*  @param[in] void
 	*  @return 　　bool
 	*****************************************************************************/
-	bool BuildMMDRootSignature(ModelPipeline& model)
+	bool BuildPMXPipeline(ModelPipeline& model)
 	{
 		/*-------------------------------------------------------------------
-		-			 Check Model Type
+		-			 Substitute Model Type
 		---------------------------------------------------------------------*/
-		if (model.Type == ModelType::MMD) { return false; }
+		if (model.Type != ModelType::PMX) { return false; }
+
+		/*-------------------------------------------------------------------
+		-			 Build PSO
+		---------------------------------------------------------------------*/
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipeLineState = DirectX12::Instance().GetDefaultPSOConfig();
+		BuildMMDRasterizer(pipeLineState);
+		BuildMMDRenderTarget(pipeLineState);
+		BuildMMDBlendState(pipeLineState);
+		BuildMMDDepthStencil(pipeLineState);
+		pipeLineState.InputLayout = PMXVertex::InputLayout;
+		pipeLineState.pRootSignature = model.RootSignature.Get();
+		if (model.VertexShader == nullptr || model.PixelShader == nullptr) { MessageBox(NULL, L"don't set shaders.", L"Warning", MB_ICONWARNING); return false; }
+		pipeLineState.VS =
+		{
+			reinterpret_cast<BYTE*>(model.VertexShader->GetBufferPointer()),
+			model.VertexShader->GetBufferSize()
+		};
+		pipeLineState.PS =
+		{
+			reinterpret_cast<BYTE*>(model.PixelShader->GetBufferPointer()),
+			model.PixelShader->GetBufferSize()
+		};
+		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&model.PipeLineState)));
+		return true;
+	}
+
+	/****************************************************************************
+	*                            BuildPMDRootSignature
+	*************************************************************************//**
+	*  @fn        bool BuildPMDRootSignature(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	*  @brief     Prepare PMD RootSignature
+	*  @param[in] void
+	*  @return 　　bool
+	*****************************************************************************/
+	bool BuildPMDRootSignature(ModelPipeline& model)
+	{
+		/*-------------------------------------------------------------------
+		-			 Substitute Model Type
+		---------------------------------------------------------------------*/
+		model.Type = ModelType::PMD;
 
 		/*-------------------------------------------------------------------
 		-			Build texture table
 		---------------------------------------------------------------------*/
 		DESCRIPTOR_RANGE descriptorTable[1];
-		//descriptorTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, CUBEMAP, 0); // t6
+		descriptorTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0); // t0
+
+		DESCRIPTOR_RANGE sphereMapMultiplyTable[1];
+		sphereMapMultiplyTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0); // t1
+
+		DESCRIPTOR_RANGE sphereMapAdditionTable[1];
+		sphereMapAdditionTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0); // t2
+
+		DESCRIPTOR_RANGE toonTextureTable[1];
+		toonTextureTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3, 0); // t3
 
 		/*-------------------------------------------------------------------
 		-			Build root parameter
 		---------------------------------------------------------------------*/
-		ROOT_PARAMETER rootParameter[4];
+		ROOT_PARAMETER rootParameter[8];
 		rootParameter[0].InitAsConstantBufferView(0); // objectConstants
 		rootParameter[1].InitAsConstantBufferView(1); // sceneConsntants
 		rootParameter[2].InitAsConstantBufferView(2); // materialConstants
-		rootParameter[3].InitAsDescriptorTable(1, &descriptorTable[0], D3D12_SHADER_VISIBILITY_ALL);
-
+		rootParameter[3].InitAsConstantBufferView(3); // bone
+		rootParameter[4].InitAsDescriptorTable(1, &descriptorTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameter[5].InitAsDescriptorTable(1, &sphereMapMultiplyTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameter[6].InitAsDescriptorTable(1, &sphereMapAdditionTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameter[7].InitAsDescriptorTable(1, &toonTextureTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
 		/*-------------------------------------------------------------------
 		-			Build sampler desc
 		---------------------------------------------------------------------*/
@@ -288,41 +358,143 @@ namespace model
 		return true;
 	}
 
-	void BuildMMDRasterizer(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	/****************************************************************************
+	*                            BuildPMDRootSignature
+	*************************************************************************//**
+	*  @fn        bool BuildPMDRootSignature(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	*  @brief     Prepare PMD RootSignature
+	*  @param[in] void
+	*  @return 　　bool
+	*****************************************************************************/
+	bool BuildPMXRootSignature(ModelPipeline& model)
 	{
-		pipeline.RasterizerState                      = RASTERIZER_DESC(D3D12_DEFAULT);
-		pipeline.RasterizerState.CullMode             = D3D12_CULL_MODE_NONE;
-		pipeline.RasterizerState.DepthBias            = 0.1f;
-		pipeline.RasterizerState.SlopeScaledDepthBias = 0.01f;
-	}
-	void BuildMMDRenderTarget(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
-	{
-		pipeline.NumRenderTargets = 3;
-		pipeline.RTVFormats[0]    = DXGI_FORMAT_R8G8B8A8_UNORM;
-		pipeline.RTVFormats[1]    = DXGI_FORMAT_R8G8B8A8_UNORM;
-		pipeline.RTVFormats[2]    = DXGI_FORMAT_R8G8B8A8_UNORM;
+		/*-------------------------------------------------------------------
+		-			 Substitute Model Type
+		---------------------------------------------------------------------*/
+		model.Type = ModelType::PMX;
+
+		/*-------------------------------------------------------------------
+		-			Build texture table
+		---------------------------------------------------------------------*/
+		DESCRIPTOR_RANGE descriptorTable[1];
+		descriptorTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0); // t0
+
+		DESCRIPTOR_RANGE sphereMapMultiplyTable[1];
+		sphereMapMultiplyTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0); // t1
+
+		DESCRIPTOR_RANGE sphereMapAdditionTable[1];
+		sphereMapAdditionTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0); // t2
+
+		DESCRIPTOR_RANGE toonTextureTable[1];
+		toonTextureTable[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3, 0); // t3
+
+
+		/*-------------------------------------------------------------------
+		-			Build root parameter
+		---------------------------------------------------------------------*/
+		ROOT_PARAMETER rootParameter[8];
+		rootParameter[0].InitAsConstantBufferView(0); // objectConstants
+		rootParameter[1].InitAsConstantBufferView(1); // sceneConsntants
+		rootParameter[2].InitAsConstantBufferView(2); // materialConstants
+		rootParameter[3].InitAsConstantBufferView(3); // bone
+		rootParameter[4].InitAsDescriptorTable(1, &descriptorTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameter[5].InitAsDescriptorTable(1, &sphereMapMultiplyTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameter[6].InitAsDescriptorTable(1, &sphereMapAdditionTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameter[7].InitAsDescriptorTable(1, &toonTextureTable[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		/*-------------------------------------------------------------------
+		-			Build sampler desc
+		---------------------------------------------------------------------*/
+		auto samplerDesc = GetStaticSamplers(); // linearsampler
+
+		/*-------------------------------------------------------------------
+		-			 Build root parameter
+		---------------------------------------------------------------------*/
+		// A root signature is a collection of descriptor tables 
+		// (which feeds data other than vertices to the shader).
+		ROOT_SIGNATURE_DESC rootSignatureDesc = {};
+		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &model.RootSignature);
+		return true;
 	}
 
+	/****************************************************************************
+	*                            BuildPMDRasterizer
+	*************************************************************************//**
+	*  @fn        bool BuildPMDRasterizer(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	*  @brief     Prepare PMD Rasterizer
+	*  @param[in] void
+	*  @return 　　void
+	*****************************************************************************/
+	void BuildMMDRasterizer(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	{
+		pipeline.RasterizerState                       = RASTERIZER_DESC(D3D12_DEFAULT);
+		pipeline.RasterizerState.CullMode              = D3D12_CULL_MODE_NONE;
+		pipeline.RasterizerState.DepthBias             = D3D12_DEFAULT_DEPTH_BIAS;
+		pipeline.RasterizerState.DepthBiasClamp        = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		pipeline.RasterizerState.SlopeScaledDepthBias  = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		pipeline.RasterizerState.AntialiasedLineEnable = false;
+		pipeline.RasterizerState.ForcedSampleCount     = 0;
+		pipeline.RasterizerState.ConservativeRaster    = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	}
+
+	/****************************************************************************
+	*                            BuildPMDRenderTarget
+	*************************************************************************//**
+	*  @fn        bool BuildPMDRenderTarget(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	*  @brief     Prepare PMD RenderTarget
+	*  @param[in] void
+	*  @return 　　void
+	*****************************************************************************/
+	void BuildMMDRenderTarget(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	{
+		pipeline.NumRenderTargets = 1;
+		pipeline.RTVFormats[0]    = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//pipeline.RTVFormats[1]    = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//pipeline.RTVFormats[2]    = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
+
+	/****************************************************************************
+	*                            BuildPMDBlendState
+	*************************************************************************//**
+	*  @fn        bool BuildPMDBlendState(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	*  @brief     Prepare PMD BlendState
+	*  @param[in] void
+	*  @return 　　void
+	*****************************************************************************/
 	void BuildMMDBlendState(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
 	{
 		pipeline.BlendState = BLEND_DESC(D3D12_DEFAULT);
-		pipeline.BlendState.RenderTarget[0].BlendEnable    = true;//今のところfalse
+		pipeline.BlendState.AlphaToCoverageEnable          = true;
+		pipeline.BlendState.IndependentBlendEnable         = false;
+		pipeline.BlendState.RenderTarget[0].BlendEnable    = true;
+		pipeline.BlendState.RenderTarget[0].LogicOpEnable  = false;
 		pipeline.BlendState.RenderTarget[0].BlendOp        = D3D12_BLEND_OP_ADD;
 		pipeline.BlendState.RenderTarget[0].BlendOpAlpha   = D3D12_BLEND_OP_ADD;
 		pipeline.BlendState.RenderTarget[0].SrcBlend       = D3D12_BLEND_SRC_ALPHA;
-		pipeline.BlendState.RenderTarget[0].DestBlend      = D3D12_BLEND_INV_SRC_ALPHA;
+		pipeline.BlendState.RenderTarget[0].DestBlend      = D3D12_BLEND_INV_SRC_ALPHA;	
 		pipeline.BlendState.RenderTarget[0].SrcBlendAlpha  = D3D12_BLEND_ONE;
 		pipeline.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		pipeline.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	}
 
+	/****************************************************************************
+	*                            BuildPMDDepthStencil
+	*************************************************************************//**
+	*  @fn        bool BuildPMDDepthStencil(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
+	*  @brief     Prepare PMD DepthStencil
+	*  @param[in] void
+	*  @return 　　void
+	*****************************************************************************/
 	void BuildMMDDepthStencil(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipeline)
 	{
 		pipeline.DepthStencilState                = DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		pipeline.DepthStencilState.DepthEnable    = true;
 		pipeline.DepthStencilState.DepthFunc      = D3D12_COMPARISON_FUNC_LESS;
 		pipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		pipeline.DepthStencilState.StencilEnable  = false;
-		pipeline.DSVFormat                        = DXGI_FORMAT_D32_FLOAT;
+		pipeline.DepthStencilState.StencilEnable  = true;
+		//pipeline.DSVFormat                        = DXGI_FORMAT_D32_FLOAT;
+		pipeline.DSVFormat                        = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
 	}
 #pragma endregion MMD
 

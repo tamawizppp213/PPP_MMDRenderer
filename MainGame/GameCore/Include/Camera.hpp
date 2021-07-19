@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include <DirectXMath.h>
-#include "DirectX12/Include/DirectX12MathHelper.hpp"
+#include "GameMath/Include/GMMatrix.hpp"
+#include "GameCore/Include/Screen.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -48,9 +48,9 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	// World Camera Position
-	DirectX::XMVECTOR GetPosition()   const;
-	DirectX::XMFLOAT3 GetPosition3f() const;
-	void SetPosition(const DirectX::XMFLOAT3& position);
+	gm::Vector3 GetPosition()   const;
+	gm::Float3  GetPosition3f() const;
+	void SetPosition(const gm::Float3& position);
 	void SetPosition(float x, float y, float z);
 
 	// Rotate the camera
@@ -62,12 +62,12 @@ public:
 	void RotateWorldZ(float angle);
 
 	// Get camera basis vectors
-	DirectX::XMVECTOR GetRight()   const;
-	DirectX::XMFLOAT3 GetRight3f() const;
-	DirectX::XMVECTOR GetUp()      const;
-	DirectX::XMFLOAT3 GetUp3f()    const;
-	DirectX::XMVECTOR GetLook()    const;
-	DirectX::XMFLOAT3 GetLook3f()  const;
+	gm::Vector3 GetRight()   const;
+	gm::Float3  GetRight3f() const;
+	gm::Vector3 GetUp()      const;
+	gm::Float3  GetUp3f()    const;
+	gm::Vector3 GetLook()    const;
+	gm::Float3  GetLook3f()  const;
 
 	// Get frustum properties
 	float GetNearZ()         const;
@@ -83,10 +83,10 @@ public:
 	float GetFarWindowHeight()  const;
 
 	// Get View / Projection Matrix
-	DirectX::XMMATRIX   GetViewMatrix()           const;
-	DirectX::XMMATRIX   GetProjectionMatrix()     const;
-	DirectX::XMFLOAT4X4 GetViewMatrix4x4f()       const;
-	DirectX::XMFLOAT4X4 GetProjectionMatrix4x4f() const;
+	gm::Matrix4   GetViewMatrix()           const;
+	gm::Matrix4   GetProjectionMatrix()     const;
+	gm::Float4x4  GetViewMatrix4x4f()       const;
+	gm::Float4x4  GetProjectionMatrix4x4f() const;
 
 
 	// Set frusum
@@ -94,8 +94,8 @@ public:
 	void SetZRange(float nearZ, float farZ);
 
 	// Define camera space via LookAt parameters
-	void LookAt(DirectX::FXMVECTOR position, DirectX::FXMVECTOR target, DirectX::FXMVECTOR worldUp);
-	void LookAt(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& target, const DirectX::XMFLOAT3& up);
+	void LookAt(gm::Vector3 position, gm::Vector3 target, gm::Vector3 worldUp);
+	void LookAt(const gm::Float3& position, const gm::Float3& target, const gm::Float3& up);
 
 	// Camera Motion
 	void Strafe(float distance);
@@ -121,17 +121,19 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	DirectX::XMFLOAT3 _position = { 0.0f, 0.0f, 0.0f };
-	DirectX::XMFLOAT3 _right    = { 1.0f, 0.0f, 0.0f };
-	DirectX::XMFLOAT3 _up       = { 0.0f, 1.0f, 0.0f };
-	DirectX::XMFLOAT3 _look     = { 0.0f, 0.0f, 1.0f };
+	gm::Float3 _position = { 0.0f, 0.0f, 0.0f };
+	gm::Float3 _right    = { 1.0f, 0.0f, 0.0f };
+	gm::Float3 _up       = { 0.0f, 1.0f, 0.0f };
+	gm::Float3 _look     = { 0.0f, 0.0f, 1.0f };
 
 	bool _viewDirty = true;
 
 	Frustum frustum;
 
-	DirectX::XMFLOAT4X4 _view = DirectXMathHelper::Identity4X4();
-	DirectX::XMFLOAT4X4 _proj = DirectXMathHelper::Identity4X4();
+	gm::Float4x4 _view = gm::MatrixIdentityF();
+	gm::Float4x4 _proj = gm::MatrixIdentityF();
+
+	Screen _screen;
 
 	/****************************************************************************
 	**                Public Member Variables

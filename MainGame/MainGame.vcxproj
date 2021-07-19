@@ -48,6 +48,8 @@
     <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp" />
     <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
     <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
+    <ClInclude Include="GameCore\Include\Effect\Blur.hpp" />
+    <ClInclude Include="GameCore\Include\Effect\PostEffect.hpp" />
     <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMap.hpp" />
     <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMapPipeLineState.hpp" />
     <ClInclude Include="GameCore\Include\FileUtility.hpp" />
@@ -64,11 +66,13 @@
     <ClInclude Include="GameCore\Include\Input\Mouse.hpp" />
     <ClInclude Include="GameCore\Include\Light\LightType.hpp" />
     <ClInclude Include="GameCore\Include\Model\FBX\FBXFile.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\MMDRenderer.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\PMDConfig.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\PMDFile.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\PMDModel.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\PMXConfig.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\PMXFile.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXModel.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VMDConfig.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VMDFile.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VPDConfig.hpp" />
@@ -76,6 +80,8 @@
     <ClInclude Include="GameCore\Include\Model\Model.hpp" />
     <ClInclude Include="GameCore\Include\Model\ModelFile.hpp" />
     <ClInclude Include="GameCore\Include\Model\ModelLoader.hpp" />
+    <ClInclude Include="GameCore\Include\Model\ModelPipelineState.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MotionLoader.hpp" />
     <ClInclude Include="GameCore\Include\Model\Obj\OBJConfig.hpp" />
     <ClInclude Include="GameCore\Include\Model\Obj\OBJFile.hpp" />
     <ClInclude Include="GameCore\Include\Mouse.hpp" />
@@ -88,6 +94,7 @@
     <ClInclude Include="GameCore\Include\Sprite\SpriteRenderer.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Text.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\Wipe.hpp" />
     <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
     <ClInclude Include="GameMath\Include\GMColor.hpp" />
     <ClInclude Include="GameMath\Include\GMDistribution.hpp" />
@@ -429,6 +436,8 @@
     <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
     <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
+    <ClCompile Include="GameCore\Source\Effect\Blur.cpp" />
+    <ClCompile Include="GameCore\Source\Effect\PostEffect.cpp" />
     <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMap.cpp" />
     <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMapPipeLineState.cpp" />
     <ClCompile Include="GameCore\Source\File\Json.cpp" />
@@ -445,10 +454,13 @@
     <ClCompile Include="GameCore\Source\Model\MMD\PMDModel.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\PMXConfig.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\PMXFile.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMXModel.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\VMDFile.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\VPDFile.cpp" />
     <ClCompile Include="GameCore\Source\Model\Model.cpp" />
     <ClCompile Include="GameCore\Source\Model\ModelLoader.cpp" />
+    <ClCompile Include="GameCore\Source\Model\ModelPipelineState.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MotionLoader.cpp" />
     <ClCompile Include="GameCore\Source\Model\Obj\OBJFile.cpp" />
     <ClCompile Include="GameCore\Source\Save.cpp" />
     <ClCompile Include="GameCore\Source\Screen.cpp" />

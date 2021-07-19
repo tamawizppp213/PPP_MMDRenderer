@@ -12,7 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12/Include/Core/DirectX12Texture.hpp"
-#include <DirectXMath.h>
+#include "GameMath/Include/GMVector.hpp"
 #include <unordered_map>
 #pragma warning(disable : 26495)
 
@@ -31,10 +31,10 @@ enum class FontType
 
 struct FontInfo
 {
-	FontType          FontType;
-	DirectX::XMFLOAT2 PixelSizePerChar;
-	float             ImagePixelWidth; 
-	Texture           Texture;
+	FontType     FontType;
+	gm::Float2   PixelSizePerChar;
+	float        ImagePixelWidth; 
+	Texture      Texture;
 };
 
 class FontLoader

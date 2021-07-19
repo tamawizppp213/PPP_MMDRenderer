@@ -10,9 +10,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Sprite/SpritePipeLineState.hpp"
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
-#include "DirectX12/Include/Core/DirectX12Debug.hpp"
 #include "DirectX12/Include/Core/DirectX12Shader.hpp"
 #include "DirectX12/Include/Core/DirectX12StaticSampler.hpp"
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define

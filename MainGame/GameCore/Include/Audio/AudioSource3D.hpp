@@ -11,7 +11,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "AudioCore.hpp"
 #include "AudioSource.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -25,10 +24,10 @@
 *****************************************************************************/
 struct AudioListener
 {
-	DirectX::XMFLOAT3 Front;
-	DirectX::XMFLOAT3 Up;
-	DirectX::XMFLOAT3 Position;
-	DirectX::XMFLOAT3 Velocity;
+	gm::Float3 Front;
+	gm::Float3 Up;
+	gm::Float3 Position;
+	gm::Float3 Velocity;
 };
 
 /****************************************************************************
@@ -92,17 +91,17 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	void SetListenerFront(const DirectX::XMFLOAT3& front);
-	void SetListenerUp(const DirectX::XMFLOAT3& top);
-	void SetListenerPosition(const DirectX::XMFLOAT3& position);
-	void SetListenerVelocity(const DirectX::XMFLOAT3& velocity);
+	void SetListenerFront   (const gm::Float3& front);
+	void SetListenerUp      (const gm::Float3& top);
+	void SetListenerPosition(const gm::Float3& position);
+	void SetListenerVelocity(const gm::Float3& velocity);
 
-	void SetEmitterFront(const DirectX::XMFLOAT3& front);
-	void SetEmitterUp(const DirectX::XMFLOAT3& top);
-	void SetEmitterPosition(const DirectX::XMFLOAT3& position);
-	void SetEmitterVelocity(const DirectX::XMFLOAT3& velocity);
+	void SetEmitterFront   (const gm::Float3& front);
+	void SetEmitterUp      (const gm::Float3& top);
+	void SetEmitterPosition(const gm::Float3& position);
+	void SetEmitterVelocity(const gm::Float3& velocity);
 	void SetEmitterDopplerLevel(float level);
-	void SetEmitterRadius(float radius);
+	void SetEmitterRadius  (float radius);
 
 	/****************************************************************************
 	**                Constructor and Destructor

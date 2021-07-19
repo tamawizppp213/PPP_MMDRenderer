@@ -25,6 +25,10 @@
 *  @class     ModelTableManager
 *  @brief     Model Table
 *****************************************************************************/
+class PMDData;
+class PMXData;
+class OBJData;
+class FBXData;
 class ModelTableManager
 {
 public:
@@ -36,6 +40,7 @@ public:
 	**                Public Member Variables
 	*****************************************************************************/
 	std::unordered_map<std::wstring, std::shared_ptr<PMDData>> ModelTablePMD;
+	std::unordered_map<std::wstring, std::shared_ptr<PMXData>> ModelTablePMX;
 	std::unordered_map<std::wstring, std::shared_ptr<OBJData>> ModelTableObj;
 	std::unordered_map<std::wstring, std::shared_ptr<FBXData>> ModelTableFbx;
 	/***************************************************************************
@@ -80,9 +85,11 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	void Load3DModel(const std::wstring& filePath, std::shared_ptr<PMXData>* pmxData);
 	void Load3DModel(const std::wstring& filePath, std::shared_ptr<PMDData>* pmdData);
 	void Load3DModel(const std::wstring& filePath, std::shared_ptr<FBXData>* fbxData);
 	void Load3DModel(const std::wstring& filePath, std::shared_ptr<OBJData>* objData);
+
 	/***************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/

@@ -12,7 +12,7 @@
 #include "GameCore/Include/FrameResources.hpp"
 #include "GameCore/Include/Camera.hpp"
 #include "GameCore/Include/Screen.hpp"
-#include "GameCore/Include/GameTimer.hpp"
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -41,33 +41,32 @@ void FrameResource::UpdateObjectConstants()
 
 void FrameResource::UpdateSceneConstants(SceneConstants* scene, const Camera* camera)
 {
-	using namespace DirectX;
+	using namespace gm;
 	if (camera == nullptr || scene == nullptr) { return; }
 
-	XMMATRIX view                      = camera->GetViewMatrix();
-	XMMATRIX projection                = camera->GetProjectionMatrix();
-	XMMATRIX viewProjection            = XMMatrixMultiply(view, projection);
+	Matrix4 view                      = camera->GetViewMatrix();
+	Matrix4 projection                = camera->GetProjectionMatrix();
+	Matrix4 viewProjection            = view * projection; 
 
-	XMVECTOR viewDeterminant           = XMMatrixDeterminant(view);
-	XMVECTOR projectionDeterminant     = XMMatrixDeterminant(projection);
-	XMVECTOR viewProjectionDeterminant = XMMatrixDeterminant(viewProjection);
+	Vector4 viewDeterminant           = Determinant(view);
+	Vector4 projectionDeterminant     = Determinant(projection);
+	Vector4 viewProjectionDeterminant = Determinant(viewProjection);
 
-	XMMATRIX inverseView               = XMMatrixInverse(&viewDeterminant          , view);
-	XMMATRIX inverseProjection         = XMMatrixInverse(&projectionDeterminant    , projection);
-	XMMATRIX inverseViewProjection     = XMMatrixInverse(&viewProjectionDeterminant, viewProjection);
+	Matrix4 inverseView               = Inverse(viewDeterminant          , view);
+	Matrix4 inverseProjection         = Inverse(projectionDeterminant    , projection);
+	Matrix4 inverseViewProjection     = Inverse(viewProjectionDeterminant, viewProjection);
 	// note: Texture and shadow related features will be added later.
 
-	XMStoreFloat4x4(&scene->View                 , XMMatrixTranspose(view));
-	XMStoreFloat4x4(&scene->InverseView          , XMMatrixTranspose(inverseView));
-	XMStoreFloat4x4(&scene->Projection           , XMMatrixTranspose(projection));
-	XMStoreFloat4x4(&scene->InverseProjection    , XMMatrixTranspose(inverseProjection));
-	XMStoreFloat4x4(&scene->ViewProjection       , XMMatrixTranspose(viewProjection));
-	XMStoreFloat4x4(&scene->InverseViewProjection, XMMatrixTranspose(inverseViewProjection));
+	scene->View                  = view.ToFloat4x4();
+	scene->InverseView           = inverseView.ToFloat4x4();
+	scene->Projection            = projection .ToFloat4x4();
+	scene->InverseProjection     = inverseProjection.ToFloat4x4();
+	scene->ViewProjection        = viewProjection.ToFloat4x4();
+	scene->InverseViewProjection = inverseViewProjection.ToFloat4x4();
 
-	Screen screen;
 	scene->EyePosition             = camera->GetPosition3f();
-	scene->RenderTargetSize        = XMFLOAT2((float)screen.GetScreenWidth(), (float)screen.GetScreenHeight());
-	scene->InverseRenderTargetSize = XMFLOAT2(1.0f / screen.GetScreenWidth(), 1.0f / screen.GetScreenHeight());
+	scene->RenderTargetSize        = Float2((float)_screen.GetScreenWidth(), (float)_screen.GetScreenHeight());
+	scene->InverseRenderTargetSize = Float2(1.0f / _screen.GetScreenWidth(), 1.0f / _screen.GetScreenHeight());
 	scene->NearZ                   = camera->GetNearZ();
 	scene->FarZ                    = camera->GetFarZ();
 	scene->TotalTime               = _gameTimer->TotalTime();

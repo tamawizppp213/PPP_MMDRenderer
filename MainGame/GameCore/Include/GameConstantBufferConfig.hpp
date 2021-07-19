@@ -10,11 +10,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12/Include/Core/DirectX12Core.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include "GameCore/Include/HLSLUtility.hpp"
 #include "GameCore/Include/Light/LightType.hpp"
+#include "GameMath/Include/GMMatrix.hpp"
 #include <memory>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -36,8 +35,8 @@
 *****************************************************************************/
 struct ObjectConstants
 {
-	hlsl::matrix World            = DirectXMathHelper::Identity4X4();
-	hlsl::matrix TextureTransform = DirectXMathHelper::Identity4X4();
+	hlsl::matrix World            = gm::MatrixIdentityF();
+	hlsl::matrix TextureTransform = gm::MatrixIdentityF();
 };
 
 /****************************************************************************
@@ -48,12 +47,12 @@ struct ObjectConstants
 *****************************************************************************/
 struct SceneConstants
 {
-	hlsl::matrix View                    = DirectXMathHelper::Identity4X4();
-	hlsl::matrix InverseView             = DirectXMathHelper::Identity4X4();
-	hlsl::matrix Projection              = DirectXMathHelper::Identity4X4();
-	hlsl::matrix InverseProjection       = DirectXMathHelper::Identity4X4();
-	hlsl::matrix ViewProjection          = DirectXMathHelper::Identity4X4();
-	hlsl::matrix InverseViewProjection   = DirectXMathHelper::Identity4X4();
+	hlsl::matrix View                    = gm::MatrixIdentityF();
+	hlsl::matrix InverseView             = gm::MatrixIdentityF();
+	hlsl::matrix Projection              = gm::MatrixIdentityF();
+	hlsl::matrix InverseProjection       = gm::MatrixIdentityF();
+	hlsl::matrix ViewProjection          = gm::MatrixIdentityF();
+	hlsl::matrix InverseViewProjection   = gm::MatrixIdentityF();
 	hlsl::float3 EyePosition             = { 0.0f, 0.0f, 0.0f };
 	float        cbPerObjectPad1         = 0.0f;
 	hlsl::float2 RenderTargetSize        = { 0.0f, 0.0f };
