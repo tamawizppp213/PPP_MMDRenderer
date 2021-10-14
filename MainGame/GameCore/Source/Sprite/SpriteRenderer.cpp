@@ -26,12 +26,12 @@ using namespace gm;
 const int SpriteRenderer::MaxSpriteCount = 1024;
 SpriteRenderer::SpriteRenderer()
 {
-	_projectionViewMatrix = gm::MatrixIdentity();
+	_projectionViewMatrix =gm::MatrixIdentity();
 }
 
 SpriteRenderer::~SpriteRenderer()
 {
-
+	this->Finalize();
 }
 
 
@@ -76,6 +76,7 @@ bool SpriteRenderer::DrawStart()
 	commandList->IASetIndexBuffer(&indexBufferView);
 	return true;
 }
+
 bool SpriteRenderer::Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const gm::Matrix4& matrix)
 {
 	/*-------------------------------------------------------------------
@@ -185,7 +186,6 @@ bool SpriteRenderer::DrawEnd()
 
 bool SpriteRenderer::Finalize()
 {
-
 	return true;
 }
 #pragma endregion Public Function
@@ -211,7 +211,7 @@ bool SpriteRenderer::PrepareVertexBuffer()
 	for (int i = 0; i < _meshBuffer.size(); ++i)
 	{
 		VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4 * MaxSpriteCount];
-		_dynamicVertexBuffer[i] = std::make_shared<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), MaxSpriteCount * 4, false);
+		_dynamicVertexBuffer[i] = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), MaxSpriteCount * 4, false);
 
 		_dynamicVertexBuffer[i]->CopyStart();
 		for (int j = 0; j < MaxSpriteCount * 4; ++j)
@@ -318,7 +318,7 @@ bool SpriteRenderer::PrepareConstantBuffer()
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	_constantBuffer = std::make_shared<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
+	_constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
 	_constantBuffer->CopyStart();
 	_constantBuffer->CopyData(0, _projectionViewMatrix);
 	_constantBuffer->CopyEnd();
@@ -389,6 +389,7 @@ bool SpriteRenderer::PreparePipelineState(FastBlendStateType type)
 	};
 	pipeLineState.BlendState = GetBlendDesc(type);
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelineState)));
+
 	return true;
 
 }

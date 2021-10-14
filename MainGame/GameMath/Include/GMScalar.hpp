@@ -94,6 +94,21 @@ namespace gm
 	INLINE bool operator== (float lhs, Scalar rhs) { return lhs == (float)rhs; }
 	
 	CREATE_SIMD_FUNCTIONS(Scalar);
-
+	INLINE Scalar NormalizeAngle(float angleInRadians)
+	{
+		angleInRadians = fmodf(angleInRadians, GM_2PI);
+		if (angleInRadians < -GM_PI)
+		{
+			return angleInRadians + GM_2PI;
+		}
+		else if (angleInRadians > GM_PI)
+		{
+			return angleInRadians - GM_2PI;
+		}
+		else
+		{
+			return angleInRadians;
+		}
+	}
 }
 #endif

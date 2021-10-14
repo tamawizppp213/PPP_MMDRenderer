@@ -24,6 +24,7 @@ enum class ModelType
 	PMX,
 	FBX,
 	OBJ,
+	PRIMITIVE,
 	MODEL_TYPE_COUNT
 };
 

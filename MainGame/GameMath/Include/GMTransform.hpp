@@ -32,11 +32,13 @@
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 
+
 //////////////////////////////////////////////////////////////////////////////////
 //                              Class
 //////////////////////////////////////////////////////////////////////////////////
 namespace gm
 {
+	Quaternion GetAffineTransformRotation(const Matrix3& matrix);
 	struct OrthogonalTransform;
 	struct AffineTransform;
 	struct ScaleAndTranslation;
@@ -64,11 +66,12 @@ namespace gm
 			_parent = parent;
 		}
 
-		INLINE Matrix4 GetMatrix()
+		INLINE Matrix4 GetMatrix() const
 		{
 			Matrix4 model;
 			if (_parent != nullptr) { model = _parent->GetMatrix(); }
 			else { model = Matrix4(EIdentityTag::kIdentity); }
+
 			return Scaling(LocalScale) * RotationQuaternion(LocalRotation) * Translation(LocalPosition) * model;
 		}
 
@@ -78,6 +81,21 @@ namespace gm
 			if (_parent != nullptr) { model = _parent->GetMatrix(); }
 			else { model = Matrix4(EIdentityTag::kIdentity); }
 			return (Scaling(LocalScale) * RotationQuaternion(LocalRotation) * Translation(LocalPosition) * model).ToFloat4x4();
+		}
+
+		INLINE int  GetChildCount()           const { return static_cast<int>(_child.size()); }
+		INLINE Transform* GetChild(int index) const { return (_child.size() <= index) ? nullptr : _child[index]; }
+		INLINE void SetChild(Transform* child) { _child.push_back(child); };
+		INLINE bool RemoveChild(Transform* child)
+		{
+			for (auto it = _child.begin(); it != _child.end(); ++it)
+			{
+				if (*it == child)
+				{
+					_child.erase(it); return true;
+				}
+			}
+			return false;
 		}
 
 		/****************************************************************************
@@ -95,18 +113,7 @@ namespace gm
 		/****************************************************************************
 		**                Private Function
 		*****************************************************************************/
-		INLINE void SetChild(Transform* child) { _child.push_back(child); };
-		INLINE bool RemoveChild(Transform* child)
-		{
-			for (std::vector<Transform*>::iterator it = _child.begin(); it != _child.end(); ++it)
-			{
-				if (*it == child)
-				{
-					_child.erase(it); return true;
-				}
-			}
-			return false;
-		}
+		
 
 		/****************************************************************************
 		**                Private Member Variables
@@ -279,11 +286,12 @@ namespace gm
 		INLINE Vector3 GetX() const { return _basis.GetX(); }
 		INLINE Vector3 GetY() const { return _basis.GetY(); }
 		INLINE Vector3 GetZ() const { return _basis.GetZ(); }
-		INLINE Vector3 GetTranslation() const { return _translation; }
+		INLINE Vector3 GetTranslation() const  { return _translation; }
 		INLINE const Matrix3& GetBasis() const { return (const Matrix3&)*this; }
+		INLINE Quaternion   GetRotation() const { return GetAffineTransformRotation(this->GetBasis()); }
 		INLINE Vector3 operator* (Vector3 vector) const { return _basis * vector + _translation; }
 		INLINE AffineTransform operator* (const AffineTransform& matrix) const{return AffineTransform(_basis * matrix._basis, *this * matrix.GetTranslation());}
-
+		bool operator == (const AffineTransform& transform) const noexcept;
 		/****************************************************************************
 		**                Constructor and Destructor
 		*****************************************************************************/
@@ -313,6 +321,21 @@ namespace gm
 		Matrix3 _basis;
 		Vector3 _translation;
 	};
+	INLINE bool AffineTransform::operator == (const AffineTransform& transform) const noexcept
+	{
+		return (_basis == transform.GetBasis() &&
+			_translation == transform.GetTranslation());
+	}
 
+	INLINE Vector3 InverseXForm(AffineTransform& transform, const Vector3& inVector)
+	{
+		Vector3 v = inVector - transform.GetTranslation();
+		return (Transpose(transform.GetBasis()) * v);
+	}
+	INLINE AffineTransform InverseAffineTransform(const AffineTransform& transform)
+	{
+		Matrix3 inverse = Transpose(transform.GetBasis());
+		return AffineTransform(inverse, inverse * (-transform.GetTranslation()));
+	}
 }
 #endif

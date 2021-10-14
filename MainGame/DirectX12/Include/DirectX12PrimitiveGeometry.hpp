@@ -38,6 +38,17 @@ public:
 	MeshData& operator=(MeshData&&)      = default;
 };
 
+enum class MeshType
+{
+	Rect, 
+	Quadrangle,
+	Box,
+	Sphere,
+	GeoSphere,
+	Cylinder,
+	Grid,
+};
+
 /****************************************************************************
 *							 Primitive Geometry
 *************************************************************************//**
@@ -50,13 +61,13 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	MeshData Rect      (float width, float height, float depth);
-	MeshData Quadrangle(float x, float y, float w, float h, float depth);
-	MeshData Box       (float width, float height, float depth, UINT32 numSubdivisions, bool isInvertNormal);
-	MeshData Sphere    (float radius, UINT32 sliceCount, UINT32 stackCount, bool isInvertNormal);
-	MeshData GeoSphere (float radius, UINT32 numSubdivisions, bool isInvertNormal);
-	MeshData Cylinder  (float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, bool isInvertNormal);
-	MeshData Grid      (float width, float depth, UINT32 rows, UINT32 columns, bool isInvertNormal);
+	static MeshData Rect      (float width, float height, float depth);
+	static MeshData Quadrangle(float x, float y, float w, float h, float depth);
+	static MeshData Box       (float width, float height, float depth, UINT32 numSubdivisions, bool isInvertNormal);
+	static MeshData Sphere    (float radius, UINT32 sliceCount, UINT32 stackCount, bool isInvertNormal);
+	static MeshData GeoSphere (float radius, UINT32 numSubdivisions, bool isInvertNormal);
+	static MeshData Cylinder  (float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, bool isInvertNormal);
+	static MeshData Grid      (float width, float depth, UINT32 rows, UINT32 columns, bool isInvertNormal);
 
 	/****************************************************************************
 	**                Public Member Variables
@@ -76,11 +87,11 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	void SubDivide(MeshData& meshData);
-	VertexPositionNormalTexture MidPoint(const VertexPositionNormalTexture& v0, const VertexPositionNormalTexture& v1);
-	void BuildCylinderTopCap(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, MeshData& meshData);
-	void BuildCylinderBottomCap(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, MeshData& meshData);
-	void IsInvertNormal(MeshData& meshData);
+	static void SubDivide(MeshData& meshData);
+	static VertexPositionNormalTexture MidPoint(const VertexPositionNormalTexture& v0, const VertexPositionNormalTexture& v1);
+	static void BuildCylinderTopCap(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, MeshData& meshData);
+	static void BuildCylinderBottomCap(float bottomRadius, float topRadius, float height, UINT32 sliceCount, UINT32 stackCount, MeshData& meshData);
+	static void IsInvertNormal(MeshData& meshData);
 
 	/****************************************************************************
 	**                Private Member Variables

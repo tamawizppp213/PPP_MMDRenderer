@@ -238,6 +238,15 @@ void Camera::SetLens(float fovVertical, float aspect, float nearZ, float farZ)
 	_proj     = P.ToFloat4x4();
 }
 
+void Camera::SetOrthoLens(float width, float height, float nearZ, float farZ)
+{
+	frustum.NearZ  = nearZ;
+	frustum.FarZ   = farZ;
+	frustum.Aspect = height / width;
+	Matrix4 P = OrthographicLH(width, height, nearZ, farZ);
+	_proj = P.ToFloat4x4();
+}
+
 void Camera::SetZRange(float nearZ, float farZ)
 {
 	frustum.NearZ = nearZ;

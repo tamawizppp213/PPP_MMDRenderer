@@ -538,7 +538,6 @@ bool Skybox::PrepareSkyObject()
 	---------------------------------------------------------------------*/
 	ObjectConstants skyData; // sphere
 	skyData.World = gm::Scaling(SKY_SCALE, SKY_SCALE, SKY_SCALE).ToFloat4x4();
-	skyData.TextureTransform = gm::MatrixIdentityF();
 
 	/*-------------------------------------------------------------------
 	-			Copy Sky object data

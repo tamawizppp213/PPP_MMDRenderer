@@ -60,7 +60,8 @@ namespace gm
 	INLINE BoolVector operator<= ( const TYPE& lhs, const TYPE& rhs ){ return DirectX::XMVectorLessOrEqual(lhs, rhs); } \
 	INLINE BoolVector operator>  ( const TYPE& lhs, const TYPE& rhs ){ return DirectX::XMVectorGreater(lhs, rhs); } \
 	INLINE BoolVector operator>= ( const TYPE& lhs, const TYPE& rhs ){ return DirectX::XMVectorGreaterOrEqual(lhs, rhs); } \
-	INLINE TYPE Select( const TYPE& lhs, const TYPE& rhs, BoolVector mask ) { return TYPE(DirectX::XMVectorSelect(lhs, rhs, mask)); }
+	INLINE TYPE Select( const TYPE& lhs, const TYPE& rhs, BoolVector mask ) { return TYPE(DirectX::XMVectorSelect(lhs, rhs, mask)); }\
+	INLINE void Swap(TYPE& a, TYPE& b){TYPE temp = a; a=b;b = temp;}
 }
 
 //INLINE BoolVector operator== ( const TYPE& lhs, const TYPE& rhs ){ return DirectX::XMVectorEqual(lhs, rhs); } 

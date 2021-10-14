@@ -39,12 +39,15 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	bool Initialize(PostEffectBlendStateType type);
-	virtual bool OnResize();
-	virtual bool Draw(); // バックバッファにテクスチャを書き込む.
+	virtual bool OnResize(int newWidth, int newHeight);
+	virtual bool Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState = D3D12_RESOURCE_STATE_COMMON);
+	virtual bool Draw(); //back buffer 
 
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	Texture&  GetFinalRenderTexture() { return _colorBuffer[_colorBuffer.size() - 1].GetColorBuffer(); }
+	ColorBuffer& GetFinalColorBuffer() { return _colorBuffer[_colorBuffer.size() - 1]; }
 
 	/****************************************************************************
 	**                Constructor and Destructor
@@ -68,12 +71,13 @@ protected:
 	bool PrepareSprite();
 	bool PrepareResources();
 	bool PrepareDescriptors();
+	bool FinalCopyToResource(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState = D3D12_RESOURCE_STATE_COMMON);
 
 	/****************************************************************************
 	**                Protected Member Variables
 	*****************************************************************************/
 	Sprite              _sprite;
-	std::vector<Texture> _colorBuffer;
+	std::vector<ColorBuffer> _colorBuffer;
 	VertexBufferPtr     _vertexBuffer[FRAME_BUFFER_COUNT];
 	MeshBufferPtr       _meshBuffer  [FRAME_BUFFER_COUNT];
 	MatrixBufferPtr     _constantBuffer;

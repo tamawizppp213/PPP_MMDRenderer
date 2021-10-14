@@ -10,6 +10,7 @@
 #include "GameCore/Include/Model/MMD/PMXConfig.hpp"
 #include "GameCore/Include/Model/MMD/PMXFile.hpp"
 #include "GameCore/Include/Model/MMD/VMDFile.hpp"
+#include <algorithm>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -27,6 +28,8 @@ const D3D12_INPUT_ELEMENT_DESC PMXVertex::InputElements[] =
     { "POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     { "NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     { "TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+    { "TANGENT" ,   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+    { "BINORMAL" ,  0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     { "BONE_NO",    0, DXGI_FORMAT_R32G32B32A32_SINT , 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     { "WEIGHT"   ,  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     { "DEF_C"    ,  0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -35,7 +38,7 @@ const D3D12_INPUT_ELEMENT_DESC PMXVertex::InputElements[] =
     { "WEIGHT_TYPE",0, DXGI_FORMAT_R8_UINT         ,   0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert(sizeof(PMXVertex) == 101, "Vertex struct/layout mismatch");
+static_assert(sizeof(PMXVertex) == 125, "Vertex struct/layout mismatch");
 const D3D12_INPUT_LAYOUT_DESC PMXVertex::InputLayout =
 {
     PMXVertex::InputElements,
@@ -70,20 +73,27 @@ void PMXBoneNode::UpdateLocalMatrix()
 {
     Transform transform;
     transform.LocalPosition = AnimateTranslate();
+    transform.LocalRotation = AnimateRotate();
+
+    // Append bone node
     if (_isAppendTranslate)
     {
         transform.LocalPosition += _appendTransform.LocalPosition;
     }
 
-    transform.LocalRotation = AnimateRotate();
+    // ik node 
     if (_enableIK)
     {
-        transform.LocalRotation = transform.LocalRotation * _ikRotation;
+        transform.LocalRotation = _ikRotation * transform.LocalRotation;
     }
+
+    // append bone rotation
     if (_isAppendRotate)
     {
-        transform.LocalRotation = _appendTransform.LocalRotation * transform.LocalRotation;
+        transform.LocalRotation = transform.LocalRotation * _appendTransform.LocalRotation;
     }
+
+    // final local matrix
     _localBoneMatrix = transform.GetMatrix();
 }
 
@@ -108,9 +118,9 @@ void PMXBoneNode::UpdateGlobalMatrix()
 }
 
 /****************************************************************************
-*                       UpdateChildMatrices
+*                       UpdateSelfandChildMatrices
 *************************************************************************//**
-*  @fn        void PMXBoneNode::UpdateChildMatrices()
+*  @fn        void PMXBoneNode::UpdateSelfandChildMatrix
 *  @brief     Update child bone matrices
 *  @param[in] void
 *  @return @@void
@@ -151,7 +161,7 @@ void PMXBoneNode::UpdateAppendMatrix()
 
         if (_appendNode->_enableIK)
         {
-            appendRotate =  appendRotate * _appendNode->GetIKRotate();
+            appendRotate = _appendNode->GetIKRotate() * appendRotate;
         }
 
         if (GetAppendWeight() != 0)
@@ -197,205 +207,120 @@ void PMXBoneNode::BeforeUpdateMatrix()
 #pragma endregion Bone
 
 #pragma region BoneIK
-void PMXBoneIK::SolveIK(int frameNo, VMDFile* vmdFile)
+void PMXBoneIK::SolveIK(int frameNo)
 {
-    /*-------------------------------------------------------------------
-    -             enable ik check
-    ---------------------------------------------------------------------*/
-
-    /*-------------------------------------------------------------------
-    -             Current Frame IK Data
-    ---------------------------------------------------------------------*/
-    auto iterator = std::find_if(vmdFile->GetEnableIKData().rbegin(), vmdFile->GetEnableIKData().rend(),
-        [frameNo](const VMDIK& ikEnable)
-    {
-        return ikEnable.FrameNo <= frameNo;
-    });
-
-    if (iterator != vmdFile->GetEnableIKData().rend())
-    {
-        auto ikEnableIterator = iterator->IKEnableTable.find(_ikBone->GetBoneName());
-        if (ikEnableIterator != iterator->IKEnableTable.end())
-        {
-            if (!ikEnableIterator->second)
-            {
-                return;
-            }
-        }
-    }
-
     /*-------------------------------------------------------------------
     -             Initialize Child Node
     ---------------------------------------------------------------------*/
     InitializeChildNode();
-
-    /*-------------------------------------------------------------------
-    -             Calculate IK Solver
-    ---------------------------------------------------------------------*/
-    auto childNodesCount = GetChainLength();
-    switch (childNodesCount)
-    {
-    case 0:
-        assert(0);
-        return;
-    /*case 1:
-        SolveLookAt();
-        break;
-    case 2:
-        SolveCosIK();
-        break;*/
-    default:
-        SolveCCDIK();
-        break;
-    }
     
+    float maxDist = FLT_MAX;
+    for (int i = 0; i < _iterationCount; ++i)
+    {
+        SolveCore(i);
+
+        float dist = Norm(_ikTargetBone->GetGlobalMatrix().GetW() - _ikBone->GetGlobalMatrix().GetW());
+        if (dist < maxDist)
+        {
+            maxDist = dist;
+            for (auto& chain : _ikChains)
+            {
+                chain.SaveIKRotation = chain.IKBone->GetIKRotate();
+            }
+        }
+        else
+        {
+            for (auto& chain : _ikChains)
+            {
+                chain.IKBone->SetIKRotate(chain.SaveIKRotation);
+                chain.IKBone->UpdateLocalMatrix();
+                chain.IKBone->UpdateSelfandChildMatrix();
+            }
+            break;
+        }
+    }
 
 }
 
-
-void PMXBoneIK::SolveIK(int frameNo, PMXData* pmxFile, const PMXBoneNodeAddressList& boneAddressList, VMDFile* vmdFile)
+void PMXBoneIK::SolveCore(int iteration)
 {
-    auto iterator = std::find_if(vmdFile->GetEnableIKData().rbegin(), vmdFile->GetEnableIKData().rend(),
-        [frameNo](const VMDIK& ikEnable)
-    {
-        return ikEnable.FrameNo <= frameNo;
-    });
-    
-    for (int i = 0; i < pmxFile->GetBoneIKCount(); ++i)
-    {
-        auto& ik = pmxFile->GetBoneIK()[i];
+    /*-------------------------------------------------------------------
+    -                         Get node
+    ---------------------------------------------------------------------*/
+    PMXBoneNode* targetNode = _ikTargetBone;
+    PMXBoneNode* ikNode     = _ikBone;
 
-        if (iterator != vmdFile->GetEnableIKData().rend())
+    Vector3 ikPosition = Vector3(ikNode->GetGlobalMatrix().GetW());
+    for (int chainIndex = 0; chainIndex < _ikChainLength; ++chainIndex)
+    {
+        auto& chain = _ikChains[chainIndex];
+        PMXBoneNode* chainNode = chain.IKBone;
+
+        /*-------------------------------------------------------------------
+        -        Pointer check between chain node and ikTarget
+        ---------------------------------------------------------------------*/
+        if (chainNode == _ikTargetBone) { continue; }
+
+        /*-------------------------------------------------------------------
+        -        Solve Plane Check
+        ---------------------------------------------------------------------*/
+        if (chain.EnableLimit)
         {
-            auto ikEnableIterator = iterator->IKEnableTable.find(ik.GetIKBoneNode()->GetBoneName());
-            if (ikEnableIterator != iterator->IKEnableTable.end())
+            if ((chain.AngleMin.x != 0 || chain.AngleMax.x != 0) &&
+                (chain.AngleMin.y == 0 || chain.AngleMax.y == 0) &&
+                (chain.AngleMin.z == 0 || chain.AngleMax.z == 0)
+                )
             {
-                if (!ikEnableIterator->second)
-                {
-                    continue;
-                }
+                SolvePlane(iteration, chainIndex, SolveAxis::X);
+                continue;
+            }
+            else if ((chain.AngleMin.y != 0 || chain.AngleMax.y != 0) &&
+                (chain.AngleMin.x == 0 || chain.AngleMax.x == 0) &&
+                (chain.AngleMin.z == 0 || chain.AngleMax.z == 0)
+                )
+            {
+                SolvePlane(iteration, chainIndex, SolveAxis::Y);
+                continue;
+            }
+            else if ((chain.AngleMin.z != 0 || chain.AngleMax.z != 0) &&
+                (chain.AngleMin.x == 0 || chain.AngleMax.x == 0) &&
+                (chain.AngleMin.y == 0 || chain.AngleMax.y == 0)
+                )
+            {
+                SolvePlane(iteration, chainIndex, SolveAxis::Z);
+                continue;
             }
         }
 
-        auto childNodesCount = ik.GetChainLength();
-        switch (childNodesCount)
-        {
-        case 0:
-            assert(0);
-            continue;
-        case 1:
-            SolveLookAt(ik, boneAddressList);
-            break;
-        case 2:
-            SolveCosIK(ik, boneAddressList);
-            break;
-        default:
-            //SolveCCDIK(ik, pmxFile->GetBoneAddressList());
-            break;
-        }
+        /*-------------------------------------------------------------------
+        -        Prepare variables for CCD-IK
+        ---------------------------------------------------------------------*/
+        Vector3 targetPosition = Vector3(targetNode->GetGlobalMatrix().GetW());
+        auto inverseChain      = Inverse(chainNode->GetGlobalMatrix());
+        auto toIK              = Normalize(Vector3(inverseChain * ikPosition));
+        auto toEnd             = Normalize(Vector3(inverseChain * targetPosition));
+        if (Norm(toIK - toEnd) <= EPSILON) { continue; }
+
+        /*-------------------------------------------------------------------
+        -        Calculate  angle and cross vector
+        ---------------------------------------------------------------------*/
+        float dot          = Clamp(Dot(toEnd, toIK), -1.0f, 1.0f);
+        float angle        = ACos(dot);
+        angle              = Min(Max(angle, -_angleLimit), _angleLimit); // modify
+        auto  cross        = Normalize(Cross(toEnd, toIK));
+        auto rotation      = Quaternion(cross, angle);
+        auto chainRotation = chainNode->GetIKRotate() * chainNode->AnimateRotate() * rotation;
+
+        auto ikRotation = chainRotation * Inverse(chainNode->AnimateRotate());
+        chainNode->SetIKRotate(ikRotation);
+
+        /*-------------------------------------------------------------------
+        -        Update chain node
+        ---------------------------------------------------------------------*/
+        chainNode->UpdateLocalMatrix();
+        chainNode->UpdateSelfandChildMatrix();
 
     }
-
-    
-}
-
-void PMXBoneIK::SolveLookAt()
-{
-
-}
-void PMXBoneIK::SolveLookAt(const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray)
-{
-    auto rootBoneNode   = ik.GetChains()[0].IKBone;
-    auto targetBoneNode = ik.GetTargetBoneNode();
-    auto ikBoneNode     = ik.GetIKBoneNode();
-
-    auto inverseRoot    = Inverse(rootBoneNode->GetGlobalMatrix());
-    auto targetPosition = Vector3(targetBoneNode->GetGlobalMatrix().GetW());
-    auto ikPosition     = Vector3(ikBoneNode->GetGlobalMatrix().GetW());
-   
-    Vector3 localTarget = TransformCoordinateVector3(targetPosition, inverseRoot);
-    Vector3 localIK     = TransformCoordinateVector3(ikPosition, inverseRoot);
-
-    Vector3 toTarget = Normalize(localTarget);
-    Vector3 toIK     = Normalize(localIK);
-
-    Vector3 axis  = Normalize(Cross(toIK, toTarget));
-    float   theta = ACos(Dot(toTarget, toIK));
-
-    rootBoneNode  ->SetRotate(Quaternion(axis, theta));
-
-    rootBoneNode  ->UpdateGlobalMatrix();
-    targetBoneNode->UpdateGlobalMatrix();
-    ikBoneNode    ->UpdateGlobalMatrix();
-
-}
-
-void PMXBoneIK::SolveCosIK()
-{
-
-}
-void PMXBoneIK::SolveCosIK(const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray)
-{
-     /*-------------------------------------------------------------------
-    -             Get bone nodes
-    ---------------------------------------------------------------------*/
-    auto targetNode       = ik.GetTargetBoneNode();
-    auto ikNode           = ik.GetIKBoneNode();
-    auto rootNode         = ik.GetChainsVector()[1].IKBone;
-    auto intermediateNode = ik.GetChainsVector()[0].IKBone;
-
-    /*-------------------------------------------------------------------
-    -            Get Position in model space
-    ---------------------------------------------------------------------*/
-    auto inverseRoot = Inverse(rootNode->GetGlobalMatrix());
-    auto intermediatePosition = Vector3(intermediateNode->GetGlobalMatrix().GetW());
-    auto targetPosition       = Vector3(targetNode->GetGlobalMatrix().GetW());
-    auto ikPosition           = Vector3(ikNode->GetGlobalMatrix().GetW());
-    /*-------------------------------------------------------------------
-    -            Get Position in world space
-    ---------------------------------------------------------------------*/
-    Vector3 localTarget       = TransformCoordinateVector3(targetPosition      , inverseRoot);
-    Vector3 localIK           = TransformCoordinateVector3(ikPosition          , inverseRoot);
-    Vector3 localIntermediate = TransformCoordinateVector3(intermediatePosition, inverseRoot);
-
-    /*-------------------------------------------------------------------
-    -            Save edge distance
-    ---------------------------------------------------------------------*/
-    Vector3 toTarget             = localTarget;
-    Vector3 toIK                 = localIK;
-    Vector3 rootToIntermediate   = localIntermediate;
-    Vector3 intermediateToTarget = localTarget - localIntermediate;
-
-                                                                                                     
-    /*-------------------------------------------------------------------
-    -            Calculate cosine theorem
-    ---------------------------------------------------------------------*/
-    float a = Norm(toTarget);
-    float b = Norm(rootToIntermediate);
-    float c = Norm(intermediateToTarget);
-
-    float theta1 = ACos(min(1.0f, max(-1.0f, (a * a + b * b - c * c) / (2 * a * b))));
-    float theta2 = ACos(min(1.0f, max(-1.0f, (b * b + c * c - a * a) / (2 * b * c))));
-
-    /*-------------------------------------------------------------------
-    -            Calculate axis 
-    ---------------------------------------------------------------------*/
-    Vector3 axis;
-    auto vm = Normalize(toTarget);
-    auto vt = Normalize(toIK);
-    axis    = Cross(vt, vm);
-    
-
-    rootNode->SetRotate(Quaternion(axis, theta1));
-    rootNode->SetRotate(Quaternion(axis, theta2));
-    /*-------------------------------------------------------------------
-    -            Calculate bone matrix
-    ---------------------------------------------------------------------*/
-    rootNode        ->UpdateGlobalMatrix();
-    intermediateNode->UpdateGlobalMatrix();
-    targetNode      ->UpdateGlobalMatrix();
-    ikNode          ->UpdateGlobalMatrix();
-  
 }
 
 void PMXBoneIK::SolveCCDIK()
@@ -457,7 +382,7 @@ void PMXBoneIK::SolveCCDIK()
             -        Prepare variables for CCD-IK
             ---------------------------------------------------------------------*/
             Vector3 targetPosition = Vector3(targetNode->GetGlobalMatrix().GetW());
-            auto inverseChain  = Inverse(chainNode->GetGlobalMatrix());
+            auto inverseChain      = Inverse(chainNode->GetGlobalMatrix());
             auto toIK  = Normalize(Vector3(inverseChain * ikPosition));
             auto toEnd = Normalize(Vector3(inverseChain * targetPosition));
             if (Norm(toIK - toEnd) <= EPSILON) { continue; }
@@ -606,6 +531,21 @@ void PMXBoneIK::AddIKChain(PMXBoneNode* boneNode, bool axisLimit, const gm::Floa
 void PMXBoneIK::AddIKChain(PMXIKChain&& chain)
 {
     _ikChains.emplace_back(chain);
+    _ikChainLength = _ikChains.size();
+}
+
+void PMXBoneIK::InsertIKChain(int index, PMXBoneNode* boneNode, bool axisLimit, const gm::Float3& limitMin, const gm::Float3& limitMax)
+{
+    if (_ikChains.size() <= index) { return; }
+    auto it = _ikChains.begin();
+    it += index;
+
+    PMXIKChain chain;
+    chain.IKBone      = boneNode;
+    chain.EnableLimit = axisLimit;
+    chain.AngleMax    = limitMax;
+    chain.AngleMin    = limitMin;
+    _ikChains.insert(it, chain);
 }
 
 void PMXBoneIK::InitializeChildNode()
@@ -616,6 +556,7 @@ void PMXBoneIK::InitializeChildNode()
         chain.IKBone->SetIKRotate(Quaternion());
         chain.IKBone->UpdateLocalMatrix();
         chain.IKBone->UpdateSelfandChildMatrix();
+        
     }
 }
 #pragma endregion BoneIK

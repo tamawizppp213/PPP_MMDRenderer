@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "DirectX12BaseStruct.hpp"
+#include "DirectX12Texture.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -124,41 +124,143 @@ private:
 	bool  _isConstantBuffer = false;
 };
 
-struct StructuredBuffer
-{
-public:
-	~StructuredBuffer();
 
-	void Initialize(int elementByteSize, int elementCount, void* initData);
-	void RegistShaderResourceView(D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
-	void Update(void* data);
-	bool IsInited() const { return _isInitialized; }
-	Resource* GetResource();
+//////////////////////////////////////////////////////////////////////////////////
+//                              Define
+//////////////////////////////////////////////////////////////////////////////////
+/****************************************************************************
+*				  			Color Buffer
+*************************************************************************//**
+*  @class     Color Buffer
+*  @brief     Create color buffer class
+*****************************************************************************/
+class ColorBuffer
+{
+	enum class ResourceID
+	{
+		RTV,
+		SRV,
+		UAV,
+		CountOfResourceType
+	};
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	bool Create(int width, int height, DXGI_FORMAT colorFormat =DXGI_FORMAT_R8G8B8A8_UNORM, float clearColor[4]= nullptr);
+	bool OnResize(int newWidth, int newHeight);
+	bool ClearBuffer();
+	bool CopyToColorBuffer(Resource* source, D3D12_RESOURCE_STATES sourceState = D3D12_RESOURCE_STATE_COMMON);
+	bool TransitionResourceState(D3D12_RESOURCE_STATES after);
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSRV() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPURTV() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUUAV() const;
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSRV() const;
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPURTV() const;
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUUAV() const;
+	Texture& GetColorBuffer() { return _colorBuffer; }
+	D3D12_RESOURCE_STATES GetUsageState() const { return _usageState; }
+	DXGI_FORMAT GetFormat()      const { return _format; }
+	const float* GetClearColor() const { return _clearColor; }
+	gm::Float2 GetTextureSize() const { return _colorBuffer.ImageSize; }
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	ColorBuffer() = default;
+	~ColorBuffer();
+	ColorBuffer(const ColorBuffer&)            = delete;
+	ColorBuffer& operator=(const ColorBuffer&) = delete;
+	ColorBuffer(ColorBuffer&&)                 = default;
+	ColorBuffer& operator=(ColorBuffer&&)      = default;
+
 private:
-	Resource* _bufferOnGPU = nullptr;
-	void*     _bufferOnCPU = nullptr;
-	int _elementCount      = 0;
-	int _elementByteSize   = 0;
-	bool _isInitialized    = false;
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+	bool CreateDescriptorHeap();
+	bool CreateTexture(int width, int height, DXGI_FORMAT format, float clearColor[4]);
+	bool CreateDescriptor(DXGI_FORMAT format);
+	bool IssueViewID();
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	Texture _colorBuffer;
+	UINT    _resourceID[(int)ResourceID::CountOfResourceType]; 
+	DXGI_FORMAT _format;
+	float   _clearColor[4];
+	bool    _isInitialzed = false;
+	D3D12_RESOURCE_STATES _usageState;
 };
 
-struct RWStructuredBuffer
+/****************************************************************************
+*				  			RWStructuredBuffer
+*************************************************************************//**
+*  @class     RWStructured Buffer
+*  @brief     RW Structured Buffer
+*****************************************************************************/
+class RWStructuredBuffer
 {
+	enum class ResourceID
+	{
+		SRV,
+		UAV,
+		CountOfResourceType
+	};
+
 public:
-	~RWStructuredBuffer();
+	/**************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	bool Create(int elementByteSize, int elementCount);
+	bool OnResize(int elementCount);
+	inline void CopyStart()                                 { ThrowIfFailed(_buffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedData)));}
+	inline void CopyData(int elementIndex, const void* data){ std::memcpy(&_mappedData[elementIndex * _elementByteSize], data, _elementByteSize);}
+	inline void CopyTotalData(const void* data)             { std::memcpy(&_mappedData[0], data, _elementByteSize * _elementCount); }
+	inline void CopyEnd(){ _buffer->Unmap(0, nullptr); }
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSRV() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUUAV() const;
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSRV() const;
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUUAV() const;
+	Resource* GetResource() { return _buffer.Get(); }
+	bool IsCreated() const { return _isInitialized; }
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	RWStructuredBuffer() = default;
+	~RWStructuredBuffer() {};
+	RWStructuredBuffer(const RWStructuredBuffer&)            = delete; // prohibit copy
+	RWStructuredBuffer& operator=(const RWStructuredBuffer&) = delete; // prohibit copy
+	RWStructuredBuffer(RWStructuredBuffer&&)                 = default;
+	RWStructuredBuffer& operator=(RWStructuredBuffer&&)      = default;
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+	bool IssueViewID();
+	bool PrepareDescriptor();
+	bool PrepareResource();
 	
-	void Initialize(int elementByteSize, int elementCount, void* initData);
-	void RegistUnorderAccessView(D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
-	void RegistShaderResourceView(D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
-	bool IsInitialized() const { return _isInitialized; }
-	void* GetResourceOnCPU();
-	Resource* GetResource();
 
-private:
-	Resource* _bufferOnGPU = nullptr;
-	void* _bufferOnCPU     = nullptr;
-	int _elementCount      = 0;
-	int _elementByteSize   = 0;
-	bool _isInitialized     = false;
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	ResourceComPtr _buffer = nullptr;
+	BYTE* _mappedData      = nullptr;
+	UINT  _elementByteSize = 0;
+	UINT  _elementCount    = 0;
+	bool _isInitialized    = false;
+	UINT _resourceID[(int)ResourceID::CountOfResourceType];
 };
+
+
 #endif

@@ -11,7 +11,7 @@
 #include "GameCore/Include/Model/ModelPipelineState.hpp"
 #include "GameCore/Include/Model/ModelLoader.hpp"
 #include "GameCore/Include/Model/MotionLoader.hpp"
-#include "GameCore/Include/Model/MMD/VMDFile.hpp"
+#include "GameCore/Include/Model/MMD/VMDAnimation.hpp"
 #include "GameCore/Include/GameTimer.hpp"
 #include <d3dcompiler.h>
 
@@ -25,7 +25,6 @@ namespace pmd
 	Texture g_whiteTexture;
 }
 
-float GetYFromXOnBezier(float x, const Float4& controlPoints, UINT8 loop);
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +87,7 @@ bool PMDModel::UpdateMotion()
 	---------------------------------------------------------------------*/
 	_currentTime += _gameTimer->DeltaTime(); // [s]
 
-	UINT32 frameNo = PMD_FRAME_PER_SECOND * _currentTime;
+	UINT32 frameNo = static_cast<UINT32>(PMD_FRAME_PER_SECOND * _currentTime);
 
 	if (frameNo > _motionData[_currentMotionName]->GetAnimationDuration())
 	{
@@ -133,11 +132,11 @@ bool PMDModel::UpdateMotion()
 		if (iterator != keyFrames.end())
 		{
 			float t  = static_cast<float>(frameNo - reverseIterator->Frame) / static_cast<float>(iterator->Frame - reverseIterator->Frame);
-			t        = VMDFile::GetYFromXOnBezier(t, iterator->ControlPointForBezier[3].ToFloat4(), 12);
+			t        = VMDBezier::GetYFromXOnBezier(t, iterator->ControlPointForBezier[3].ToFloat4(), 12);
 			Vector3  bezier;
-			bezier.SetX(VMDFile::GetYFromXOnBezier(t, iterator->ControlPointForBezier[0].ToFloat4(), 12));
-			bezier.SetY(VMDFile::GetYFromXOnBezier(t, iterator->ControlPointForBezier[1].ToFloat4(), 12));
-			bezier.SetZ(VMDFile::GetYFromXOnBezier(t, iterator->ControlPointForBezier[2].ToFloat4(), 12));
+			bezier.SetX(VMDBezier::GetYFromXOnBezier(t, iterator->ControlPointForBezier[0].ToFloat4(), 12));
+			bezier.SetY(VMDBezier::GetYFromXOnBezier(t, iterator->ControlPointForBezier[1].ToFloat4(), 12));
+			bezier.SetZ(VMDBezier::GetYFromXOnBezier(t, iterator->ControlPointForBezier[2].ToFloat4(), 12));
 
 			rotation = RotationQuaternion(Slerp(reverseIterator->Quaternion, iterator->Quaternion, t));
 			offset   = offset +  bezier * (iterator->Location - offset);
@@ -169,7 +168,7 @@ bool PMDModel::UpdateMotion()
 *  @param[in] void
 *  @return @@bool
 *****************************************************************************/
-bool PMDModel::Draw(SceneGPUAddress scene)
+bool PMDModel::Draw(SceneGPUAddress scene, LightGPUAddress light)
 {
 	/*-------------------------------------------------------------------
 	-               Prepare variable
@@ -198,7 +197,8 @@ bool PMDModel::Draw(SceneGPUAddress scene)
 	commandList->IASetIndexBuffer(&indexBufferView);
 	commandList->SetGraphicsRootConstantBufferView(0, _modelObject.get()->Resource()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, scene);
-	commandList->SetGraphicsRootConstantBufferView(3, _boneBuffer.get()->Resource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(3, light);
+	commandList->SetGraphicsRootConstantBufferView(4, _boneBuffer.get()->Resource()->GetGPUVirtualAddress());
 
 	/*-------------------------------------------------------------------
 	-               Drawing process for each material
@@ -208,10 +208,10 @@ bool PMDModel::Draw(SceneGPUAddress scene)
 	for (int i = 0; i < (int)_pmdData->GetMaterialCount(); ++i)
 	{
 		commandList->SetGraphicsRootConstantBufferView(2, address);
-		commandList->SetGraphicsRootDescriptorTable(4, _pmdData->GetTextureList(i).Texture.GPUHandler);
-		commandList->SetGraphicsRootDescriptorTable(5, _pmdData->GetTextureList(i).SphereMultiply.GPUHandler);
-		commandList->SetGraphicsRootDescriptorTable(6, _pmdData->GetTextureList(i).SphereAddition.GPUHandler);
-		commandList->SetGraphicsRootDescriptorTable(7, _pmdData->GetTextureList(i).ToonTexture.GPUHandler);
+		commandList->SetGraphicsRootDescriptorTable(5, _pmdData->GetTextureList(i).Texture.GPUHandler);
+		commandList->SetGraphicsRootDescriptorTable(6, _pmdData->GetTextureList(i).SphereMultiply.GPUHandler);
+		commandList->SetGraphicsRootDescriptorTable(7, _pmdData->GetTextureList(i).SphereAddition.GPUHandler);
+		commandList->SetGraphicsRootDescriptorTable(8, _pmdData->GetTextureList(i).ToonTexture.GPUHandler);
 		commandList->DrawIndexedInstanced(_pmdData.get()->GetIndexCountForMaterial(i), 1, offset, _meshBuffer[currentFrameIndex].BaseVertexLocation, 0);
 		offset  += _pmdData.get()->GetIndexCountForMaterial(i);
 		address += CalcConstantBufferByteSize(sizeof(PMDMaterial));
@@ -302,20 +302,6 @@ bool PMDModel::StartAnimation(const std::wstring& motionName)
 	return true;
 }
 #pragma region Property
-void PMDModel::SetPosition(float x, float y, float z)
-{
-	_transform.LocalPosition = gm::Vector3(x, y, z);
-}
-
-void PMDModel::SetScale(float x, float y, float z)
-{
-	_transform.LocalScale = gm::Vector3(x, y, z);
-}
-
-void PMDModel::SetRotation(const gm::Quaternion& rotation)
-{
-	_transform.LocalRotation = rotation;
-}
 
 void PMDModel::SetWorldTimer(const GameTimer& gameTimer)
 {
@@ -559,7 +545,6 @@ bool PMDModel::PreparePMDObject()
 	-			Set Modeldata
 	---------------------------------------------------------------------*/
 	_worldInfo.World            = gm::MatrixIdentityF();
-	_worldInfo.TextureTransform = gm::MatrixIdentityF();
 
 	/*-------------------------------------------------------------------
 	-			Copy Model object data

@@ -25,5 +25,4 @@
 //       (2) You can register up to 2032 StaticSamplers.Å@(register * swapchainBuffer * material Count)
 
 std::array<const STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
-
 #endif

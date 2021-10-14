@@ -25,7 +25,7 @@ class DirectX12;
 //                         Alias 
 //////////////////////////////////////////////////////////////////////////////////
 using Microsoft::WRL::ComPtr;
-using Device           = ID3D12Device;
+using Device           = ID3D12Device8;
 using Factory          = IDXGIFactory4;
 using Adapter          = IDXGIAdapter;
 using Output           = IDXGIOutput;
@@ -39,7 +39,7 @@ using RootSignature    = ID3D12RootSignature;
 using PipelineState    = ID3D12PipelineState;
 using DescriptorHeap   = ID3D12DescriptorHeap;
 
-using DeviceComPtr           = ComPtr<ID3D12Device>;
+using DeviceComPtr           = ComPtr<ID3D12Device8>;
 using AdapterComPtr          = ComPtr<IDXGIAdapter1>;
 using FactoryComPtr          = ComPtr<IDXGIFactory7>;
 using SwapchainComPtr        = ComPtr<IDXGISwapChain4>;

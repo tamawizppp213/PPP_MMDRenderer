@@ -30,8 +30,8 @@ public:
 	Screen(int width, int height);
 
 	Screen& GetScreen();
-	int GetScreenWidth ();
-	int GetScreenHeight();
+	static int GetScreenWidth ();
+	static int GetScreenHeight();
 	void SetScreenWidth (int width);
 	void SetScreenHeight(int height);
 	float AspectRatio() const;

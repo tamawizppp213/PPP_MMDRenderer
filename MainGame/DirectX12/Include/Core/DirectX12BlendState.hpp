@@ -57,7 +57,7 @@ enum class BlendStateType
 /****************************************************************************
 *                       FastBlendStateType
 *************************************************************************//**
-*  @fn        enum class FastBlendStateType 
+*  @class     enum class FastBlendStateType 
 *  @brief     Fast color blend type (non-offscreen rendering)
 *****************************************************************************/
 enum class FastBlendStateType
@@ -73,7 +73,7 @@ enum class FastBlendStateType
 /****************************************************************************
 *                       PostEffectBlendStateType
 *************************************************************************//**
-*  @fn        enum class PostEffectBlendStateType
+*  @class        enum class PostEffectBlendStateType
 *  @brief     Post Effect color blend.
 *****************************************************************************/
 enum class PostEffectBlendStateType

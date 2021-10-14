@@ -46,14 +46,15 @@ bool PostEffect::Initialize(PostEffectBlendStateType type)
 	return true;
 }
 
-bool PostEffect::OnResize()
+bool PostEffect::OnResize(int newWidth, int newHeight)
 {
-	Screen screen;
-	if (_colorBuffer[0].ImageSize.x != screen.GetScreenWidth() 
-		|| _colorBuffer[0].ImageSize.y != screen.GetScreenHeight())
+	if (_colorBuffer[0].GetColorBuffer().ImageSize.x != newWidth 
+		|| _colorBuffer[0].GetColorBuffer().ImageSize.y != newHeight)
 	{
-		_colorBuffer[0] = DirectX12::Instance().ResizeOffScreenRenderTarget(0, screen.GetScreenWidth(), screen.GetScreenHeight());
+		_colorBuffer[0].OnResize(newWidth, newHeight);
+		_colorBuffer[1].OnResize(newWidth, newHeight);
 	}
+	
 	return true;
 }
 /****************************************************************************
@@ -64,7 +65,7 @@ bool PostEffect::OnResize()
 *  @param[in] void
 *  @return @@bool
 *****************************************************************************/
-bool PostEffect::Draw()
+bool PostEffect::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
 {
 	/*-------------------------------------------------------------------
 	-               Prepare variable
@@ -78,24 +79,7 @@ bool PostEffect::Draw()
 	/*-------------------------------------------------------------------
 	-               Barrier (Shader Resource->RenderTarget)
 	---------------------------------------------------------------------*/
-	BARRIER barrier1[] = 
-	{ 
-		BARRIER::Transition(directX12.GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE),
-		BARRIER::Transition(_colorBuffer[0].Resource.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST)
-		
-	};
-	commandList->ResourceBarrier(_countof(barrier1), barrier1);
-	commandList->CopyResource(_colorBuffer[0].Resource.Get(), directX12.GetCurrentRenderTarget());
-	BARRIER barrier2[] =
-	{
-		BARRIER::Transition(directX12.GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
-		BARRIER::Transition(_colorBuffer[0].Resource.Get(),
-		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
-	};
-	commandList->ResourceBarrier(_countof(barrier2), barrier2);
+	_colorBuffer[0].CopyToColorBuffer(renderTarget, renderTargetState);
 
 	/*-------------------------------------------------------------------
 	-               Execute commandlist
@@ -104,7 +88,7 @@ bool PostEffect::Draw()
 	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
 	commandList->SetGraphicsRootSignature(_rootSignature.Get());
 	commandList->SetPipelineState        (_pipelineState.Get());
-	commandList->SetGraphicsRootDescriptorTable(0, _colorBuffer[0].GPUHandler);
+	commandList->SetGraphicsRootDescriptorTable(0, _colorBuffer[0].GetColorBuffer().GPUHandler);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers    (0, 1, &vertexBufferView);
 	commandList->IASetIndexBuffer      (&indexBufferView);
@@ -114,20 +98,11 @@ bool PostEffect::Draw()
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 	/*-------------------------------------------------------------------
-	-               Barrier (Shader Resource->RenderTarget)
-	---------------------------------------------------------------------*/
-	BARRIER barrier3[] =
-	{
-		BARRIER::Transition(_colorBuffer[0].Resource.Get(),
-		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COMMON)
-	};
-	commandList->ResourceBarrier(_countof(barrier3), barrier3);
-	/*-------------------------------------------------------------------
 	-               Set Prev Frame Screen Size
 	---------------------------------------------------------------------*/
 	Screen screen;
-	_colorBuffer[0].ImageSize.x = screen.GetScreenWidth();
-	_colorBuffer[0].ImageSize.y = screen.GetScreenHeight();
+	_colorBuffer[0].GetColorBuffer().ImageSize.x = static_cast<float> (screen.GetScreenWidth());
+	_colorBuffer[0].GetColorBuffer().ImageSize.y = static_cast<float>(screen.GetScreenHeight());
 	_vertexBuffer[currentFrameIndex].get()->CopyStart();
 	for (int i = 0; i < 4; ++i)
 	{
@@ -135,6 +110,11 @@ bool PostEffect::Draw()
 	}
 	_vertexBuffer[currentFrameIndex].get()->CopyEnd();
 	return true;
+}
+
+bool PostEffect::Draw()
+{
+	return Draw(DirectX12::Instance().GetCurrentRenderTarget(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 #pragma region Protected Function
 /****************************************************************************
@@ -380,14 +360,36 @@ bool PostEffect::PrepareSprite()
 
 bool PostEffect::PrepareResources()
 {
-	DirectX12::Instance().ResizeOffScreenRenderTargets();
-	_colorBuffer[0] = DirectX12::Instance().GetOffScreenRenderTarget(0);
-	
+	Screen screen;
+	_colorBuffer[0].Create(screen.GetScreenWidth(), screen.GetScreenHeight(), DirectX12::Instance().GetBackBufferRenderFormat());
 	return true;
 }
 
 bool PostEffect::PrepareDescriptors()
 {
+	return true;
+}
+
+bool PostEffect::FinalCopyToResource(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
+{
+	CommandList* commandList = DirectX12::Instance().GetCommandList();
+	BARRIER before[] =
+	{
+		BARRIER::Transition(renderTarget,
+		renderTargetState, D3D12_RESOURCE_STATE_COPY_DEST),
+		BARRIER::Transition(_colorBuffer[_colorBuffer.size() - 1].GetColorBuffer().Resource.Get(),
+		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_SOURCE),
+	};
+	commandList->ResourceBarrier(_countof(before), before);
+	commandList->CopyResource(renderTarget, _colorBuffer[_colorBuffer.size() - 1].GetColorBuffer().Resource.Get());
+	BARRIER after[] =
+	{
+		BARRIER::Transition(renderTarget,
+		D3D12_RESOURCE_STATE_COPY_DEST, renderTargetState),
+		BARRIER::Transition(_colorBuffer[_colorBuffer.size() - 1].GetColorBuffer().Resource.Get(),
+		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COMMON)
+	};
+	commandList->ResourceBarrier(_countof(after), after);
 	return true;
 }
 #pragma endregion Protected Function

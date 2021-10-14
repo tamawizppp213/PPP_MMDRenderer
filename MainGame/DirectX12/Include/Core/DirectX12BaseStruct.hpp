@@ -1,10 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////////
-//              Title:  DirectX12BaseStruct.hpp
-//            Content:  DirectX12 Struct for DirexctX12_Base.hpp 
+//            @fileÅ@Å@  DirectX12BaseStruct.hpp
+//            @brief    DirectX12 Struct for DirexctX12_Base.hpp 
 //                      (For Studying)(Reference: Microsoft d3dx12.h) 
-//             Author:  Toide Yutaro
-//             Create:  2020_11_
+//            @author:  Toide Yutaro
+//            @date  :  2020_11_
 //////////////////////////////////////////////////////////////////////////////////
+#pragma once
 #ifndef DIRECTX12_BASE_STRUCT_HPP
 #define DIRECTX12_BASE_STRUCT_HPP
 //////////////////////////////////////////////////////////////////////////////////
@@ -12,8 +13,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12Core.hpp"
 #include "DirectX12Debug.hpp"
-#include <d3d12.h>
-#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define

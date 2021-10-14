@@ -81,3 +81,4 @@ std::array<const STATIC_SAMPLER_DESC, 6> GetStaticSamplers()
 		samplerAnisotropicClamp
 	};
 }
+

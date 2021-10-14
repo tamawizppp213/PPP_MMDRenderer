@@ -10,12 +10,12 @@
 
 #define CBV_DESC_COUNT 1000
 #define SRV_DESC_COUNT 3800
-#define UAV_DESC_COUNT 100
+#define UAV_DESC_COUNT 1000
 #define DSV_DESC_COUNT 100
 #define RTV_DESC_COUNT 1000
 
 #define OFF_SCREEN_TEXTURE_NUM 4
-//#define USE_HDR 
+#define USE_HDR 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Enum 
 //////////////////////////////////////////////////////////////////////////////////

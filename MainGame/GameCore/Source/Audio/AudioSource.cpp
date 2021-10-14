@@ -27,8 +27,8 @@ float AudioSource::_volumeRatio[] = { DEFAULT_VOLUME ,DEFAULT_VOLUME ,DEFAULT_VO
 AudioSource::AudioSource()
 {
 	_maxVolume = MAX_VOLUME;
-	_maxPitch = XAUDIO2_DEFAULT_FREQ_RATIO;
-	_isLoop = false;
+	_maxPitch  = XAUDIO2_DEFAULT_FREQ_RATIO;
+	_isLoop    = false;
 }
 
 /****************************************************************************
@@ -433,7 +433,7 @@ bool AudioSource::IsExistedSourceVoice()
 {
 	if (_sourceVoice == nullptr)
 	{
-		MessageBox(NULL, L"SourceVoice is nullptr.", L"Warning", MB_ICONWARNING);
+		OutputDebugString(L"SourceVoice is nullptr.");
 		return false;
 	}
 	return true;

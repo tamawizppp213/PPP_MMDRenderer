@@ -13,13 +13,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/GameConstantBufferConfig.hpp"
 #include "GameCore/Include/GameTimer.hpp"
+#include "Screen.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 using ObjectConstantBuffer     = std::unique_ptr<UploadBuffer<ObjectConstants>>;
 using SceneConstantBuffer      = std::unique_ptr<UploadBuffer<SceneConstants>>;
 using MaterialConstantBuffer   = std::unique_ptr<UploadBuffer<MaterialConstants>>;
-using SceneLightConstantBuffer = std::unique_ptr<UploadBuffer<SceneLightConstants>>;
 
 class Camera;
 
@@ -28,7 +28,6 @@ struct FrameResourceCounter
 	UINT MaxObjectCount     = 0;
 	UINT MaxSceneCount      = 0;
 	UINT MaxMaterialCount   = 0;
-	UINT MaxSceneLightCount = 0;
 };
 
 /****************************************************************************
@@ -55,7 +54,7 @@ public:
 	ObjectConstantBuffer     ObjectConstantsBuffer     = nullptr;
 	SceneConstantBuffer      SceneConstantsBuffer      = nullptr;
 	MaterialConstantBuffer   MaterialConstantsBuffer   = nullptr;
-	SceneLightConstantBuffer SceneLightConstantsBuffer = nullptr;
+	
 
 	// Fence value to mark commands up to this fence point.  This lets us
 	// check if these frame resources are still in use by the GPU.

@@ -91,6 +91,7 @@ public:
 
 	// Set frusum
 	void SetLens(float fovVertical, float aspect, float nearZ, float farZ);
+	void SetOrthoLens(float width, float height, float nearZ, float farZ);
 	void SetZRange(float nearZ, float farZ);
 
 	// Define camera space via LookAt parameters

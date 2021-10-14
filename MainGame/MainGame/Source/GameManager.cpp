@@ -21,13 +21,15 @@
 void GameManager::GameStart(GameTimer& gameTimer)
 {
 	_directX12.Initialize(_mainWindow);
+	_directX12.ResetCommandList();
+	_renderingEngine.Initialize(Screen::GetScreenWidth(), Screen::GetScreenHeight());
 	_sceneManager.Initialize(gameTimer);
 }
 
 void GameManager::GameMain()
 {
-	Draw();
 	Update();
+	Draw();
 }
 
 void GameManager::GameEnd()

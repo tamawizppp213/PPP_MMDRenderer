@@ -32,7 +32,7 @@ bool Application::Initialize()
 	if (!InitializeGameAudio())  { return false; }
 	return true;
 }
-float counter = 0.0f;
+
 void Application::Run()
 {
 	MSG message = { 0 };
@@ -102,9 +102,10 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 	  WM_SIZE is sent when the windows size is changed or changing
 	--------------------------------------------------------------------*/
 	case WM_SIZE:
+
 		_screen.SetScreenWidth (LOWORD(lParam));
 		_screen.SetScreenHeight(HIWORD(lParam));
-
+		
 		if (_gameManager.GetDirectX12()->GetDevice())
 		{
 			switch (wParam)
@@ -113,31 +114,36 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 				_isApplicationPaused = true;
 				_isMinimized         = true;
 				_isMaximized         = false;
+
 				break;
 
 			case SIZE_MAXIMIZED:
 				_isApplicationPaused = false;
 				_isMinimized         = false;
 				_isMaximized         = true;
+				_gameManager.GetDirectX12()->OnResize();
 				break;
 
 			case SIZE_RESTORED:
+				
 				// Restoring from minimized state?
 				if (_isMinimized)
 				{
 					_isApplicationPaused = false;
 					_isMinimized         = false;
+					_gameManager.GetDirectX12()->OnResize();
 				}
 				// Restoring from maximized state?
 				else if (_isMaximized)
 				{
 					_isApplicationPaused = false;
 					_isMaximized = false;
+					_gameManager.GetDirectX12()->OnResize();
 				}
 				else if (_isResizing) {}
 				else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
 				{
-					
+					_gameManager.GetDirectX12()->OnResize();
 				}
 				break;
 			default:
@@ -149,6 +155,7 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 	case WM_ENTERSIZEMOVE:
 		_isApplicationPaused = true;
 		_isResizing          = true;
+		
 		_gameTimer.Stop();
 		return 0;
 	
@@ -156,6 +163,7 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 		_isApplicationPaused = false;
 		_isResizing          = false;
 		_gameTimer.Start();
+		_gameManager.GetDirectX12()->OnResize();
 		return 0;
 	/*-----------------------------------------------------------------
 		WM_CLOSE is sent when the window is closed
@@ -173,6 +181,8 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 		PostQuitMessage(0);
 		return 0;
 
+	case WM_MENUCHAR:
+		return MAKELRESULT(0, MNC_CLOSE);
 	/*-----------------------------------------------------------------
 		WM_KEYUP is sent when the key is inputed 
 	--------------------------------------------------------------------*/
@@ -181,7 +191,10 @@ LRESULT Application::WindowMessageProcedure(HWND hwnd, UINT message, WPARAM wPar
 		{
 			PostQuitMessage(0);
 		}
-
+		else if ((int)wParam == VK_F2)
+		{
+			_gameManager.GetDirectX12()->Set4xMsaaState(!_gameManager.GetDirectX12()->Get4xMsaaState());
+		}
 		return 0;
 	}
 

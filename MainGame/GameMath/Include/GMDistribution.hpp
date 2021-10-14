@@ -58,7 +58,7 @@ namespace gm
 		{
 			std::mt19937 engine(_seed());
 			_engine      = engine;
-			_uniformDist = std::uniform_real_distribution<T>(1.0f, 1.0);
+			_uniformDist = std::uniform_real_distribution<T>(0.0f, 1.0f);
 		}
 
 		Random(T min, T max)

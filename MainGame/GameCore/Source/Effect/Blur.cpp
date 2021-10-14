@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////
-///             @file   PostEfect.cpp
-///             @brief  PostEffect 
+///             @file   Blur.cpp
+///             @brief  Blur 
 ///             @author Toide Yutaro
-///             @date   2021_07_08
+///             @date   2021_07_15
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
@@ -21,7 +21,7 @@ using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
-bool Blur::Initialize()
+bool Blur::Initialize(int width, int height, DXGI_FORMAT format)
 {
 	_colorBuffer.resize(4);
 	if (!PrepareRootSignature())     { return false;}
@@ -30,27 +30,26 @@ bool Blur::Initialize()
 	if (!PrepareIndexBuffer())       { return false; }
 	if (!PrepareConstantBuffer())    { return false; }
 	if (!PrepareBlurParameters())    { return false; }
-	if (!PrepareTextureSizeBuffer()) { return false; }
+	if (!PrepareTextureSizeBuffer(width, height))
+	{ return false; }
 	if (!PrepareSprite())            { return false; }
-	if (!PrepareResources())         { return false; }
+	if (!PrepareResources(width, height, format)) { return false; }
 	if (!PrepareDescriptors())       { return false; }
 	return true;
 }
 
-bool Blur::Draw()
+bool Blur::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
 {
 	/*-------------------------------------------------------------------
 	-               Prepare variable
 	---------------------------------------------------------------------*/
-	DirectX12& directX12                      = DirectX12::Instance();
-	CommandList* commandList                  = directX12.GetCommandList();
-	int currentFrameIndex                     = directX12.GetCurrentFrameIndex();
+	DirectX12& directX12 = DirectX12::Instance();
+	CommandList* commandList = directX12.GetCommandList();
+	int currentFrameIndex = directX12.GetCurrentFrameIndex();
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = _meshBuffer[currentFrameIndex].get()->VertexBufferView();
-	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = _meshBuffer[currentFrameIndex].get()->IndexBufferView();
-	
-	ExecuteFirstBarrier(directX12, commandList);
-	commandList->CopyResource(_colorBuffer[0].Resource.Get(), directX12.GetCurrentRenderTarget());
-	ExecuteSecondBarrier(directX12, commandList);
+	D3D12_INDEX_BUFFER_VIEW  indexBufferView = _meshBuffer[currentFrameIndex].get()->IndexBufferView();
+
+	_colorBuffer[0].CopyToColorBuffer(renderTarget, renderTargetState); // copy to back buffer
 
 	/*-------------------------------------------------------------------
 	-               Execute commandlist
@@ -58,60 +57,61 @@ bool Blur::Draw()
 	ID3D12DescriptorHeap* heapList[] = { directX12.GetCbvSrvUavHeap() };
 	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
 	commandList->SetComputeRootSignature(_rootSignature.Get());
-	commandList->SetComputeRootConstantBufferView(0, _weightBuffer.get()->Resource()->GetGPUVirtualAddress()); 
+	commandList->SetComputeRootConstantBufferView(0, _weightBuffer.get()->Resource()->GetGPUVirtualAddress());
 	commandList->SetComputeRootConstantBufferView(1, _textureSizeBuffer.get()->Resource()->GetGPUVirtualAddress());
 
 	/*-------------------------------------------------------------------
 	-               Execute XBlur Command
 	---------------------------------------------------------------------*/
 	commandList->SetPipelineState(_xBlurPipeline.Get());
-	commandList->SetComputeRootDescriptorTable(2, _colorBuffer[0].GPUHandler);// srv,
-	commandList->SetComputeRootDescriptorTable(3, _colorBuffer[1].GPUHandler);//uav
+	commandList->SetComputeRootDescriptorTable(2, _colorBuffer[0].GetGPUSRV());// srv,
+	commandList->SetComputeRootDescriptorTable(3, _colorBuffer[1].GetGPUUAV());//uav
 	commandList->Dispatch(
-		_textureSizeParameter.XBlurTexture[0] / 4, 
+		_textureSizeParameter.XBlurTexture[0] / 4,
 		_textureSizeParameter.XBlurTexture[1] / 4, 1);
-	ExecuteThirdBarrier(directX12, commandList);
 
 	/*-------------------------------------------------------------------
 	-               Execute YBlur Command
 	---------------------------------------------------------------------*/
 	commandList->SetPipelineState(_yBlurPipeline.Get());
-	commandList->SetComputeRootDescriptorTable(2, _colorBuffer[1].GPUHandler);// srv,
-	commandList->SetComputeRootDescriptorTable(3, _colorBuffer[2].GPUHandler);//uav
+	commandList->SetComputeRootDescriptorTable(2, _colorBuffer[1].GetGPUSRV());// srv,
+	commandList->SetComputeRootDescriptorTable(3, _colorBuffer[2].GetGPUUAV());//uav
 	commandList->Dispatch(
 		_textureSizeParameter.YBlurTexture[0] / 4,
 		_textureSizeParameter.YBlurTexture[1] / 4, 1);
-	ExecuteFourthBarrier(directX12, commandList);
 
 	/*-------------------------------------------------------------------
 	-               Execute FinalBlur Command
 	---------------------------------------------------------------------*/
 	commandList->SetPipelineState(_pipelineState.Get());
-	commandList->SetComputeRootDescriptorTable(2, _colorBuffer[2].GPUHandler);// srv,
-	commandList->SetComputeRootDescriptorTable(3, _colorBuffer[3].GPUHandler);//uav
+	commandList->SetComputeRootDescriptorTable(2, _colorBuffer[2].GetGPUSRV());// srv,
+	commandList->SetComputeRootDescriptorTable(3, _colorBuffer[3].GetGPUUAV());//uav
 	commandList->Dispatch(
-		_textureSizeParameter.OriginalTexture[0] / 4, 
+		_textureSizeParameter.OriginalTexture[0] / 4,
 		_textureSizeParameter.OriginalTexture[1] / 4, 1);
 
-	ExecuteFifthBarrier(directX12, commandList);
 
 	/*-------------------------------------------------------------------
 	-               Copy to back buffer
 	---------------------------------------------------------------------*/
-	commandList->CopyResource(directX12.GetCurrentRenderTarget(), _colorBuffer[3].Resource.Get());
-	ExecuteFinalBarrier(directX12, commandList);
+	FinalCopyToResource(renderTarget, renderTargetState);
 	return true;
 }
-
-bool Blur::OnResize()
+bool Blur::Draw()
 {
-	Screen screen;
-	if (_colorBuffer[0].ImageSize.x != screen.GetScreenWidth()
-		|| _colorBuffer[0].ImageSize.y != screen.GetScreenHeight())
+	return Draw(DirectX12::Instance().GetCurrentRenderTarget(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+bool Blur::OnResize(int newWidth, int newHeight)
+{
+	if (_colorBuffer[0].GetColorBuffer().ImageSize.x != newWidth
+		|| _colorBuffer[0].GetColorBuffer().ImageSize.y != newHeight)
 	{
-		PrepareDescriptors();
-		PrepareResources();
-		PrepareTextureSizeBuffer();
+		_colorBuffer[0].OnResize(newWidth, newHeight);
+		_colorBuffer[1].OnResize(newWidth / 2, newHeight);
+		_colorBuffer[2].OnResize(newWidth / 2, newHeight / 2);
+		_colorBuffer[3].OnResize(newWidth , newHeight);
+		PrepareTextureSizeBuffer(newWidth, newHeight);
 	}
 	return true;
 }
@@ -185,13 +185,12 @@ void Blur::UpdateBlurSampling(int xBlurWidthDivision, int xBlurHeightDivision, i
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool Blur::PrepareResources()
+bool Blur::PrepareResources(int width, int height, DXGI_FORMAT format)
 {
-	Screen screen;
-	_colorBuffer[0] = DirectX12::Instance().ResizeOffScreenRenderTarget(0, screen.GetScreenWidth(), screen.GetScreenHeight());
-	_colorBuffer[1] = DirectX12::Instance().ResizeOffScreenRenderTarget(1, screen.GetScreenWidth(), screen.GetScreenHeight());
-	_colorBuffer[2] = DirectX12::Instance().ResizeOffScreenRenderTarget(2, screen.GetScreenWidth() / 2, screen.GetScreenHeight());
-	_colorBuffer[3] = DirectX12::Instance().ResizeOffScreenRenderTarget(3, screen.GetScreenWidth() / 2, screen.GetScreenHeight() / 2);
+	_colorBuffer[0].Create(width, height, format);
+	_colorBuffer[1].Create(width / 2, height, format);
+	_colorBuffer[2].Create(width / 2, height / 2, format);
+	_colorBuffer[3].Create(width, height , format);
 
 	return true;
 }
@@ -242,18 +241,18 @@ bool Blur::PrepareBlurParameters()
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool Blur::PrepareTextureSizeBuffer()
+bool Blur::PrepareTextureSizeBuffer(int width, int height)
 {
 	DirectX12& directX12 = DirectX12::Instance();
 	Screen screen;
 
 	TextureSizeParameter parameter;
-	parameter.OriginalTexture[0] = screen.GetScreenWidth();
-	parameter.OriginalTexture[1] = screen.GetScreenHeight();
-	parameter.XBlurTexture[0]    = screen.GetScreenWidth() / 2;
-	parameter.XBlurTexture[1]    = screen.GetScreenHeight();
-	parameter.YBlurTexture[0]    = screen.GetScreenWidth() / 2;
-	parameter.YBlurTexture[1]    = screen.GetScreenHeight() / 2;
+	parameter.OriginalTexture[0] = width;
+	parameter.OriginalTexture[1] = height;
+	parameter.XBlurTexture[0]    = width / 2;
+	parameter.XBlurTexture[1]    = height;
+	parameter.YBlurTexture[0]    = width / 2;
+	parameter.YBlurTexture[1]    = height / 2;
 	_textureSizeParameter = parameter;
 
 	auto textureSizeBuffer = std::make_unique<UploadBuffer<TextureSizeParameter>>(directX12.GetDevice(), 1, true);
@@ -348,81 +347,4 @@ bool Blur::PreparePipelineState()
 	return true;
 }
 
-void Blur::ExecuteFirstBarrier(DirectX12& directX12, CommandList* commandList)
-{
-	BARRIER barrier[] =
-	{
-		BARRIER::Transition(directX12.GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE),
-		BARRIER::Transition(_colorBuffer[0].Resource.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST)
-	};
-	commandList->ResourceBarrier(_countof(barrier), barrier);
-}
-
-void Blur::ExecuteSecondBarrier(DirectX12& directX12, CommandList* commandList)
-{
-	BARRIER barrier[] =
-	{
-		BARRIER::Transition(directX12.GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST),
-		BARRIER::Transition(_colorBuffer[0].Resource.Get(),
-		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ),
-		BARRIER::Transition(_colorBuffer[1].Resource.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS),
-	};
-	commandList->ResourceBarrier(_countof(barrier), barrier);
-}
-
-void Blur::ExecuteThirdBarrier(DirectX12& directX12, CommandList* commandList)
-{
-	BARRIER barrier[] =
-	{
-		BARRIER::Transition(_colorBuffer[1].Resource.Get(),
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_GENERIC_READ),
-		BARRIER::Transition(_colorBuffer[2].Resource.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS),
-	};
-	commandList->ResourceBarrier(_countof(barrier), barrier);
-}
-
-void Blur::ExecuteFourthBarrier(DirectX12& directX12, CommandList* commandList)
-{
-	BARRIER barrier[] =
-	{
-		BARRIER::Transition(_colorBuffer[2].Resource.Get(),
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_GENERIC_READ),
-		BARRIER::Transition(_colorBuffer[3].Resource.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS),
-	};
-	commandList->ResourceBarrier(_countof(barrier), barrier);
-}
-
-void Blur::ExecuteFifthBarrier(DirectX12& directX12, CommandList* commandList)
-{
-	BARRIER barrier[] =
-	{
-		BARRIER::Transition(_colorBuffer[0].Resource.Get(),
-		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COMMON),
-		BARRIER::Transition(_colorBuffer[1].Resource.Get(),
-		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COMMON),
-		BARRIER::Transition(_colorBuffer[2].Resource.Get(),
-		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COMMON),
-		BARRIER::Transition(_colorBuffer[3].Resource.Get(),
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,  D3D12_RESOURCE_STATE_COPY_SOURCE),
-	};
-	commandList->ResourceBarrier(_countof(barrier), barrier);
-}
-
-void Blur::ExecuteFinalBarrier(DirectX12& directX12, CommandList* commandList)
-{
-	BARRIER barrier[] =
-	{
-		BARRIER::Transition(_colorBuffer[3].Resource.Get(),
-		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COMMON),
-		BARRIER::Transition(directX12.GetCurrentRenderTarget(),
-		D3D12_RESOURCE_STATE_COPY_DEST,  D3D12_RESOURCE_STATE_RENDER_TARGET)
-	};
-	commandList->ResourceBarrier(_countof(barrier), barrier);
-}
 #pragma endregion Protected Function

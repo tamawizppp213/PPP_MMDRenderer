@@ -96,6 +96,8 @@ public:
 		ibv.Format         = IndexFormat;
 		ibv.SizeInBytes    = IndexBufferByteSize;
 
+
+
 		return ibv;
 	}
 

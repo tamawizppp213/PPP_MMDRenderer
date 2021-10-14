@@ -58,6 +58,7 @@ namespace gm
 		INLINE Quaternion& operator*= (Quaternion rhs) { *this = *this * rhs; return *this; }
 		INLINE Quaternion& operator=  (Quaternion&&) = default;
 
+		INLINE bool operator == (const Quaternion& V) const noexcept { DirectX::XMQuaternionEqual(*this, V); };
 		INLINE bool operator == (const Float4& V) const noexcept { DirectX::XMQuaternionEqual(*this, V); };
 		INLINE bool operator != (const Float4& V) const noexcept { DirectX::XMQuaternionNotEqual(*this, V); };
 
@@ -74,6 +75,7 @@ namespace gm
 		INLINE Quaternion(const Vector3& axis, const Scalar& angle)         { _vector = DirectX::XMQuaternionRotationAxis(axis, angle); }
 		INLINE Quaternion(float pitch, float yaw, float roll)               { _vector = DirectX::XMQuaternionRotationRollPitchYaw(pitch, yaw, roll); }
 		INLINE Quaternion(const Vector3& PitchYawRoll)                      { _vector = DirectX::XMQuaternionRotationRollPitchYawFromVector(PitchYawRoll); }
+		INLINE Quaternion(const Vector4& vector)                            { _vector = vector; }
 		INLINE explicit Quaternion(const DirectX::XMMATRIX& rotationMatrix) { _vector = DirectX::XMQuaternionRotationMatrix(rotationMatrix); }
 		INLINE explicit Quaternion(DirectX::FXMVECTOR vec)                  { _vector = vec; }
 		INLINE explicit Quaternion(EIdentityTag)                            { _vector = DirectX::XMQuaternionIdentity(); }
@@ -103,6 +105,13 @@ namespace gm
 	INLINE Quaternion Inverse    (const Quaternion& q)                         { return Quaternion(DirectX::XMQuaternionInverse(q)); }
 	INLINE Quaternion BaryCentric(const Quaternion& v1, const Quaternion& v2, const Quaternion& v3, float wf, float wg) { return Quaternion(DirectX::XMQuaternionBaryCentric(v1, v2, v3, wf, wg)); }
 	INLINE Scalar Dot(const Quaternion& q1, const Quaternion& q2) { return Scalar(DirectX::XMQuaternionDot(q1, q2)); }
-
+	INLINE Vector3    QuaternionRotate(const Quaternion& rotation, const Vector3& v)
+	{
+		Quaternion q = rotation * v;
+		q *= Inverse(rotation);
+		Float4 result = q.ToFloat4();
+		return Vector3(result.x, result.y, result.z);
+	}
+	//INLINE Quaternion Inverse(const Quaternion& q) { return Quaternion(-q); }
 }
 #endif

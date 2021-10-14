@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-using MotionMap = std::unordered_map<std::string, std::vector<VMDKeyFrame>>;
+using MotionMap   = std::unordered_map<std::string, std::vector<VMDKeyFrame>>;
 using MorphingMap = std::unordered_map<std::string, std::vector<VMDKeyFrameMorph>>;
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,6 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	bool LoadVMDFile(const std::wstring& filePath);
-	static float GetYFromXOnBezier(float x, const gm::Float4& controlPoints, UINT8 loop);
 
 	/****************************************************************************
 	**                Public Member Variables

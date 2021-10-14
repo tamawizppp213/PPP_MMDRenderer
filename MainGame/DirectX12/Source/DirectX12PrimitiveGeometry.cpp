@@ -496,6 +496,7 @@ MeshData GeometryGenerator::Grid(float width, float depth, UINT32 rows, UINT32 c
 
 			meshData.Vertices[(UINT64)i * columns + j].UV.x = j * du;
 			meshData.Vertices[(UINT64)i * columns + j].UV.y = i * dv;
+
 		}
 	}
 
@@ -558,7 +559,7 @@ void GeometryGenerator::IsInvertNormal(MeshData& meshData)
 *****************************************************************************/
 void GeometryGenerator::SubDivide(MeshData& meshData)
 {
-	using Vertex = VertexPositionNormalTexture;
+	//using Vertex = VertexPositionNormalTexture;
 
 	// Save a copy of the input geometry
 	MeshData inputCopy = meshData;
@@ -643,12 +644,14 @@ VertexPositionNormalTexture GeometryGenerator::MidPoint(const VertexPositionNorm
 	Vector2 t0 = Vector2(v0.UV);
 	Vector2 t1 = Vector2(v1.UV);
 
+
 	/*-------------------------------------------------------------------
 	-						Calcurate mid point
 	---------------------------------------------------------------------*/
 	Vector3 pos    = 0.5f * (p0 + p1);
 	Vector3 normal = Normalize(0.5f * (n0 + n1));
 	Vector2 uv     = 0.5f * (t0 + t1);
+
 
 	/*-------------------------------------------------------------------
 	-						Set vertex data

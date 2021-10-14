@@ -357,27 +357,5 @@ bool VMDFile::LoadVMDIK(FILE* filePtr)
 	return true;
 }
 
-float VMDFile::GetYFromXOnBezier(float x, const gm::Float4& controlPoints, UINT8 loop)
-{
-	if (controlPoints.x == controlPoints.y && controlPoints.z == controlPoints.w) { return x; }
 
-	float t = x;
-	const float k0 = 1 + 3 * controlPoints.x - 3 * controlPoints.z;
-	const float k1 = 3 * controlPoints.z - 6 * controlPoints.x;
-	const float k2 = 3 * controlPoints.x;
-
-	constexpr float epsilon = 0.0005f;
-
-	for (int i = 0; i < loop; ++i)
-	{
-		auto ft = k0 * t * t * t + k1 * t * t + k2 * t - x;
-
-		if (ft <= epsilon && ft >= -epsilon)break;
-
-		t -= ft / 2;
-	}
-
-	auto r = 1 - t;
-	return t * t * t + 3 * t * t * r * controlPoints.w + 3 * t * r * r * controlPoints.y;
-}
 #pragma endregion Private Function
