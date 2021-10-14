@@ -207,15 +207,29 @@ namespace gm
 		INLINE void SetX(Vector3 x) { _matrix[0] = x; }
 		INLINE void SetY(Vector3 y) { _matrix[1] = y; }
 		INLINE void SetZ(Vector3 z) { _matrix[2] = z; }
+		INLINE void SetRow(int i, Vector3 value){ _matrix[i] = value; }
+		INLINE void SetElement(int row, int column, Scalar value) { _matrix[row].SetElement(column, value); }
 		INLINE Vector3 GetX() const { return _matrix[0]; }
 		INLINE Vector3 GetY() const { return _matrix[1]; }
 		INLINE Vector3 GetZ() const { return _matrix[2]; }
+		INLINE Vector3 GetRow(int i) const { return _matrix[i]; }
+		INLINE Vector3 GetColumn(int i) const { return Vector3(_matrix[0].GetElement(i), _matrix[1].GetElement(i), _matrix[2].GetElement(i)); }
+		INLINE Scalar  GetElement(int row, int column) const { return _matrix[row].GetElement(column); }
 		INLINE operator DirectX::XMMATRIX() const { return DirectX::XMMATRIX(_matrix[0], _matrix[1], _matrix[2], DirectX::XMVectorZero()); }
 
 		INLINE Matrix3 operator* (Scalar scl)         const { return Matrix3(scl * GetX(), scl * GetY(), scl * GetZ()); }
 		INLINE Vector3 operator* (Vector3 vec)        const { return Vector3(DirectX::XMVector3TransformNormal(vec, *this)); }
 		INLINE Matrix3 operator* (const Matrix3& mat) const { return Matrix3(*this * mat.GetX(), *this * mat.GetY(), *this * mat.GetZ()); }
-
+		
+		bool operator == (const Matrix3& M) const noexcept;
+		bool operator != (const Matrix3& M) const noexcept;
+		Matrix3& operator+= (const Matrix3& M) noexcept;
+		Matrix3& operator-= (const Matrix3& M) noexcept;
+		Matrix3& operator*= (const Matrix3& M) noexcept;
+		Matrix3& operator*= (float S)          noexcept;
+		Matrix3& operator/= (float S)          noexcept;
+		Matrix3& operator/= (const Matrix3& M) noexcept;
+		Matrix3 operator+ () const noexcept { return *this; }
 		/****************************************************************************
 		**                Constructor and Destructor
 		*****************************************************************************/
@@ -226,6 +240,8 @@ namespace gm
 		INLINE explicit Matrix3(const DirectX::XMMATRIX& m) { _matrix[0] = Vector3(m.r[0]); _matrix[1] = Vector3(m.r[1]); _matrix[2] = Vector3(m.r[2]); }
 		INLINE explicit Matrix3(EIdentityTag)               { _matrix[0] = Vector3(kXUnitVector); _matrix[1] = Vector3(kYUnitVector); _matrix[2] = Vector3(kZUnitVector); }
 		INLINE explicit Matrix3(EZeroTag)                   { _matrix[0] = _matrix[1] = _matrix[2] = Vector3(kZero); }
+	
+		INLINE Matrix3& operator=(const Matrix3&) = default;
 	private:
 		/****************************************************************************
 		**                Private Function
@@ -235,6 +251,7 @@ namespace gm
 		**                Private Member Variables
 		*****************************************************************************/
 		Vector3 _matrix[3];
+		
 	};
 
 	/****************************************************************************
@@ -271,6 +288,7 @@ namespace gm
 		INLINE void SetY(Vector4 y) { _matrix.r[1] = y; }
 		INLINE void SetZ(Vector4 z) { _matrix.r[2] = z; }
 		INLINE void SetW(Vector4 w) { _matrix.r[3] = w; }
+
 
 		INLINE Float4x4 ToFloat4x4()
 		{
@@ -311,7 +329,7 @@ namespace gm
 			_matrix.r[0] = vector::SetWToZero(mat.GetX());
 			_matrix.r[1] = vector::SetWToZero(mat.GetY());
 			_matrix.r[2] = vector::SetWToZero(mat.GetZ());
-			_matrix.r[3] = vector::CreateWUnitVector();
+			_matrix.r[3] = vector::CreateWUnitVector();    // 0,0,0,1
 		}
 		INLINE Matrix4(const Matrix3& xyz, Vector3 w)
 		{
@@ -343,7 +361,17 @@ namespace gm
 		DirectX::XMMATRIX _matrix;
 	};
 
+	INLINE Matrix3 HadamaldProduct(const Matrix3& a, const Matrix3& b)
+	{
+		Matrix3 result;
+		result.SetX(a.GetX() * b.GetX());
+		result.SetY(a.GetY() * b.GetY());
+		result.SetZ(a.GetZ() * b.GetZ());
+		return result;
+	}
+	INLINE Matrix3 Absolute(const Matrix3& mat) { return Matrix3(Abs(mat.GetX()), Abs(mat.GetY()), Abs(mat.GetZ())); }
 	INLINE Matrix3 Transpose(const Matrix3& mat) { return Matrix3(DirectX::XMMatrixTranspose(mat)); }
+	INLINE Matrix3 InverseMatrix3(const Matrix3& mat) { Matrix4 m(mat);  return Matrix4(DirectX::XMMatrixInverse(nullptr, m)).Get3x3(); }
 	INLINE Matrix3 InverseTranspose(const Matrix3& mat)
 	{
 		const Vector3 x = mat.GetX();
@@ -358,7 +386,29 @@ namespace gm
 		// Return the adjoint / determinant
 		return Matrix3(inv0, inv1, inv2) * rDet;
 	}
+	INLINE Matrix3 Matrix3Identity() { return Matrix3(DirectX::XMMatrixIdentity()); }
+	INLINE Matrix3 ScalingMatrix3(const Vector3& scale) { return Matrix3(DirectX::XMMatrixScalingFromVector(scale)); }
+	INLINE Matrix3 RotationQuaternionMatrix3(const Quaternion& rotation) { return Matrix3(DirectX::XMMatrixRotationQuaternion(rotation)); }
+	INLINE Vector3 Solve33(const Vector3& b, const Matrix3& matrix) 
+	{
+		Vector3 column1 = matrix.GetColumn(0);
+		Vector3 column2 = matrix.GetColumn(1);
+		Vector3 column3 = matrix.GetColumn(2);
 
+		Scalar det = Dot(column1, Cross(column2, column3));
+		if (Abs(det) > FLT_EPSILON) { det = 1.0f / det; }
+		Vector3 x;
+		x.SetX(det * Dot(b, Cross(column2, column3)));
+		x.SetY(det * Dot(column1, Cross(b, column3)));
+		x.SetZ(det * Dot(column1, Cross(column2, b)));
+		return x;
+	}
+	INLINE void GetSkewSymmetricMatrix3(const Vector3& input, Matrix3& matrix)
+	{
+		matrix.SetX(Vector3(0.0f, -input.GetZ(), input.GetY()));
+		matrix.SetY(Vector3(input.GetZ(), 0.0f, -input.GetX()));
+		matrix.SetZ(Vector3(-input.GetY(), input.GetX(), 0.0f));
+	}
 
 	INLINE Scalar  Determinant(const Matrix4& matrix) { return Scalar(DirectX::XMMatrixDeterminant(matrix)); }
 	INLINE Matrix4 Transpose  (const Matrix4& matrix) { return Matrix4(DirectX::XMMatrixTranspose(matrix)); }
@@ -376,6 +426,7 @@ namespace gm
 		if (DirectX::XMMatrixDecompose(&s, &r, &t, matrix)) { return true; }
 		else { return false; }
 	}
+	
 	INLINE Matrix4  MatrixIdentity()   { return Matrix4(DirectX::XMMatrixIdentity()); }
 	INLINE Float4x4 MatrixIdentityF()  { return Matrix4(DirectX::XMMatrixIdentity()).ToFloat4x4(); }
 	INLINE Vector3 TransformVector3(Vector3& vector, Matrix4& matrix) { return Vector3(DirectX::XMVector3Transform(vector, matrix)); }
@@ -475,6 +526,7 @@ namespace gm
 		_matrix.r[1] = DirectX::XMVectorScale(_matrix.r[1], rs);
 		_matrix.r[2] = DirectX::XMVectorScale(_matrix.r[2], rs);
 		_matrix.r[3] = DirectX::XMVectorScale(_matrix.r[3], rs);
+
 		return *this;
 	}
 	INLINE Matrix4& Matrix4::operator/= (const Matrix4& M) noexcept
@@ -543,5 +595,199 @@ namespace gm
 		result.SetW(M.GetW() * S);
 		return result;
 	}
+
+	INLINE bool Matrix3::operator == (const Matrix3& M) const noexcept
+	{
+		return ((Vector3)
+			    _matrix[0] == M._matrix[0]
+			&&  _matrix[1] == M._matrix[1]
+			&&  _matrix[2] == M._matrix[2]);
+	}
+	INLINE bool Matrix3::operator != (const Matrix3& M) const noexcept
+	{
+		return ((Vector3)_matrix[0] != M._matrix[0]
+			|| _matrix[1] != M._matrix[1]
+			|| _matrix[2] != M._matrix[2]) != 0;
+	}
+	INLINE Matrix3& Matrix3::operator+= (const Matrix3& M) noexcept
+	{
+		_matrix[0] += M._matrix[0];
+		_matrix[1] += M._matrix[1];
+		_matrix[2] += M._matrix[2];
+		return *this;
+	}
+	INLINE Matrix3& Matrix3::operator-= (const Matrix3& M) noexcept
+	{
+		_matrix[0] = _matrix[0] - M._matrix[0];
+		_matrix[1] = _matrix[1] - M._matrix[1];
+		_matrix[2] = _matrix[2] - M._matrix[2];
+		return *this;
+	}
+	INLINE Matrix3& Matrix3::operator*= (const Matrix3& M) noexcept
+	{
+		Matrix4 mLeft(*this);
+		Matrix4 mRight(M);
+		Matrix4 result = mLeft * mRight;
+		*this = result.Get3x3();
+		return *this;
+	}
+	INLINE Matrix3& Matrix3::operator*= (float S) noexcept
+	{
+		_matrix[0] = _matrix[0] * S;
+		_matrix[1] = _matrix[1] * S;
+		_matrix[2] = _matrix[2] * S;
+		return *this;
+	}
+	INLINE Matrix3& Matrix3::operator/= (float S) noexcept
+	{
+		assert(S != 0.f);
+
+		float rs = 1.0f / S;
+		_matrix[0] = _matrix[0] * rs;
+		_matrix[1] = _matrix[1] * rs;
+		_matrix[2] = _matrix[2] * rs;
+		return *this;
+	}
+	INLINE Matrix3& Matrix3::operator/= (const Matrix3& M) noexcept
+	{
+		_matrix[0] = (_matrix[0] / M._matrix[0]);
+		_matrix[1] = (_matrix[1] / M._matrix[1]);
+		_matrix[2] = (_matrix[2] / M._matrix[2]);
+		return *this;
+	}
+	INLINE Matrix3 operator+(const Matrix3& M1, const Matrix3& M2) noexcept
+	{
+		Matrix3 result;
+		result.SetX(M1.GetX() + M2.GetX());
+		result.SetY(M1.GetY() + M2.GetY());
+		result.SetZ(M1.GetZ() + M2.GetZ());
+		return result;
+	}
+	INLINE Matrix3 operator-(const Matrix3& M1, const Matrix3& M2) noexcept
+	{
+		Matrix3 result;
+		result.SetX(M1.GetX() - M2.GetX());
+		result.SetY(M1.GetY() - M2.GetY());
+		result.SetZ(M1.GetZ() - M2.GetZ());
+		return result;
+	}
+
+	INLINE Matrix3 operator* (const Matrix3& M, float S) noexcept
+	{
+		Matrix3 result;
+		result.SetX(M.GetX() * S);
+		result.SetY(M.GetY() * S);
+		result.SetZ(M.GetZ() * S);
+		return result;
+	}
+	INLINE Matrix3 operator/ (const Matrix3& M, float S) noexcept
+	{
+		assert(S != 0.0f);
+		float rs = 1.0f / S;
+
+		Matrix3 result;
+		result.SetX(M.GetX() * rs);
+		result.SetY(M.GetY() * rs);
+		result.SetZ(M.GetZ() * rs);
+		return result;
+	}
+	INLINE Matrix3 operator/ (const Matrix3& M1, const Matrix3& M2) noexcept
+	{
+		Matrix3 result;
+		result.SetX(M1.GetX() / M2.GetX());
+		result.SetY(M1.GetY() / M2.GetY());
+		result.SetZ(M1.GetZ() / M2.GetZ());
+		return result;
+	}
+	INLINE Matrix3 operator* (float S, const Matrix3& M) noexcept
+	{
+		Matrix3 result;
+		result.SetX(M.GetX() * S);
+		result.SetY(M.GetY() * S);
+		result.SetZ(M.GetZ() * S);
+		return result;
+	}
+
+	INLINE void Diagonalize(Matrix3& matrix, Matrix3& rotation, float threshold, int maxSteps)
+	{
+		rotation = Matrix3Identity();
+		for (int step = maxSteps; step > 0; step--)
+		{
+			// find off-diagonal element [p][q] with largest magnitude
+			int p = 0;
+			int q = 1;
+			int r = 2;
+			float max = Abs(matrix.GetElement(0,1));
+			float v   = Abs(matrix.GetElement(0,2));
+			if (v > max)
+			{
+				q = 2;
+				r = 1;
+				max = v;
+			}
+			v = Abs(matrix.GetElement(1,2));
+			if (v > max)
+			{
+				p = 1;
+				q = 2;
+				r = 0;
+				max = v;
+			}
+
+			float t = threshold * (Abs(matrix.GetElement(0,0)) + Abs(matrix.GetElement(1,1)) + Abs(matrix.GetElement(2,2)));
+			if (max <= t)
+			{
+				if (max <= FLT_MAX * t)
+				{
+					return;
+				}
+				step = 1;
+			}
+
+			// compute Jacobi rotation J which leads to a zero for element [p][q]
+			float mpq    = matrix.GetElement(p,q);
+			float theta  = (matrix.GetElement(q,q) - matrix.GetElement(p,p) / (2 * mpq));
+			float theta2 = theta * theta;
+			float cos;
+			float sin;
+			if (theta2 * theta2 < float(10 / FLT_EPSILON))
+			{
+				t = (theta >= 0) ? (float)1 / (theta + Sqrt(1 + theta2))
+					: 1.0f / (theta - Sqrt(1 + theta2));
+				cos = 1.0f / Sqrt(1 + t * t);
+				sin = cos * t;
+			}
+			else
+			{
+				// approximation for large theta-value, i.e., a nearly diagonal matrix
+				t = 1 / (theta * (2 + 0.5f / theta2));
+				cos = 1 - 0.5f * t * t;
+				sin = cos * t;
+			}
+
+			// apply rotation to matrix (this = J^T * this * J)
+			matrix.SetElement(p, q, 0);
+			matrix.SetElement(q,p ,0);
+			matrix.SetElement(p,p, matrix.GetElement(p,p) -t * mpq);
+			matrix.SetElement(q,q, matrix.GetElement(q,q) + t * mpq);
+			float mrp = matrix.GetElement(r,p);
+			float mrq = matrix.GetElement(r,q);
+			matrix.SetElement(r, p, cos * mrp - sin * mrq);
+			matrix.SetElement(p, r, cos * mrp - sin * mrq);
+			matrix.SetElement(r, q, cos * mrq + sin * mrp);
+			matrix.SetElement(q, r, cos * mrq + sin * mrp);
+
+			// apply rotation to rot (rot = rot * J)
+			for (int i = 0; i < 3; i++)
+			{
+				Vector3 row = rotation.GetRow(i);
+				mrp = row.GetElement(p);
+				mrq = row.GetElement(q);
+				rotation.SetElement(i,p, cos * mrp - sin * mrq);
+				rotation.SetElement(i,q, cos * mrq + sin * mrp);
+			}
+		}
+	}
+
 }
 #endif

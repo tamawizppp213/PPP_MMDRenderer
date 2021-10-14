@@ -12,17 +12,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "GameCore/Include/HLSLUtility.hpp"
-#include "GameCore/Include/Light/LightType.hpp"
+#include "GameCore/Include/Rendering/LightType.hpp"
 #include "GameMath/Include/GMMatrix.hpp"
 #include <memory>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-#define NUM_POINT_LIGHTS           20
-#define NUM_SPOT_LIGHTS            5
-#define NUM_SHADOWING_POINT_LIGHTS 5
-#define NUM_SHADOWING_SPOT_LIGHTS  5
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Struct
@@ -36,7 +32,8 @@
 struct ObjectConstants
 {
 	hlsl::matrix World            = gm::MatrixIdentityF();
-	hlsl::matrix TextureTransform = gm::MatrixIdentityF();
+	int TextureConfig             = 0;
+	int Padding[2]                = { 0,0 };
 };
 
 /****************************************************************************
@@ -83,25 +80,5 @@ struct MaterialConstants
 	int          TextureConfig      = 0;
 };
 
-/****************************************************************************
-*				  			SceneLightConstants
-*************************************************************************//**
-*  @struct    SceneLightConstants
-*  @brief     SceneLight Infomation per frame
-*****************************************************************************/
-struct SceneLightConstants
-{
-	int PointLightNum;
-	int SpotLightNum;
-	int PointCasterNum;
-	int SpotCasterNum;
 
-	DirectionalLight Directional;
-	hlsl::matrix     ShadowViewDirectional;
-	PointLight       PointLights [NUM_POINT_LIGHTS];
-	PointLight       PointCasters[NUM_SHADOWING_SPOT_LIGHTS];
-	SpotLight        SpotLights  [NUM_SPOT_LIGHTS];
-	SpotLight        SpotCasters [NUM_SHADOWING_SPOT_LIGHTS];
-	hlsl::matrix     ShadowViews [NUM_SHADOWING_SPOT_LIGHTS];
-};
 #endif

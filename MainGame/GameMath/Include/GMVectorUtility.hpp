@@ -31,9 +31,19 @@
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 #define INLINE __forceinline
+#define ALIGNED16(a) __declspec(align(16)) a
+#define ALIGNED64(a) __declspec(align(64)) a
+#define ALIGNED128(a) __declspec (align(128)) a
+
 
 namespace gm
 {
+    constexpr float GM_HALF_PI = DirectX::XM_PIDIV2;
+    constexpr float GM_PI      = DirectX::XM_PI;
+    constexpr float GM_2PI     = DirectX::XM_2PI;
+    constexpr float GM_RADS_PER_DEG(GM_2PI / 360.0f);
+    constexpr float GM_DEGS_PER_RAD(360.0f / GM_2PI);
+
 	namespace utils
 	{
 		template <typename T> __forceinline T AlignUpWithMask(T value, size_t mask)
@@ -94,6 +104,34 @@ namespace gm
             return value == 0 ? 0 : 1 << Log2(value);
         }
 
+        template <typename T>
+        T* AlignmentPointer(T* unAlignedPtr, size_t alignment)
+        {
+            struct ConvertPointerSizeT
+            {
+                union
+                {
+                    T* ptr;
+                    size_t integer;
+                };
+            };
+
+            ConvertPointerSizeT converter;
+
+            const size_t bitMask = ~(alignment - 1);
+            converter.ptr = unAlignedPtr;
+            converter.integer += alignment - 1;
+            converter.integer &= bitMask;
+            return converter.ptr;
+        }
+
+        ///rudimentary class to provide type info
+        struct TypedObject
+        {
+            TypedObject(int objectType) : ObjectType(objectType) { }
+            int ObjectType;
+            inline int GetObjectType() const { return ObjectType; }
+        };
 	}
 
     namespace vector
@@ -166,6 +204,7 @@ namespace gm
         {
             return _mm_movelh_ps(vec, _mm_unpackhi_ps(vec, SplatOne()));
         }
+
 #endif
 
 #else // !_XM_SSE_INTRINSICS_

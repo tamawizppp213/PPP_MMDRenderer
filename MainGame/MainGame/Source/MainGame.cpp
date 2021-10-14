@@ -1,8 +1,6 @@
 ﻿#include "MainGame/Include/Application.hpp"
-#include <stdlib.h>
 #include <iostream>
 #include <Windows.h>
-#include "GameCore/Include/Audio/AudioSource3D.hpp"
 
 #ifdef _DEBUG
 int main()

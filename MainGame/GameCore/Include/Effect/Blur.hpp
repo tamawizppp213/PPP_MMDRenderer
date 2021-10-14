@@ -43,15 +43,17 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize();
-	bool OnResize() override;
+	bool Initialize(int width, int height, DXGI_FORMAT format);
+	bool OnResize(int newWidth, int newHeight) override;
 	bool Draw()     override;
+	bool Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState = D3D12_RESOURCE_STATE_COMMON);
 
 	void UpdateWeightsTable(float sigma);
 	void UpdateBlurSampling(int xBlurWidthDivision, int xBlurHeightDivision, int yBlurWidthDivision, int yBlurHeightDivision); // substitute for division count;
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	ColorBuffer& GetHalfDownSamplingColorBuffer() { return _colorBuffer[_colorBuffer.size() - 2]; }
 
 	/****************************************************************************
 	**                Constructor and Destructor
@@ -67,19 +69,13 @@ protected:
 	/****************************************************************************
 	**                Protected Function
 	*****************************************************************************/
-	bool PrepareResources();
+	bool PrepareResources(int width, int height, DXGI_FORMAT format);
 	bool PrepareDescriptors();
 	bool PrepareBlurParameters();
-	bool PrepareTextureSizeBuffer();
+	bool PrepareTextureSizeBuffer(int width, int height);
 	bool PrepareRootSignature();
 	bool PreparePipelineState();
 
-	void ExecuteFirstBarrier(DirectX12& directX12, CommandList* commandList);
-	void ExecuteSecondBarrier(DirectX12& directX12, CommandList* commandList);
-	void ExecuteThirdBarrier(DirectX12& directX12, CommandList* commandList);
-	void ExecuteFourthBarrier(DirectX12& directX12, CommandList* commandList);
-	void ExecuteFifthBarrier(DirectX12& directX12, CommandList* commandList);
-	void ExecuteFinalBarrier(DirectX12& directX12, CommandList* commandList);
 	/****************************************************************************
 	**                Protected Member Variables
 	*****************************************************************************/

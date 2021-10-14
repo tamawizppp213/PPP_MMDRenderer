@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-DirectX::XMMATRIX g_ProjViewMatrix = DirectX::XMMatrixIdentity();
+gm::Matrix4 g_ProjViewMatrix = gm::MatrixIdentity();
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
@@ -58,8 +58,8 @@ void Title::Draw()
 
 void Title::Terminate()
 {
-	_fader->Finalize();
-	delete _fader; _fader = nullptr;
+	//_fader->Finalize();
+	//delete _fader; _fader = nullptr;
 }
 
 #pragma region Protected Function
@@ -95,7 +95,7 @@ bool Title::InitializeDirectX12(GameTimer& gameTimer)
 bool Title::InitializeCoordinates()
 {
 	Screen screen;
-	g_ProjViewMatrix = DirectX::XMMatrixOrthographicLH(
+	g_ProjViewMatrix = gm::OrthographicLH(
 		(float)screen.GetScreenWidth(),
 		(float)screen.GetScreenHeight(),
 		0.0f,
@@ -114,12 +114,12 @@ bool Title::InitializeCoordinates()
 *****************************************************************************/
 bool Title::InitializeFader()
 {
-	_fader = new Fader();
+	/*_fader = new Fader();
 	_fader->Initialize();
 	_fader->StartFadeIn(1.0f, 2.0f);
 
 	Screen screen;
-	_fader->SetSpriteSize((float)screen.GetScreenWidth(), (float)screen.GetScreenHeight());
+	_fader->SetSpriteSize((float)screen.GetScreenWidth(), (float)screen.GetScreenHeight());*/
 	return true;
 }
 

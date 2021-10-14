@@ -44,6 +44,17 @@ enum class TextureType : UINT
 	RayTracing_Acceleration_Structure = 11
 };
 
+enum class SaveFormat
+{
+	BMP  = 1,
+	JPEG = 2,
+	PNG  = 3,
+	TIFF = 4,
+	GIF  = 5,
+	WMP  = 6,
+	ICO  = 7
+};
+
 /****************************************************************************
 *				  		TextureTable (Singleton) 
 *************************************************************************//**
@@ -103,6 +114,7 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	void LoadTexture(const std::wstring& filePath, Texture& texture, TextureType type = TextureType::Texture2D );
+
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

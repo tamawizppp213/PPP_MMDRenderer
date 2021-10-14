@@ -30,7 +30,7 @@
 *					SpriteRenderer
 *************************************************************************//**
 *  @struct    SpriteRenderer
-*  @brief     SpriteRenderer
+*  @brief     SpriteRenderer (screen center is origin point. and x, y, from -1 to 1)
 *****************************************************************************/
 class SpriteRenderer
 {
@@ -53,7 +53,10 @@ public:
 	*****************************************************************************/
 	SpriteRenderer();
 	~SpriteRenderer();
-
+	SpriteRenderer(const SpriteRenderer&)            = delete; // prohibit copy
+	SpriteRenderer& operator=(const SpriteRenderer&) = delete;
+	SpriteRenderer(SpriteRenderer&&)                 = default; // arrow move
+	SpriteRenderer& operator=(SpriteRenderer&&)      = default;
 private:
 	/****************************************************************************
 	**                Private Function
@@ -74,8 +77,8 @@ private:
 	std::vector<Texture>    _textures;
 	std::vector<VertexPositionNormalColorTexture> _vertices;
 	gm::Matrix4       _projectionViewMatrix;
-	std::shared_ptr<UploadBuffer<VertexPositionNormalColorTexture>> _dynamicVertexBuffer[FRAME_BUFFER_COUNT];
-	std::shared_ptr<UploadBuffer<gm::Matrix4>> _constantBuffer = nullptr;
+	std::unique_ptr<UploadBuffer<VertexPositionNormalColorTexture>> _dynamicVertexBuffer[FRAME_BUFFER_COUNT];
+	std::unique_ptr<UploadBuffer<gm::Matrix4>> _constantBuffer = nullptr;
 	
 	int _spriteStackCount = 0;
 	int _drawCallNum = 0;

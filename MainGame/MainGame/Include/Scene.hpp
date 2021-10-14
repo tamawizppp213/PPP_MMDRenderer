@@ -14,12 +14,16 @@
 #include "DirectX12/Include/Core/DirectX12Base.hpp"
 #include "GameCore/Include/Input/GameInput.hpp"
 #include "GameCore/Include/GameTimer.hpp"
-#include "GameCore/Include/Sprite/Fade.hpp"
+#include <memory>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+class Fader;
+class SpriteRenderer;
 
+using FaderPtr = std::unique_ptr<Fader>;
+using SpriteRendererPtr = std::unique_ptr<SpriteRenderer>;
 //////////////////////////////////////////////////////////////////////////////////
 //                              SceneState
 //////////////////////////////////////////////////////////////////////////////////
@@ -59,12 +63,13 @@ protected:
 	/****************************************************************************
 	**                Protected Member Variables
 	*****************************************************************************/
-	DirectX12&        _directX12   = DirectX12::Instance();
-	DeviceComPtr      _device      = nullptr;
-	CommandListComPtr _commandList = nullptr;
-	GameInput&        _gameInput   = GameInput::Instance();
-	GameTimer*        _gameTimer   = nullptr;
-	Fader*            _fader       = nullptr;
+	DirectX12&        _directX12      = DirectX12::Instance();
+	DeviceComPtr      _device         = nullptr;
+	CommandListComPtr _commandList    = nullptr;
+	GameInput&        _gameInput      = GameInput::Instance();
+	GameTimer*        _gameTimer      = nullptr;
+	FaderPtr          _fader          = nullptr;
+	SpriteRendererPtr _spriteRenderer = nullptr;
 private:
 	/****************************************************************************
 	**                Private Function

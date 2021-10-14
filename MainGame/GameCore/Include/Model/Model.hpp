@@ -14,13 +14,16 @@
 #include "DirectX12/Include/Core/DirectX12Config.hpp"
 #include "DirectX12/Include/Core/DirectX12MeshBuffer.hpp"
 #include "GameCore/Include/GameConstantBufferConfig.hpp"
+#include "GameCore/Include/Core/GameActor.hpp"
 #include "GameMath/Include/GMTransform.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-class DefaultModel
+
+class DefaultModel : public GameActor
 {
+	using ModelObject = std::unique_ptr<UploadBuffer<ObjectConstants>>;
 public:
 	/****************************************************************************
 	**                Public Function
@@ -30,16 +33,25 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	MeshBuffer& GetCurrentMeshBuffer();
+	UploadBuffer<ObjectConstants>* GetModelWorldInfo() const { return _modelObject.get(); }
+
+	void EnableAmbientOcculusionMap(bool enabled) { _worldInfo.TextureConfig = enabled; }
 
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-
+	DefaultModel()                               = default;
+	DefaultModel(const DefaultModel&)            = default;
+	DefaultModel& operator=(const DefaultModel&) = default;
+	DefaultModel(DefaultModel&&)                 = default;
+	DefaultModel& operator=(DefaultModel&&)      = default;
+	~DefaultModel();
 protected:
 	/****************************************************************************
 	**                ProtectedFunction
 	*****************************************************************************/
-	bool PrepareVertexBuffer() { return true; } ;
+	bool PrepareVertexBuffer() { return true; };
 	bool PrepareIndexBuffer() { return true; };
 
 	/****************************************************************************
@@ -54,6 +66,7 @@ protected:
 	-           Object Property
 	---------------------------------------------------------------------*/
 	ObjectConstants           _worldInfo;
-	gm::Transform             _transform;
+	ModelObject               _modelObject = nullptr;
+	
 };
 #endif

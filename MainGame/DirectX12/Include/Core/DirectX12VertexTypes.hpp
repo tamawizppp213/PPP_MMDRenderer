@@ -329,6 +329,7 @@ public:
 	gm::Float3 Normal;   /// Normal
 	gm::Float2 UV;       /// Texture
 	gm::Float3 Tangent;  /// Tangent
+	gm::Float3 Binormal; // Binormal
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -341,16 +342,17 @@ public:
 		: Position(position), Normal(normal), UV(uv), Tangent(tangent)
 	{
 	};
-	VertexPositionNormalTextureTangent(DirectX::FXMVECTOR position, DirectX::FXMVECTOR normal, DirectX::FXMVECTOR uv, DirectX::FXMVECTOR tangent)
+	VertexPositionNormalTextureTangent(DirectX::FXMVECTOR position, DirectX::FXMVECTOR normal, DirectX::FXMVECTOR uv, DirectX::FXMVECTOR tangent, DirectX::FXMVECTOR binormal)
 	{
 		DirectX::XMStoreFloat3(&this->Position, position);
 		DirectX::XMStoreFloat3(&this->Normal, normal);
 		DirectX::XMStoreFloat2(&this->UV, uv);
 		DirectX::XMStoreFloat3(&this->Tangent, tangent);
+		DirectX::XMStoreFloat3(&this->Binormal, binormal);
 	}
 
 private:
-	static constexpr unsigned int InputElementCount = 4;
+	static constexpr unsigned int InputElementCount = 5;
 	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
 };
 #endif

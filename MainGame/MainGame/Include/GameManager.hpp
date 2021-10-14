@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "SceneManager.hpp"
 #include "DirectX12/Include/Core/DirectX12Base.hpp"
+#include "GameCore/Include/Core/RenderingEngine.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -66,8 +67,9 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	SceneManager& _sceneManager = SceneManager::Instance();
-	DirectX12&    _directX12    = DirectX12::Instance();
+	SceneManager& _sceneManager       = SceneManager::Instance();
+	DirectX12&    _directX12          = DirectX12::Instance();
+	RenderingEngine& _renderingEngine = RenderingEngine::Instance();
 	HWND _mainWindow = nullptr;
 	
 

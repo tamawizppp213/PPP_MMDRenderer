@@ -29,7 +29,6 @@ FrameResource::FrameResource(const FrameResourceCounter& frameResourceCounter, c
 	this->ObjectConstantsBuffer     = std::make_unique<UploadBuffer<ObjectConstants>>    (device, frameResourceCounter.MaxObjectCount    , true);
 	this->SceneConstantsBuffer      = std::make_unique<UploadBuffer<SceneConstants>>     (device, frameResourceCounter.MaxSceneCount     , true);
 	this->MaterialConstantsBuffer   = std::make_unique<UploadBuffer<MaterialConstants>>  (device, frameResourceCounter.MaxMaterialCount  , true);
-	this->SceneLightConstantsBuffer = std::make_unique<UploadBuffer<SceneLightConstants>>(device, frameResourceCounter.MaxSceneLightCount, true);
 	this->_gameTimer                = &gameTimer;
 	
 }

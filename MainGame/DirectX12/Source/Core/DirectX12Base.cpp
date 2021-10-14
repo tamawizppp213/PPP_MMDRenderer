@@ -15,6 +15,7 @@
 #include "GameMath/Include/GMColor.hpp"
 #include <vector>
 
+
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "dxcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -22,11 +23,18 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "xinput.lib")
-
+#pragma comment(lib, "legacy_stdio_definitions.lib")
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+enum class GPUVender
+{
+	NVidia,
+	AMD,
+	Intel,
+	CountOfGPUVender
+};
 
 //////////////////////////////////////////////////////////////////////////////////
 //                            Implement
@@ -68,13 +76,14 @@ void DirectX12::OnResize()
 	-              Flush before chainging any resources
 	---------------------------------------------------------------------*/
 	FlushCommandQueue();
+
 	//ResetCommandList();
 	ThrowIfFailed(_commandList->Reset(_commandAllocator[_currentFrameIndex].Get(), nullptr));
 	
 	/*-------------------------------------------------------------------
 	-              Release the previous resources
 	---------------------------------------------------------------------*/
-	for (int i = 0; i < (int)RenderTargetType::CountOfRenderTarget; ++i)
+	for (int i = 0; i <FRAME_BUFFER_COUNT; ++i)
 	{
 		_renderTargetList[i].Reset();
 	}
@@ -169,7 +178,26 @@ void DirectX12::CompleteRendering()
 	FlushCommandQueue();
 }
 
-
+void DirectX12::CopyTextureToBackBuffer(Resource* resource, D3D12_RESOURCE_STATES resourceState)
+{
+	BARRIER before[] =
+	{
+		BARRIER::Transition(GetCurrentRenderTarget(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST),
+		BARRIER::Transition(resource,
+		resourceState, D3D12_RESOURCE_STATE_COPY_SOURCE),
+	};
+	_commandList->ResourceBarrier(_countof(before), before);
+	_commandList->CopyResource(GetCurrentRenderTarget(), resource);
+	BARRIER after[] =
+	{
+		BARRIER::Transition(GetCurrentRenderTarget(),
+		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET),
+		BARRIER::Transition(resource,
+		D3D12_RESOURCE_STATE_COPY_SOURCE, resourceState)
+	};
+	_commandList->ResourceBarrier(_countof(after), after);
+}
 #pragma endregion Public Function
 
 #pragma region Private Function 
@@ -225,7 +253,7 @@ void DirectX12::LoadPipeLine()
 	---------------------------------------------------------------------*/
 	CreateDescriptorHeap();
 	BuildResourceAllocator();
-	for(int i = 0; i < (int)RenderTargetType::CountOfRenderTarget; ++i){ IssueViewID(HeapType::RTV); }
+	for(int i = 0; i <FRAME_BUFFER_COUNT; ++i){ IssueViewID(HeapType::RTV); }
 	IssueViewID(HeapType::DSV);
 
 
@@ -247,7 +275,6 @@ void DirectX12::LoadPipeLine()
 void DirectX12::LoadAssets()
 {
 	InitializeShaderBlendData();
-	BuildOffScreenRenderingView();
 	OnResize();
 }
 
@@ -282,6 +309,33 @@ void DirectX12::FlushCommandQueue()
 	_currentFrameIndex = _swapchain->GetCurrentBackBufferIndex();
 }
 
+void DirectX12::FlushCommandQueuesOnResize()
+{
+	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i)
+	{
+		++_currentFenceValue[i];
+		ThrowIfFailed(_commandQueue->Signal(_fence.Get(), _currentFenceValue[i]));
+
+		/*-------------------------------------------------------------------
+		-   Wait until the GPU has completed commands up to this fence point
+		---------------------------------------------------------------------*/
+		if (_fence->GetCompletedValue() < _currentFenceValue[i])
+		{
+			_fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
+			ThrowIfFailed(_fence->SetEventOnCompletion(_currentFenceValue[i], _fenceEvent));
+
+			if (_fenceEvent != 0)
+			{
+				WaitForSingleObject(_fenceEvent, INFINITE);
+				CloseHandle(_fenceEvent);
+			}
+
+		}
+	}
+	
+	_currentFrameIndex = _swapchain->GetCurrentBackBufferIndex();
+}
+
 #pragma region Initialize
 /****************************************************************************
 *                     CreateDevice
@@ -303,14 +357,51 @@ void DirectX12::CreateDevice()
 	-                   Search Hardware Adapter
 	---------------------------------------------------------------------*/
 	AdapterComPtr adapter;
+	AdapterComPtr adapterVender[(int)GPUVender::CountOfGPUVender];
+	size_t maxVideoMemory[(int)GPUVender::CountOfGPUVender] = {0};
 	for (int i = 0; _dxgiFactory->EnumAdapters1(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
 	{
 		DXGI_ADAPTER_DESC1 adapterDesc;
 		adapter->GetDesc1(&adapterDesc);
 		if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) { continue; }
-		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, __uuidof(ID3D12Device), nullptr))) { break; };
+		if (FAILED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, __uuidof(ID3D12Device), nullptr))) { continue; }
+		if (wcsstr(adapterDesc.Description, L"NVIDIA") != nullptr)
+		{
+			if (adapterDesc.DedicatedVideoMemory > maxVideoMemory[(int)GPUVender::NVidia])
+			{
+				if (adapterVender[(int)GPUVender::NVidia]) { adapterVender[(int)GPUVender::NVidia]->Release(); }
+				adapterVender[(int)GPUVender::NVidia] = adapter;
+				adapterVender[(int)GPUVender::NVidia]->AddRef();
+			}
+		}
+		else if (wcsstr(adapterDesc.Description, L"AMD") != nullptr)
+		{
+			if (adapterDesc.DedicatedVideoMemory > maxVideoMemory[(int)GPUVender::AMD])
+			{
+				if (adapterVender[(int)GPUVender::AMD]) { adapterVender[(int)GPUVender::AMD]->Release(); }
+				adapterVender[(int)GPUVender::AMD] = adapter;
+				adapterVender[(int)GPUVender::AMD]->AddRef();
+			}
+		}
+		else if (wcsstr(adapterDesc.Description, L"Intel") != nullptr)
+		{
+			if (adapterDesc.DedicatedVideoMemory > maxVideoMemory[(int)GPUVender::Intel])
+			{
+				if (adapterVender[(int)GPUVender::Intel]) { adapterVender[(int)GPUVender::Intel]->Release(); }
+				adapterVender[(int)GPUVender::Intel] = adapter;
+				adapterVender[(int)GPUVender::Intel]->AddRef();
+			}
+		}
+		//adapter->Release();
 	}
-	_useAdapter = adapter.Detach();
+	for (int i = 0; i < (int)GPUVender::CountOfGPUVender; ++i)
+	{
+		if (adapterVender[i] != nullptr)
+		{
+			_useAdapter = adapterVender[i].Detach();
+			break;
+		}
+	}
 
 	/*-------------------------------------------------------------------
 	-                   Create Hardware Device
@@ -336,6 +427,13 @@ void DirectX12::CreateDevice()
 		_isWarpAdapter = true;
 	}
 
+	for (int i = 0; i < (int)GPUVender::CountOfGPUVender; ++i)
+	{
+		if (adapterVender[i] != nullptr)
+		{
+			adapterVender[i]->Release();
+		}
+	}
 }
 
 /****************************************************************************
@@ -505,187 +603,8 @@ void DirectX12::BuildRenderTargetView()
 		ThrowIfFailed(_swapchain->GetBuffer(i, IID_PPV_ARGS(&_renderTargetList[i])));
 		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, _rtvAllocator.GetCPUDescHandler(i));
 	}
-	for (int i = FRAME_BUFFER_COUNT; i < (int)RenderTargetType::CountOfRenderTarget; ++i)
-	{
-		ThrowIfFailed(_swapchain->GetBuffer(0, IID_PPV_ARGS(&_renderTargetList[i])));
-		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, _rtvAllocator.GetCPUDescHandler(i));
-	}
+
 	
-}
-
-/****************************************************************************
-*							BuildOddScreenRenderingView
-*************************************************************************//**
-*  @fn        void DirectX12::BuildRenderTargetView(void)
-*  @brief     Build off screen rendering color buffer
-*  @param[in] void
-*  @return 　　void
-*****************************************************************************/
-void DirectX12::BuildOffScreenRenderingView()
-{
-	// for off screen rendering
-	D3D12_RENDER_TARGET_VIEW_DESC colorBufferDesc = {};
-	colorBufferDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	colorBufferDesc.Format        = _backBufferFormat;
-	_device->CreateRenderTargetView(_renderTargetList[(int)RenderTargetType::ColorBuffer].Get(), &colorBufferDesc, _rtvAllocator.GetCPUDescHandler((int)RenderTargetType::ColorBuffer));
-
-	D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
-	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(_backBufferFormat,_screen.GetScreenWidth() , (UINT)_screen.GetScreenHeight(), 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-	for (int i = 0; i < OFF_SCREEN_TEXTURE_NUM; ++i)
-	{
-		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateCommittedResource(
-			&heapProperty,
-			D3D12_HEAP_FLAG_NONE,
-			&resourceDesc,
-			D3D12_RESOURCE_STATE_COMMON,
-			nullptr,
-			IID_PPV_ARGS(&_offScreenRenderTarget[i].Resource)));
-
-		/*-------------------------------------------------------------------
-		-			     Set SRV
-		---------------------------------------------------------------------*/
-		UINT id = IssueViewID(HeapType::SRV);
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		srvDesc.Format = _backBufferFormat;
-		srvDesc.Shader4ComponentMapping       = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension                 = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels           = 1;
-		srvDesc.Texture2D.PlaneSlice          = 0;
-		srvDesc.Texture2D.MostDetailedMip     = 0;
-		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-		_device->CreateShaderResourceView(
-			_offScreenRenderTarget[i].Resource.Get(), &srvDesc,
-			GetCPUResourceView(HeapType::SRV, id));
-		_offScreenRenderTarget[i].GPUHandler = GetGPUResourceView(HeapType::SRV, id);
-		_offScreenRenderTarget[i].ImageSize.x = _screen.GetScreenWidth();
-		_offScreenRenderTarget[i].ImageSize.y = _screen.GetScreenHeight();
-		_offScreenRenderTarget[i].Format = _backBufferFormat;
-
-		/*-------------------------------------------------------------------
-		-			     Set UAV 
-		---------------------------------------------------------------------*/
-		UINT uavID = IssueViewID(HeapType::UAV);
-		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-		uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
-		uavDesc.Format               = _backBufferFormat;
-		uavDesc.Texture2D.MipSlice   = 0;
-		uavDesc.Texture2D.PlaneSlice = 0;
-		_device->CreateUnorderedAccessView(
-			_offScreenRenderTarget[i].Resource.Get(), nullptr, 
-			&uavDesc, GetCPUResourceView(HeapType::UAV, uavID));
-	}
-
-}
-
-/****************************************************************************
-*						ResizeOffScreenRenderTarget
-*************************************************************************//**
-*  @fn        Texture DirectX12::ResizeOffScreenRenderTarget(UINT index)
-*  @brief     Resize Off Screen Render Target
-*  @param[in] UINT index
-*  @return 　　void
-*****************************************************************************/
-Texture DirectX12::ResizeOffScreenRenderTarget(UINT index, int width, int height)
-{
-	if (index >= OFF_SCREEN_TEXTURE_NUM)
-	{
-		OutputDebugString(L"Error! max offscreen texture num exceeds.\n");
-		index = OFF_SCREEN_TEXTURE_NUM - 1;
-	}
-	D3D12_RENDER_TARGET_VIEW_DESC colorBufferDesc = {};
-	colorBufferDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	colorBufferDesc.Format = _backBufferFormat;
-	_device->CreateRenderTargetView(_renderTargetList[(int)RenderTargetType::ColorBuffer].Get(), &colorBufferDesc, _rtvAllocator.GetCPUDescHandler((int)RenderTargetType::ColorBuffer));
-
-	D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
-	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(_backBufferFormat, _screen.GetScreenWidth(), (UINT)_screen.GetScreenHeight(), 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-
-	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateCommittedResource(
-		&heapProperty,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_COMMON,
-		nullptr,
-		IID_PPV_ARGS(&_offScreenRenderTarget[index].Resource)));
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format = _backBufferFormat;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels  = 1;
-	srvDesc.Texture2D.PlaneSlice = 0;
-	srvDesc.Texture2D.MostDetailedMip     = 0;
-	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-	_device->CreateShaderResourceView(
-		_offScreenRenderTarget[index].Resource.Get(), &srvDesc,
-		GetCPUResourceView(HeapType::SRV, index));
-	_offScreenRenderTarget[index].GPUHandler = GetGPUResourceView(HeapType::SRV, index);
-	_offScreenRenderTarget[index].ImageSize.x = _screen.GetScreenWidth();
-	_offScreenRenderTarget[index].ImageSize.y = _screen.GetScreenHeight();
-	_offScreenRenderTarget[index].Format = _backBufferFormat;
-
-	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-	uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
-	uavDesc.Texture2D.MipSlice   = 0;
-	uavDesc.Texture2D.PlaneSlice = 0;
-	uavDesc.Format = _backBufferFormat;
-	_device->CreateUnorderedAccessView(
-		_offScreenRenderTarget[index].Resource.Get(), nullptr,
-		&uavDesc, GetCPUResourceView(HeapType::UAV, index));
-
-	return _offScreenRenderTarget[index];
-}
-
-void DirectX12::ResizeOffScreenRenderTargets()
-{
-
-	D3D12_RENDER_TARGET_VIEW_DESC colorBufferDesc = {};
-	colorBufferDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	colorBufferDesc.Format = _backBufferFormat;
-	_device->CreateRenderTargetView(_renderTargetList[(int)RenderTargetType::ColorBuffer].Get(), &colorBufferDesc, _rtvAllocator.GetCPUDescHandler((int)RenderTargetType::ColorBuffer));
-
-	D3D12_HEAP_PROPERTIES heapProperty = HEAP_PROPERTY(D3D12_HEAP_TYPE_DEFAULT);
-	D3D12_RESOURCE_DESC resourceDesc = RESOURCE_DESC::Texture2D(_backBufferFormat, _screen.GetScreenWidth(), (UINT)_screen.GetScreenHeight(), 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-	for (int i = 0; i < OFF_SCREEN_TEXTURE_NUM; ++i)
-	{
-		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateCommittedResource(
-			&heapProperty,
-			D3D12_HEAP_FLAG_NONE,
-			&resourceDesc,
-			D3D12_RESOURCE_STATE_COMMON,
-			nullptr,
-			IID_PPV_ARGS(&_offScreenRenderTarget[i].Resource)));
-
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		srvDesc.Format = _backBufferFormat;
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = 1;
-		srvDesc.Texture2D.PlaneSlice = 0;
-		srvDesc.Texture2D.MostDetailedMip = 0;
-		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-		_device->CreateShaderResourceView(
-			_offScreenRenderTarget[i].Resource.Get(), &srvDesc,
-			GetCPUResourceView(HeapType::SRV, i));
-
-		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-		uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
-		uavDesc.Texture2D.MipSlice   = 0;
-		uavDesc.Texture2D.PlaneSlice = 0;
-		uavDesc.Format = _backBufferFormat;
-		_device->CreateUnorderedAccessView(
-			_offScreenRenderTarget[i].Resource.Get(), nullptr,
-			&uavDesc, GetCPUResourceView(HeapType::UAV, i));
-		_offScreenRenderTarget[i].GPUHandler = GetGPUResourceView(HeapType::SRV, i);
-		_offScreenRenderTarget[i].ImageSize.x = _screen.GetScreenWidth();
-		_offScreenRenderTarget[i].ImageSize.y = _screen.GetScreenHeight();
-		_offScreenRenderTarget[i].Format      = _backBufferFormat;
-
-
-	}
 }
 
 
@@ -881,6 +800,13 @@ void DirectX12::CreateDefaultPSO()
 	_defaultPSODesc.SampleDesc.Count      = _4xMsaaState ? 4 : 1;
 	_defaultPSODesc.SampleDesc.Quality    = _4xMsaaState ? (_4xMsaaQuality - 1) : 0;
 	_defaultPSODesc.DSVFormat             = _depthStencilFormat;
+	_defaultPSODesc.DepthStencilState = DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	_defaultPSODesc.DepthStencilState.DepthEnable = true;
+	_defaultPSODesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	_defaultPSODesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	_defaultPSODesc.DepthStencilState.StencilEnable = true;
+	//pipeline.DSVFormat                        = DXGI_FORMAT_D32_FLOAT;
+	_defaultPSODesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	if (_isWarpAdapter)
 	{
 		_defaultPSODesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
@@ -924,6 +850,7 @@ void DirectX12::CheckMultiSampleQualityLevels()
 *****************************************************************************/
 void DirectX12::EnsureSwapChainColorSpace()
 {
+
 	DXGI_SWAP_CHAIN_DESC1 desc;
 	ThrowIfFailed(_swapchain->GetDesc1(&desc));
 
@@ -954,6 +881,7 @@ void DirectX12::EnsureSwapChainColorSpace()
 *****************************************************************************/
 void DirectX12::SetHDRMetaData()
 {
+
 	DXGI_SWAP_CHAIN_DESC1 desc;
 	ThrowIfFailed(_swapchain->GetDesc1(&desc));
 
@@ -1051,8 +979,8 @@ bool DirectX12::CheckHDRDisplaySupport()
 
 		if (!isDisplayHDR10)
 		{
-			_backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-			isEnabledHDR = false;
+			//_backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			//isEnabledHDR = false;
 		}
 	}
 
@@ -1290,6 +1218,11 @@ Resource* DirectX12::GetCurrentRenderTarget() const
 Resource* DirectX12::GetRenderTargetResource(RenderTargetType type) const
 {
 	return _renderTargetList[(int)type].Get();
+}
+
+Resource* DirectX12::GetDepthStencil() const
+{
+	return _depthStencilBuffer.Get(); 
 }
 /****************************************************************************
 *                        GetCPUCbvSrvUavHeapStart

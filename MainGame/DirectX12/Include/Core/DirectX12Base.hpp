@@ -35,8 +35,10 @@ public:
 	void OnResize();
 	void ClearScreen();
 	void CompleteInitialize();
+	void CopyTextureToBackBuffer(Resource* resource, D3D12_RESOURCE_STATES resourceState = D3D12_RESOURCE_STATE_COMMON);
 	void CompleteRendering();
 	void FlushCommandQueue();
+	void FlushCommandQueuesOnResize();
 	inline void ResetCommandList()
 	{
 		ThrowIfFailed(_commandAllocator[_currentFrameIndex]->Reset());
@@ -48,6 +50,7 @@ public:
 	CommandList*  GetCommandList()           const;
 	CommandQueue* GetCommandQueue()          const;
 	CommandAllocator* GetCommandAllocator()  const;
+	Resource* GetDepthStencil() const;
 	Resource* GetCurrentRenderTarget()       const;
 	Resource* GetRenderTargetResource(RenderTargetType type)       const;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDefaultPSOConfig() const;
@@ -58,19 +61,15 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUResourceView(HeapType heapType, int offsetIndex) const;
 	ID3D12DescriptorHeap* GetCbvSrvUavHeap() const;
 	ID3D12DescriptorHeap* GetCPURtvHeapStart() const;
-	Texture GetOffScreenRenderTarget(UINT index) const 
-	{
-		if (index >= OFF_SCREEN_TEXTURE_NUM) { index = OFF_SCREEN_TEXTURE_NUM - 1; }
-		return _offScreenRenderTarget[index]; 
-	}
-	Texture ResizeOffScreenRenderTarget(UINT index, int width, int height);
-	void ResizeOffScreenRenderTargets();
+	DXGI_FORMAT GetBackBufferRenderFormat() const { return _backBufferFormat; }
+
 	INT  GetCbvSrvUavDescriptorHeapSize() const;
 	UINT IssueViewID(HeapType heapType);
 	D3D12_VIEWPORT GetViewport()     const;
 	D3D12_RECT     GetScissorRect()  const;
 	INT  GetCurrentFrameIndex()      const;
 	INT  GetCurrentBackBufferIndex() const;
+
 	bool Get4xMsaaState() const;
 	void Set4xMsaaState(bool value);
 	void SetHWND(HWND hwnd);
@@ -110,7 +109,6 @@ private:
 #pragma region View
 	void BuildRenderTargetView();
 	void BuildDepthStencilView();
-	void BuildOffScreenRenderingView();
 	void BuildResourceAllocator();
 
 #pragma endregion View
@@ -158,9 +156,7 @@ private:
 	DescriptorHeapComPtr         _cbvSrvUavHeap;      /// Heap For Constant Buffer View
 	PipelineStateComPtr          _pipelineState;      /// Graphic Pipeline State
 	ResourceComPtr               _depthStencilBuffer; /// DepthStencl Buffer   
-	ResourceComPtr               _renderTargetList[(int)RenderTargetType::CountOfRenderTarget];
-	Texture                      _offScreenRenderTarget[OFF_SCREEN_TEXTURE_NUM];
-	CPU_DESC_HANDLER             _offScreenRenderSourceCPU;
+	ResourceComPtr               _renderTargetList[FRAME_BUFFER_COUNT];
 	RenderTargetViewAllocator    _rtvAllocator;
 	DepthStencilViewAllocator    _dsvAllocator;
 	ConstantBufferViewAllocator  _cbvAllocator;
@@ -187,12 +183,12 @@ private:
 	UINT _4xMsaaQuality = 0;
 
 	// Customize starting value
-	DXGI_FORMAT _backBufferFormat   = DXGI_FORMAT_R8G8B8A8_UNORM;
+	DXGI_FORMAT _backBufferFormat   = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	bool _isWarpAdapter = false;
 
-	bool _isHDRSupport  = false;
+	bool _isHDRSupport  = true;
 };
 
 #endif

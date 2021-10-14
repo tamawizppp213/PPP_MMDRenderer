@@ -41,6 +41,9 @@ namespace gm
 	struct Float3;
 	struct Float4;
 
+	enum class Vector2Element{ X, Y };
+	enum class Vector3Element{ X,Y,Z };
+	enum class Vector4Element{X,Y,Z,W};
 	/****************************************************************************
 	*				  			Float2
 	*************************************************************************//**
@@ -223,6 +226,15 @@ namespace gm
 		*****************************************************************************/
 		INLINE Scalar GetX() const { return Scalar(DirectX::XMVectorSplatX(_vector)); }
 		INLINE Scalar GetY() const { return Scalar(DirectX::XMVectorSplatY(_vector)); }
+		INLINE Scalar GetElement(Vector2Element element)
+		{
+			switch (element)
+			{
+				case Vector2Element::X: { return GetX(); }
+				default:                { return GetY(); }
+			}
+		};
+
 		INLINE void SetX(Scalar x) { _vector = DirectX::XMVectorPermute<4, 1, 2, 3>(_vector, x); }
 		INLINE void SetY(Scalar y) { _vector = DirectX::XMVectorPermute<0, 5, 2, 3>(_vector, y); }
 		INLINE Float2 ToFloat2() { 
@@ -230,6 +242,23 @@ namespace gm
 			DirectX::XMStoreFloat2(&value, _vector);
 			return value;
 		}
+		INLINE void SetElement(Vector2Element element, Scalar scalar)
+		{
+			switch (element)
+			{
+			case Vector2Element::X: { SetX(scalar); return; }
+			default: { SetY(scalar); return; }
+			}
+		}
+		INLINE void SetElement(int element, Scalar scalar)
+		{
+			switch ((Vector2Element)element)
+			{
+			case Vector2Element::X: { SetX(scalar); return; }
+			default: { SetY(scalar); return; }
+			}
+		}
+
 		/****************************************************************************
 		**                Constructor and Destructor
 		*****************************************************************************/
@@ -278,6 +307,42 @@ namespace gm
 		INLINE Scalar GetX() const { return Scalar(DirectX::XMVectorSplatX(_vector)); }
 		INLINE Scalar GetY() const { return Scalar(DirectX::XMVectorSplatY(_vector)); }
 		INLINE Scalar GetZ() const { return Scalar(DirectX::XMVectorSplatZ(_vector)); }
+		INLINE Scalar GetElement(Vector3Element element) const 
+		{
+			switch (element)
+			{
+				case Vector3Element::X: { return GetX(); }
+				case Vector3Element::Y: { return GetY(); }
+				default: { return GetZ(); }
+			}
+		};
+		INLINE Scalar GetElement(int element) const
+		{
+			switch ((Vector3Element)element)
+			{
+				case Vector3Element::X: { return GetX(); }
+				case Vector3Element::Y: { return GetY(); }
+				default: { return GetZ(); }
+			}
+		}
+		INLINE void SetElement(Vector3Element element, Scalar scalar)
+		{
+			switch (element)
+			{
+			case Vector3Element::X: { SetX(scalar); return; }
+			case Vector3Element::Y: { SetY(scalar); return; }
+			default: { SetZ(scalar); return; }
+			}
+		}
+		INLINE void SetElement(int element, Scalar scalar)
+		{
+			switch ((Vector3Element)element)
+			{
+			case Vector3Element::X: { SetX(scalar); return; }
+			case Vector3Element::Y: { SetY(scalar); return; }
+			default: { SetZ(scalar); return; }
+			}
+		}
 		INLINE void SetX(Scalar x) { _vector = DirectX::XMVectorPermute<4, 1, 2, 3>(_vector, x); }
 		INLINE void SetY(Scalar y) { _vector = DirectX::XMVectorPermute<0, 5, 2, 3>(_vector, y); }
 		INLINE void SetZ(Scalar z) { _vector = DirectX::XMVectorPermute<0, 1, 6, 3>(_vector, z); }
@@ -308,14 +373,14 @@ namespace gm
 		INLINE friend Vector3 operator* (float   v1, Vector3 v2) { return Scalar(v1) * v2; }
 		INLINE friend Vector3 operator/ (float   v1, Vector3 v2) { return Scalar(v1) / v2; }
 
-		INLINE bool operator == (const Vector3& V) const noexcept { DirectX::XMVector3Equal(*this, V); };
-		INLINE bool operator != (const Vector3& V) const noexcept { DirectX::XMVector3NotEqual(*this, V); };
+		INLINE bool operator == (const Vector3& V) const noexcept { return DirectX::XMVector3Equal(*this, V); };
+		INLINE bool operator != (const Vector3& V) const noexcept { return DirectX::XMVector3NotEqual(*this, V); };
 
 		/****************************************************************************
 		**                Constructor and Destructor
 		*****************************************************************************/
 		INLINE Vector3()                           { _vector = vector::SplatZero(); }
-		INLINE Vector3(float x, float y, float z)  { _vector = DirectX::XMVectorSet(x, y, z, z); }
+		INLINE Vector3(float x, float y, float z)  { _vector = DirectX::XMVectorSet(x, y, z, 0); }
 		INLINE Vector3(const DirectX::XMFLOAT3& v) { _vector = DirectX::XMLoadFloat3(&v); }
 		INLINE Vector3(const Float3& v)            { _vector = XMLoadFloat3(&v); }
 		INLINE Vector3(const Vector3& vector)      { _vector = vector; }
@@ -381,6 +446,18 @@ namespace gm
 		INLINE Scalar GetY() const { return Scalar(DirectX::XMVectorSplatY(_vector)); }
 		INLINE Scalar GetZ() const { return Scalar(DirectX::XMVectorSplatZ(_vector)); }
 		INLINE Scalar GetW() const { return Scalar(DirectX::XMVectorSplatW(_vector)); }
+		INLINE Vector3 GetXYZ() const { return Vector3(GetX(), GetY(), GetZ()); }
+		INLINE Scalar GetElement(Vector4Element element)
+		{
+			switch (element)
+			{
+				case Vector4Element::X: { return GetX(); }
+				case Vector4Element::Y: { return GetY(); }
+				case Vector4Element::Z: { return GetZ(); }
+				default: { return GetW(); }
+			}
+		};
+		
 		INLINE void SetX(Scalar x) { _vector = DirectX::XMVectorPermute<4, 1, 2, 3>(_vector, x); }
 		INLINE void SetY(Scalar y) { _vector = DirectX::XMVectorPermute<0, 5, 2, 3>(_vector, y); }
 		INLINE void SetZ(Scalar z) { _vector = DirectX::XMVectorPermute<0, 1, 6, 3>(_vector, z); }
@@ -393,7 +470,26 @@ namespace gm
 			DirectX::XMStoreFloat4(&value, _vector);
 			return value;
 		}
-
+		INLINE void SetElement(Vector4Element element, Scalar scalar)
+		{
+			switch (element)
+			{
+			case Vector4Element::X: { SetX(scalar); return; }
+			case Vector4Element::Y: { SetY(scalar); return; }
+			case Vector4Element::Z: { SetZ(scalar); return; }
+			default: { SetW(scalar); return; }
+			}
+		}
+		INLINE void SetElement(int element, Scalar scalar)
+		{
+			switch ((Vector4Element)element)
+			{
+			case Vector4Element::X: { SetX(scalar); return; }
+			case Vector4Element::Y: { SetY(scalar); return; }
+			case Vector4Element::Z: { SetZ(scalar); return; }
+			default: { SetW(scalar); return; }
+			}
+		}
 		/****************************************************************************
 		**                Constructor and Destructor
 		*****************************************************************************/
@@ -524,5 +620,129 @@ namespace gm
 
 	INLINE Vector2 IntersectLine(const Vector2& line1Point1, const Vector2& line1Point2, const Vector2& line2Point1, const Vector2& line2Point2) { return Vector2(DirectX::XMVector2IntersectLine(line1Point1, line1Point2, line2Point1, line2Point2)); }
 	
+	INLINE Vector2Element MaxAxis2(const Vector2& v)
+	{
+		Vector2Element maxIndex = Vector2Element::X;
+		float maxValue = -FLT_MAX;
+		if (v.GetX() > maxValue) { maxIndex = Vector2Element::X; maxValue = v.GetX(); }
+		if (v.GetY() > maxValue) { maxIndex = Vector2Element::Y; maxValue = v.GetY(); }
+		return maxIndex;
+	}
+	INLINE Vector3Element MaxAxis3(const Vector3& v)
+	{
+		Vector3Element maxIndex = Vector3Element::X;
+		float maxValue = -FLT_MAX;
+		if (v.GetX() > maxValue) { maxIndex = Vector3Element::X; maxValue = v.GetX(); }
+		if (v.GetY() > maxValue) { maxIndex = Vector3Element::Y; maxValue = v.GetY(); }
+		if (v.GetZ() > maxValue) { maxIndex = Vector3Element::Z; maxValue = v.GetZ(); }
+		return maxIndex;
+	}
+	INLINE Vector4Element MaxAxis4(const Vector4& v)
+	{
+		Vector4Element maxIndex = Vector4Element::X;
+		float maxValue = -FLT_MAX;
+		if (v.GetX() > maxValue) { maxIndex = Vector4Element::X; maxValue = v.GetX(); }
+		if (v.GetY() > maxValue) { maxIndex = Vector4Element::Y; maxValue = v.GetY(); }
+		if (v.GetZ() > maxValue) { maxIndex = Vector4Element::Z; maxValue = v.GetZ(); }
+		if (v.GetW() > maxValue) { maxIndex = Vector4Element::W; maxValue = v.GetW(); }
+		return maxIndex;
+	}
+	INLINE Vector2Element MinAxis2(const Vector2& v)
+	{
+		Vector2Element minIndex = Vector2Element::X;
+		float minValue = FLT_MAX;
+		if (v.GetX() < minValue) { minIndex = Vector2Element::X; minValue = v.GetX(); }
+		if (v.GetY() < minValue) { minIndex = Vector2Element::Y; minValue = v.GetY(); }
+		return minIndex;
+	}
+	INLINE Vector3Element MinAxis3(const Vector3& v)
+	{
+		Vector3Element minIndex = Vector3Element::X;
+		float minValue = FLT_MAX;
+		if (v.GetX() < minValue) { minIndex = Vector3Element::X; minValue = v.GetX(); }
+		if (v.GetY() < minValue) { minIndex = Vector3Element::Y; minValue = v.GetY(); }
+		if (v.GetZ() < minValue) { minIndex = Vector3Element::Z; minValue = v.GetZ(); }
+		return minIndex;
+	}
+	INLINE Vector4Element MinAxis4(const Vector4& v)
+	{
+		Vector4Element minIndex = Vector4Element::X;
+		float minValue = FLT_MAX;
+		if (v.GetX() < minValue) { minIndex = Vector4Element::X; minValue = v.GetX(); }
+		if (v.GetY() < minValue) { minIndex = Vector4Element::Y; minValue = v.GetY(); }
+		if (v.GetZ() < minValue) { minIndex = Vector4Element::Z; minValue = v.GetZ(); }
+		if (v.GetW() < minValue) { minIndex = Vector4Element::W; minValue = v.GetW(); }
+		return minIndex;
+	}
+
+	INLINE long MaxDot(const Vector3& mySelf, const Vector3* array, long array_count, Scalar& dotOut)
+	{
+		Scalar maxDot1 = -FLT_MAX;
+
+		int ptIndex = -1;
+		for (int i = 0; i < array_count; ++i)
+		{
+			Scalar dot = Dot(mySelf, array[i]);
+			if ((float)dot > maxDot1)
+			{
+				maxDot1 = dot;
+				ptIndex = i;
+			}
+		}
+		dotOut = maxDot1;
+		return ptIndex;
+	}
+	INLINE long MinDot(const Vector3& mySelf, const Vector3* array, long array_count, Scalar& dotOut)
+	{
+		Scalar minDot1 = FLT_MAX;
+
+		int ptIndex = -1;
+		for (int i = 0; i < array_count; ++i)
+		{
+			Scalar dot = Dot(mySelf, array[i]);
+			if ((float)dot < minDot1)
+			{
+				minDot1 = dot;
+				ptIndex = i;
+			}
+		}
+		dotOut = minDot1;
+		return ptIndex;
+	}
+
+	//Get the most influential ingredients.
+	INLINE Vector4Element ClosestAxis4(const Vector4& v)
+	{
+		return MaxAxis4(Abs(v));
+	}
+	INLINE void PlaneSpace(const Vector3& n, Vector3& p, Vector3& q)
+	{
+		if (Abs((float)n.GetZ()) > ((float)Sqrt(2) / 2.0f))
+		{
+			// choose p in y-z plane
+			float a = (float)(n.GetY() * n.GetY() + n.GetZ() * n.GetZ());
+			float k = (float)RecipSqrt(a);
+			p.SetX(0);
+			p.SetY((float)(-n.GetZ() * k));
+			p.SetZ(n.GetY() * k);
+			// set q = n x p
+			q.SetX(a * k);
+			q.SetY(-n.GetX() * p.GetZ());
+			q.SetZ( n.GetX() * p.GetY());
+		}
+		else
+		{
+			// choose p in x-y plane
+			float a = n.GetX() * n.GetX() + n.GetY() * n.GetY();
+			float k = RecipSqrt(a);
+			p.SetX(-n.GetY() * k);
+			p.SetY(n.GetX() * k);
+			p.SetZ(0);
+			// set q = n x p
+			q.SetX(-n.GetZ() * p.GetY());
+			q.SetY( n.GetZ() * p.GetX());
+			q.SetZ(a * k);
+		}
+	}
 }
 #endif

@@ -8,10 +8,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "MainGame/Include/MainBattle.hpp"-
+#include "MainGame/Include/MainBattle.hpp"
 #include "GameCore/Include/FrameResources.hpp"
-#include <DirectXMath.h>
-#include <iostream>
+#include "GameCore/Include/Model/MMD/PMXModel.hpp"
+#include "GameCore/Include/Model/Primitive/PrimitiveModel.hpp"
+#include "GameCore/Include/Sprite/SpriteRenderer.hpp"
+#include "GameCore/Include/Sprite/Fade.hpp"
+#include "GameCore/Include/Effect/Bloom.hpp"
+#include "GameMath/Include/GMDistribution.hpp"
+#include "GameCore/Include/Sprite/Text.hpp"
+#include "GameCore/Include/Audio/AudioSource.hpp"
+
+using namespace gm;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -20,40 +28,76 @@
 #define SCENE_COUNT  1
 #define MATERIAL_COUNT 1
 #define LIGHT_COUNT  1
-#define ACTION_SPEED 10.0f
+#define ACTION_SPEED 15.0f
+
 namespace battle
 {
 	static SceneConstants sceneParameter;
-	static DirectX::XMFLOAT4X4 projView = DirectXMathHelper::Identity4X4();
+	static gm::Matrix4 projView = gm::MatrixIdentity();
+	static Bloom effect;
+	static PostEffect postEffect;
+	static AudioSource audio;
+	static bool _isStart = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
 using namespace battle;
+
+MainBattle::MainBattle()
+{
+	_stage  = std::make_unique<PMXModel>();
+	_skybox = std::make_unique<Skybox>();
+	_miku   = std::make_unique<PMXModel>();
+	
+}
+
+MainBattle::~MainBattle() 
+{
+
+};
 void MainBattle::Initialize(GameTimer& gameTimer)
 {
 	InitializeDirectX12(gameTimer);
 	InitializeFrameResources();
 	InitializeSceneParameters();
 	InitializeFader();
-	LoadTextures();
+	InitializeModels(gameTimer);
+	LoadSkybox();
+	LoadStage();
+	InitializeRenderingEngine();
+	effect.Initialize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
+	audio.LoadSound(L"Resources/Audio/oddsends.wav", SoundType::BGM);
+	
 	_directX12.CompleteInitialize();
-	_directX12.FlushCommandQueue();
+
 }
 
 void MainBattle::Update()
-{           
+{   
+	if (!_isStart) { _isStart = true; audio.Play(); }
 	OnGameInput();
-	_frameResource->UpdateSceneConstants(&sceneParameter, &_fpsCamera);
 
+	_frameResource->UpdateSceneConstants(&sceneParameter, &_fpsCamera);
+	_miku.get()->Update();
+	_stage.get()->Update();
+
+	
 }
 
 void MainBattle::Draw()
 {
 	_directX12.ClearScreen();
-	_skybox.Draw(_frameResource->SceneConstantsBuffer->Resource()->GetGPUVirtualAddress());
-	_fader->Draw(*_gameTimer, DirectX::XMLoadFloat4x4(&projView));
+	
+	_skybox.get()->Draw(_frameResource->SceneConstantsBuffer->Resource()->GetGPUVirtualAddress());
+	_renderingEngine.Draw();
+
+	effect.OnResize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
+	effect.Draw();
+
+
+	//_fader.get()->Draw(*_gameTimer, projView);
 	_directX12.CompleteRendering();
 }
 
@@ -75,9 +119,10 @@ void MainBattle::OnGameInput()
 	OnKeyboardInput();
 	OnMouseInput();
 	OnGamePadInput();
-	Screen screen;
-	_fpsCamera.SetLens(0.25f * DirectX::XM_PI, screen.AspectRatio(), 1.0f, 1000.0f);
+	
+	_fpsCamera.SetLens(0.25f * DirectX::XM_PI, _screen.AspectRatio(), 1.0f, 1000.0f);
 	_fpsCamera.UpdateViewMatrix();
+
 }
 
 #pragma region Private Function
@@ -95,7 +140,7 @@ bool MainBattle::InitializeDirectX12(GameTimer& gameTimer)
 	_gameTimer   = &gameTimer;
 	_device      = _directX12.GetDevice();
 	_commandList = _directX12.GetCommandList();
-	_directX12.ResetCommandList();
+	//_directX12.ResetCommandList();
 	return true;
 }
 
@@ -116,7 +161,6 @@ bool MainBattle::InitializeFrameResources()
 	resourceCounter.MaxObjectCount     = OBJECT_COUNT;
 	resourceCounter.MaxSceneCount      = SCENE_COUNT;
 	resourceCounter.MaxMaterialCount   = MATERIAL_COUNT;
-	resourceCounter.MaxSceneLightCount = LIGHT_COUNT;
 
 	/*-------------------------------------------------------------------
 	-           Create FrameResource
@@ -134,10 +178,8 @@ bool MainBattle::InitializeFrameResources()
 *****************************************************************************/
 bool MainBattle::InitializeSceneParameters()
 {
-	/*-------------------------------------------------------------------
-	-           Set Scene Parameter
-	---------------------------------------------------------------------*/
-	_fpsCamera.SetPosition(0.0f, 2.0f, -15.0f);
+	
+	_fpsCamera.SetPosition(0.0f, 10.0f, -20.0f);
 	SceneConstants sceneParameter;
 	_frameResource->UpdateSceneConstants(&sceneParameter, &_fpsCamera);
 
@@ -161,12 +203,10 @@ bool MainBattle::InitializeSceneParameters()
 *****************************************************************************/
 bool MainBattle::InitializeFader()
 {
-	_fader = new Fader();
-	_fader->Initialize();
-	_fader->StartFadeIn(1.0f, 2.0f);
-
-	Screen screen;
-	_fader->SetSpriteSize((float)screen.GetScreenWidth(), (float)screen.GetScreenHeight());
+	auto fader = _fader.get();
+	fader->Initialize();
+	fader->StartFadeIn(1.0f, 2.0f);
+	fader->SetSpriteSize((float)_screen.GetScreenWidth(), (float)_screen.GetScreenHeight());
 	return true;
 }
 
@@ -180,7 +220,61 @@ bool MainBattle::InitializeFader()
 *****************************************************************************/
 bool MainBattle::LoadTextures()
 {
-	_skybox.Initialize(L"Resources/Texture/grasscube1024.dds");
+	_spriteRenderer.get()->Initialize();
+	return true;
+}
+
+/****************************************************************************
+*                       LoadSkybox
+*************************************************************************//**
+*  @fn        bool MainBattle::LoadSkybox()
+*  @brief     Load skybox
+*  @param[in] void
+*  @return @@bool
+*****************************************************************************/
+bool MainBattle::LoadSkybox()
+{
+	_skybox.get()->Initialize(L"Resources/Texture/grasscube1024.dds");
+	return true;
+}
+
+bool MainBattle::LoadStage()
+{
+	_stage.get()->Initialize(L"Resources/Model/Cyber/Cyber.pmx");
+	_stage.get()->SetPosition(0, 0, 0);
+	return true;
+}
+
+bool MainBattle::InitializeModels(GameTimer& gameTimer)
+{
+	_miku.get()->Initialize(L"Resources/Model/YYB Hatsune Miku/YYB Hatsune Miku_10th_v1.02_toonchange.pmx");
+	_miku.get()->AddMotion(L"Resources/Model/oddsends/oddsends.vmd", L"pose");
+	_miku.get()->SetWorldTimer(gameTimer);
+	_miku.get()->StartAnimation(L"pose");
+	_miku.get()->EnableAmbientOcculusionMap(true);
+	_miku.get()->SetPosition(0, 0, 10);
+	return true;
+}
+
+bool MainBattle::InitializeRenderingEngine()
+{
+	_renderingEngine.SetSceneGPUAddress(_frameResource->SceneConstantsBuffer.get()->Resource()->GetGPUVirtualAddress());
+	_renderingEngine.AddObjectToForwardRenderer(*_stage.get());
+	_renderingEngine.AddObjectToForwardRenderer(*_miku.get());
+	_renderingEngine.AddObjectToZPrepass(*_stage.get());
+	_renderingEngine.AddObjectToZPrepass(*_miku.get());
+	_renderingEngine.AddObjectToGBuffer(*_stage.get());
+	_renderingEngine.AddObjectToGBuffer(*_miku.get());
+	_renderingEngine.AddObjectToShadowMap(*_miku.get(), 0);
+	InitializeLights();
+	return true;
+}
+
+bool MainBattle::InitializeLights()
+{
+	_renderingEngine.SetDirectionalLight(0, DirectionalLight(Float3(1.0f, -1.0f, 1), 1.2f, Float3(1.0f, 0.85f, 0.85f)));
+	_renderingEngine.SetDirectionalLight(1, DirectionalLight(Float3(-1.0f, -1.0f, 1), 1.2f, Float3(1.0f, 0.85f, 0.85f)));
+	
 	return true;
 }
 #pragma endregion Initialize
@@ -196,14 +290,30 @@ bool MainBattle::LoadTextures()
 void MainBattle::OnKeyboardInput()
 {
 	const float deltaTime = _gameTimer->DeltaTime();
+
 	/*-------------------------------------------------------------------
 	-           Keyboad Input W
 	---------------------------------------------------------------------*/
-	if (_gameInput.GetKeyboard().IsPress('w'))
+	if (_gameInput.GetKeyboard().IsPress(DIK_W))
 	{
 		_fpsCamera.Walk(ACTION_SPEED * deltaTime);
 	}
+
+	if (_gameInput.GetKeyboard().IsPress(DIK_S))
+	{
+		_fpsCamera.Walk(-ACTION_SPEED * deltaTime);
+	}
 	
+	if (_gameInput.GetKeyboard().IsPress(DIK_D))
+	{
+		_fpsCamera.Strafe(ACTION_SPEED * deltaTime);
+	}
+
+	if (_gameInput.GetKeyboard().IsPress(DIK_A))
+	{
+		_fpsCamera.Strafe(-ACTION_SPEED * deltaTime);
+	}
+
 }
 
 /****************************************************************************
@@ -262,10 +372,10 @@ void MainBattle::OnGamePadInput()
 		StickValue rightStick = _gameInput.GetGamePad().RStick();
 
 		DirectX::XMFLOAT2 dRotation;
-		dRotation.x = 0.25f * deltaTime * rightStick.XAxis * 0.01f;
-		dRotation.y = 0.25f * deltaTime * rightStick.YAxis * 0.01f;
+		dRotation.x = 0.25f * deltaTime * rightStick.XAxis * 0.10f ;
+		dRotation.y = -0.25f * deltaTime * rightStick.YAxis * 0.10f;
 		_fpsCamera.RotateWorldY(dRotation.x);
-		//_fpsCamera.RotatePitch(dRotation.y);
+		_fpsCamera.RotatePitch(dRotation.y);
 	}
 
 }

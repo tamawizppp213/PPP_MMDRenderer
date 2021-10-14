@@ -210,7 +210,7 @@ namespace cubemap
 		-			 Build PSO
 		---------------------------------------------------------------------*/
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipeLineState = DirectX12::Instance().GetDefaultPSOConfig();
-
+		
 		pipeLineState.RasterizerState             = BuildSkyboxRasterizerDescriptor();
 		pipeLineState.InputLayout                 = VertexPositionNormalTexture::InputLayout;
 		pipeLineState.pRootSignature              = cubemap.RootSignature.Get();

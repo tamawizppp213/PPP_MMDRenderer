@@ -492,7 +492,7 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	VertexPositionNormalTexture Vertex;
+	VertexPositionNormalTextureTangent Vertex;
 	std::array<INT32, 4>        BoneIndices;
 	std::array<float, 4>        BoneWeights;
 	gm::Float3                  SDefC;
@@ -512,7 +512,7 @@ public:
 	PMXVertex& operator=(PMXVertex&&)      = default;
 	inline PMXVertex(pmx::PMXVertex& vertex)
 	{
-		Vertex = VertexPositionNormalTexture(vertex.Position, vertex.Normal, vertex.UV);
+		Vertex = VertexPositionNormalTextureTangent(vertex.Position, vertex.Normal, vertex.UV, gm::Float3(0,0,0), gm::Float3(0, 0, 0));
 		for (int i = 0; i < 4; ++i)
 		{
 			BoneIndices[i] = vertex.BoneIndices[i];
@@ -533,7 +533,7 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	static constexpr unsigned int InputElementCount = 9;
+	static constexpr unsigned int InputElementCount = 11;
 	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
 };
 
@@ -645,7 +645,6 @@ public:
 	void UpdateAppendMatrix(); // use before global matrix 
 	void BeforeUpdateMatrix();
 
-
 	void AddChild(PMXBoneNode* boneNode) { _children.emplace_back(boneNode); }
 	static void RecursiveBoneMatrixMultiply(std::vector<gm::Matrix4>& boneMatrix, PMXBoneNode* boneNode, const gm::Matrix4& matrix);
 	/****************************************************************************
@@ -654,36 +653,36 @@ public:
 	/*-------------------------------------------------------------------
 	-							Transform
 	---------------------------------------------------------------------*/
-	inline void SetTransform   (const gm::Transform& transform)  { _transform = transform; }
-	inline void SetTranslate   (const gm::Vector3& translate)    { _transform.LocalPosition = translate; }
-	inline void SetScale       (const gm::Vector3& scale)        { _transform.LocalScale    = scale; }
-	inline void SetRotate      (const gm::Quaternion quaternion) { _transform.LocalRotation = quaternion; }
-	inline void SetAnimateTransform(const gm::Transform& transform) { _animateTransform     = transform; }
-	inline void SetAnimateTranslate (const gm::Vector3& translate)   { _animateTransform.LocalPosition = translate; }
-	inline void SetAnimateRotate   (const gm::Quaternion& rotate)      { _animateTransform.LocalRotation = rotate; }
-	inline void SetAppendTransform (const gm::Transform& transform)   { _appendTransform                = transform; }
-	inline void SetAppendRotate    (const gm::Vector3& translate)     { _appendTransform.LocalPosition  = translate; }
+	inline void SetTransform       (const gm::Transform&  transform)  { _transform = transform; }
+	inline void SetTranslate       (const gm::Vector3&    translate)  { _transform.LocalPosition        = translate; }
+	inline void SetScale           (const gm::Vector3&    scale)      { _transform.LocalScale           = scale; }
+	inline void SetRotate          (const gm::Quaternion  quaternion) { _transform.LocalRotation        = quaternion; }
+	inline void SetAnimateTransform(const gm::Transform&  transform)  { _animateTransform               = transform; }
+	inline void SetAnimateTranslate(const gm::Vector3&    translate)  { _animateTransform.LocalPosition = translate; }
+	inline void SetAnimateRotate   (const gm::Quaternion& rotate)     { _animateTransform.LocalRotation = rotate; }
+	inline void SetAppendTransform (const gm::Transform&  transform)  { _appendTransform                = transform; }
+	inline void SetAppendRotate    (const gm::Vector3&    translate)  { _appendTransform.LocalPosition  = translate; }
 	inline void SetIKRotate        (const gm::Quaternion& quaternion) { _ikRotation = quaternion; }
-	inline gm::Transform  GetTransform () { return _transform; }
-	inline gm::Vector3    GetTranslate () const { return _transform.LocalPosition; }
-	inline gm::Vector3    GetScale     () const { return _transform.LocalScale; }
-	inline gm::Quaternion GetRotate    () const { return _transform.LocalRotation; }
+	inline gm::Transform  GetTransform       ()       { return _transform; }
+	inline gm::Vector3    GetTranslate       () const { return _transform.LocalPosition; }
+	inline gm::Vector3    GetScale           () const { return _transform.LocalScale; }
+	inline gm::Quaternion GetRotate          () const { return _transform.LocalRotation; }
 	inline gm::Transform  GetInitialTransform() const { return _initialTransform; }
 	inline gm::Vector3    GetInitialTranslate() const { return _initialTransform.LocalPosition; }
 	inline gm::Vector3    GetInitialScale    () const { return _initialTransform.LocalScale; }
 	inline gm::Quaternion GetInitialRotate   () const { return _initialTransform.LocalRotation; }
-	inline gm::Transform  GetAppendTransform() const { return _appendTransform; }
-	inline gm::Vector3    GetAppendTranslate() const { return _appendTransform.LocalPosition; }
-	inline gm::Quaternion GetAppendRotate () const { return _appendTransform.LocalRotation; }
-	inline gm::Quaternion GetIKRotate     () const { return _ikRotation; }
-	inline gm::Vector3    AnimateTranslate() const { return _animateTransform.LocalPosition + _transform.LocalPosition; }
-	inline gm::Quaternion AnimateRotate()    const { return  _transform.LocalRotation * _animateTransform.LocalRotation; }
+	inline gm::Transform  GetAppendTransform () const { return _appendTransform; }
+	inline gm::Vector3    GetAppendTranslate () const { return _appendTransform.LocalPosition; }
+	inline gm::Quaternion GetAppendRotate    () const { return _appendTransform.LocalRotation; }
+	inline gm::Quaternion GetIKRotate        () const { return _ikRotation; }
+	inline gm::Vector3    AnimateTranslate   () const { return _animateTransform.LocalPosition + _transform.LocalPosition; }
+	inline gm::Quaternion AnimateRotate      () const { return _animateTransform.LocalRotation * _transform.LocalRotation; }
 
 	/*-------------------------------------------------------------------
 	-							Bone Matrix
 	---------------------------------------------------------------------*/
-	inline void SetLocalMatrix      (const gm::Matrix4& matrix) { _localBoneMatrix = matrix; }
-	inline void SetGlobalMatrix     (const gm::Matrix4& matrix) { _globalBoneMatrix = matrix; }
+	inline void SetLocalMatrix      (const gm::Matrix4& matrix) { _localBoneMatrix   = matrix; }
+	inline void SetGlobalMatrix     (const gm::Matrix4& matrix) { _globalBoneMatrix  = matrix; }
 	inline void SetInverseBindMatrix(const gm::Matrix4& matrix) { _inverseBindMatrix = matrix; }
 	const  gm::Matrix4& GetLocalMatrix      () const { return _localBoneMatrix; }
 	const  gm::Matrix4& GetGlobalMatrix     () const { return _globalBoneMatrix; }
@@ -692,14 +691,14 @@ public:
 	/*-------------------------------------------------------------------
 	-							Property
 	---------------------------------------------------------------------*/
-	inline void SetBoneName(const std::string& name) { this->_name = name; }
-	inline void SetBoneIndex(int boneIndex)                     { this->_boneIndex = boneIndex; }
-	inline void SetDeformationDepth(int deformDepth)            { this->_deformationDepth = deformDepth; }
-	inline void SetAppendWeight(float weight) { this->_appendWeight = weight; }
+	inline void SetBoneName(const std::string& name)   { _name             = name; }
+	inline void SetBoneIndex       (int   boneIndex)   { _boneIndex        = boneIndex; }
+	inline void SetDeformationDepth(int   deformDepth) { _deformationDepth = deformDepth; }
+	inline void SetAppendWeight    (float weight)      { _appendWeight     = weight; }
 
-	inline float GetAppendWeight() { return _appendWeight; }
-	inline int GetBoneIndex()   { return _boneIndex; }
-	inline int GetDeformationDepth() { return _deformationDepth; }
+	inline float GetAppendWeight()     { return _appendWeight; }
+	inline int   GetBoneIndex()        { return _boneIndex; }
+	inline int   GetDeformationDepth() { return _deformationDepth; }
 
 	/*-------------------------------------------------------------------
 	-							Bone flag
@@ -714,16 +713,16 @@ public:
 	/*-------------------------------------------------------------------
 	-							Bone Node
 	---------------------------------------------------------------------*/
-	inline void         SetParent(PMXBoneNode* parent)       { this->_parent = parent; }
+	inline void         SetParent(PMXBoneNode* parent)          { _parent          = parent; }
 	inline void         SetChild(PMXBoneNode* child, int index) { _children[index] = child; }
-	inline void         SetAppendNode(PMXBoneNode* boneNode) { _appendNode = boneNode; }
-	inline PMXBoneNode* GetAppendNode() const                { return _appendNode; }
-	inline PMXBoneNode* GetParent()                          { return _parent; }
+	inline void         SetAppendNode(PMXBoneNode* boneNode)    { _appendNode      = boneNode; }
+	inline PMXBoneNode* GetAppendNode() const                   { return _appendNode; }
+	inline PMXBoneNode* GetParent()                             { return _parent; }
 	inline std::vector<PMXBoneNode*>& GetChildren() { return _children; }
 	inline std::string GetBoneName() { return _name; }
  
 	inline void        SetBoneIK(PMXBoneIK* ik) { _boneIK = ik; }
-	inline PMXBoneIK* GetBoneIK() { return _boneIK; }
+	inline PMXBoneIK*  GetBoneIK()              { return _boneIK; }
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
@@ -742,10 +741,10 @@ private:
 	/*-------------------------------------------------------------------
 	-							Transform 
 	---------------------------------------------------------------------*/
-	gm::Transform _initialTransform;
-	gm::Transform _transform;
-	gm::Transform _appendTransform;
-	gm::Transform _animateTransform; // offset
+	gm::Transform _initialTransform; // A or T poses transform 
+	gm::Transform _transform;        // 
+	gm::Transform _appendTransform;  // append bone node transform
+	gm::Transform _animateTransform; // bone node animation per frame. 
 
 	/*-------------------------------------------------------------------
 	-							Bone matrix
@@ -887,10 +886,10 @@ enum class SolveAxis
 	Z
 };
 /****************************************************************************
-*				  			PMDBoneNode
+*				  			PMXBoneIK
 *************************************************************************//**
-*  @class     PMD Bone Node
-*  @brief     PMD Bone Data
+*  @class     PMD Bone IK
+*  @brief     PMD Bone IK
 *****************************************************************************/
 class PMXBoneIK
 {
@@ -899,15 +898,15 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	static void SolveIK(int frameNo, PMXData* pmxFile, const PMXBoneNodeAddressList& boneAddressList, VMDFile* vmdFile);
 	void InitializeChildNode();
-	void SolveIK(int frameNo, VMDFile* vmdFile);
+	void SolveIK(int frameNo);
 	void AddIKChain(PMXBoneNode* boneNode, bool axisLimit, const gm::Float3& limitMin, const gm::Float3& limitMax);
 	void SetIKChains(std::vector<PMXIKChain>& ikChains) 
 	{
 		_ikChains = std::move(ikChains);
 		_ikChainLength = _ikChains.size();
 	}
+	void InsertIKChain(int index, PMXBoneNode* boneNode, bool axisLimit, const gm::Float3& limitMin, const gm::Float3& limitMax);
 
 	/****************************************************************************
 	**                Public Member Variables
@@ -935,7 +934,7 @@ public:
 		_ikChains.at(index).AngleMax = limitMax;
 		_ikChains.at(index).AngleMin = limitMin;
 	}
-	void SetIterationCount(size_t count) { _iterationCount = count; }
+	void SetIterationCount(size_t count) { _iterationCount = static_cast<UINT16>(count); }
 	void SetLimitAngle    (float angle)  { _angleLimit = angle; }
 
 	inline const std::vector<PMXIKChain>& GetChainsVector()  const { return _ikChains; }
@@ -950,13 +949,10 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	void SolveLookAt();
-	void SolveCosIK();
+	void SolveCore(int iteration);
 	void SolveCCDIK();
 	void SolvePlane(int cycle, int chainIndex, SolveAxis solveAxis);
-	static void SolveCCDIK (const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray);
-	static void SolveCosIK (const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray);
-	static void SolveLookAt(const PMXBoneIK& ik, const PMXBoneNodeAddressList& boneNodeAddressArray);
+	
 	
 	void AddIKChain(PMXIKChain&& chain);
 	/****************************************************************************
@@ -971,5 +967,47 @@ private:
 	std::vector<PMXIKChain> _ikChains;
 };
 
+enum class RigidBodyType
+{
+	Kinematic,
+	Dynamic,
+	Aligned
+};
+
+class PMXRigidBody
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	bool Create();
+
+	void ReflectGlobalMatrix();
+	void GetLocalMatrix();
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXRigidBody()  = default;
+	~PMXRigidBody() = default;
+	PMXRigidBody(const PMXRigidBody& rigidBody)              = delete;
+	PMXRigidBody& operator = (const PMXRigidBody& rigidBody) = delete;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	std::string   _name;
+	gm::Transform _transform;
+	
+};
 #pragma pack()
 #endif

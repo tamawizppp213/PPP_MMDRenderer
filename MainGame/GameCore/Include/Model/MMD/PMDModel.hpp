@@ -30,6 +30,7 @@ using MaterialBuffer   = std::unique_ptr<UploadBuffer<PMDMaterial>>;
 using ModelObject      = std::unique_ptr<UploadBuffer<ObjectConstants>>;
 using AnimationList    = std::unordered_map<std::wstring, std::shared_ptr<VMDFile>>;
 using SceneGPUAddress  = D3D12_GPU_VIRTUAL_ADDRESS;
+using LightGPUAddress  = D3D12_GPU_VIRTUAL_ADDRESS;
 
 class PMDModel : public DefaultModel
 {
@@ -39,7 +40,7 @@ public:
 	*****************************************************************************/
 	bool Initialize(const std::wstring& filePath);
 	bool Update();
-	bool Draw(SceneGPUAddress scene);
+	bool Draw(SceneGPUAddress scene, LightGPUAddress light);
 
 	bool StartAnimation(const std::wstring& motionName);
 	bool AddMotion(const std::wstring& filePath, const std::wstring& motionName);
@@ -47,9 +48,6 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	void SetPosition  (float x, float y, float z);
-	void SetScale     (float x, float y, float z);
-	void SetRotation  (const gm::Quaternion& rotation);
 	void SetWorldTimer(const GameTimer& gameTimer);
 
 	/****************************************************************************
@@ -70,7 +68,6 @@ protected:
 	**                Protected Member Variables
 	*****************************************************************************/
 	std::shared_ptr<PMDData>  _pmdData     = nullptr;
-	ModelObject               _modelObject = nullptr;
 	
 	/*-------------------------------------------------------------------
 	-           Motion Data

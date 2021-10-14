@@ -15,9 +15,9 @@
 #pragma comment(lib, "Pluguins/fbxsdk/debug/zlib-md.lib")
 #pragma comment(lib, "Pluguins/fbxsdk/debug/libxml2-md.lib")
 #else
-#pragma comment(lib, "Pluguins/fbxsdk/release/libfbxsdk-md.lib")
-#pragma comment(lib, "Pluguins/fbxsdk/release/zlib-md.lib")
-#pragma comment(lib, "Pluguins/fbxsdk/release/libxml2-md.lib")
+//#pragma comment(lib, "Pluguins/fbxsdk/release/libfbxsdk-md.lib")
+//#pragma comment(lib, "Pluguins/fbxsdk/release/zlib-md.lib")
+//#pragma comment(lib, "Pluguins/fbxsdk/release/libxml2-md.lib")
 #endif
 //#pragma comment(lib, "libfbxsdk.lib")
 //////////////////////////////////////////////////////////////////////////////////
@@ -30,9 +30,9 @@
 #pragma region Public Function
 FBXData::~FBXData()
 {
-	_fbxImporter->Destroy();
-	_fbxScene->Destroy();
-	_fbxManager->Destroy();
+	//_fbxImporter->Destroy();
+	//_fbxScene->Destroy();
+	//_fbxManager->Destroy();
 }
 
 /****************************************************************************
@@ -94,15 +94,15 @@ bool FBXData::Load3DModel(const std::wstring& filePath)
 *****************************************************************************/
 bool FBXData::CreateFBXManager()
 {
-	/*-------------------------------------------------------------------
-	-             Create Manager
-	---------------------------------------------------------------------*/
-	_fbxManager = FbxManager::Create();
+	///*-------------------------------------------------------------------
+	//-             Create Manager
+	//---------------------------------------------------------------------*/
+	//_fbxManager = FbxManager::Create();
 
-	/*-------------------------------------------------------------------
-	-             Nullptr Check
-	---------------------------------------------------------------------*/
-	if (_fbxManager == nullptr) { return false; }
+	///*-------------------------------------------------------------------
+	//-             Nullptr Check
+	//---------------------------------------------------------------------*/
+	//if (_fbxManager == nullptr) { return false; }
 	return true;
 }
 
@@ -116,19 +116,19 @@ bool FBXData::CreateFBXManager()
 *****************************************************************************/
 bool FBXData::CreateFBXImporter()
 {
-	/*-------------------------------------------------------------------
-	-             Create Importer
-	---------------------------------------------------------------------*/
-	_fbxImporter = FbxImporter::Create(_fbxManager, "imp");
+	///*-------------------------------------------------------------------
+	//-             Create Importer
+	//---------------------------------------------------------------------*/
+	//_fbxImporter = FbxImporter::Create(_fbxManager, "imp");
 
-	/*-------------------------------------------------------------------
-	-             Nullptr Check
-	---------------------------------------------------------------------*/
-	if (_fbxImporter == nullptr)
-	{
-		_fbxManager->Destroy();
-		return false;
-	}
+	///*-------------------------------------------------------------------
+	//-             Nullptr Check
+	//---------------------------------------------------------------------*/
+	//if (_fbxImporter == nullptr)
+	//{
+	//	_fbxManager->Destroy();
+	//	return false;
+	//}
 
 	return true; 
 }
@@ -143,20 +143,20 @@ bool FBXData::CreateFBXImporter()
 *****************************************************************************/
 bool FBXData::CreateFBXScene()
 {
-	/*-------------------------------------------------------------------
-	-             Get FBX Scene
-	---------------------------------------------------------------------*/
-	_fbxScene    = FbxScene::Create(_fbxManager, "fbxscene");
+	///*-------------------------------------------------------------------
+	//-             Get FBX Scene
+	//---------------------------------------------------------------------*/
+	//_fbxScene    = FbxScene::Create(_fbxManager, "fbxscene");
 
-	/*-------------------------------------------------------------------
-	-             Nullptr Check
-	---------------------------------------------------------------------*/
-	if (_fbxScene == nullptr)
-	{
-		_fbxImporter->Destroy();
-		_fbxManager->Destroy();
-		return false;
-	}
+	///*-------------------------------------------------------------------
+	//-             Nullptr Check
+	//---------------------------------------------------------------------*/
+	//if (_fbxScene == nullptr)
+	//{
+	//	_fbxImporter->Destroy();
+	//	_fbxManager->Destroy();
+	//	return false;
+	//}
 	return true;
 }
 
@@ -170,23 +170,23 @@ bool FBXData::CreateFBXScene()
 *****************************************************************************/
 bool FBXData::OpenFBXFile(const std::wstring& filePath)
 {
-	fbxsdk::FbxString fileName(file::WStringToString(filePath).c_str());
-	if (!_fbxImporter->Initialize(fileName.Buffer(), -1, _fbxManager->GetIOSettings()))
-	{
-		MessageBox(NULL, L" FBX Importer cannot be initialized.", L"Warning", MB_ICONWARNING);
-		_fbxImporter->Destroy();
-		_fbxScene->Destroy();
-		_fbxManager->Destroy();
-		return false;
-	}
-	if (!_fbxImporter->Import(_fbxScene))
-	{
-		MessageBox(NULL, L" FBX Scene cannot be created.", L"Warning", MB_ICONWARNING);
-		_fbxImporter->Destroy();
-		_fbxScene->Destroy();
-		_fbxManager->Destroy();
-		return false;
-	}
+	//fbxsdk::FbxString fileName(file::WStringToString(filePath).c_str());
+	//if (!_fbxImporter->Initialize(fileName.Buffer(), -1, _fbxManager->GetIOSettings()))
+	//{
+	//	MessageBox(NULL, L" FBX Importer cannot be initialized.", L"Warning", MB_ICONWARNING);
+	//	_fbxImporter->Destroy();
+	//	_fbxScene->Destroy();
+	//	_fbxManager->Destroy();
+	//	return false;
+	//}
+	//if (!_fbxImporter->Import(_fbxScene))
+	//{
+	//	MessageBox(NULL, L" FBX Scene cannot be created.", L"Warning", MB_ICONWARNING);
+	//	_fbxImporter->Destroy();
+	//	_fbxScene->Destroy();
+	//	_fbxManager->Destroy();
+	//	return false;
+	//}
 	return true;
 
 }
@@ -201,22 +201,22 @@ bool FBXData::OpenFBXFile(const std::wstring& filePath)
 *****************************************************************************/
 bool FBXData::SetFBXConfig()
 {
-	/*-------------------------------------------------------------------
-	-             Righthand coordinate -> Left handed coordinate
-	---------------------------------------------------------------------*/
-	FbxAxisSystem axisSystem = _fbxScene->GetGlobalSettings().GetAxisSystem();
-	FbxAxisSystem::DirectX.ConvertScene(_fbxScene);
+	///*-------------------------------------------------------------------
+	//-             Righthand coordinate -> Left handed coordinate
+	//---------------------------------------------------------------------*/
+	//FbxAxisSystem axisSystem = _fbxScene->GetGlobalSettings().GetAxisSystem();
+	//FbxAxisSystem::DirectX.ConvertScene(_fbxScene);
 
-	/*-------------------------------------------------------------------
-	-             Convert Mesh Triangle
-	---------------------------------------------------------------------*/
-	FbxGeometryConverter converter(_fbxManager);
-	converter.Triangulate(_fbxScene, true);
+	///*-------------------------------------------------------------------
+	//-             Convert Mesh Triangle
+	//---------------------------------------------------------------------*/
+	//FbxGeometryConverter converter(_fbxManager);
+	//converter.Triangulate(_fbxScene, true);
 
-	/*-------------------------------------------------------------------
-	-             Get RootNode
-	---------------------------------------------------------------------*/
-	_fbxRootNode = _fbxScene->GetRootNode();
+	///*-------------------------------------------------------------------
+	//-             Get RootNode
+	//---------------------------------------------------------------------*/
+	//_fbxRootNode = _fbxScene->GetRootNode();
 
 	
 	return true;
@@ -224,10 +224,10 @@ bool FBXData::SetFBXConfig()
 
 bool FBXData::LoadFBXVertex()
 {
-	std::map<std::string, FbxNode*> nodeList;
-	CollectMeshNode(_fbxRootNode, nodeList);
+	//std::map<std::string, FbxNode*> nodeList;
+	//CollectMeshNode(_fbxRootNode, nodeList);
 
-	
+	//
 	return true;
 }
 
@@ -239,28 +239,28 @@ bool FBXData::LoadFBXVertex()
 *  @param[in] void
 *  @return Å@Å@void
 *****************************************************************************/
-void FBXData::CollectMeshNode(FbxNode* node, std::map<std::string, FbxNode*>& nodeList)
-{
-	/*-------------------------------------------------------------------
-	-             Check whether the nodeType is eMesh. 
-	---------------------------------------------------------------------*/
-	for (int i = 0; i < node->GetNodeAttributeCount(); ++i)
-	{
-		FbxNodeAttribute* attribute = node->GetNodeAttributeByIndex(i);
+//void FBXData::CollectMeshNode(FbxNode* node, std::map<std::string, FbxNode*>& nodeList)
+//{
+	///*-------------------------------------------------------------------
+	//-             Check whether the nodeType is eMesh. 
+	//---------------------------------------------------------------------*/
+	//for (int i = 0; i < node->GetNodeAttributeCount(); ++i)
+	//{
+	//	FbxNodeAttribute* attribute = node->GetNodeAttributeByIndex(i);
 
-		if (attribute->GetAttributeType() == FbxNodeAttribute::EType::eMesh)
-		{
-			nodeList[node->GetName()] = node;
-			break;
-		}
-	}
+	//	if (attribute->GetAttributeType() == FbxNodeAttribute::EType::eMesh)
+	//	{
+	//		nodeList[node->GetName()] = node;
+	//		break;
+	//	}
+	//}
 
-	/*-------------------------------------------------------------------
-	-             Recursive Function
-	---------------------------------------------------------------------*/
-	for (int i = 0; i < node->GetChildCount(); ++i)
-	{
-		CollectMeshNode(node->GetChild(i), nodeList);
-	}
-}
+	///*-------------------------------------------------------------------
+	//-             Recursive Function
+	//---------------------------------------------------------------------*/
+	//for (int i = 0; i < node->GetChildCount(); ++i)
+	//{
+	//	CollectMeshNode(node->GetChild(i), nodeList);
+	//}
+////}
 #pragma endregion Private Functoon

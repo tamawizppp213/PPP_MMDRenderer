@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "GMVector.hpp"
+#include "GMMatrix.hpp"
 #include <DirectXCollision.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -23,9 +23,69 @@
 //////////////////////////////////////////////////////////////////////////////////
 namespace gm
 {
-	class BoundingSphere;
-	class BoundingBox;
-	class BoundingOrientedBox;
+	enum ContainmentType
+	{
+		Disjoint   = 0,
+		Intersects = 1,
+		Contains   = 2
+	};
+
+	enum PlaneIntersectionType
+	{
+		Front        = 0,
+		Intersecting = 1,
+		Back         = 2
+	};
+
+	struct BoundingSphere;
+	struct BoundingBox;
+	struct BoundingOrientedBox;
+	struct BoundingFrustum;
+
+#pragma warning(push)
+#pragma warning(disable:4324 4820)
+// C4324: alignment padding warnings
+// C4820: Off by default noise
+
+	/****************************************************************************
+	*				  			BoundingSphere
+	*************************************************************************//**
+	*  @class     Bounding Sphere
+	*  @brief     BoundingSphere class
+	*****************************************************************************/
+	struct BoundingSphere
+	{
+	public:		
+		/****************************************************************************
+		**                Public Member Variables
+		*****************************************************************************/
+		Float3 Center;
+		float  Radius;
+
+		/****************************************************************************
+		**                Public Function
+		*****************************************************************************/
+		void __vectorcall Transform(BoundingSphere& Out, gm::Matrix4 M) const;
+
+		/****************************************************************************
+		**                Constructor and Destructor
+		*****************************************************************************/
+		BoundingSphere() { Center = Float3(0.0f, 0.0f, 0.0f); Radius = 1.0f; }
+		BoundingSphere(const BoundingSphere&)            = default;
+		BoundingSphere& operator=(const BoundingSphere&) = default;
+		BoundingSphere(const BoundingSphere&&)           = default;
+
+		constexpr BoundingSphere(const Float3& center, float radius) :Center(center),Radius(radius){}
+	protected:
+		/****************************************************************************
+		**                Private Function
+		*****************************************************************************/
+
+		/****************************************************************************
+		**                Private Member Variables
+		*****************************************************************************/
+	};
+
 	/****************************************************************************
 	*				  			Ray
 	*************************************************************************//**

@@ -142,6 +142,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	-                    Create SRV Desc
 	---------------------------------------------------------------------*/
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
 	switch (type)
 	{
 		case TextureType::Texture2D:

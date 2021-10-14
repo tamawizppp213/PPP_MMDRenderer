@@ -13,7 +13,6 @@
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 #include <iostream>
@@ -167,7 +166,7 @@ void MotionTest::BuildRenderItem()
 	_allRenderItems.push_back(std::move(boxRitem));
 
 	auto gridRitem = std::make_unique<RenderItem>();
-	gridRitem->World              = DirectXMathHelper::Identity4X4();
+	gridRitem->World              = gm::MatrixIdentityF();
 	gridRitem->ObjectCBIndex      = 1;
 	gridRitem->Geo                = _geometries["shapeGeo"].get();
 	gridRitem->PrimitiveType      = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

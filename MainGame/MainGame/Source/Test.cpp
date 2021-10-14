@@ -13,10 +13,8 @@
 #include "DirectX12/Include/Core/DirectX12VertexTypes.hpp"
 #include "DirectX12/Include/Core/DirectX12BaseStruct.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/DirectX12MathHelper.hpp"
 #include "DirectX12/Include/Core/DirectX12Texture.hpp"
 #include "GameCore/Include/Model/ModelLoader.hpp"
-#include <DirectXMath.h>
 #include <DirectXColors.h>
 #include <iostream>
 #include <array>
@@ -26,11 +24,13 @@
 #include "GameCore/Include/Model/FBX/FBXFile.hpp"
 #include "GameCore/Include/Sprite/TextRenderer.hpp"
 #include "GameCore/Include/Sprite/Fade.hpp"
+#include "GameMath/Include/GMDistribution.hpp"
+#include "GameMath/Include/GMMatrix.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 
-DirectX::XMMATRIX matrix = DirectX::XMMatrixIdentity();
+gm::Matrix4 matrix = gm::MatrixIdentity();
 float angle = 0.0f;
 std::vector<Sprite> _spriteList;
 std::vector<Sprite> _list;
@@ -50,7 +50,6 @@ bool isStart = false;
 //////////////////////////////////////////////////////////////////////////////////
 Test::Test()
 {
-	
 }
 
 Test::~Test()
@@ -64,9 +63,8 @@ void Test::Initialize(GameTimer& gameTimer)
 	_device      = _directX12.GetDevice();
 	_commandList = _directX12.GetCommandList();
 
-	_directX12.ResetCommandList();
 
-	_spriteRenderer.Initialize();
+	_spriteRenderer.Initialize(FastBlendStateType::Normal);
 	LoadTextures();
 
 	// ÉÇÉìÉXÉ^Å[10ëÃÇ
@@ -85,7 +83,7 @@ void Test::Initialize(GameTimer& gameTimer)
 	{
 		Sprite sprite;
 		sprite.CreateSpriteForTexture(
-			DirectX::XMFLOAT3((float)0.1 * i - 0.5f, (float)0.0f, 0.0f),
+			DirectX::XMFLOAT3((float)10 * i - 5, (float)0.0f, 0.0f),
 			DirectX::XMFLOAT2(0.5f, 0.5f),
 			DirectX::XMFLOAT2(0.0f, 1.0f),
 			DirectX::XMFLOAT2(0.0f, 1.0f));
@@ -95,9 +93,10 @@ void Test::Initialize(GameTimer& gameTimer)
 	for (int i = 0; i < 10; ++i)
 	{
 		Sprite sprite;
-		sprite.CreateSpriteForTexture(
-			DirectX::XMFLOAT3((float)0.1 * i - 0.5f, (float)0.5f, 0.0f),
+		sprite.CreateSprite(
+			DirectX::XMFLOAT3((float)0.5 * i - 0.5f, (float)0.3f, 0.0f),
 			DirectX::XMFLOAT2(0.5f, 0.5f),
+			DirectX::XMFLOAT4(1.0f, 1.0f,1,1),
 			DirectX::XMFLOAT2(0.0f, 1.0f),
 			DirectX::XMFLOAT2(0.0f, 1.0f));
 		_spriteList.push_back(sprite);
@@ -124,8 +123,8 @@ void Test::Draw()
 {
 	_directX12.ClearScreen();
 	_spriteRenderer.DrawStart();
-	_spriteRenderer.Draw(_spriteList, test, matrix);
-	_spriteRenderer.Draw(_list, test2, matrix);
+	_spriteRenderer.Draw(_spriteList, _texture, matrix);
+	_spriteRenderer.Draw(_list, test3, matrix);
 	_spriteRenderer.DrawEnd();
     _directX12.CompleteRendering();
 }
@@ -197,9 +196,8 @@ void Test::LoadTextures()
 {
 	TextureLoader texture;
 	texture.LoadTexture(L"Resources/Texture/Test.jpg", _texture);
-	texture.LoadTexture(L"Resources/Texture/textest.png", test2);
-	texture.LoadTexture(L"Resources/Texture/Alora.jpg", test);
 	texture.LoadTexture(L"Resources/Texture/Title.png", test3);
+
 }
 
 void Test::BuildRootSignature()

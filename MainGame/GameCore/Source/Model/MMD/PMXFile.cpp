@@ -313,6 +313,74 @@ bool PMXData::LoadPMXMeshIndex(FILE* filePtr)
 			return false;
 		}
 	}
+
+	/*-------------------------------------------------------------------
+	-             Calculate Tangent Data
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < _indices.size() / 3; ++i)
+	{
+		auto& vertex0 = _vertices[_indices[i]];
+		auto& vertex1 = _vertices[_indices[i + 1]];
+		auto& vertex2 = _vertices[_indices[i + 2]];
+
+		Vector3 cp0[] =
+		{
+			{vertex0.Vertex.Position.x, vertex0.Vertex.UV.x, vertex0.Vertex.UV.y},
+			{vertex0.Vertex.Position.y, vertex0.Vertex.UV.x, vertex0.Vertex.UV.y},
+			{vertex0.Vertex.Position.z, vertex0.Vertex.UV.x, vertex0.Vertex.UV.y}
+		};
+
+		Vector3 cp1[] =
+		{
+			{vertex1.Vertex.Position.x, vertex1.Vertex.UV.x, vertex1.Vertex.UV.y},
+			{vertex1.Vertex.Position.y, vertex1.Vertex.UV.x, vertex1.Vertex.UV.y},
+			{vertex1.Vertex.Position.z, vertex1.Vertex.UV.x, vertex1.Vertex.UV.y}
+		};
+
+		Vector3 cp2[] =
+		{
+			{vertex2.Vertex.Position.x, vertex2.Vertex.UV.x, vertex2.Vertex.UV.y},
+			{vertex2.Vertex.Position.y, vertex2.Vertex.UV.x, vertex2.Vertex.UV.y},
+			{vertex2.Vertex.Position.z, vertex2.Vertex.UV.x, vertex2.Vertex.UV.y}
+		};
+
+		float tangent[3];
+		float binormal[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			Vector3 V1 = cp1[i] - cp0[i];
+			Vector3 V2 = cp2[i] - cp1[i];
+			Vector3 ABC = Cross(V1, V2);
+			
+			if (ABC.GetX() == 0.0f)
+			{
+				tangent[i]  = 0.0f;
+				binormal[i] = 0.0f;
+			}
+			else
+			{
+				tangent[i]  = -ABC.GetY() / ABC.GetX();
+				binormal[i] = -ABC.GetZ() / ABC.GetX();
+			}
+		}
+		Float3 tangentAfter  = Float3(tangent);
+		Float3 binormalAfter = Float3(binormal);
+		tangentAfter  = Normalize(tangentAfter).ToFloat3();
+		binormalAfter = Normalize(binormalAfter).ToFloat3();
+		
+		//https://edom18.hateblo.jp/entry/2018/08/30/131859
+		vertex0.Vertex.Tangent  = Vector3(Vector3(vertex0.Vertex.Tangent) + Vector3(tangentAfter)).ToFloat3();
+		vertex1.Vertex.Tangent  = Vector3(Vector3(vertex1.Vertex.Tangent) + Vector3(tangentAfter)).ToFloat3();
+		vertex2.Vertex.Tangent  = Vector3(Vector3(vertex2.Vertex.Tangent) + Vector3(tangentAfter)).ToFloat3();
+		vertex0.Vertex.Binormal = Vector3(Vector3(vertex0.Vertex.Binormal) + Vector3(tangentAfter)).ToFloat3();
+		vertex1.Vertex.Binormal = Vector3(Vector3(vertex1.Vertex.Binormal) + Vector3(tangentAfter)).ToFloat3();
+		vertex2.Vertex.Binormal = Vector3(Vector3(vertex2.Vertex.Binormal) + Vector3(tangentAfter)).ToFloat3();
+	}
+
+	for (int i = 0; i < _vertices.size(); ++i)
+	{
+		_vertices[i].Vertex.Tangent = Normalize(_vertices[i].Vertex.Tangent).ToFloat3();
+	}
 	return true;
 }
 
@@ -462,13 +530,13 @@ bool PMXData::LoadPMXTextures(const pmx::PMXMaterial& material, int index)
 		case pmx::PMXSphereMapMode::Addition:
 		{
 			if (material.SphereMapTextureIndex != INVALID_ID) { spaName = _texturePathList[material.SphereMapTextureIndex]; }
-			else { ::OutputDebugString(L"Couldn't read addition type textures\n"); }
+			//else { ::OutputDebugString(L"Couldn't read addition type textures\n"); }
 			break;
 		}
 		case pmx::PMXSphereMapMode::Multiply:
 		{
 			if (material.SphereMapTextureIndex != INVALID_ID) { sphName = _texturePathList[material.SphereMapTextureIndex]; }
-			else { ::OutputDebugString(L"Couldn't read multiply type textures\n"); }
+			//else { ::OutputDebugString(L"Couldn't read multiply type textures\n"); }
 			break;
 		}
 		case pmx::PMXSphereMapMode::SubTexture:
@@ -721,7 +789,6 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 				chain.EnableLimit = ikLink.EnableLimit;
 				chain.AngleMax    = ikLink.AngleMax;
 				chain.AngleMin    = ikLink.AngleMin;
-
 				ikChain.emplace_back(chain);
 			}
 
@@ -731,7 +798,7 @@ bool PMXData::LoadPMXBone(FILE* filePtr)
 			boneIK.SetIKBone        (_boneNodeAddress[boneIndex]);
 			boneIK.SetIKParentBone  (_boneNodeAddress[ik.LinkBoneIndex]);
 			boneIK.SetIterationCount(ik.IKIterationCount);
-			boneIK.SetLimitAngle    (ik.IKAngleLimit);
+			boneIK.SetLimitAngle    (ik.IKAngleLimit / 4.0f); // as pmd value
 			boneIK.SetTargetBone    (_boneNodeAddress[ik.IKTargetBoneIndex]);
 			
 			auto& boneNode = _boneNodeAddress[boneIndex];

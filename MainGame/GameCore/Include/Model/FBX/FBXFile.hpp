@@ -60,18 +60,18 @@ private:
 	bool SetFBXConfig();
 	bool LoadFBXVertex();
 	
-	void CollectMeshNode(fbxsdk::FbxNode* node, std::map<std::string, fbxsdk::FbxNode*>& nodeList);
+	//void CollectMeshNode(fbxsdk::FbxNode* node, std::map<std::string, fbxsdk::FbxNode*>& nodeList);
 
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	fbxsdk::FbxManager*  _fbxManager  = nullptr;
-	fbxsdk::FbxImporter* _fbxImporter = nullptr;
-	fbxsdk::FbxScene*    _fbxScene    = nullptr;
-	fbxsdk::FbxNode*     _fbxMeshNode = nullptr;
-	fbxsdk::FbxMesh*     _fbxMesh     = nullptr;
-	fbxsdk::FbxNode*     _fbxRootNode = nullptr;
+	//fbxsdk::FbxManager*  _fbxManager  = nullptr;
+	//fbxsdk::FbxImporter* _fbxImporter = nullptr;
+	//fbxsdk::FbxScene*    _fbxScene    = nullptr;
+	//fbxsdk::FbxNode*     _fbxMeshNode = nullptr;
+	//fbxsdk::FbxMesh*     _fbxMesh     = nullptr;
+	//fbxsdk::FbxNode*     _fbxRootNode = nullptr;
 
-	std::vector<VertexPositionNormalTexture> _vertex;
+	//std::vector<VertexPositionNormalTexture> _vertex;
 };
 #endif

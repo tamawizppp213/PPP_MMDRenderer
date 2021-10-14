@@ -14,7 +14,7 @@
 #include "Scene.hpp"
 #include "DirectX12/Include/DirectX12Geometry.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
-#include "DirectX12/Include/DirectX12MathHelper.hpp"
+#include "GameMath/Include/GMMatrix.hpp"
 #include "GameCore/Include/FrameResources.hpp"
 #include <vector>
 #include <unordered_map>
@@ -28,7 +28,7 @@ struct RenderItem
 {
 	RenderItem() = default;
 
-	DirectX::XMFLOAT4X4 World   = DirectXMathHelper::Identity4X4();
+	DirectX::XMFLOAT4X4 World   = gm::MatrixIdentityF();
 	int NumFramesDirty = numFrameResources;
 	UINT ObjectCBIndex = -1;
 

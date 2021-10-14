@@ -34,9 +34,9 @@ struct TextNumber
 {
 	UINT              Number;
 	INT               Digit;
-	gm::Float2        SizePerDigit;
+	gm::Float2        SizePerDigit;  // 0 ~ 1
 	gm::Float3        StartPosition; // rect left upper point
-	float             Space;
+	float             Space;         // 0 ~ 1
 };
 
 #endif
