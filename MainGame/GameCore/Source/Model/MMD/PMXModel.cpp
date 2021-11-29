@@ -56,33 +56,39 @@ bool PMXModel::Initialize(const std::wstring& filePath)
 	/*-------------------------------------------------------------------
 	-             Prepare Vertex Buffer
 	---------------------------------------------------------------------*/
-	if (!PrepareVertexBuffer()) { MessageBox(NULL, L" Vertex buffer cannot be prepared.", L"Warning", MB_ICONWARNING); };
+	if (!PrepareVertexBuffer()) { MessageBox(NULL, L" Vertex buffer cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
 
 	/*-------------------------------------------------------------------
 	-             Prepare Index Buffer
 	---------------------------------------------------------------------*/
-	if (!PrepareIndexBuffer()) { MessageBox(NULL, L" Index buffer cannot be prepared.", L"Warning", MB_ICONWARNING); };
+	if (!PrepareIndexBuffer()) { MessageBox(NULL, L" Index buffer cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
 
 	/*-------------------------------------------------------------------
 	-             Prepare Material Buffer
 	---------------------------------------------------------------------*/
-	if (!PrepareMaterialBuffer()) { MessageBox(NULL, L" Material buffer cannot be prepared.", L"Warning", MB_ICONWARNING); };
+	if (!PrepareMaterialBuffer()) { MessageBox(NULL, L" Material buffer cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
 	
 	/*-------------------------------------------------------------------
 	-             Prepare Material Buffer
 	---------------------------------------------------------------------*/
-	if (!PrepareBoneBuffer()) { MessageBox(NULL, L" Bone buffer cannot be prepared.", L"Warning", MB_ICONWARNING); };
+	if (!PrepareBoneBuffer()) { MessageBox(NULL, L" Bone buffer cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
 
 	/*-------------------------------------------------------------------
-	-             Prepare PMDObject
+	-             Prepare PMX Object
 	---------------------------------------------------------------------*/
-	if (!PreparePMXObject())      { MessageBox(NULL, L"PMXObject cannot be prepared.", L"Warning", MB_ICONWARNING); };
+	if (!PreparePMXObject()) { MessageBox(NULL, L"PMXObject cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
 
 	/*-------------------------------------------------------------------
-	-             Prepare PMDObject
+	-             Prepare PMX Bone
 	---------------------------------------------------------------------*/
-	if (!PrepareBoneMap()) { MessageBox(NULL, L"BoneMap cannot be prepared.", L"Warning", MB_ICONWARNING); };
-	if(!PrepareBoneIK()) { MessageBox(NULL, L"BoneIK cannot be prepared.", L"Warning", MB_ICONWARNING); };
+	if (!PrepareBoneMap()) { MessageBox(NULL, L"BoneMap cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
+	if (!PrepareBoneIK()) { MessageBox(NULL, L"BoneIK cannot be prepared.", L"Warning", MB_ICONWARNING); return false; };
+	
+	/*-------------------------------------------------------------------
+	-             Prepare PMX Physics and RigidBody and Joint
+	---------------------------------------------------------------------*/
+	if (!PreparePhysics()) { MessageBox(NULL, L"BoneIK cannot be prepared.", L"Warning", MB_ICONWARNING); return false; }
+
 	return true;
 }
 
@@ -145,7 +151,7 @@ bool PMXModel::Draw(SceneGPUAddress scene, LightGPUAddress light)
 		commandList->SetGraphicsRootDescriptorTable(8, _pmxData->GetTextureList(i).ToonTexture.GPUHandler);
 		commandList->DrawIndexedInstanced(_pmxData.get()->GetIndexCountForMaterial(i), 1, offset, _meshBuffer[_currentFrameIndex].BaseVertexLocation, 0);
 		offset  += _pmxData.get()->GetIndexCountForMaterial(i);
-		address += CalcConstantBufferByteSize(sizeof(PMXMaterial));
+		address += CalcConstantBufferByteSize(sizeof(PBRMaterial));
 	}
 
 	
@@ -207,17 +213,18 @@ bool PMXModel::StartAnimation(const std::wstring& motionName)
 		}
 
 		PMXBoneNode* boneNode      = _pmxData->GetBoneNode(boneMotion.first);
-		Vector3       basePosition = boneNode->GetTranslate();
+		Vector3      basePosition = boneNode->GetTranslate();
 		Matrix4      boneTransform = 
 			  Translation(basePosition)
 			* RotationQuaternion(boneMotion.second[0].Quaternion)
 			* Translation(basePosition);
 		_boneMatrices.get()->at(boneNode->GetBoneIndex()) = boneTransform;
 	}
-	PMXBoneNode::RecursiveBoneMatrixMultiply(*_boneMatrices, _pmxData->GetBoneNode("センター"), MatrixIdentity());
+	PMXBoneNode::RecursiveBoneMatrixMultiply(*_boneMatrices, _pmxData->GetBoneNode("全ての親"), MatrixIdentity());
 	WriteBoneParameterToBuffer();
 
 	_isAnimation = true;
+	_currentTime = 0;
 	return true;
 }
 #pragma region Property
@@ -350,18 +357,18 @@ bool PMXModel::PrepareMaterialBuffer()
 	/*-------------------------------------------------------------------
 	-			Check Material Data
 	---------------------------------------------------------------------*/
-	if (_pmxData->GetMaterial() == nullptr) { ::OutputDebugString(L"Can't read material data"); return false; }
+	if (_pmxData->GetPBRMaterial() == nullptr) { ::OutputDebugString(L"Can't read material data"); return false; }
 	int materialCount = (int)_pmxData->GetMaterialCount();
 
 	/*-------------------------------------------------------------------
 	-			Build Material Data
 	---------------------------------------------------------------------*/
-	_materialBuffer = std::make_unique<UploadBuffer<PMXMaterial>>(directX12.GetDevice(), materialCount, true);
+	_materialBuffer = std::make_unique<UploadBuffer<PBRMaterial>>(directX12.GetDevice(), materialCount, true);
 	_materialBuffer->CopyStart();
 	_materialBuffer->Resource()->SetName(L"PMXMaterial");
 	for (int i = 0; i < materialCount; ++i)
 	{
-		_materialBuffer->CopyData(i, _pmxData->GetMaterial()[i]);
+		_materialBuffer->CopyData(i, _pmxData->GetPBRMaterial()[i]);
 	}
 	_materialBuffer->CopyEnd();
 
@@ -375,8 +382,8 @@ bool PMXModel::PrepareMaterialBuffer()
 		-			Create Constant Buffer View Descriptor
 		---------------------------------------------------------------------*/
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-		cbvDesc.BufferLocation = _materialBuffer.get()->Resource()->GetGPUVirtualAddress() + i * CalcConstantBufferByteSize(sizeof(PMXMaterial));
-		cbvDesc.SizeInBytes    = CalcConstantBufferByteSize(sizeof(PMXMaterial));
+		cbvDesc.BufferLocation = _materialBuffer.get()->Resource()->GetGPUVirtualAddress() + i * CalcConstantBufferByteSize(sizeof(PBRMaterial));
+		cbvDesc.SizeInBytes    = CalcConstantBufferByteSize(sizeof(PBRMaterial));
 
 		/*-------------------------------------------------------------------
 		-			Create Constant Buffer View
@@ -481,6 +488,14 @@ bool PMXModel::PrepareBoneBuffer()
 	delete boneParameter;
 	return true;
 }
+/****************************************************************************
+*                       PrepareBoneMap
+*************************************************************************//**
+*  @fn        bool PMDModel::PrepareBoneMap()
+*  @brief     Prepare Bone Map
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool PMXModel::PrepareBoneMap()
 {
 	/*-------------------------------------------------------------------
@@ -566,7 +581,14 @@ bool PMXModel::PrepareBoneMap()
 	_boneNodeAddress       = std::move(nodeAddress);
 	_sortedBoneNodeAddress = std::move(sortedNodeAddress);
 
-
+	for (const auto& node : *_sortedBoneNodeAddress.get())
+	{
+		if (node->GetParent() == nullptr)
+		{
+			_rootBoneNodeNames.push_back(node->GetBoneName());
+		}
+	}
+	
 	return true;
 }
 bool PMXModel::PrepareBoneIK()
@@ -655,7 +677,6 @@ bool PMXModel::PrepareBoneIK()
 	_boneIKs = std::move(boneIK);
 	return true;
 }
-
 void PMXModel::WriteBoneParameterToBuffer()
 {
 	PMXBoneParameter* boneParameter = new PMXBoneParameter();
@@ -666,6 +687,54 @@ void PMXModel::WriteBoneParameterToBuffer()
 	boneObject->CopyData(0, *boneParameter);
 	boneObject->CopyEnd();
 	delete boneParameter;
+}
+/****************************************************************************
+*                       PreparePhysics
+*************************************************************************//**
+*  @fn        bool PMXModel::PreparePhysics()
+*  @brief     Prepare Physics
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
+bool PMXModel::PreparePhysics()
+{
+	if (!_physicsManager.Create()) { return false; }
+
+	for (const auto& pmxRigidBody : GetPMXData()->GetRigidBodyList())
+	{
+		auto         rigidBody = _physicsManager.AddRigidBody();
+		PMXBoneNode* node      = nullptr;
+		if (pmxRigidBody.BoneIndex != -1)
+		{
+			node = _boneNodeAddress.get()->at(pmxRigidBody.BoneIndex);
+		}
+		if (!rigidBody->Create(pmxRigidBody, this, node))
+		{
+			return false;
+		}
+		_physicsManager.GetMMDPhysics()->AddRigidBody(rigidBody);
+	}
+
+	for (const auto& pmxJoint : GetPMXData()->GetJointList())
+	{
+		if (pmxJoint.RigidBodyIndex_A != -1 && pmxJoint.RigidBodyIndex_B != -1 && pmxJoint.RigidBodyIndex_A != pmxJoint.RigidBodyIndex_B)
+		{
+			auto         joint = _physicsManager.AddJoint();
+			PMXBoneNode* node  = nullptr;
+			auto rigidBodies   = _physicsManager.GetRigidBodies();
+			bool result = joint->CreateJoint(pmxJoint, (*rigidBodies)[pmxJoint.RigidBodyIndex_A].get(), (*rigidBodies)[pmxJoint.RigidBodyIndex_B].get());
+			if (!result)
+			{
+				return false;
+			}
+			_physicsManager.GetMMDPhysics()->AddJoint(joint);
+		}
+		
+	}
+
+	ResetPhysics();
+
+	return true;
 }
 
 #pragma endregion Prepare
@@ -748,10 +817,46 @@ void PMXModel::UpdateNodeAnimation(bool isAfterPhysics, int frameNo)
 		}
 	}
 }
-
-void PMXModel::UpdatePhysicsAnimation()
+/****************************************************************************
+*                       UpdatePhysicsAnimation
+*************************************************************************//**
+*  @fn        void PMXModel::UpdatePhysicsAnimation(float deltaTime)
+*  @brief     Update physics animation
+*  @param[in] float deltaTime
+*  @return 　　void
+*****************************************************************************/
+void PMXModel::UpdatePhysicsAnimation(float deltaTime)
 {
+	PMXPhysicsManager* physicsManager = GetPMXPhysicsManager();
+	MMDPhysics*        physics        = physicsManager->GetMMDPhysics();
+	if (physics == nullptr) { return; }
 
+	/*-------------------------------------------------------------------
+	-                    Activate rigidBody
+	---------------------------------------------------------------------*/
+	auto rigidBodies = physicsManager->GetRigidBodies();
+	for (auto& rigidBody : *rigidBodies)
+	{
+		rigidBody->SetActivation(true);
+	}
+
+	/*-------------------------------------------------------------------
+	-                    Update physics
+	---------------------------------------------------------------------*/
+	physics->Update(deltaTime);
+
+	for (auto& rigidBody : *rigidBodies)
+	{
+		rigidBody->ReflectGlobalMatrix();
+	}
+	for (auto& rigidBodies : *rigidBodies)
+	{
+		rigidBodies->CalculateLocalMatrix();
+	}
+	for (auto name : _rootBoneNodeNames)
+	{
+		_boneMap.get()->at(name).UpdateSelfandChildMatrix();
+	}
 }
 
 /****************************************************************************
@@ -970,7 +1075,7 @@ bool PMXModel::UpdateMotion(UINT32 frameNo)
 	ClearBoneMatrices();
 	UpdateBoneNodeTransform(frameNo); // set the bone node of the target frame.
 	UpdateNodeAnimation(false);
-	UpdatePhysicsAnimation();
+	//UpdatePhysicsAnimation(_gameTimer->DeltaTime());
 	UpdateNodeAnimation(true);
 	UpdateBoneMatrices();
 
@@ -1018,5 +1123,135 @@ void PMXModel::ClearBoneMatrices()
 		bone->BeforeUpdateMatrix();
 	}
 }
+/****************************************************************************
+*                       ResetPhysics
+*************************************************************************//**
+*  @fn        void PMXModel::ResetPhysics()
+*  @brief     Reset physics
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void PMXModel::ResetPhysics()
+{
+	/*-------------------------------------------------------------------
+	-             Prepare physics manager
+	---------------------------------------------------------------------*/
+	PMXPhysicsManager* physicsManager = GetPMXPhysicsManager();
+	MMDPhysics*        physics        = physicsManager->GetMMDPhysics();
+	if (physics == nullptr) { return; }
+
+	/*-------------------------------------------------------------------
+	-             Reset RigidBody
+	---------------------------------------------------------------------*/
+	auto rigidBodies = physicsManager->GetRigidBodies();
+	for (auto& rigidBody : *rigidBodies)
+	{
+		rigidBody->SetActivation(false);
+		rigidBody->ResetTransform();
+	}
+
+	/*-------------------------------------------------------------------
+	-             Update physics
+	---------------------------------------------------------------------*/
+	physics->Update(1.0f / FIXED_FRAME_RATE);
+
+	for (auto& rigidBody : *rigidBodies)
+	{
+		rigidBody->ReflectGlobalMatrix();
+	}
+	
+	for (auto& rigidBody : *rigidBodies)
+	{
+		rigidBody->CalculateLocalMatrix();
+	}
+
+	for (auto& name : _rootBoneNodeNames)
+	{
+		_boneMap.get()->at(name).UpdateSelfandChildMatrix();
+	}
+
+	for (auto& rigidBody : *rigidBodies)
+	{
+		rigidBody->Reset(physics);
+	}
+}
 #pragma endregion Clear
 #pragma endregion Protected Function
+
+#pragma region  Physics Manager
+PMXPhysicsManager::PMXPhysicsManager() {};
+PMXPhysicsManager::~PMXPhysicsManager()
+{
+	for (auto& joint : _joints)
+	{
+		_mmdPhysics->RemoveJoint(joint.get());
+	}
+	_joints.clear();
+
+	for (auto& rigidBody : _rigidBodies)
+	{
+		_mmdPhysics->RemoveRigidBody(rigidBody.get());
+	}
+	_rigidBodies.clear();
+	_mmdPhysics.reset();
+}
+/****************************************************************************
+*                       Create
+*************************************************************************//**
+*  @fn        bool PMXPhysicsManager::Create()
+*  @brief     Create MMDPhysics
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
+bool PMXPhysicsManager::Create()
+{
+	_mmdPhysics = std::make_unique<MMDPhysics>();
+	return _mmdPhysics->Create();
+}
+/****************************************************************************
+*                      GetMMDPhysics
+*************************************************************************//**
+*  @fn        MMDPhysics* PMXPhysicsManager::GetMMDPhysics()
+*  @brief     Get MMDPhysics pointer
+*  @param[in] void
+*  @return 　　MMDPhysics*
+*****************************************************************************/
+MMDPhysics* PMXPhysicsManager::GetMMDPhysics()
+{
+	return _mmdPhysics.get();
+}
+/****************************************************************************
+*                      AddRigidBody
+*************************************************************************//**
+*  @fn        PMXRigidBody* PMXPhysicsManager::AddRigidBody()
+*  @brief     Add rigidBody
+*  @param[in] void
+*  @return 　　PMXRigidBody*
+*****************************************************************************/
+PMXRigidBody* PMXPhysicsManager::AddRigidBody()
+{
+	assert(_mmdPhysics != nullptr);
+	auto rigidBody = std::make_unique<PMXRigidBody>();
+	auto result    = rigidBody.get();
+	_rigidBodies.emplace_back(std::move(rigidBody));
+
+	return result;
+}
+/****************************************************************************
+*                      AddJoint
+*************************************************************************//**
+*  @fn        PMXJoint* PMXPhysicsManager::AddJoint()
+*  @brief     Add joint
+*  @param[in] void
+*  @return 　　PMXJoint*
+*****************************************************************************/
+PMXJoint* PMXPhysicsManager::AddJoint()
+{
+	assert(_mmdPhysics != nullptr);
+	auto joint  = std::make_unique<PMXJoint>();
+	auto result = joint.get();
+	_joints.emplace_back(std::move(joint));
+
+	return result;
+}
+#pragma endregion Physics Manager

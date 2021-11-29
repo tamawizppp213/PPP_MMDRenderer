@@ -549,14 +549,16 @@ void DirectX12::BuildResourceAllocator()
 	-			     Set RTV Heap
 	---------------------------------------------------------------------*/
 	auto rtvCpuHandler = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
-	auto rtvGpuHandler = _rtvHeap->GetGPUDescriptorHandleForHeapStart();
+	D3D12_GPU_DESCRIPTOR_HANDLE rtvGpuHandler;
+	rtvGpuHandler.ptr = 0;// = _rtvHeap->GetGPUDescriptorHandleForHeapStart();
 	_rtvAllocator.SetResourceAllocator(RTV_DESC_COUNT, _rtvDescriptorSize, rtvCpuHandler, rtvGpuHandler);
 
 	/*-------------------------------------------------------------------
 	-			     Set DSV Heap
 	---------------------------------------------------------------------*/
 	auto dsvCpuHandler = _dsvHeap->GetCPUDescriptorHandleForHeapStart();
-	auto dsvGpuHandler = _dsvHeap->GetGPUDescriptorHandleForHeapStart();
+	D3D12_GPU_DESCRIPTOR_HANDLE dsvGpuHandler;
+	dsvGpuHandler.ptr = 0;// = _dsvHeap->GetGPUDescriptorHandleForHeapStart();
 	_dsvAllocator.SetResourceAllocator(DSV_DESC_COUNT, _dsvDescriptorSize, dsvCpuHandler, dsvGpuHandler);
 
 	/*-------------------------------------------------------------------

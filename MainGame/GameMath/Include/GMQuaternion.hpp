@@ -45,6 +45,7 @@ namespace gm
 		**                Public Function
 		*****************************************************************************/
 		INLINE Quaternion Normalize() { DirectX::XMVECTOR q = _vector; return Quaternion(DirectX::XMQuaternionNormalize(q)); }
+		INLINE Scalar     GetAngle()  { return Scalar(2.0f)* ACos(DirectX::XMVectorGetW(_vector)); }
 		/****************************************************************************
 		**                Public Member Variables
 		*****************************************************************************/
@@ -94,7 +95,8 @@ namespace gm
 		DirectX::XMVECTOR _vector;
 	};
 	
-	INLINE void AxisAngle(const Quaternion& q, float* rotate, DirectX::XMVECTOR* axis) { return DirectX::XMQuaternionToAxisAngle(axis,rotate,q); }
+	INLINE void AxisAngle(const Quaternion& q, float* rotate, Vector3& axis) { DirectX::XMVECTOR v = axis; DirectX::XMQuaternionToAxisAngle(&v, rotate, q); axis = Vector3(v); }
+	INLINE void AxisAngle(const Quaternion& q, float* rotate, DirectX::XMVECTOR* axis) { DirectX::XMQuaternionToAxisAngle(axis,rotate,q); }
 	INLINE Quaternion Normalize(const Quaternion& q)                           { return Quaternion(DirectX::XMQuaternionNormalize(q)); }
 	INLINE Quaternion Squad(const Quaternion& a, const Quaternion& b, const Quaternion& c, const Quaternion& d, float t) { return Quaternion(DirectX::XMQuaternionSquad(a, b, c, d, t)); }
 	INLINE Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t) { return Quaternion(DirectX::XMQuaternionSlerp(a, b, t)); }
@@ -111,6 +113,23 @@ namespace gm
 		q *= Inverse(rotation);
 		Float4 result = q.ToFloat4();
 		return Vector3(result.x, result.y, result.z);
+	}
+	INLINE Quaternion ShortestArcQuaternion(const Vector3& v0, const Vector3& v1)
+	{
+		Vector3 c = Cross(v0, v1);
+		float   d = Dot(v0, v1);
+
+		if (d < -1.0f + FLT_EPSILON)
+		{
+			Vector3 n, unused;
+			PlaneSpace(v0, n, unused);
+			return Quaternion(Vector4(n.GetX(), n.GetY(), n.GetZ(), 0.0f));
+		}
+
+		float s = Sqrt((1.0f + d) * 2.0f);
+		float rs = 1.0f / s;
+
+		return Quaternion(Vector4(c.GetX() * rs, c.GetY() * rs, c.GetZ() * rs, s * 0.5f));
 	}
 	//INLINE Quaternion Inverse(const Quaternion& q) { return Quaternion(-q); }
 }

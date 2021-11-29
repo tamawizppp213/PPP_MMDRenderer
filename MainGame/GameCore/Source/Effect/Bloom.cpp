@@ -100,7 +100,7 @@ bool Bloom::OnResize(int newWidth, int newHeight)
 		_blur[0].OnResize(newWidth, newHeight);
 		for (int i = 0; i < _countof(_blur); ++i)
 		{
-			_blur[i].OnResize(newWidth / (int)pow(2, i), newHeight / pow(2, i));
+			_blur[i].OnResize((int)(newWidth / pow(2, i)), (int)(newHeight / pow(2, i)));
 		}
 		for (int i = 0; i < _colorBuffer.size(); ++i)
 		{
@@ -127,7 +127,7 @@ bool Bloom::PrepareResources(int width, int height)
 	if (!_blur[0].Initialize(width, height, DirectX12::Instance().GetBackBufferRenderFormat())) { return false; }
 	for (int i = 1; i < _countof(_blur); ++i)
 	{
-		if(!_blur[i].Initialize(width / pow(2, i), height / pow(2, i), DirectX12::Instance().GetBackBufferRenderFormat())){return false;}
+		if(!_blur[i].Initialize((int)(width / pow(2, i)), (int)(height / pow(2, i)), DirectX12::Instance().GetBackBufferRenderFormat())){return false;}
 	}
 	return true;
 }

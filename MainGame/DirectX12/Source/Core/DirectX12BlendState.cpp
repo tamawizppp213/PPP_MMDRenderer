@@ -126,10 +126,10 @@ static PostEffectEntryPoint g_EffectEntryPointList[(int)PostEffectBlendStateType
 {
 	{PostEffectBlendStateType::None      , "VSMain" , "PSMain"},
 	{PostEffectBlendStateType::Monochrome, "VSBlend", "PSMonochrome"},
-	{PostEffectBlendStateType::Invert    , "VSBlend", "PSInvert"},
 	{PostEffectBlendStateType::Sepia     , "VSBlend", "PSSepia"},
 	{PostEffectBlendStateType::GrayScale , "VSBlend", "PSGrayScale"},
 	{PostEffectBlendStateType::Binary    , "VSBlend", "PSBinary"},
+	{PostEffectBlendStateType::Invert    , "VSBlend", "PSInvert"},
 	{PostEffectBlendStateType::Blur      , "VSBlend", "PSMain"}
 };
 

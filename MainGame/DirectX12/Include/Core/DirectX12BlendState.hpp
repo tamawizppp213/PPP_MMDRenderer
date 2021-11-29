@@ -81,10 +81,10 @@ enum class PostEffectBlendStateType
 	// shader default 2D
 	None,
 	Monochrome,
-	Invert,
 	Sepia,
 	GrayScale,
 	Binary,
+	Invert,
 
 	// Special Effects
 	Blur,

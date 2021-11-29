@@ -116,7 +116,7 @@ bool PrimitiveModel::Draw(SceneGPUAddress scene, LightGPUAddress light)
 	-               Drawing process for each material
 	---------------------------------------------------------------------*/
 	commandList->SetGraphicsRootDescriptorTable(4, _texture.GPUHandler);
-	commandList->DrawIndexedInstanced(_meshData.Indices.size(), 1, _meshBuffer[_currentFrameIndex].StartIndexLocation, _meshBuffer[_currentFrameIndex].BaseVertexLocation, 0);
+	commandList->DrawIndexedInstanced((UINT)_meshData.Indices.size(), 1, _meshBuffer[_currentFrameIndex].StartIndexLocation, _meshBuffer[_currentFrameIndex].BaseVertexLocation, 0);
 	return true;
 }
 
@@ -141,7 +141,7 @@ bool PrimitiveModel::PrepareVertexBuffer()
 	/*-------------------------------------------------------------------
 	-			Check PMD Vertex is existed
 	---------------------------------------------------------------------*/
-	int vertexCount    = _meshData.Vertices.size();
+	int vertexCount    = static_cast<int>(_meshData.Vertices.size());
 	int vertexByteSize = sizeof(VertexPositionNormalTexture);
 
 	/*-------------------------------------------------------------------

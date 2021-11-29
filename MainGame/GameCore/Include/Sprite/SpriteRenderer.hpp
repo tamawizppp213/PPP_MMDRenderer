@@ -19,9 +19,8 @@
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "Sprite.hpp"
 #include "GameMath/Include/GMMatrix.hpp"
-#include <memory>
 #include "GameCore/Include/Effect/PostEffect.hpp"
-
+#include <memory>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -41,6 +40,7 @@ public:
 	bool Initialize(FastBlendStateType type = FastBlendStateType::Normal);
 	bool DrawStart();
 	bool Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const gm::Matrix4& matrix);
+	
 	bool DrawEnd();
 	bool Finalize();
 

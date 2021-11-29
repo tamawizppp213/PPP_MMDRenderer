@@ -28,6 +28,14 @@ struct TextString
 	gm::Float3        StartPosition; // rect left upper point
 	float             Space;
 
+	TextString(std::wstring string, const gm::Float2& sizePerChar, const gm::Float3& startPosition, float space)
+	{
+		String        = string;
+		SizePerChar   = sizePerChar;
+		StartPosition = startPosition;
+		Space         = space;
+	}
+	TextString() = default;
 };
 
 struct TextNumber

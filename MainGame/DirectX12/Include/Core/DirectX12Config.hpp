@@ -6,7 +6,8 @@
 //                             Define Config
 //////////////////////////////////////////////////////////////////////////////////
 #define FRAME_BUFFER_COUNT 2 // double buffer
-#define VSYNC 0// 0: don't wait, 1: wait (60fps) 
+#define VSYNC 0// 0: don't wait, 1: wait (60fps)
+#define FIXED_FRAME_RATE (60.0f)
 
 #define CBV_DESC_COUNT 1000
 #define SRV_DESC_COUNT 3800

@@ -536,6 +536,10 @@ namespace gm
 	CREATE_SIMD_FUNCTIONS(Vector3);
 	CREATE_SIMD_FUNCTIONS(Vector4);
 
+	INLINE bool IsZero(const Vector2& v) { return (v.GetX() == 0.0f) && (v.GetY() == 0.0f); }
+	INLINE bool IsZero(const Vector3& v) { return (v.GetX() == 0.0f) && (v.GetY() == 0.0f) && (v.GetZ() == 0.0f); }
+	INLINE bool IsZero(const Vector4& v) { return (v.GetX() == 0.0f) && (v.GetY() == 0.0f) && (v.GetZ() == 0.0f) && (v.GetW() == 0.0f); }
+
 	INLINE Vector2 ReplicateVector2(float value) { return Vector2(DirectX::XMVectorReplicate(value)); }
 	INLINE Vector3 ReplicateVector3(float value) { return Vector3(DirectX::XMVectorReplicate(value)); }
 	INLINE Vector4 ReplicateVector4(float value) { return Vector4(DirectX::XMVectorReplicate(value)); }
@@ -547,6 +551,10 @@ namespace gm
 	INLINE Scalar NormSquared(const Vector2& v)                                   { return Scalar(DirectX::XMVector2LengthSq(v)); }
 	INLINE Scalar NormSquared(const Vector3& v)                                   { return Scalar(DirectX::XMVector3LengthSq(v)); }
 	INLINE Scalar NormSquared(const Vector4& v)                                   { return Scalar(DirectX::XMVector4LengthSq(v)); }
+
+	INLINE bool FuzzyZero(const Vector2& v)										  { return NormSquared(v) < FLT_EPSILON * FLT_EPSILON; }
+	INLINE bool FuzzyZero(const Vector3& v)										  { return NormSquared(v) < FLT_EPSILON * FLT_EPSILON; }
+	INLINE bool FuzzyZero(const Vector4& v)										  { return NormSquared(v) < FLT_EPSILON * FLT_EPSILON; }
 
 	INLINE Scalar NormRecip(const Vector2& v)                                     { return Scalar(DirectX::XMVector2ReciprocalLength(v)); }
 	INLINE Scalar NormRecip(const Vector3& v)                                     { return Scalar(DirectX::XMVector3ReciprocalLength(v)); }
@@ -568,6 +576,20 @@ namespace gm
 	INLINE Vector3 Normalize(const Vector3& v)                                    { return Vector3(DirectX::XMVector3Normalize(v)); }
 	INLINE Vector4 Normalize(const Vector4& v)                                    { return Vector4(DirectX::XMVector4Normalize(v)); }
 	
+	INLINE Vector3 SafeNormalize(const Vector3& v)
+	{
+		Vector3 result;
+		Scalar l2 = NormSquared(v);
+		if (l2 >= FLT_EPSILON * FLT_EPSILON)
+		{
+			result = v / Sqrt(l2);
+		}
+		else
+		{
+			result = Vector3(1, 0, 0);
+		}
+		return result;
+	}
 	INLINE Scalar Distance(const Vector2& v1, const Vector2& v2)                  { return Scalar(Norm(v1 - v2)); }
 	INLINE Scalar Distance(const Vector3& v1, const Vector3& v2)                  { return Scalar(Norm(v1 - v2)); }
 	INLINE Scalar Distance(const Vector4& v1, const Vector4& v2)                  { return Scalar(Norm(v1 - v2)); }

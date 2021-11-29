@@ -135,7 +135,7 @@ bool SpritePipelineStateDescriptor::BuildRootSignature()
 	-			Build root parameter
 	---------------------------------------------------------------------*/
 	ROOT_PARAMETER rootParameter[2];
-	rootParameter[0].InitAsDescriptorTable(1, &textureTable[0], D3D12_SHADER_VISIBILITY_ALL);
+	rootParameter[0].InitAsConstantBufferView(0, D3D12_SHADER_VISIBILITY_ALL);
 	rootParameter[1].InitAsDescriptorTable(1, &textureTable[1], D3D12_SHADER_VISIBILITY_PIXEL);
 
 	/*-------------------------------------------------------------------

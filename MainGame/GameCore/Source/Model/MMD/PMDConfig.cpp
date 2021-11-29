@@ -69,7 +69,7 @@ void PMDBoneIK::SolveIK(int frameNo, PMDData* pmdFile, std::vector<gm::Matrix4>&
     auto iterator = std::find_if(vmdFile->GetEnableIKData().rbegin(), vmdFile->GetEnableIKData().rend(),
         [frameNo](const VMDIK& ikEnable)
     {
-        return ikEnable.FrameNo <= frameNo;
+        return ikEnable.FrameNo <= static_cast<UINT>(frameNo);
     });
 
     for (int i = 0; i < pmdFile->GetBoneIKCount(); ++i)

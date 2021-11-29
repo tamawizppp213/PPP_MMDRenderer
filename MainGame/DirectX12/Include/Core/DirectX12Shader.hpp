@@ -10,9 +10,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12Core.hpp"
-#include "DirectX12Debug.hpp"
 #include <fstream>
-#include <d3dcommon.h>
 #include <d3dcompiler.h>
 #include <dxcapi.h>
 #include <filesystem>

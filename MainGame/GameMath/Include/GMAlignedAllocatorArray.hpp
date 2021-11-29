@@ -28,10 +28,11 @@ subject to the following restrictions:
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "GMAlighedAllocator.hpp"
-
+#include <new>
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+
 // std::vector like 
 namespace gm
 {
@@ -119,7 +120,7 @@ namespace gm
 		}
 		INLINE void resize(int newSize, const T& fillData = T())
 		{
-			int curSize = size();
+			const int curSize = size();
 
 			if (newSize < curSize)
 			{
@@ -135,6 +136,7 @@ namespace gm
 				{
 					reserve(newSize);
 				}
+
 				for (int i = curSize; i < newSize; i++)
 				{
 					new (&_data[i]) T(fillData);

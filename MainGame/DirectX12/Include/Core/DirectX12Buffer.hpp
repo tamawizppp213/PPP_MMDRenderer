@@ -221,9 +221,8 @@ public:
 	bool OnResize(int elementCount);
 	inline void CopyStart()                                 { ThrowIfFailed(_buffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedData)));}
 	inline void CopyData(int elementIndex, const void* data){ std::memcpy(&_mappedData[elementIndex * _elementByteSize], data, _elementByteSize);}
-	inline void CopyTotalData(const void* data)             { std::memcpy(&_mappedData[0], data, _elementByteSize * _elementCount); }
+	inline void CopyTotalData(const void* data)             { std::memcpy(&_mappedData[0], data, (__int64)_elementByteSize * _elementCount); }
 	inline void CopyEnd(){ _buffer->Unmap(0, nullptr); }
-
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

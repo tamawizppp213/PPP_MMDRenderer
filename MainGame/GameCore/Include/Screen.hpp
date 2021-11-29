@@ -32,12 +32,17 @@ public:
 	Screen& GetScreen();
 	static int GetScreenWidth ();
 	static int GetScreenHeight();
+	static float GetOnePixelWidth();
+	static float GetOnePixelHeight();
+
 	void SetScreenWidth (int width);
 	void SetScreenHeight(int height);
 	float AspectRatio() const;
 
 private:
-	static int _width;
-	static int _height;
+	static int   _width;
+	static int   _height;
+	static float _pixelWidth;
+	static float _pixelHeight;
 };
 #endif

@@ -70,7 +70,8 @@ bool SpriteRenderer::DrawStart()
 	commandList->SetPipelineState(_pipelineState.Get());
 	ID3D12DescriptorHeap* heapList[] = {_textureDescHeap.Get()};
 	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
-	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUCbvSrvUavHeapStart());
+
+	commandList->SetGraphicsRootConstantBufferView(0, _constantBuffer.get()->Resource()->GetGPUVirtualAddress());
 	commandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0,1,&vertexBufferView);
 	commandList->IASetIndexBuffer(&indexBufferView);
@@ -175,7 +176,7 @@ bool SpriteRenderer::DrawEnd()
 	{
 		vertices[j].Position = Float3(0.0f, 0.0f, 0.0f);
 		vertices[j].Normal   = Float3(0.0f, 0.0f, 0.0f);
-		vertices[j].Color    = Float4(1.0f, 1.0f, 1.0f, 0.0f);
+		vertices[j].Color    = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 		vertices[j].UV       = Float2(0.0f, 0.0f);
 		_dynamicVertexBuffer[currentFrameIndex]->CopyData(j, vertices[j]);
 	}
@@ -218,7 +219,7 @@ bool SpriteRenderer::PrepareVertexBuffer()
 		{
 			vertices[j].Position = Float3(0.0f, 0.0f, 0.0f);
 			vertices[j].Normal   = Float3(0.0f, 0.0f, 0.0f);
-			vertices[j].Color    = Float4(1.0f, 1.0f, 1.0f, 0.0f);
+			vertices[j].Color    = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 			vertices[j].UV       = Float2(0.0f, 0.0f);
 			_dynamicVertexBuffer[i]->CopyData(j, vertices[j]);
 		}
@@ -349,7 +350,7 @@ bool SpriteRenderer::PrepareRootSignature()
 	-			Build root parameter
 	---------------------------------------------------------------------*/
 	ROOT_PARAMETER rootParameter[2];
-	rootParameter[0].InitAsDescriptorTable(1, &textureTable[0], D3D12_SHADER_VISIBILITY_ALL);
+	rootParameter[0].InitAsConstantBufferView(0,D3D12_SHADER_VISIBILITY_ALL);
 	rootParameter[1].InitAsDescriptorTable(1, &textureTable[1], D3D12_SHADER_VISIBILITY_PIXEL);
 
 	/*-------------------------------------------------------------------
