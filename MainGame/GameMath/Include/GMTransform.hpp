@@ -282,7 +282,8 @@ namespace gm
 		INLINE void SetY(Vector3 y) { _basis.SetY(y); }
 		INLINE void SetZ(Vector3 z) { _basis.SetZ(z); }
 		INLINE void SetTranslation(Vector3 w) { _translation = w; }
-		INLINE void SetBasis(const Matrix3& basis) { _basis = basis; }
+		INLINE void SetBasis(const Matrix3& m) { _basis = m; }
+		INLINE void SetRotation(const Quaternion& q) { _basis = Matrix3(q); }
 		INLINE Vector3 GetX() const { return _basis.GetX(); }
 		INLINE Vector3 GetY() const { return _basis.GetY(); }
 		INLINE Vector3 GetZ() const { return _basis.GetZ(); }
@@ -328,6 +329,11 @@ namespace gm
 	}
 
 	INLINE Vector3 InverseXForm(AffineTransform& transform, const Vector3& inVector)
+	{
+		Vector3 v = inVector - transform.GetTranslation();
+		return (Transpose(transform.GetBasis()) * v);
+	}
+	INLINE Vector3 InverseXForm(const AffineTransform& transform, const Vector3& inVector)
 	{
 		Vector3 v = inVector - transform.GetTranslation();
 		return (Transpose(transform.GetBasis()) * v);

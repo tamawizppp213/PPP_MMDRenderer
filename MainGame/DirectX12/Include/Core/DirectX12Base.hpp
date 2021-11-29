@@ -14,7 +14,6 @@
 #include "DirectX12Config.hpp"
 #include "DirectX12BufferAllocator.hpp"
 #include "GameCore/Include/Screen.hpp"
-#include "DirectX12/Include/Core/DirectX12Texture.hpp"
 #include <Windows.h>
 
 //////////////////////////////////////////////////////////////////////////////////

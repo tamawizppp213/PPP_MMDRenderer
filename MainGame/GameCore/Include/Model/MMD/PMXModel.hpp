@@ -33,11 +33,32 @@ struct UpdateRange
 	int VertexCount;
 };
 
+class PMXPhysicsManager
+{
+	using RigidBodyPtr = std::unique_ptr<PMXRigidBody>;
+	using JointPtr     = std::unique_ptr<PMXJoint>;
+public:
+	PMXPhysicsManager();
+	~PMXPhysicsManager();
+
+	bool Create();
+	MMDPhysics*   GetMMDPhysics();
+	PMXRigidBody* AddRigidBody();
+	PMXJoint*     AddJoint();
+
+	std::vector<RigidBodyPtr>* GetRigidBodies() { return &_rigidBodies; }
+	std::vector<JointPtr>*     GetJoints() { return &_joints; };
+private:
+	std::unique_ptr<MMDPhysics> _mmdPhysics;
+	std::vector<RigidBodyPtr>   _rigidBodies;
+	std::vector<JointPtr>       _joints;
+};
+
 class PMXModel : public DefaultModel
 {
 	using VertexBuffer         = std::unique_ptr<UploadBuffer<PMXVertex>>;
 	using IndexBuffer          = std::unique_ptr<UploadBuffer<UINT32>>;
-	using MaterialBuffer       = std::unique_ptr<UploadBuffer<PMXMaterial>>;
+	using MaterialBuffer       = std::unique_ptr<UploadBuffer<PBRMaterial>>;
 	using BoneBuffer           = std::unique_ptr<UploadBuffer<PMXBoneParameter>>;
 	using BoneQuaternionBuffer = std::unique_ptr<UploadBuffer<PMXBoneQuaternion>>;
 	using BonePositionBuffer   = std::unique_ptr<UploadBuffer<PMXBoneLocalPosition>>;
@@ -49,9 +70,9 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(const std::wstring& filePath);
-	bool Update();
-	bool Draw(SceneGPUAddress scene, LightGPUAddress light);
+	virtual bool Initialize(const std::wstring& filePath);
+	virtual bool Update();
+	virtual bool Draw(SceneGPUAddress scene, LightGPUAddress light);
 
 	bool StartAnimation(const std::wstring& motionName);
 	bool PauseAnimation(); 
@@ -64,8 +85,11 @@ public:
 	void SetWorldTimer(const GameTimer& gameTimer);
 	void ResetAnimationTimer()  { _currentTime = 0; };
 	PMXData* GetPMXData() const { return _pmxData.get(); }
-	UploadBuffer<PMXBoneParameter>* GetBoneBuffer    () const  { return _boneBuffer.get(); }
-	UploadBuffer<PMXMaterial     >* GetMaterialBuffer()  const { return _materialBuffer.get(); }
+	UploadBuffer<PMXBoneParameter>* GetBoneBuffer      () const  { return _boneBuffer.get(); }
+	UploadBuffer<PBRMaterial     >* GetMaterialBuffer  ()  const { return _materialBuffer.get(); }
+	const std::vector<std::string>& GetRootBoneNodeName() const  { return _rootBoneNodeNames; }
+	PMXBoneNode* GetRootBoneNode(std::string rootBoneName)       {  return &_boneMap.get()->at(rootBoneName);}
+	PMXPhysicsManager* GetPMXPhysicsManager() { return &_physicsManager; }
 
 	/****************************************************************************
 	**                Constructor and Destructor
@@ -88,6 +112,7 @@ protected:
 	bool PrepareBoneMap();
 	bool PrepareBoneIK();
 	bool PreparePMXObject();
+	bool PreparePhysics();
 #pragma endregion Prepare
 #pragma region Update 
 	void UpdateTotalAnimation(); // morph, motion
@@ -96,12 +121,14 @@ protected:
 	void UpdateBoneMatrices();
 	void UpdateBoneNodeTransform(UINT32 frameNo);
 	void UpdateNodeAnimation(bool isAfterPhysics, int frameNo = 0);
-	void UpdatePhysicsAnimation();
-	bool UpdateGPUData();
+	void UpdatePhysicsAnimation(float deltaTime);
+	void ResetPhysics();
+	virtual bool UpdateGPUData();
 	void SetUpParallelUpdate();
 
 #pragma endregion Update
 #pragma region Bone Function
+	
 	void ClearBoneMatrices();
 	void WriteBoneParameterToBuffer();
 #pragma endregion Bone Function
@@ -144,10 +171,13 @@ protected:
 	std::unique_ptr<std::vector<gm::Float4>> _boneQuaternion;
 	std::unique_ptr<PMXVertex[]>   _vertices;
 	std::unique_ptr<std::map<std::string, PMXBoneNode>> _boneMap;
-	std::unique_ptr<std::vector<PMXBoneNode*>> _boneNodeAddress;
-	std::unique_ptr<std::vector<PMXBoneNode*>> _sortedBoneNodeAddress;
-	std::unique_ptr<std::vector<PMXBoneIK>>    _boneIKs;
+	std::unique_ptr<std::vector<PMXBoneNode*>>          _boneNodeAddress;
+	std::unique_ptr<std::vector<PMXBoneNode*>>          _sortedBoneNodeAddress;
+	std::vector<std::string>                            _rootBoneNodeNames; //操作中心と全ての親ボーン
+	std::unique_ptr<std::vector<PMXBoneIK>>             _boneIKs;
+
 	std::vector<std::pair<int, int>> _semiStandardBoneMap;
+	PMXPhysicsManager                _physicsManager;
 };
 
 #endif

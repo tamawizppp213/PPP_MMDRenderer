@@ -220,7 +220,7 @@ namespace gm
 		INLINE Matrix3 operator* (Scalar scl)         const { return Matrix3(scl * GetX(), scl * GetY(), scl * GetZ()); }
 		INLINE Vector3 operator* (Vector3 vec)        const { return Vector3(DirectX::XMVector3TransformNormal(vec, *this)); }
 		INLINE Matrix3 operator* (const Matrix3& mat) const { return Matrix3(*this * mat.GetX(), *this * mat.GetY(), *this * mat.GetZ()); }
-		
+
 		bool operator == (const Matrix3& M) const noexcept;
 		bool operator != (const Matrix3& M) const noexcept;
 		Matrix3& operator+= (const Matrix3& M) noexcept;
@@ -230,6 +230,11 @@ namespace gm
 		Matrix3& operator/= (float S)          noexcept;
 		Matrix3& operator/= (const Matrix3& M) noexcept;
 		Matrix3 operator+ () const noexcept { return *this; }
+
+
+		INLINE Scalar TDotX(const Vector3& v) const { return _matrix[0].GetX() * v.GetX() + _matrix[1].GetX() * v.GetY() + _matrix[2].GetX() * v.GetZ(); }
+		INLINE Scalar TDotY(const Vector3& v) const { return _matrix[0].GetY() * v.GetX() + _matrix[1].GetY() * v.GetY() + _matrix[2].GetY() * v.GetZ(); }
+		INLINE Scalar TDotZ(const Vector3& v) const { return _matrix[0].GetZ() * v.GetX() + _matrix[2].GetZ() * v.GetY() + _matrix[2].GetZ() * v.GetZ(); }
 		/****************************************************************************
 		**                Constructor and Destructor
 		*****************************************************************************/
@@ -409,6 +414,7 @@ namespace gm
 		matrix.SetY(Vector3(input.GetZ(), 0.0f, -input.GetX()));
 		matrix.SetZ(Vector3(-input.GetY(), input.GetX(), 0.0f));
 	}
+	INLINE void GetSkewSymmetricMatrix3(const Vector3& input, Vector3* v0, Vector3* v1, Vector3* v2) { *v0 = Vector3(0.0f, -input.GetZ(), input.GetY()); *v1 = Vector3(input.GetZ(), 0.0f, -input.GetX()); *v2 = Vector3(-input.GetY(), input.GetX(), 0.0f); }
 
 	INLINE Scalar  Determinant(const Matrix4& matrix) { return Scalar(DirectX::XMMatrixDeterminant(matrix)); }
 	INLINE Matrix4 Transpose  (const Matrix4& matrix) { return Matrix4(DirectX::XMMatrixTranspose(matrix)); }
@@ -708,6 +714,10 @@ namespace gm
 		return result;
 	}
 
+	INLINE Vector3 operator* (const Vector3& v, const Matrix3& m)
+	{
+		return Vector3(m.TDotX(v), m.TDotY(v), m.TDotZ(v));
+	}
 	INLINE void Diagonalize(Matrix3& matrix, Matrix3& rotation, float threshold, int maxSteps)
 	{
 		rotation = Matrix3Identity();

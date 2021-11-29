@@ -80,6 +80,7 @@ bool ZPrepass::Draw(D3D12_GPU_VIRTUAL_ADDRESS scene)
 			case ActorType::PMX:{ DrawPMXActor(i); break; }
 			case ActorType::Primitive: { DrawPrimitiveActor(i); break; }
 			default: { break;}
+
 		}
 	}
 

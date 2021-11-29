@@ -70,8 +70,8 @@ SpotLight::SpotLight(
 	Color          = Float3(0, 0, 0);
 	Brightness     = 1.0f;
 	Direction      = Float3(0, 0, 0);
-	InnerConeAngle = 3.141592 / 6.0f;
-	OuterConeAngle = 3.141592 / 4.0f;
+	InnerConeAngle = 3.141592f / 6.0f;
+	OuterConeAngle = 3.141592f / 4.0f;
 }
 SpotLight::SpotLight(gm::Float3 position, float range, float brightness,
 	gm::Float3 direction,

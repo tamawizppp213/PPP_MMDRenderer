@@ -20,6 +20,7 @@ enum class ActorType
 {
 	PMX,
 	Primitive,
+	Sprite,
 	CountOfActorType
 };
 

@@ -494,6 +494,14 @@ bool PMXData::LoadPMXMaterial(FILE* filePtr)
 	for (int i = 0; i < _materials.size(); ++i)
 	{
 		_materials[i] = PMXMaterial(materials[i]);
+		
+		PBRMaterial pbr;
+		pbr.Diffuse  = materials[i].Diffuse;
+		pbr.Ambient  = materials[i].Ambient;
+		pbr.Specular = materials[i].Specular;
+		_pbrMaterials.push_back(pbr);
+		_materialNameIndex[materials[i].MaterialName] = i;
+		_materialNameList.push_back(materials[i].MaterialName);
 		LoadPMXTextures(materials[i], i);
 	}
 	return true;
@@ -1068,8 +1076,9 @@ bool PMXData::LoadPMXRigidBody(FILE* filePtr)
 	for (auto& rigidBody : _rigidBodies)
 	{
 		ReadPMXString(filePtr, &rigidBody.Name);
-		ReadPMXString(filePtr, &rigidBody.EnglishName);
-
+		ReadPMXString(filePtr, &rigidBody.EnglishName);;
+		rigidBody.Name        = file::WStringToString(unicode::ToWString(rigidBody.Name));
+		rigidBody.EnglishName = file::WStringToString(unicode::ToWString(rigidBody.EnglishName));
 		ReadPMXIndex(filePtr, &rigidBody.BoneIndex, _header.BoneIndexSize);
 		fread_s(&rigidBody.Group             , sizeof(rigidBody.Group)             , sizeof(UINT8)   , 1, filePtr);
 		fread_s(&rigidBody.CollisionGroup    , sizeof(rigidBody.CollisionGroup)    , sizeof(UINT16)  , 1, filePtr);
@@ -1080,7 +1089,7 @@ bool PMXData::LoadPMXRigidBody(FILE* filePtr)
 		fread_s(&rigidBody.Mass              , sizeof(rigidBody.Mass)              , sizeof(float)   , 1, filePtr);
 		fread_s(&rigidBody.DampingTranslation, sizeof(rigidBody.DampingTranslation), sizeof(float)   , 1, filePtr);
 		fread_s(&rigidBody.DampingRotation   , sizeof(rigidBody.DampingRotation)   , sizeof(float)   , 1, filePtr);
-		fread_s(&rigidBody.Elasticity        , sizeof(rigidBody.Elasticity)        , sizeof(float)   , 1, filePtr);
+		fread_s(&rigidBody.Repulsion         , sizeof(rigidBody.Repulsion)         , sizeof(float)   , 1, filePtr);
 		fread_s(&rigidBody.Friction          , sizeof(rigidBody.Friction)          , sizeof(float)   , 1, filePtr);
 		fread_s(&rigidBody.RigidBodyOperation, sizeof(rigidBody.RigidBodyOperation), sizeof(UINT8)   , 1, filePtr);
 	}
@@ -1113,6 +1122,8 @@ bool PMXData::LoadPMXJoint(FILE* filePtr)
 	{
 		ReadPMXString(filePtr, &joint.Name);
 		ReadPMXString(filePtr, &joint.EnglishName);
+		joint.Name        = file::WStringToString(unicode::ToWString(joint.Name));
+		joint.EnglishName = file::WStringToString(unicode::ToWString(joint.EnglishName));
 		fread_s(&joint.JointType              , sizeof(joint.JointType)              , sizeof(UINT8)   , 1, filePtr);
 		ReadPMXIndex(filePtr, &joint.RigidBodyIndex_A, _header.RigidBodyIndexSize);
 		ReadPMXIndex(filePtr, &joint.RigidBodyIndex_B, _header.RigidBodyIndexSize);

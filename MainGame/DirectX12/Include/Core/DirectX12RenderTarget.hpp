@@ -44,8 +44,8 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDsvHeapStart() const { return _dsvHeap.Get()->GetGPUDescriptorHandleForHeapStart(); }
 	Texture& GetRenderTargetTexture() { return _renderTargetTexture; }
 	Texture& GetDepthStencilTexture() { return _depthStencilTexture; }
-	int GetWidth()  const { return _renderTargetTexture.ImageSize.x; }
-	int GetHeight() const { return _renderTargetTexture.ImageSize.y; }
+	int GetWidth()  const { return static_cast<int>(_renderTargetTexture.ImageSize.x); }
+	int GetHeight() const { return static_cast<int>(_renderTargetTexture.ImageSize.y); }
 	DXGI_FORMAT  GetColorBufferFormat() const { return _renderTargetTexture.Format; }
 	const float* GetRTVClearColor()     const { return _rtvClearColor; }
 	float        GetDSVClearValue()     const { return _dsvClearValue; }

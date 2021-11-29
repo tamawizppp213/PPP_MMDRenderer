@@ -77,7 +77,7 @@ namespace gm
 		{
 			if (ptr)
 			{
-				if (((unsigned char*)ptr >= _pool && (unsigned char*)ptr < _pool + _maxElementCount * _elementSize))
+				if (((unsigned char*)ptr >= _pool && (unsigned char*)ptr < _pool + (__int64)(_maxElementCount) * _elementSize))
 				{
 					return true;
 				}
@@ -89,7 +89,7 @@ namespace gm
 		{
 			if (ptr)
 			{
-				assert((unsigned char*)ptr >= _pool && (unsigned char*)ptr < _pool + _maxElementCount * _elementSize);
+				assert((unsigned char*)ptr >= _pool && (unsigned char*)ptr < _pool + (__int64)(_maxElementCount) * _elementSize);
 
 				_mutex.lock();
 				*(void**)ptr = _firstFree;
@@ -102,10 +102,9 @@ namespace gm
 		**                Constructor and Destructor
 		*****************************************************************************/
 		PoolAllocator(int elementSize, int maxElementCount)
+			:_elementSize(elementSize), _maxElementCount(maxElementCount)
 		{
-			_elementSize    = elementSize;
-			_maxElementCount = maxElementCount;
-			_pool = (unsigned char*)gm::AlignedAllocInternal(static_cast<unsigned int>(_elementSize * _maxElementCount), 16);
+			_pool = (unsigned char*)AlignedAllocInternal(static_cast<unsigned int>((__int64)(_elementSize) * _maxElementCount), 16);
 			unsigned char* p = _pool;
 			_firstFree = p;
 			_freeCount = _maxElementCount;
@@ -117,7 +116,7 @@ namespace gm
 			}
 			*(void**)p = 0;
 		}
-		~PoolAllocator() { gm::AlignedFreeInternal(_pool); }
+		~PoolAllocator() { AlignedFreeInternal(_pool); }
 	private:
 		/****************************************************************************
 		**                Private Function

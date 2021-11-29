@@ -110,5 +110,6 @@ namespace gm
 			return angleInRadians;
 		}
 	}
+	INLINE bool FuzzyZero(const Scalar& v) { return Abs(v) < FLT_EPSILON; }
 }
 #endif

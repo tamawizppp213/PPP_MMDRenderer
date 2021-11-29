@@ -41,6 +41,7 @@ AudioSource::~AudioSource()
 {
 	if (IsExistedSourceVoice())
 	{
+		
 		_sourceVoice->FlushSourceBuffers();
 		_sourceVoice->DestroyVoice();
 
@@ -163,9 +164,9 @@ bool AudioSource::ExitLoop()
 *****************************************************************************/
 bool AudioSource::LoadSound(const std::wstring& filePath, SoundType soundType, float volume)
 {
-	if (!LoadAudioClip(filePath)) { return false; }
-	if (!CreateSourceVoice()) { return false; }
-	if (!CreateReverb()) { return false; }
+	if (!LoadAudioClip(filePath))    { return false; }
+	if (!CreateSourceVoice())        { return false; }
+	if (!CreateReverb())             { return false; }
 	if (!SelectSoundType(soundType)) { return false; }
 	if (!SetVolume(volume)) { return false; }
 	return true;
@@ -418,7 +419,7 @@ void AudioSource::FlushAudioData()
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 
 	// Nullptr check has been done in advance.
-	_sourceVoice->SubmitSourceBuffer(&buffer);
+	if(_sourceVoice)_sourceVoice->SubmitSourceBuffer(&buffer);
 }
 
 /****************************************************************************
@@ -433,7 +434,7 @@ bool AudioSource::IsExistedSourceVoice()
 {
 	if (_sourceVoice == nullptr)
 	{
-		OutputDebugString(L"SourceVoice is nullptr.");
+		//OutputDebugString(L"SourceVoice is nullptr.");
 		return false;
 	}
 	return true;
@@ -556,11 +557,7 @@ bool AudioSource::CreateReverb()
 	XAUDIO2_EFFECT_CHAIN effectChain;
 	effectChain.EffectCount = 1;
 	effectChain.pEffectDescriptors = &effectDesc;
-	if (FAILED(_sourceVoice->SetEffectChain(&effectChain)))
-	{
-		MessageBox(NULL, L"Couldn't create effectChain.", L"Warning", MB_ICONWARNING);
-		return false;
-	}
+	_sourceVoice->SetEffectChain(&effectChain);
 
 	return true;
 }

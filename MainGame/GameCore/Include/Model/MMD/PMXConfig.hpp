@@ -348,7 +348,7 @@ namespace pmx
 		float                 Mass;
 		float                 DampingTranslation;
 		float                 DampingRotation;
-		float                 Elasticity;
+		float                 Repulsion;
 		float                 Friction;
 		PMXRigidBodyOperation RigidBodyOperation;
 	};
@@ -495,10 +495,10 @@ public:
 	VertexPositionNormalTextureTangent Vertex;
 	std::array<INT32, 4>        BoneIndices;
 	std::array<float, 4>        BoneWeights;
-	gm::Float3                  SDefC;
-	gm::Float3                  SDefR0;
-	gm::Float3                  SDefR1;
-	UINT8                       WeightType;
+	//gm::Float3                  SDefC;
+	//gm::Float3                  SDefR0;
+	//gm::Float3                  SDefR1;
+	UINT32                      WeightType;
 
 	static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
@@ -518,9 +518,9 @@ public:
 			BoneIndices[i] = vertex.BoneIndices[i];
 			BoneWeights[i] = vertex.BoneWeights[i];
 		}
-		SDefC  = vertex.SDefC;
-		SDefR0 = vertex.SDefR0;
-		SDefR1 = vertex.SDefR1;
+		//SDefC  = vertex.SDefC;
+		//SDefR0 = vertex.SDefR0;
+		//SDefR1 = vertex.SDefR1;
 		WeightType = (UINT8)vertex.WeightType;
 	}
 
@@ -533,7 +533,7 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	static constexpr unsigned int InputElementCount = 11;
+	static constexpr unsigned int InputElementCount = 8;
 	static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
 };
 
@@ -642,6 +642,7 @@ public:
 	void UpdateLocalMatrix();
 	void UpdateGlobalMatrix();
 	void UpdateSelfandChildMatrix();
+	void UpdateChildMatrix();
 	void UpdateAppendMatrix(); // use before global matrix 
 	void BeforeUpdateMatrix();
 
@@ -974,26 +975,52 @@ enum class RigidBodyType
 	Aligned
 };
 
+class btRigidBody;
+class btCollisionShape;
+class btTypedConstraint;
+class btBroadphaseInterface;
+class btDefaultCollisionConfiguration;
+class btDiscreteDynamicsWorld;
+class btCollisionDispatcher;
+class btSequentialImpulseConstraintSolver;
+class btMotionState;
+struct btOverlapFilterCallback;
+class MMDPhysics;
+class MMDMotionState;
+class PMXModel;
 class PMXRigidBody
 {
+	enum class RigidBodyType
+	{
+		Kinematic,
+		Dynamic,
+		Aligned
+	};
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Create();
+	bool Create(const pmx::PMXRigidBody& pmxRigidBody, PMXModel* model, PMXBoneNode* node);
+	void Destroy();
 
 	void ReflectGlobalMatrix();
-	void GetLocalMatrix();
+	void CalculateLocalMatrix();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	btRigidBody* GetRigidBody() const;
+	UINT16     GetGroup()     const;
+	UINT16     GetGroupMask() const;
+	gm::Matrix4 GetTransformMatrix();
 
-
+	void SetActivation(bool activation);
+	void ResetTransform();
+	void Reset(MMDPhysics* physics);
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
-	PMXRigidBody()  = default;
-	~PMXRigidBody() = default;
+	PMXRigidBody();
+	~PMXRigidBody();
 	PMXRigidBody(const PMXRigidBody& rigidBody)              = delete;
 	PMXRigidBody& operator = (const PMXRigidBody& rigidBody) = delete;
 
@@ -1006,8 +1033,117 @@ private:
 	**                Private Member Variables
 	*****************************************************************************/
 	std::string   _name;
-	gm::Transform _transform;
+	gm::AffineTransform _transform;
 	
+	std::unique_ptr<btCollisionShape> _shape;
+	std::unique_ptr<MMDMotionState>  _activeMotionState;
+	std::unique_ptr<MMDMotionState>  _kinematicMotionState;
+	std::unique_ptr<btRigidBody>       _rigidBody;
+	RigidBodyType                    _rigidBodyType;
+
+	UINT16 _group;
+	UINT16 _groupMask;
+
+	PMXBoneNode* _boneNode;
+	gm::Matrix4      _offsetMatrix;
+};
+
+/****************************************************************************
+*				  			TemplateClass
+*************************************************************************//**
+*  @class     TemplateClass
+*  @brief     temp
+*****************************************************************************/
+class PMXJoint
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	bool CreateJoint(const pmx::PMXJoint& pmxJoint, PMXRigidBody* rigidBodyA, PMXRigidBody* rigidBodyB);
+	void Destroy();
+
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	btTypedConstraint* GetConstraint() const;
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	PMXJoint();
+	~PMXJoint();
+	PMXJoint(const PMXJoint& rhs)              = delete;
+	PMXJoint& operator = (const PMXJoint& rhs) = delete;
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	std::unique_ptr<btTypedConstraint> _constraint;
+};
+
+/****************************************************************************
+*				  			TemplateClass
+*************************************************************************//**
+*  @class     TemplateClass
+*  @brief     temp
+*****************************************************************************/
+class MMDPhysics
+{
+public:
+	/****************************************************************************
+	**                Public Function
+	*****************************************************************************/
+	bool Create();
+	bool Update(float time);
+	void Destroy();
+
+	void AddRigidBody(PMXRigidBody* rigidBody);
+	void RemoveRigidBody(PMXRigidBody* rigidBody);
+	void AddJoint(PMXJoint* joint);
+	void RemoveJoint(PMXJoint* joint);
+	/****************************************************************************
+	**                Public Member Variables
+	*****************************************************************************/
+	float GetFPS() const;
+	int   GetMaxSubStepCount() const;
+	btDiscreteDynamicsWorld* GetDynamicsWorld() const;
+
+	void  SetFPS(float fps);
+	void  SetMaxSubStepCount(int numSteps);
+
+	/****************************************************************************
+	**                Constructor and Destructor
+	*****************************************************************************/
+	MMDPhysics();
+	~MMDPhysics();
+	MMDPhysics(const MMDPhysics& rhs)              = delete; // prohibit copy
+	MMDPhysics& operator = (const MMDPhysics& rhs) = delete;
+
+private:
+	/****************************************************************************
+	**                Private Function
+	*****************************************************************************/
+
+	/****************************************************************************
+	**                Private Member Variables
+	*****************************************************************************/
+	std::unique_ptr<btBroadphaseInterface> _broadPhase;
+	std::unique_ptr<btDefaultCollisionConfiguration>     _collisionConfig;
+	std::unique_ptr<btCollisionDispatcher>               _dispatcher;
+	std::unique_ptr<btSequentialImpulseConstraintSolver> _solver;
+	std::unique_ptr<btDiscreteDynamicsWorld>             _world;
+	std::unique_ptr<btCollisionShape>                   _groundShape;
+	std::unique_ptr<btMotionState>                      _groundMotionState;
+	std::unique_ptr<btRigidBody>                         _groundRigidBody;
+	std::unique_ptr<btOverlapFilterCallback>             _filterCallback;
+
+	float  _fps;
+	int    _maxSubStepCount;
 };
 #pragma pack()
 #endif

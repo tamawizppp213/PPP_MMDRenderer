@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "PMXConfig.hpp"
 #include "GameCore/Include/Model/ModelFile.hpp"
+#include "GameCore/Include/Model/ModelMaterial.hpp"
 #include <map>
 #include <array>
 //////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +39,7 @@ public:
 	inline const PMXVertex*          GetVertex()     const     { return _vertices.data(); }
 	inline const UINT32*             GetIndex()      const     { return _indices.data(); }
 	inline const PMXMaterial*        GetMaterial()   const     { return _materials.data(); }
+	inline const PBRMaterial*        GetPBRMaterial() const { return _pbrMaterials.data(); }
 	inline const PMXTexture          GetTextureList(int index) { return _textures[index]; }
 	inline       PMXBoneNode*        GetBoneNode (const std::string& boneName) { return &_boneNodeTable.at(boneName); }
 	inline       PMXBoneNodeIterator FindBoneNode(const std::string& boneName) { return _boneNodeTable.find(boneName); }
@@ -45,9 +47,12 @@ public:
 	inline       PMXBoneIK*          GetBoneIK()                               { return _boneIKs.data(); }
 	inline       std::string*        GetBoneNames()                            { return _boneNames.data(); }
 	inline const std::vector<PMXBoneNode*>& GetBoneAddressList()               { return _boneNodeAddress; }
+	inline const std::vector<pmx::PMXRigidBody>& GetRigidBodyList() const { return _rigidBodies; }
+	inline const std::vector<pmx::PMXJoint>& GetJointList() const { return _joints; }
 	std::map<std::string, PMXBoneNode>& GetBoneNodeTable()  { return _boneNodeTable; }
 	std::map<std::string, PMXMorph>   & GetMorphingMap()    { return _morphingMap; }
 	std::map<std::string, PMXBoneNode> CopyBoneNodeTable()  { return _boneNodeTable; }
+	std::vector<PBRMaterial>           CopyPBRMaterials() { return _pbrMaterials; }
 
 	inline size_t GetVertexCount()   { return _vertices.size(); }
 	inline size_t GetIndexCount()    { return _indices.size(); }
@@ -56,6 +61,8 @@ public:
 	inline size_t GetBoneIKCount()   { return _boneIKs.size(); }
 	inline size_t GetBoneNodeAddressListCount()      { return _boneNodeAddress.size(); }
 	inline UINT  GetIndexCountForMaterial(int index) { return _materials[index].PolygonNum; }
+	inline int    GetMaterialNameIndex(const std::string& string) { return _materialNameIndex.at(string); }
+	inline std::string GetMaterialName(int index) { return _materialNameList[index]; }
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
@@ -89,6 +96,9 @@ private:
 	std::vector<std::string>                 _texturePathList;
 	std::vector<PMXTexture>                  _textures;
 	std::vector<PMXMaterial>                 _materials;
+	std::vector<PBRMaterial>                 _pbrMaterials;
+	std::vector<std::string>                 _materialNameList;
+	std::map<std::string, int>               _materialNameIndex;
 	std::map<std::string, PMXBoneNode>       _boneNodeTable;
 	std::vector<std::string>                 _boneNames;
 	std::vector<PMXBoneNode*>                _boneNodeAddress;

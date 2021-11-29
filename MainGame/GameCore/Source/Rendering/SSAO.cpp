@@ -351,7 +351,7 @@ bool SSAO::PrepareRandomTexture()
 			color[i * 256 + j].r = random.GetRandomValue();
 			color[i * 256 + j].g = random.GetRandomValue();
 			color[i * 256 + j].b = random.GetRandomValue();
-			color[i * 256 + j].a = 0.0f;
+			color[i * 256 + j].a = 0;
 		}
 	}
 	
