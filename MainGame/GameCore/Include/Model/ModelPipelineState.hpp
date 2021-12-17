@@ -77,7 +77,7 @@ private:
 	bool SetShaders();
 	
 	ModelPSOManager();
-	~ModelPSOManager() = default;
+	~ModelPSOManager() { _model.clear(); _model.shrink_to_fit(); };
 	
 	/****************************************************************************
 	**                Private Member Variables

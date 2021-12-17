@@ -14,12 +14,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define
 //////////////////////////////////////////////////////////////////////////////////
-Texture2D<float4> DiffuseMap     : register(t0);
-Texture2D<float4> NormalMap      : register(t1);
-Texture2D<float4> EmissiveMap    : register(t2);
-Texture2D<float4> AlphaMaskMap   : register(t3);
-Texture2D<float4> MetalnessMap   : register(t4);
-Texture2D<float4> RoughnessMap   : register(t5);
+Texture2D<float4> DestDiffuseMap : register(t0);
+Texture2D<float4> SrcDiffuseMap  : register(t1);
 
 TextureCube       CubeMap        : register(t6);
 

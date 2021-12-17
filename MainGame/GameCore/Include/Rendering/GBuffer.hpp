@@ -63,6 +63,7 @@ public:
 	GBuffer& operator=(const GBuffer&) = default;
 	GBuffer(GBuffer&&)                 = default;
 	GBuffer& operator=(GBuffer&&)      = default;
+	~GBuffer();
 private:
 	/****************************************************************************
 	**                Private Function

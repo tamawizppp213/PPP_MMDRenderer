@@ -34,28 +34,28 @@ struct VSInputPositionColorTexture
 struct VSInputPositionNormal
 {
     float4 Position : POSITION;
-    float3 Normal   : NORMAL;
+    float4 Normal   : NORMAL;
     
 };
 
 struct VSInputPositionNormalColor
 {
     float4 Position : POSITION;
-    float3 Normal   : NORMAL;
+    float4 Normal   : NORMAL;
     float4 Color    : COLOR;
 };
 
 struct VSInputPositionNormalTexture
 {
     float4 Position : POSITION;
-    float3 Normal   : NORMAL;
+    float4 Normal   : NORMAL;
     float2 UV       : TEXCOORD0;
 };
 
 struct VSInputPositionNormalColorTexture
 {
     float4 Position : POSITION;
-    float3 Normal   : NORMAL;
+    float4 Normal   : NORMAL;
     float4 Color    : COLOR;
     float2 UV       : TEXCOORD0;
 };
@@ -92,31 +92,31 @@ struct VSOutputPositionColorTexture
     float2 UV : TEXCOORD0;
 };
 
-struct VSOuputPositionNormal
+struct VSOutputPositionNormal
 {
     float4 Position : SV_POSITION;
-    float3 Normal : NORMAL;
+    float4 Normal : NORMAL;
     
 };
 
 struct VSOutputPositionNormalColor
 {
     float4 Position : SV_POSITION;
-    float3 Normal : NORMAL;
+    float4 Normal : NORMAL;
     float4 Color : COLOR;
 };
 
 struct VSIOutputPositionNormalTexture
 {
     float4 Position : SV_POSITION;
-    float3 Normal : NORMAL;
+    float4 Normal : NORMAL;
     float2 UV : TEXCOORD0;
 };
 
 struct VSOutputPositionNormalColorTexture
 {
     float4 Position : SV_POSITION;
-    float3 Normal : NORMAL;
+    float4 Normal : NORMAL;
     float4 Color : COLOR;
     float2 UV : TEXCOORD0;
 };

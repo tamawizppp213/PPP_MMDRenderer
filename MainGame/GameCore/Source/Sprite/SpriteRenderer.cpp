@@ -187,6 +187,15 @@ bool SpriteRenderer::DrawEnd()
 
 bool SpriteRenderer::Finalize()
 {
+	_textures.clear();
+	_vertices.clear();
+	_spriteCountList.clear();
+	_meshBuffer.clear();
+
+	_textures.shrink_to_fit();
+	_vertices.shrink_to_fit();
+	_spriteCountList.shrink_to_fit();
+	_meshBuffer.shrink_to_fit();
 	return true;
 }
 #pragma endregion Public Function

@@ -9,9 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Core/Include/SceneManager.hpp"
 #include "MainGame/Core/Include/Scene.hpp"
-#include "MainGame/Other/Include/Title.hpp"
-#include "MainGame/MMDRender/Include/MainRenderScene.hpp"
-#include "MainGame/Other/Include/Test.hpp"
+#include "MainGame/Core/Include/RendererTitle.hpp"
 #include "GameCore/Include/GameTimer.hpp"
 #include <iostream>
 #include <cassert>
@@ -26,13 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 void SceneManager::Initialize(GameTimer& gameTimer)
 {
-#ifdef _DEBUG
-	PushScene(new MainRenderScene());
+	PushScene(new CoreRendererTitle());
 	CallSceneInitialize(gameTimer);
-#else
-	PushScene(new Title());
-	CallSceneInitialize(gameTimer);
-#endif
 }
 
 void SceneManager::TransitScene(const ScenePtr scene, GameTimer& gameTimer)

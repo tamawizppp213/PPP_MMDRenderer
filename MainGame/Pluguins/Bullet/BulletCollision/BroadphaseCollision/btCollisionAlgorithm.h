@@ -15,7 +15,7 @@ subject to the following restrictions:
 
 #ifndef BT_COLLISION_ALGORITHM_H
 #define BT_COLLISION_ALGORITHM_H
-
+#pragma warning(disable: 26495)
 #include "LinearMath/btScalar.h"
 #include "LinearMath/btAlignedObjectArray.h"
 

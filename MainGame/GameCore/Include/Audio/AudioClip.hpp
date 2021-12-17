@@ -47,6 +47,10 @@ public:
 	*****************************************************************************/
 	AudioClip();
 	~AudioClip();
+	AudioClip(const AudioClip&) = default;
+	AudioClip& operator=(const AudioClip&) = default;
+	AudioClip(AudioClip&&) = default;
+	AudioClip& operator=(AudioClip&&) = default;
 private:
 	/****************************************************************************
 	**                Private Function

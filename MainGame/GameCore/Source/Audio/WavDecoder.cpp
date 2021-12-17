@@ -165,7 +165,7 @@ bool WavDecoder::CreateWaveData(size_t dataSize)
 	_waveDataSize = dataSize;
 	std::unique_ptr<BYTE[]> data = std::make_unique<BYTE[]>(dataSize);
 
-	if (mmioRead(_handle, reinterpret_cast<HPSTR>(data.get()), _waveDataSize) != static_cast<LONG>(_waveDataSize))
+	if (mmioRead(_handle, reinterpret_cast<HPSTR>(data.get()), (LONG)_waveDataSize) != static_cast<LONG>(_waveDataSize))
 	{
 		MessageBox(NULL, L"couldn't read wave data.", L"Warning", MB_ICONWARNING);
 		return false;

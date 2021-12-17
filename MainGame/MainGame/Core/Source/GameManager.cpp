@@ -34,7 +34,7 @@ void GameManager::GameMain()
 
 void GameManager::GameEnd()
 {
-
+	_directX12.ResetCommandList();
 }
 
 #pragma region Property

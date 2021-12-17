@@ -13,6 +13,7 @@
 #include "../Core/ShaderConstantBuffer3D.hlsli"
 #include "../Core/ShaderStaticSampler.hlsli"
 #include "../Core/ShaderTexture.hlsli"
+#include "../Core/ShaderColor.hlsli"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define
@@ -45,19 +46,21 @@ VertexOut VSMain(VertexIn vertexIn)
     /*-------------------------------------------------------------------
 	-        transform to world space 
 	---------------------------------------------------------------------*/
-    float4 positionWorld = mul(float4(vertexIn.Position.xyz, 1.0f), World);
+    float4 positionWorld = mul(World, float4(vertexIn.Position.xyz, 1.0f));
     positionWorld.xyz   += EyePosition; // always center sky about camera
     
      /*-------------------------------------------------------------------
 	-        Skybox always on far plane
 	---------------------------------------------------------------------*/
-    result.Position = mul(positionWorld, ViewProjection).xyww;
+    result.Position = mul(ProjectionView, positionWorld).xyww;
     return result;
 }
 
 float4 PSMain(VertexOut input) : SV_TARGET
 {
-    return CubeMap.Sample(SamplerLinearWrap, input.CubemapLookDirection);
+    float4 result = CubeMap.Sample(SamplerLinearWrap, input.CubemapLookDirection);
+    result.rgb = SRGBToLinear(result.rgb);
+    return result;
 
 }
 #endif

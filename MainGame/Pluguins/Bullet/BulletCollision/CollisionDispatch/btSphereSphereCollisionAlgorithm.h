@@ -20,7 +20,7 @@ subject to the following restrictions:
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
 #include "btCollisionDispatcher.h"
-
+#pragma warning(disable: 26495)
 class btPersistentManifold;
 
 /// btSphereSphereCollisionAlgorithm  provides sphere-sphere collision detection.

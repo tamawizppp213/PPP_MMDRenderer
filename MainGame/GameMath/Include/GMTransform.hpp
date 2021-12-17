@@ -62,7 +62,7 @@ namespace gm
 		INLINE void SetParent(Transform* parent)
 		{
 			if (_parent != nullptr) { RemoveChild(this); }
-			if (parent != nullptr) { parent->SetChild(this); }
+			if (parent  != nullptr) { parent->SetChild(this); }
 			_parent = parent;
 		}
 

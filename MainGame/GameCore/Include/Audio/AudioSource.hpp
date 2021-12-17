@@ -72,6 +72,11 @@ public:
 	*****************************************************************************/
 	AudioSource();
 	~AudioSource();
+	AudioSource(const AudioSource&) = default;
+	AudioSource& operator=(const AudioSource&) = default;
+	AudioSource(AudioSource&&)                 = default;
+	AudioSource& operator=(AudioSource&&)      = default;
+
 protected:
 	/****************************************************************************
 	**                Protected Function

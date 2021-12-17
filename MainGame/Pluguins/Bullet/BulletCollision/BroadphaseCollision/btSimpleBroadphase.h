@@ -15,7 +15,7 @@ subject to the following restrictions:
 
 #ifndef BT_SIMPLE_BROADPHASE_H
 #define BT_SIMPLE_BROADPHASE_H
-
+#pragma warning(disable: 26495)
 #include "btOverlappingPairCache.h"
 
 struct btSimpleBroadphaseProxy : public btBroadphaseProxy

@@ -55,6 +55,7 @@ public:
 	ZPrepass& operator=(const ZPrepass&) = default;
 	ZPrepass(ZPrepass&&)                 = default;
 	ZPrepass& operator=(ZPrepass&&)      = default;
+	~ZPrepass();
 private:
 	/****************************************************************************
 	**                Private Function

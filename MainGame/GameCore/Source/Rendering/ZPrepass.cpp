@@ -23,6 +23,18 @@ using namespace gm;
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
 #pragma region Public Function
+ZPrepass::~ZPrepass()
+{
+	_shader     .clear();
+	_pipelines  .clear();
+	_actors     .clear();
+	_colorBuffer.clear();
+
+	_shader     .shrink_to_fit();
+	_pipelines  .shrink_to_fit();
+	_actors     .shrink_to_fit();
+	_colorBuffer.shrink_to_fit();
+}
 bool ZPrepass::AddActors(GameActor& actor)
 {
 	_actors.push_back(&actor);

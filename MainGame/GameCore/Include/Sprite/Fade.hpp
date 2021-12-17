@@ -17,6 +17,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Sprite/Sprite.hpp"
 #include "GameMath/Include/GMMatrix.hpp"
+#include "DirectX12/Include/Core/DirectX12MeshBuffer.hpp"
+#include "DirectX12/Include/Core/DirectX12Buffer.hpp"
+#include <memory>
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -43,15 +46,18 @@ enum class FadeState
 *****************************************************************************/
 class Fader
 {
+	using MatrixBuffer = std::unique_ptr<UploadBuffer<gm::Matrix4>>;
+	using VertexBuffer = std::unique_ptr<UploadBuffer<VertexPositionNormalColorTexture>>;
+
 public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
 	bool Initialize(); 
-	void StartFadeIn(float inOutTime, float pauseTime);
+	void StartFadeInAndOut(float inTime, float outTime, float pauseTime);
+	void StartFadeIn (float inTime);
+	void StartFadeOut(float outTime);
 	bool Draw(const GameTimer& gameTimer, const gm::Matrix4& projViewMatrix);
-	bool AllowedGoToNextScene();
-	bool Finalize();
 
 	/****************************************************************************
 	**                Public Member Variables
@@ -85,13 +91,19 @@ protected:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	Sprite             _sprite;
-	gm::Float4         _color;
-	FadeState          _currentFadeState;
-	float              _inOutTime   = 0.0f;
-	float              _pauseTime   = 0.0f;
-	bool               _allowedNextScene = false;
-
+	Sprite      _sprite;
+	gm::Float4  _color;
+	FadeState   _currentFadeState;
+	float       _inTime      = 0.0f;
+	float       _outTime     = 0.0f;
+	float       _pauseTime   = 0.0f;
+	Texture     _texture;
+	MatrixBuffer            _constantBuffer = nullptr;
+	std::vector<MeshBuffer> _meshBuffer;
+	VertexBuffer            _vertexBuffer[FRAME_BUFFER_COUNT];
+	float                   _localTimer = 0.0f;
+	bool                    _isInitialized = false;
+	bool _isInAndOutFade = false;
 };
 
 #endif

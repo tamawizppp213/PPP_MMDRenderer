@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "GameCore/Include/Core/RenderingEngineConfig.hpp"
+#include "GameCore/Include/Core/RenderingEngineStruct.hpp"
 #include "DirectX12/Include/Core/DirectX12Buffer.hpp"
 #include "GameCore/Include/Sprite/Font.hpp"
 
@@ -36,7 +36,7 @@ struct TextNumber;
 *				  			RenderingEngine
 *************************************************************************//**
 *  @class    Rendering Engine
-*  @brief    Rendering Engine
+*  @brief    Rendering Engine (for 3D game application)
 *****************************************************************************/
 class RenderingEngine
 {

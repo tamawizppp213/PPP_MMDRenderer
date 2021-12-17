@@ -53,6 +53,9 @@ public:
 	MainRenderScene& operator=(MainRenderScene&&)      = default;
 protected:
 	bool LoadMaterials(GameTimer& gameTimer) override;
+	void OnGamePadInput () override;
+	void OnKeyboardInput() override;
+	void OnMouseInput   () override;
 
 private:
 	/****************************************************************************
@@ -60,17 +63,10 @@ private:
 	*****************************************************************************/
 	bool InitializeFrameResources();
 	bool InitializeSceneParameters();
-	bool InitializeModels(GameTimer& gameTimer);
 	bool InitializeLights();
 	bool InitializeRenderingEngine();
 
-	bool LoadSkybox();
-	bool LoadTextures();
-	bool LoadStage();
-	void OnGameInput();
-	void OnKeyboardInput();
-	void OnMouseInput();
-	void OnGamePadInput();
+	void UpdateCamera();
 
 	void DrawExplainText();
 	/****************************************************************************
@@ -80,14 +76,14 @@ private:
 	RenderingEngine& _renderingEngine = RenderingEngine::Instance();
 	std::unique_ptr<Skybox>         _skybox         = nullptr;
 	std::unique_ptr<PMXModel>       _stage          = nullptr;
-	std::unique_ptr<Miku>            _miku           = nullptr;
+	std::unique_ptr<Miku>           _miku           = nullptr;
 	std::unique_ptr<SpriteRenderer> _spriteRenderer = nullptr;
 	std::unordered_map<std::string, std::unique_ptr<Texture>> _textures;
-	FrameResource* _frameResource     = nullptr;
-	DirectX::XMFLOAT3 _playerPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	FrameResource*                  _frameResource  = nullptr;
+	gm::Float3 _playerPosition = gm::Float3(0.0f, 0.0f, 0.0f);
 
 	// explain text
-	bool _enabledExplainText = false;
+	bool    _enabledExplainText = false;
 	Texture _whiteTexture;
 	Sprite  _backSprite;
 

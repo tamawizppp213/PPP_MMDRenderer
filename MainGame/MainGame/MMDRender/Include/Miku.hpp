@@ -49,7 +49,7 @@ public:
 	Miku& operator=(const Miku&) = default;
 	Miku(Miku&&)                 = default;
 	Miku& operator=(Miku&&)      = default;
-	~Miku() {};
+	~Miku() { _pbrMaterials.clear(); _pbrMaterials.shrink_to_fit(); };
 protected:
 	/****************************************************************************
 	**                Private Function

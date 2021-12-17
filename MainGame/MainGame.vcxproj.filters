@@ -15,52 +15,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="GameCore\Include\Camera.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\GameTimer.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Mouse.hpp">
+    <ClInclude Include="MainGame\Core\Include\Application.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\TextureLoader.hpp">
+    <ClInclude Include="MainGame\Core\Include\GameCore.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\Application.hpp">
+    <ClInclude Include="MainGame\Core\Include\GameManager.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\GameCore.hpp">
+    <ClInclude Include="MainGame\Core\Include\SceneManager.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\GameManager.hpp">
+    <ClInclude Include="MainGame\Core\Include\Scene.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\SceneManager.hpp">
+    <ClInclude Include="MainGame\Other\Include\Title.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\Scene.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MainGame\Include\MotionTest.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MainGame\Include\Title.hpp">
+    <ClInclude Include="MainGame\Other\Include\MotionTest.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Screen.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Save.hpp">
+    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\Test.hpp">
+    <ClInclude Include="MainGame\Core\Include\TemplateText.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\TemplateText.hpp">
+    <ClInclude Include="GameMath\Include\GMSort.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\FrameResources.hpp">
+    <ClInclude Include="MainGame\Other\Include\Test.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\DirectXTex\BC.h">
@@ -75,9 +72,6 @@
     <ClInclude Include="Pluguins\DirectXTex\DDS.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\DirectXTex\DirectXTex.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Pluguins\DirectXTex\DirectXTexP.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -87,52 +81,121 @@
     <ClInclude Include="Pluguins\DirectXTex\scoped.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Input\Mouse.hpp">
+    <ClInclude Include="Pluguins\DirectXTex\DirectXTex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Input\Keyboard.hpp">
+    <ClInclude Include="GameMath\Include\GMStack.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Input\GamePad.hpp">
+    <ClInclude Include="GameMath\Include\GMQueue.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMSearch.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Input\GameInput.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp">
+    <ClInclude Include="GameCore\Include\Input\GamePad.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp">
+    <ClInclude Include="GameCore\Include\Input\Keyboard.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Audio\AudioDecoder.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Audio\AudioMaster.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Audio\AudioSource.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Audio\AudioSource3D.hpp">
+    <ClInclude Include="GameCore\Include\Input\Mouse.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Audio\AudioTable.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameCore\Include\Audio\AudioSource.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Audio\AudioMaster.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Audio\AudioDecoder.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="GameCore\Include\Audio\WavDecoder.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\FileUtility.hpp">
+    <ClInclude Include="GameCore\Include\Audio\AudioSource3D.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp">
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Core.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\Sprite.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12MeshBuffer.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\SpritePipeLineState.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\SpriteRenderer.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\File\FileUtility.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\File\Json.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Collision\Collision.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Collision\Collider.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Collision\Collision.hpp">
+    <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\Font.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\Text.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\Fade.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMDistribution.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Model\ModelLoader.hpp">
@@ -141,13 +204,31 @@
     <ClInclude Include="GameCore\Include\Model\ModelFile.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\Model.hpp">
+    <ClInclude Include="GameCore\Include\File\UnicodeUtility.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\FBX\FBXFile.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\Obj\OBJConfig.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Model\Obj\OBJFile.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\Obj\OBJConfig.hpp">
+    <ClInclude Include="GameCore\Include\Model\MMD\PMDConfig.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MMD\PMDFile.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXConfig.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXFile.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MMD\VMDFile.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Model\MMD\VPDFile.hpp">
@@ -156,28 +237,7 @@
     <ClInclude Include="GameCore\Include\Model\MMD\VPDConfig.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\VMDFile.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameCore\Include\Model\MMD\VMDConfig.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\PMXFile.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\PMXConfig.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\PMDFile.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\PMDModel.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\PMDConfig.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\FBX\FBXFile.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\arch\fbxalloc.h">
@@ -252,13 +312,94 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxstringlist.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxtimecode.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxtime.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxtimecode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\base\fbxutils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxclassid.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxconnectionpoint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxdatatypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxemitter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxevent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxeventhandler.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxlistener.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxloadingstrategy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxmanager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxmodule.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxobject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxperipheral.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxplugin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxplugincontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxproperty.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertydef.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertyhandle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertypage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertytypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxquery.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxqueryevent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxscopedloadingdirectory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxscopedloadingfilename.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxstream.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxsymbol.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxsystemunit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxxref.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\math\fbxaffinematrix.h">
@@ -291,91 +432,22 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxclock.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxthread.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxsync.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxclassid.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\sync\fbxthread.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxconnectionpoint.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_def.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxdatatypes.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_nsbegin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxemitter.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_nsend.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxeventhandler.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxevent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxlistener.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxloadingstrategy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxmanager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxmodule.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxobject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxplugin.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxperipheral.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxplugincontainer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxproperty.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertydef.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertyhandle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertypage.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxpropertytypes.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxqueryevent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxquery.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxscopedloadingdirectory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxscopedloadingfilename.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxstream.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxsymbol.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxsystemunit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\core\fbxxref.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_version.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fileio\collada\fbxcolladaanimationelement.h">
@@ -498,10 +570,10 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimevalstate.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimlayer.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimevaluator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimevaluator.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimlayer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\animation\fbxanimstack.h">
@@ -552,13 +624,88 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\constraint\fbxhik2fbxcharacter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaudio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaudiolayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaxissystem.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcollection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcollectionexclusive.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcontainertemplate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdisplaylayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdocument.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdocumentinfo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxenvironment.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxgroupname.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxlibrary.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxmediaclip.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectfilter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectmetadata.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectscontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxpose.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxreference.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxscene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxselectionnode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxselectionset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxtakeinfo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxthumbnail.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxvideo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxblendshape.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcache.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxblendshapechannel.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxblendshapechannel.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcache.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcachedeffect.h">
@@ -567,10 +714,10 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcameraswitcher.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcamerastereo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcamerastereo.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcameraswitcher.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\geometry\fbxcluster.h">
@@ -735,81 +882,6 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\shading\fbxtexture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaudio.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaudiolayer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxaxissystem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcollection.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcollectionexclusive.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcontainertemplate.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxcontainer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdisplaylayer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdocument.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxdocumentinfo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxenvironment.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxgroupname.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxlibrary.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxmediaclip.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectfilter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectmetadata.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxobjectscontainer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxpose.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxreference.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxscene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxselectionset.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxselectionnode.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxtakeinfo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxthumbnail.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\scene\fbxvideo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxclonemanager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -870,16 +942,7 @@
     <ClInclude Include="Pluguins\fbxsdk\fbxsdk\utils\fbxusernotification.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_def.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_nsbegin.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_nsend.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk\fbxsdk_version.h">
+    <ClInclude Include="Pluguins\fbxsdk\fbxsdk.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\c14n.h">
@@ -939,10 +1002,10 @@
     <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\relaxng.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\SAX2.h">
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\SAX.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\SAX.h">
+    <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\SAX2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\schemasInternals.h">
@@ -1026,58 +1089,28 @@
     <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xpointer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\fbxsdk\fbxsdk.h">
+    <ClInclude Include="GameCore\Include\Model\MMD\PMDModel.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12CubeMap.hpp">
+    <ClInclude Include="GameCore\Include\Model\Model.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\Fade.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\Font.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\Sprite.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\SpritePipeLineState.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\SpriteRenderer.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\Text.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\File\FileUtility.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\File\Json.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\FrameResources.hpp">
+    <ClInclude Include="DirectX12\Include\Core\DirectX12StaticSampler.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\GameConstantBufferConfig.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameCore\Include\FrameResources.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Rendering\LightType.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="GameCore\Include\HLSLUtility.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Include\MainBattle.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MainGame\Include\SoundManager.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Light\LightType.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\File\UnicodeUtility.hpp">
+    <ClInclude Include="MainGame\MMDRender\Include\MainRenderScene.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMap.hpp">
@@ -1086,109 +1119,37 @@
     <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMapPipeLineState.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectX12\Include\Core\DirectX12BufferAllocator.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Core.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12MeshBuffer.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12StaticSampler.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMColor.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMDistribution.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMMath.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMMatrix.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMQuaternion.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMQueue.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMScalar.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMSearch.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMSort.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMStack.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMTransform.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMVector.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMath\Include\GMVectorUtility.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12BlendState.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\Wipe.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MotionLoader.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\ModelPipelineState.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\PMXModel.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Model\MMD\MMDRenderer.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Effect\Blur.hpp">
+    <ClInclude Include="GameCore\Include\Model\ModelPipelineState.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Effect\PostEffect.hpp">
+    <ClInclude Include="GameMath\Include\GMVector.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMScalar.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMVectorUtility.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMQuaternion.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMMatrix.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMMath.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMTransform.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMath\Include\GMColor.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameMath\Include\GMCollision.hpp">
@@ -1197,25 +1158,43 @@
     <ClInclude Include="GameMath\Include\GMInterpolation.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MotionLoader.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXModel.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BlendState.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\Wipe.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Effect\PostEffect.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Effect\Blur.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Core\RenderingEngine.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="GameCore\Include\Rendering\CascadeShadowMap.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Rendering\GBuffer.hpp">
+    <ClInclude Include="GameCore\Include\Effect\Bloom.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Rendering\LightCulling.hpp">
+    <ClInclude Include="DirectX12\Include\Core\DirectX12RenderTarget.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Rendering\LightType.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Rendering\SSAO.hpp">
+    <ClInclude Include="GameCore\Include\Effect\DepthOfField.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Rendering\ZPrepass.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Sprite\Billboard.hpp">
+    <ClInclude Include="GameCore\Include\Core\GameObject.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Core\GameActor.hpp">
@@ -1224,463 +1203,370 @@
     <ClInclude Include="GameCore\Include\Core\GameComponent.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Core\GameObject.hpp">
+    <ClInclude Include="GameCore\Include\Rendering\LightCulling.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCore\Include\Core\RenderingEngine.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Core\RenderingEngineConfig.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Effect\Bloom.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Effect\DepthOfField.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\MMD\VMDAnimation.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCore\Include\Model\Primitive\PrimitiveModel.hpp">
+    <ClInclude Include="GameCore\Include\Rendering\GBuffer.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameCore\Include\Model\ModelMaterial.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\Core\DirectX12RenderTarget.hpp">
+    <ClInclude Include="GameCore\Include\Rendering\SSAO.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameMath\Include\GMHashMap.hpp">
+    <ClInclude Include="GameCore\Include\Core\RenderingEngineConfig.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameMath\Include\GMAlignedAllocatorArray.hpp">
+    <ClInclude Include="GameCore\Include\Model\Primitive\PrimitiveModel.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Model\MMD\VMDAnimation.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Sprite\Billboard.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\btBulletCollisionCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\btBulletDynamicsCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btBox2dShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btBoxShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCapsuleShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCollisionMargin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCollisionShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCompoundShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConcaveShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConeShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvex2dShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexHullShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexInternalShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexPointCloudShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexPolyhedron.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCylinderShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btEmptyShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMaterial.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMiniSDF.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMinkowskiSumShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMultiSphereShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btOptimizedBvh.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btPolyhedralConvexShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btSdfCollisionShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btShapeHull.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btSphereShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btStaticPlaneShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btStridingMeshInterface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTetrahedronShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleCallback.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleInfoMap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleMesh.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleMeshShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btUniformScalingShape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btAabbUtil2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btAlignedAllocator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btAlignedObjectArray.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btConvexHull.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btConvexHullComputer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btCpuFeatureUtility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btDefaultMotionState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btGeometryUtil.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btGrahamScan2dConvexHull.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btHashMap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btIDebugDraw.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btImplicitQRSVD.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMatrix3x3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMatrixX.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMinMax.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btModifiedGramSchmidt.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMotionState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btPolarDecomposition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btPoolAllocator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btQuadWord.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btQuaternion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btQuickprof.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btRandom.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btReducedVector.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btScalar.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btSerializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btSpatialAlgebra.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btStackAlloc.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btThreads.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btTransform.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btTransformUtil.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btVector3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameMath\Include\GMAlighedAllocator.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="GameMath\Include\GMAlignedAllocatorArray.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="GameMath\Include\GMPoolAllocator.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp">
+    <ClInclude Include="GameMath\Include\GMHashMap.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\btBulletDynamicsCommon.h">
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarTitle.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\SceneState.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarResult.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarGameOver.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarGameClear.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarGame.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Player\Player.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Bullet\Bullet.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\Enemy.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\Bullet\btBulletCollisionCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\btBulletDynamicsCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Pluguins\Bullet\clew\clew.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btVector3.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btComputeGjkEpaPenetration.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btTransformUtil.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btTransform.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btConvexCast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btThreads.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btConvexPenetrationDepthSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btStackAlloc.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btDiscreteCollisionDetectorInterface.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btSpatialAlgebra.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkCollisionDescription.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btSerializer.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btScalar.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btReducedVector.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btQuickprof.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btRandom.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btQuaternion.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btManifoldPoint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btQuadWord.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btPoolAllocator.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btMprPenetration.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btPolarDecomposition.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPersistentManifold.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMotionState.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPointCollector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btModifiedGramSchmidt.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMinMax.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btRaycastCallback.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMatrixX.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btSimplexSolverInterface.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMatrix3x3.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btImplicitQRSVD.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btHashMap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btIDebugDraw.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btGrahamScan2dConvexHull.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btGeometryUtil.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btDefaultMotionState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btCpuFeatureUtility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btConvexHullComputer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btConvexHull.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btAlignedObjectArray.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btAlignedAllocator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btAabbUtil2.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\LinearMath\TaskScheduler\btThreadSupportInterface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btRaycastVehicle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btVehicleRaycaster.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btWheelInfo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btDantzigLCP.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btDantzigSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btLemkeSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btMLCPSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btMLCPSolverInterface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btPATHSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btSolveProjectedGaussSeidel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBody.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyGearConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyInplaceSolverIslandCallback.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointFeedback.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointMotor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyLink.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyLinkCollider.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyMLCPConstraintSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyPoint2Point.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySliderConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySolverConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySphericalJointMotor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btActionInterface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorldMt.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDynamicsWorld.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btRigidBody.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimpleDynamicsWorld.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimulationIslandManagerMt.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btBatchedConstraints.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btConstraintSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btConeTwistConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btContactConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btContactSolverInfo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btFixedConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGearConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpring2Constraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHinge2Constraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHingeConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btJacobianEntry.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolverMt.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSliderConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolverBody.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolverConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btUniversalConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btTypedConstraint.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Character\btCharacterControllerInterface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Character\btKinematicCharacterController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3Internal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseInterface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvt.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvtBroadphase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDispatcher.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCache.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCallback.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btQuantizedBvh.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btSimpleBroadphase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxDetector.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionConfiguration.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionCreateFunc.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcher.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionObjectWrapper.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorld.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorldImporter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btGhostObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btHashedSimplePairCache.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btInternalEdgeUtility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btManifoldResult.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSimulationIslandManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btUnionFind.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btBox2dShape.h">
@@ -1812,10 +1698,10 @@
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\btBoxCollision.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\btClipPolygon.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\btCompoundFromGimpact.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\btCompoundFromGimpact.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\btClipPolygon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\btContactProcessing.h">
@@ -1887,16 +1773,16 @@
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_hash_table.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_math.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_linear_math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_pair.h">
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_memory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_pair.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_radixsort.h">
@@ -1905,88 +1791,310 @@
     <ClInclude Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_tri_collision.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btComputeGjkEpaPenetration.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Character\btCharacterControllerInterface.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Character\btKinematicCharacterController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btConvexCast.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btBatchedConstraints.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btDiscreteCollisionDetectorInterface.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btConeTwistConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btConvexPenetrationDepthSolver.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btConstraintSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkCollisionDescription.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btContactConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btContactSolverInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa2.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btFixedConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa3.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGearConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpring2Constraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btManifoldPoint.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHinge2Constraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btMprPenetration.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHingeConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPersistentManifold.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btJacobianEntry.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPointCollector.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btRaycastCallback.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btSimplexSolverInterface.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolverMt.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSliderConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.h">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Core\Include\Application.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolverConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Core\Include\GameCore.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolverBody.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Core\Include\GameManager.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btTypedConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Core\Include\Scene.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btUniversalConstraint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Core\Include\SceneManager.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btActionInterface.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Core\Include\TemplateText.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\MMDRender\Include\MainRenderScene.hpp">
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorldMt.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDynamicsWorld.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btRigidBody.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimpleDynamicsWorld.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimulationIslandManagerMt.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBody.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyGearConstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyInplaceSolverIslandCallback.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointFeedback.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointMotor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyLink.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyLinkCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyMLCPConstraintSolver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyPoint2Point.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySliderConstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySolverConstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySphericalJointMotor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btDantzigLCP.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btDantzigSolver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btLemkeSolver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btMLCPSolver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btMLCPSolverInterface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btPATHSolver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btSolveProjectedGaussSeidel.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btRaycastVehicle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btVehicleRaycaster.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btWheelInfo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxDetector.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionConfiguration.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionCreateFunc.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcher.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionObjectWrapper.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorld.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorldImporter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btGhostObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btHashedSimplePairCache.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btInternalEdgeUtility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btManifoldResult.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSimulationIslandManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btUnionFind.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3Internal.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseInterface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvt.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvtBroadphase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDispatcher.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCache.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCallback.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btQuantizedBvh.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btSimpleBroadphase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="MainGame\MMDRender\Include\Miku.hpp">
@@ -1995,43 +2103,49 @@
     <ClInclude Include="MainGame\MMDRender\Include\MMDRendererTitle.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Other\Include\MotionTest.hpp">
+    <ClInclude Include="GameCore\Include\Sprite\FontType.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Other\Include\Test.hpp">
+    <ClInclude Include="GameCore\Include\Core\RenderingEngineStruct.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\Other\Include\Title.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyBlue.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\Enemy.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Player\PlayerHP.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Player\Bullet.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyBoss.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Player\Player.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyLightGreen.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\GameClear.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyPurple.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Game.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyRed.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\GameOver.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyManager.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Result.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyType.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\SceneState.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyDefault.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Stage.hpp">
+    <ClInclude Include="MainGame\ShootingStar\Include\Bullet\DamageEffect.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Title.hpp">
+    <ClInclude Include="MainGame\Core\Include\RendererTitle.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ApplicationSelect\Include\ApplicationSelect.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarIntroduction.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2042,7 +2156,37 @@
     <ClCompile Include="GameCore\Source\GameTimer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\Application.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\GameCore.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\GameManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\MainGame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\SceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Other\Source\Title.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Other\Source\MotionTest.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="GameCore\Source\Screen.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Other\Source\Test.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Pluguins\DirectXTex\BC.cpp">
@@ -2120,94 +2264,19 @@
     <ClCompile Include="GameCore\Source\Input\Mouse.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="GameCore\Source\Audio\AudioSource.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="GameCore\Source\Audio\AudioClip.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Audio\AudioMaster.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Audio\AudioSource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Audio\AudioSource3D.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameCore\Source\Audio\WavDecoder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Collision\Collider.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Collision\Collision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\FBX\FBXFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\PMDConfig.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\PMDFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\PMDModel.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\PMXConfig.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\PMXFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\VPDFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MMD\VMDFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\Obj\OBJFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\Model.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\ModelLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Sprite\Fade.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Sprite\Font.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Sprite\Sprite.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Sprite\SpritePipeLineState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Sprite\SpriteRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Sprite\TextRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\File\Json.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\FrameResources.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\File\UnicodeUtil.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMap.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMapPipeLineState.cpp">
+    <ClCompile Include="GameCore\Source\Audio\AudioSource3D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectX12\Source\Core\DirectX12Base.cpp">
@@ -2228,43 +2297,139 @@
     <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX12\Source\Core\DirectX12StaticSampler.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp">
+    <ClCompile Include="GameCore\Source\Sprite\SpritePipeLineState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Sprite\SpriteRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Sprite\Sprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\File\Json.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Collision\Collision.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Collision\Collider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Sprite\Font.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Sprite\TextRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Sprite\Fade.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\ModelLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX12\Source\Core\DirectX12BlendState.cpp">
+    <ClCompile Include="GameCore\Source\File\UnicodeUtil.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Model\MotionLoader.cpp">
+    <ClCompile Include="GameCore\Source\Model\MMD\PMDConfig.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MMD\PMDFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MMD\PMXConfig.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MMD\PMXFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\FBX\FBXFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\Obj\OBJFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MMD\VMDFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MMD\VPDFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\Model.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MMD\PMDModel.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\FrameResources.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\MMDRender\Source\MainRenderScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMapPipeLineState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX12\Source\Core\DirectX12StaticSampler.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Model\ModelPipelineState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="GameCore\Source\Model\MotionLoader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="GameCore\Source\Model\MMD\PMXModel.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Effect\Blur.cpp">
+    <ClCompile Include="DirectX12\Source\Core\DirectX12BlendState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Effect\PostEffect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="GameCore\Source\Effect\Blur.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="GameCore\Source\Rendering\CascadeShadowMap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Rendering\GBuffer.cpp">
+    <ClCompile Include="GameCore\Source\Effect\Bloom.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX12\Source\Core\DirectX12RenderTarget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Effect\DepthOfField.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Core\GameObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Core\GameActor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Core\GameComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Rendering\ZPrepass.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Core\RenderingEngine.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Rendering\LightCulling.cpp">
@@ -2273,10 +2438,10 @@
     <ClCompile Include="GameCore\Source\Rendering\LightType.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Rendering\SSAO.cpp">
+    <ClCompile Include="GameCore\Source\Rendering\GBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Rendering\ZPrepass.cpp">
+    <ClCompile Include="GameCore\Source\Rendering\SSAO.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameCore\Source\Model\Primitive\PrimitiveModel.cpp">
@@ -2285,307 +2450,55 @@
     <ClCompile Include="GameCore\Source\Model\MMD\VMDAnimation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameCore\Source\Effect\Bloom.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Effect\DepthOfField.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Core\GameComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Core\GameActor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Core\GameObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameCore\Source\Core\RenderingEngine.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectX12\Source\Core\DirectX12RenderTarget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameMath\Source\AlignedAllocator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameMath\Source\GMQuaternion.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\btLinearMathAll.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Pluguins\Bullet\clew\clew.c">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btVector3.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btThreads.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btConvexCast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btSerializer64.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btSerializer.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btReducedVector.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btQuickprof.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btPolarDecomposition.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btGeometryUtil.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPersistentManifold.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btConvexHullComputer.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btConvexHull.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btRaycastCallback.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btAlignedAllocator.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\TaskScheduler\btThreadSupportWin32.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\TaskScheduler\btThreadSupportPosix.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\LinearMath\TaskScheduler\btTaskScheduler.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Vehicle\btRaycastVehicle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Vehicle\btWheelInfo.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btDantzigLCP.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btMLCPSolver.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBody.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyGearConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyMLCPConstraintSolver.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySliderConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySphericalJointMotor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorldMt.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btRigidBody.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimpleDynamicsWorld.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimulationIslandManagerMt.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btBatchedConstraints.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btConeTwistConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btContactConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btFixedConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGearConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpring2Constraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHinge2Constraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHingeConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolverMt.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSliderConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btUniversalConstraint.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Character\btKinematicCharacterController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvt.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvtBroadphase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDispatcher.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCache.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btQuantizedBvh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btSimpleBroadphase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorld.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorldImporter.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btGhostObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btHashedSimplePairCache.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btInternalEdgeUtility.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btManifoldResult.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSimulationIslandManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btUnionFind.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btBox2dShape.cpp">
@@ -2687,10 +2600,10 @@
     <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btTriangleCallback.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionShapes\btTriangleMesh.cpp">
@@ -2735,83 +2648,302 @@
     <ClCompile Include="Pluguins\Bullet\BulletCollision\Gimpact\gim_tri_collision.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Character\btKinematicCharacterController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btConvexCast.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btBatchedConstraints.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btConeTwistConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa2.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btContactConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btFixedConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGearConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPersistentManifold.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpring2Constraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btRaycastCallback.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHinge2Constraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btHingeConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Pluguins\Bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Core\Source\Application.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Core\Source\GameCore.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Core\Source\GameManager.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolverMt.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Core\Source\MainGame.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSliderConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Core\Source\Scene.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Core\Source\SceneManager.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\MMDRender\Source\MainRenderScene.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\ConstraintSolver\btUniversalConstraint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\MMDRender\Source\MMDRendererTitle.cpp">
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btDiscreteDynamicsWorldMt.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btRigidBody.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimpleDynamicsWorld.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Dynamics\btSimulationIslandManagerMt.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBody.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyGearConstraint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyMLCPConstraintSolver.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySliderConstraint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Featherstone\btMultiBodySphericalJointMotor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btDantzigLCP.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\MLCPSolvers\btMLCPSolver.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Vehicle\btRaycastVehicle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletDynamics\Vehicle\btWheelInfo.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorld.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCollisionWorldImporter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btGhostObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btHashedSimplePairCache.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btInternalEdgeUtility.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btManifoldResult.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSimulationIslandManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\btUnionFind.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvt.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDbvtBroadphase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btDispatcher.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCache.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btQuantizedBvh.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btSimpleBroadphase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MainGame\MMDRender\Source\Miku.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Other\Source\MotionTest.cpp">
+    <ClCompile Include="MainGame\MMDRender\Source\MMDRendererTitle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Other\Source\Test.cpp">
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarTitle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame\Other\Source\Title.cpp">
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarGame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarGameClear.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarGameOver.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Player\Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Bullet\Bullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarResult.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyBlue.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyLightGreen.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyPurple.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyRed.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyBoss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyDefault.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Bullet\DamageEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Player\PlayerHP.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\Core\Source\RemdererTitle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ApplicationSelect\Source\ApplicationSelect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarIntroduction.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Pluguins\DirectXTex\DirectXTex.inl">
-      <Filter>ヘッダー ファイル</Filter>
-    </None>
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_EncodeBlockCS.inc">
       <Filter>ヘッダー ファイル</Filter>
     </None>
@@ -2833,14 +2965,48 @@
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS.inc">
       <Filter>ヘッダー ファイル</Filter>
     </None>
-    <None Include="GameMath\Include\GameMath.inl">
+    <None Include="Pluguins\DirectXTex\DirectXTex.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Shader\ShaderTest.hlsli" />
+    <None Include="Shader\Core\ShaderBasicStruct.hlsli" />
+    <None Include="Shader\Lighting\ShaderBRDF.hlsli" />
+    <None Include="Shader\Lighting\ShaderF0Config.hlsli" />
+    <None Include="Shader\Lighting\ShaderLambertPhong.hlsli" />
+    <None Include="Shader\Core\ShaderStaticSampler.hlsli" />
+    <None Include="Shader\Model\ShaderModelStruct.hlsli" />
+    <None Include="Shader\Lighting\ShaderLightType.hlsli" />
+    <None Include="Shader\Core\ShaderConstantBuffer3D.hlsli" />
+    <None Include="Shader\Core\ShaderConstantBuffer2D.hlsli" />
+    <None Include="Shader\Core\ShaderTexture.hlsli" />
+    <None Include="Shader\Core\ShaderColor.hlsli" />
+    <None Include="Shader\Effect\ShaderFog.hlsli" />
     <None Include="GameMath\Include\GMSimdFunctions.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
     <None Include="GameMath\Include\GMCollisionFunctions.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Shader\Core\ShaderMath.hlsli" />
+    <None Include="Shader\Model\ShaderModelMaterial.hlsli" />
+    <None Include="Pluguins\bullet3\Bullet3Collision\premake4.lua" />
+    <None Include="Pluguins\bullet3\Bullet3Common\premake4.lua" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\ShaderTestVertex.hlsl" />
+    <FxCompile Include="Shader\ShaderTestPixel.hlsl" />
+    <FxCompile Include="Shader\ShaderDefault2D.hlsl" />
+    <FxCompile Include="Shader\EnvironmentMap\ShaderStaticCubemap.hlsl" />
+    <FxCompile Include="Shader\EnvironmentMap\ShaderDynamicCubemap.hlsl" />
+    <FxCompile Include="Shader\EnvironmentMap\ShaderSkybox.hlsl" />
+    <FxCompile Include="Shader\Model\ShaderModelRenderer.hlsl" />
+    <FxCompile Include="Shader\Effect\ShaderBlur.hlsl" />
+    <FxCompile Include="Shader\Effect\ShaderBloom.hlsl" />
+    <FxCompile Include="Shader\Effect\ShaderDof.hlsl" />
+    <FxCompile Include="Shader\Lighting\ShaderZPrepass.hlsl" />
+    <FxCompile Include="Shader\Lighting\ShaderLightCulling.hlsl" />
+    <FxCompile Include="Shader\Lighting\ShaderGBuffer.hlsl" />
+    <FxCompile Include="Shader\Lighting\ShaderSSAO.hlsl" />
+    <FxCompile Include="Shader\Lighting\ShaderCascadeShadow.hlsl" />
   </ItemGroup>
 </Project>

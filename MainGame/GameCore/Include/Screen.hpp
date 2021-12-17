@@ -34,7 +34,7 @@ public:
 	static int GetScreenHeight();
 	static float GetOnePixelWidth();
 	static float GetOnePixelHeight();
-
+	static float GetAspectRatio();
 	void SetScreenWidth (int width);
 	void SetScreenHeight(int height);
 	float AspectRatio() const;

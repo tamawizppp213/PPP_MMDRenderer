@@ -16,13 +16,31 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-
+class  TextRenderer;
+struct TextString;
+struct Sprite;
+struct Texture;
+class AudioSource;
 //////////////////////////////////////////////////////////////////////////////////
 //                           Title Class
 //////////////////////////////////////////////////////////////////////////////////
 class MMDRendererTitle final : public Scene
 {
+	using TextRendererPtr = std::unique_ptr<TextRenderer>;
+	using TextStringPtr   = std::unique_ptr<TextString>;
+	using AudioSourcePtr = std::unique_ptr<AudioSource>;
+	struct RenderResource
+	{
+		std::unique_ptr<Sprite>  SpritePtr;
+		std::unique_ptr<Texture> TexturePtr;
+		RenderResource()
+		{
+			SpritePtr  = std::make_unique<Sprite>();
+			TexturePtr = std::make_unique<Texture>();
+		}
+	};
 public:
+
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
@@ -36,20 +54,31 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-
 protected:
-
-private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	bool InitializeCoordinates(); // orthographicLH
+	bool LoadMaterials(GameTimer& gameTimer) override;
+	
+	void UpdateTextAnimation();
+	void DrawSprites();
 
+	void OnKeyboardInput() override;
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
+	SpriteRendererPtr _spriteRenderer     = nullptr;
+	TextRendererPtr   _textRenderer       = nullptr;
+	RenderResource    _backGround;
+	RenderResource    _backUI;
+	RenderResource    _titleBack;
+	RenderResource    _click;
+	TextStringPtr     _pressButtonText    = nullptr;
+	TextStringPtr     _titleText          = nullptr;
+	float             _localTimer         = 0;       // to use text animation
+	bool              _animationOn        = false;
 
-
+	AudioSourcePtr _pressSound = nullptr;
 
 };
 #endif
