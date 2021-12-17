@@ -13,38 +13,36 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define
 //////////////////////////////////////////////////////////////////////////////////
-// 48 bytes
+// 32 bytes
 struct PointLight
 {
     float3 Position;
     float  Range;
     float3 Color;
     float  Brightness;
-    float3 Attenuation;
-    float  DepthBias;
+    
 };
 
-// 48 bytes
+// 64 bytes
 struct SpotLight
 {
     float3 Position;
-    float  OuterConeAngle;
+    float  Range;
     float3 Color;
     float  Brightness;
     float3 Direction;
-    float  DepthBias;
     float  InnerConeAngle;
+    float  OuterConeAngle;
     float3 Dummy;
 };
 
+// 32 bytes
 struct DirectionalLight
 {
     float3 Direction;
     float  Brightness;
     float3 Color;
-    float  DepthBias;
-    int    Shadowing;
-    int    Enabled;
+    float  Padding;
 };
 
 #endif

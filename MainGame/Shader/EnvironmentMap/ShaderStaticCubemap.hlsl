@@ -45,7 +45,7 @@ VertexOut VSMain(VertexIn vertexIn)
      /*-------------------------------------------------------------------
 	-        Skybox always on far plane
 	---------------------------------------------------------------------*/
-    result.Position = mul(ViewProjection, positionWorld).xyww;
+    result.Position = mul(ProjectionView, positionWorld).xyww;
     return result;
 }
 

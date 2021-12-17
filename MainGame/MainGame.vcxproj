@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,68 +21,38 @@
   <ItemGroup>
     
     <ClInclude Include="DirectX12\Include\Core\DirectX12Base.hpp" />
-    <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12BlendState.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Buffer.hpp" />
-    <ClInclude Include="DirectX12\Include\Core\DirectX12BufferAllocator.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Config.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12Core.hpp" />
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BufferAllocator.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12MeshBuffer.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12RenderTarget.hpp" />
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp" />
     <ClInclude Include="DirectX12\Include\Core\DirectX12StaticSampler.hpp" />
-    <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp" />
-    <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12CubeMap.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12MathHelper.hpp" />
-    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioDecoder.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioMaster.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioSource.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioSource3D.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\AudioTable.hpp" />
-    <ClInclude Include="GameCore\Include\Audio\WavDecoder.hpp" />
-    <ClInclude Include="GameCore\Include\Camera.hpp" />
-    <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp" />
-    <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
-    <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
     <ClInclude Include="GameCore\Include\Core\GameActor.hpp" />
     <ClInclude Include="GameCore\Include\Core\GameComponent.hpp" />
-    <ClInclude Include="GameCore\Include\Core\GameObject.hpp" />
-    <ClInclude Include="GameCore\Include\Core\RenderingEngine.hpp" />
     <ClInclude Include="GameCore\Include\Core\RenderingEngineConfig.hpp" />
+    <ClInclude Include="GameCore\Include\Core\RenderingEngineStruct.hpp" />
     <ClInclude Include="GameCore\Include\Effect\Bloom.hpp" />
     <ClInclude Include="GameCore\Include\Effect\Blur.hpp" />
     <ClInclude Include="GameCore\Include\Effect\DepthOfField.hpp" />
-    <ClInclude Include="GameCore\Include\Effect\PostEffect.hpp" />
     <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMap.hpp" />
     <ClInclude Include="GameCore\Include\EnvironmentMap\CubeMapPipeLineState.hpp" />
-    <ClInclude Include="GameCore\Include\FileUtility.hpp" />
-    <ClInclude Include="GameCore\Include\File\FileUtility.hpp" />
-    <ClInclude Include="GameCore\Include\File\Json.hpp" />
     <ClInclude Include="GameCore\Include\File\UnicodeUtility.hpp" />
-    <ClInclude Include="GameCore\Include\FrameResources.hpp" />
     <ClInclude Include="GameCore\Include\GameConstantBufferConfig.hpp" />
-    <ClInclude Include="GameCore\Include\GameTimer.hpp" />
+    <ClInclude Include="GameCore\Include\Core\GameObject.hpp" />
     <ClInclude Include="GameCore\Include\HLSLUtility.hpp" />
-    <ClInclude Include="GameCore\Include\Input\GameInput.hpp" />
-    <ClInclude Include="GameCore\Include\Input\GamePad.hpp" />
-    <ClInclude Include="GameCore\Include\Input\Keyboard.hpp" />
-    <ClInclude Include="GameCore\Include\Input\Mouse.hpp" />
-    <ClInclude Include="GameCore\Include\Light\LightType.hpp" />
-    <ClInclude Include="GameCore\Include\Model\FBX\FBXFile.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\MMDRenderer.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\PMDConfig.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\PMDFile.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\PMDModel.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\PMXConfig.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\PMXFile.hpp" />
-    <ClInclude Include="GameCore\Include\Model\MMD\PMXModel.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VMDAnimation.hpp" />
+    <ClInclude Include="GameCore\Include\Model\ModelMaterial.hpp" />
+    <ClInclude Include="GameCore\Include\Model\Primitive\PrimitiveModel.hpp" />
+    <ClInclude Include="GameCore\Include\Rendering\CascadeShadowMap.hpp" />
+    <ClInclude Include="GameCore\Include\Rendering\GBuffer.hpp" />
+    <ClInclude Include="GameCore\Include\Rendering\LightCulling.hpp" />
+    <ClInclude Include="GameCore\Include\Rendering\LightType.hpp" />
+    <ClInclude Include="GameCore\Include\Model\FBX\FBXFile.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12Geometry.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXModel.hpp" />
+    <ClInclude Include="GameCore\Include\Model\ModelPipelineState.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VMDConfig.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VMDFile.hpp" />
     <ClInclude Include="GameCore\Include\Model\MMD\VPDConfig.hpp" />
@@ -90,31 +60,53 @@
     <ClInclude Include="GameCore\Include\Model\Model.hpp" />
     <ClInclude Include="GameCore\Include\Model\ModelFile.hpp" />
     <ClInclude Include="GameCore\Include\Model\ModelLoader.hpp" />
-    <ClInclude Include="GameCore\Include\Model\ModelMaterial.hpp" />
-    <ClInclude Include="GameCore\Include\Model\ModelPipelineState.hpp" />
     <ClInclude Include="GameCore\Include\Model\MotionLoader.hpp" />
     <ClInclude Include="GameCore\Include\Model\Obj\OBJConfig.hpp" />
     <ClInclude Include="GameCore\Include\Model\Obj\OBJFile.hpp" />
-    <ClInclude Include="GameCore\Include\Model\Primitive\PrimitiveModel.hpp" />
-    <ClInclude Include="GameCore\Include\Mouse.hpp" />
-    <ClInclude Include="GameCore\Include\Rendering\CascadeShadowMap.hpp" />
-    <ClInclude Include="GameCore\Include\Rendering\GBuffer.hpp" />
-    <ClInclude Include="GameCore\Include\Rendering\LightCulling.hpp" />
-    <ClInclude Include="GameCore\Include\Rendering\LightType.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMDConfig.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMDFile.hpp" />
+    <ClInclude Include="DirectX12\Include\DirectX12PrimitiveGeometry.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12BaseStruct.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Debug.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Shader.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12Texture.hpp" />
+    <ClInclude Include="DirectX12\Include\Core\DirectX12VertexTypes.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioSource3D.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\BoundingPlane.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\Collision.hpp" />
+    <ClInclude Include="GameCore\Include\Collision\Collider.hpp" />
+    <ClInclude Include="GameCore\Include\File\Json.hpp" />
+    <ClInclude Include="GameCore\Include\File\FileUtility.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioCore.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioSource.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioClip.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioTable.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioMaster.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXConfig.hpp" />
+    <ClInclude Include="GameCore\Include\Core\RenderingEngine.hpp" />
     <ClInclude Include="GameCore\Include\Rendering\SSAO.hpp" />
     <ClInclude Include="GameCore\Include\Rendering\ZPrepass.hpp" />
-    <ClInclude Include="GameCore\Include\Save.hpp" />
-    <ClInclude Include="GameCore\Include\Screen.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Billboard.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Fade.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Font.hpp" />
+    <ClInclude Include="GameCore\Include\Effect\PostEffect.hpp" />
+    <ClInclude Include="GameCore\Include\Sprite\FontType.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Sprite.hpp" />
+    <ClInclude Include="GameCore\Include\Camera.hpp" />
+    <ClInclude Include="GameCore\Include\Input\GameInput.hpp" />
+    <ClInclude Include="GameCore\Include\Input\GamePad.hpp" />
+    <ClInclude Include="GameCore\Include\GameTimer.hpp" />
+    <ClInclude Include="GameCore\Include\Input\Keyboard.hpp" />
+    <ClInclude Include="GameCore\Include\Input\Mouse.hpp" />
+    <ClInclude Include="GameCore\Include\Screen.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\SpritePipeLineState.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\SpriteRenderer.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Text.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\TextRenderer.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMXFile.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\PMDModel.hpp" />
+    <ClInclude Include="GameCore\Include\Model\MMD\MMDRenderer.hpp" />
     <ClInclude Include="GameCore\Include\Sprite\Wipe.hpp" />
-    <ClInclude Include="GameCore\Include\TextureLoader.hpp" />
     <ClInclude Include="GameMath\Include\GMAlighedAllocator.hpp" />
     <ClInclude Include="GameMath\Include\GMAlignedAllocatorArray.hpp" />
     <ClInclude Include="GameMath\Include\GMCollision.hpp" />
@@ -134,40 +126,120 @@
     <ClInclude Include="GameMath\Include\GMTransform.hpp" />
     <ClInclude Include="GameMath\Include\GMVector.hpp" />
     <ClInclude Include="GameMath\Include\GMVectorUtility.hpp" />
+    <ClInclude Include="MainGame\ApplicationSelect\Include\ApplicationSelect.hpp" />
     <ClInclude Include="MainGame\Core\Include\Application.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\AudioDecoder.hpp" />
+    <ClInclude Include="MainGame\Core\Include\RendererTitle.hpp" />
+    <ClInclude Include="MainGame\MMDRender\Include\MainRenderScene.hpp" />
+    <ClInclude Include="GameCore\Include\FrameResources.hpp" />
     <ClInclude Include="MainGame\Core\Include\GameCore.hpp" />
     <ClInclude Include="MainGame\Core\Include\GameManager.hpp" />
-    <ClInclude Include="MainGame\Core\Include\Scene.hpp" />
-    <ClInclude Include="MainGame\Core\Include\SceneManager.hpp" />
-    <ClInclude Include="MainGame\Core\Include\TemplateText.hpp" />
-    <ClInclude Include="MainGame\Include\Application.hpp" />
-    <ClInclude Include="MainGame\Include\FrameResources.hpp" />
-    <ClInclude Include="MainGame\Include\GameCore.hpp" />
-    <ClInclude Include="MainGame\Include\GameManager.hpp" />
-    <ClInclude Include="MainGame\Include\MainBattle.hpp" />
-    <ClInclude Include="MainGame\Include\MotionTest.hpp" />
-    <ClInclude Include="MainGame\Include\Scene.hpp" />
-    <ClInclude Include="MainGame\Include\SceneManager.hpp" />
-    <ClInclude Include="MainGame\Include\SoundManager.hpp" />
-    <ClInclude Include="MainGame\Include\TemplateText.hpp" />
-    <ClInclude Include="MainGame\Include\Test.hpp" />
-    <ClInclude Include="MainGame\Include\Title.hpp" />
-    <ClInclude Include="MainGame\MMDRender\Include\MainRenderScene.hpp" />
     <ClInclude Include="MainGame\MMDRender\Include\Miku.hpp" />
     <ClInclude Include="MainGame\MMDRender\Include\MMDRendererTitle.hpp" />
     <ClInclude Include="MainGame\Other\Include\MotionTest.hpp" />
+    <ClInclude Include="MainGame\Core\Include\Scene.hpp" />
+    <ClInclude Include="MainGame\Core\Include\SceneManager.hpp" />
+    <ClInclude Include="MainGame\Core\Include\TemplateText.hpp" />
     <ClInclude Include="MainGame\Other\Include\Test.hpp" />
     <ClInclude Include="MainGame\Other\Include\Title.hpp" />
+    <ClInclude Include="GameCore\Include\Audio\WavDecoder.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Bullet\DamageEffect.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyDefault.hpp" />
     <ClInclude Include="MainGame\ShootingStar\Include\Enemy\Enemy.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Player\Bullet.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyBlue.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyBoss.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyManager.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyLightGreen.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyPurple.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyRed.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Enemy\EnemyType.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Bullet\Bullet.hpp" />
     <ClInclude Include="MainGame\ShootingStar\Include\Player\Player.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Game.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\GameClear.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\GameOver.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Result.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Player\PlayerHP.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarGame.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarGameClear.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarGameOver.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarIntroduction.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarResult.hpp" />
     <ClInclude Include="MainGame\ShootingStar\Include\Scene\SceneState.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Stage.hpp" />
-    <ClInclude Include="MainGame\ShootingStar\Include\Scene\Title.hpp" />
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarTitle.hpp" />
+    <ClInclude Include="Pluguins\bullet3\btBulletCollisionCommon.h" />
+    <ClInclude Include="Pluguins\bullet3\btBulletDynamicsCommon.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btBox2dShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btBoxShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCapsuleShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCollisionMargin.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCollisionShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCompoundShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConcaveShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConeShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvex2dShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexHullShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexInternalShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexPointCloudShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexPolyhedron.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btCylinderShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btEmptyShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMaterial.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMiniSDF.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMinkowskiSumShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btMultiSphereShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btOptimizedBvh.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btPolyhedralConvexShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btSdfCollisionShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btShapeHull.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btSphereShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btStaticPlaneShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btStridingMeshInterface.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTetrahedronShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleBuffer.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleCallback.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleInfoMap.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleMesh.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleMeshShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btTriangleShape.h" />
+    <ClInclude Include="Pluguins\bullet3\BulletCollision\CollisionShapes\btUniformScalingShape.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btAabbUtil2.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btAlignedAllocator.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btAlignedObjectArray.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btConvexHull.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btConvexHullComputer.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btCpuFeatureUtility.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btDefaultMotionState.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btGeometryUtil.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btGrahamScan2dConvexHull.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btHashMap.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btIDebugDraw.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btImplicitQRSVD.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btList.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMatrix3x3.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMatrixX.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMinMax.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btModifiedGramSchmidt.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btMotionState.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btPolarDecomposition.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btPoolAllocator.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btQuadWord.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btQuaternion.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btQuickprof.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btRandom.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btReducedVector.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btScalar.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btSerializer.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btSpatialAlgebra.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btStackAlloc.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btThreads.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btTransform.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btTransformUtil.h" />
+    <ClInclude Include="Pluguins\bullet3\LinearMath\btVector3.h" />
     <ClInclude Include="Pluguins\Bullet\btBulletCollisionCommon.h" />
     <ClInclude Include="Pluguins\Bullet\btBulletDynamicsCommon.h" />
     <ClInclude Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.h" />
@@ -368,40 +440,6 @@
     <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btVehicleRaycaster.h" />
     <ClInclude Include="Pluguins\Bullet\BulletDynamics\Vehicle\btWheelInfo.h" />
     <ClInclude Include="Pluguins\Bullet\clew\clew.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btAabbUtil2.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btAlignedAllocator.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btAlignedObjectArray.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btConvexHull.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btConvexHullComputer.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btCpuFeatureUtility.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btDefaultMotionState.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btGeometryUtil.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btGrahamScan2dConvexHull.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btHashMap.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btIDebugDraw.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btImplicitQRSVD.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btList.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMatrix3x3.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMatrixX.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMinMax.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btModifiedGramSchmidt.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btMotionState.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btPolarDecomposition.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btPoolAllocator.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btQuadWord.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btQuaternion.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btQuickprof.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btRandom.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btReducedVector.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btScalar.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btSerializer.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btSpatialAlgebra.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btStackAlloc.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btThreads.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btTransform.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btTransformUtil.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\btVector3.h" />
-    <ClInclude Include="Pluguins\Bullet\LinearMath\TaskScheduler\btThreadSupportInterface.h" />
     <ClInclude Include="Pluguins\DirectXTex\BC.h" />
     <ClInclude Include="Pluguins\DirectXTex\BCDirectCompute.h" />
     <ClInclude Include="Pluguins\DirectXTex\d3dx12.h" />
@@ -695,54 +733,32 @@
     <ClInclude Include="Pluguins\fbxsdk\libxml2\libxml\xpointer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX12\Source\Core\DirectX12BlendState.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Base.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12BaseStruct.cpp" />
-    <ClCompile Include="DirectX12\Source\Core\DirectX12BlendState.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Buffer.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Config.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12Core.cpp" />
-    <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12RenderTarget.cpp" />
     <ClCompile Include="DirectX12\Source\Core\DirectX12StaticSampler.cpp" />
-    <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp" />
-    <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
-    <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\AudioClip.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\AudioMaster.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\AudioSource.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\AudioSource3D.cpp" />
-    <ClCompile Include="GameCore\Source\Audio\WavDecoder.cpp" />
-    <ClCompile Include="GameCore\Source\Camera.cpp" />
-    <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
-    <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
-    <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
     <ClCompile Include="GameCore\Source\Core\GameActor.cpp" />
     <ClCompile Include="GameCore\Source\Core\GameComponent.cpp" />
-    <ClCompile Include="GameCore\Source\Core\GameObject.cpp" />
     <ClCompile Include="GameCore\Source\Core\RenderingEngine.cpp" />
     <ClCompile Include="GameCore\Source\Effect\Bloom.cpp" />
     <ClCompile Include="GameCore\Source\Effect\Blur.cpp" />
     <ClCompile Include="GameCore\Source\Effect\DepthOfField.cpp" />
-    <ClCompile Include="GameCore\Source\Effect\PostEffect.cpp" />
     <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMap.cpp" />
     <ClCompile Include="GameCore\Source\EnvironmentMap\CubeMapPipeLineState.cpp" />
-    <ClCompile Include="GameCore\Source\File\Json.cpp" />
     <ClCompile Include="GameCore\Source\File\UnicodeUtil.cpp" />
     <ClCompile Include="GameCore\Source\FrameResources.cpp" />
-    <ClCompile Include="GameCore\Source\GameTimer.cpp" />
-    <ClCompile Include="GameCore\Source\Input\GameInput.cpp" />
-    <ClCompile Include="GameCore\Source\Input\GamePad.cpp" />
-    <ClCompile Include="GameCore\Source\Input\Keyboard.cpp" />
-    <ClCompile Include="GameCore\Source\Input\Mouse.cpp" />
-    <ClCompile Include="GameCore\Source\Model\FBX\FBXFile.cpp" />
-    <ClCompile Include="GameCore\Source\Model\MMD\PMDConfig.cpp" />
-    <ClCompile Include="GameCore\Source\Model\MMD\PMDFile.cpp" />
-    <ClCompile Include="GameCore\Source\Model\MMD\PMDModel.cpp" />
-    <ClCompile Include="GameCore\Source\Model\MMD\PMXConfig.cpp" />
-    <ClCompile Include="GameCore\Source\Model\MMD\PMXFile.cpp" />
-    <ClCompile Include="GameCore\Source\Model\MMD\PMXModel.cpp" />
+    <ClCompile Include="GameCore\Source\Core\GameObject.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\VMDAnimation.cpp" />
+    <ClCompile Include="GameCore\Source\Model\Primitive\PrimitiveModel.cpp" />
+    <ClCompile Include="GameCore\Source\Rendering\CascadeShadowMap.cpp" />
+    <ClCompile Include="GameCore\Source\Model\FBX\FBXFile.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12Geometry.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMDModel.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMXModel.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\VMDFile.cpp" />
     <ClCompile Include="GameCore\Source\Model\MMD\VPDFile.cpp" />
     <ClCompile Include="GameCore\Source\Model\Model.cpp" />
@@ -750,34 +766,77 @@
     <ClCompile Include="GameCore\Source\Model\ModelPipelineState.cpp" />
     <ClCompile Include="GameCore\Source\Model\MotionLoader.cpp" />
     <ClCompile Include="GameCore\Source\Model\Obj\OBJFile.cpp" />
-    <ClCompile Include="GameCore\Source\Model\Primitive\PrimitiveModel.cpp" />
-    <ClCompile Include="GameCore\Source\Rendering\CascadeShadowMap.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMDConfig.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMDFile.cpp" />
+    <ClCompile Include="DirectX12\Source\DirectX12PrimitiveGeometry.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Debug.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12Texture.cpp" />
+    <ClCompile Include="DirectX12\Source\Core\DirectX12VertexTypes.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\AudioClip.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\AudioSource.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\AudioMaster.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\AudioSource3D.cpp" />
+    <ClCompile Include="GameCore\Source\Collision\BoundingPlane.cpp" />
+    <ClCompile Include="GameCore\Source\Collision\Collider.cpp" />
+    <ClCompile Include="GameCore\Source\Collision\Collision.cpp" />
+    <ClCompile Include="GameCore\Source\File\Json.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMXConfig.cpp" />
+    <ClCompile Include="GameCore\Source\Model\MMD\PMXFile.cpp" />
     <ClCompile Include="GameCore\Source\Rendering\GBuffer.cpp" />
     <ClCompile Include="GameCore\Source\Rendering\LightCulling.cpp" />
     <ClCompile Include="GameCore\Source\Rendering\LightType.cpp" />
     <ClCompile Include="GameCore\Source\Rendering\SSAO.cpp" />
     <ClCompile Include="GameCore\Source\Rendering\ZPrepass.cpp" />
-    <ClCompile Include="GameCore\Source\Screen.cpp" />
     <ClCompile Include="GameCore\Source\Sprite\Fade.cpp" />
     <ClCompile Include="GameCore\Source\Sprite\Font.cpp" />
+    <ClCompile Include="GameCore\Source\Effect\PostEffect.cpp" />
     <ClCompile Include="GameCore\Source\Sprite\Sprite.cpp" />
+    <ClCompile Include="GameCore\Source\Camera.cpp" />
+    <ClCompile Include="GameCore\Source\Input\GameInput.cpp" />
+    <ClCompile Include="GameCore\Source\Input\GamePad.cpp" />
+    <ClCompile Include="GameCore\Source\GameTimer.cpp" />
+    <ClCompile Include="GameCore\Source\Input\Keyboard.cpp" />
+    <ClCompile Include="GameCore\Source\Input\Mouse.cpp" />
+    <ClCompile Include="GameCore\Source\Screen.cpp" />
     <ClCompile Include="GameCore\Source\Sprite\SpritePipeLineState.cpp" />
     <ClCompile Include="GameCore\Source\Sprite\SpriteRenderer.cpp" />
     <ClCompile Include="GameCore\Source\Sprite\TextRenderer.cpp" />
     <ClCompile Include="GameMath\Source\AlignedAllocator.cpp" />
     <ClCompile Include="GameMath\Source\GMQuaternion.cpp" />
+    <ClCompile Include="MainGame\ApplicationSelect\Source\ApplicationSelect.cpp" />
     <ClCompile Include="MainGame\Core\Source\Application.cpp" />
     <ClCompile Include="MainGame\Core\Source\GameCore.cpp" />
     <ClCompile Include="MainGame\Core\Source\GameManager.cpp" />
-    <ClCompile Include="MainGame\Core\Source\MainGame.cpp" />
-    <ClCompile Include="MainGame\Core\Source\Scene.cpp" />
-    <ClCompile Include="MainGame\Core\Source\SceneManager.cpp" />
+    <ClCompile Include="MainGame\Core\Source\RemdererTitle.cpp" />
     <ClCompile Include="MainGame\MMDRender\Source\MainRenderScene.cpp" />
+    <ClCompile Include="MainGame\Core\Source\MainGame.cpp" />
     <ClCompile Include="MainGame\MMDRender\Source\Miku.cpp" />
     <ClCompile Include="MainGame\MMDRender\Source\MMDRendererTitle.cpp" />
     <ClCompile Include="MainGame\Other\Source\MotionTest.cpp" />
+    <ClCompile Include="MainGame\Core\Source\Scene.cpp" />
+    <ClCompile Include="MainGame\Core\Source\SceneManager.cpp" />
     <ClCompile Include="MainGame\Other\Source\Test.cpp" />
     <ClCompile Include="MainGame\Other\Source\Title.cpp" />
+    <ClCompile Include="GameCore\Source\Audio\WavDecoder.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Bullet\DamageEffect.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\Enemy.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyBlue.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyBoss.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyDefault.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyLightGreen.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyPurple.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Enemy\EnemyRed.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Bullet\Bullet.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Player\Player.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Player\PlayerHP.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarGame.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarGameClear.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarGameOver.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarIntroduction.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarResult.cpp" />
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarTitle.cpp" />
+    <ClCompile Include="Pluguins\Bullet\btLinearMathAll.cpp" />
     <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
     <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp" />
     <ClCompile Include="Pluguins\Bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp" />
@@ -917,20 +976,6 @@
     <ClCompile Include="Pluguins\Bullet\BulletDynamics\Vehicle\btRaycastVehicle.cpp" />
     <ClCompile Include="Pluguins\Bullet\BulletDynamics\Vehicle\btWheelInfo.cpp" />
     <ClCompile Include="Pluguins\Bullet\clew\clew.c" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btAlignedAllocator.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btConvexHull.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btConvexHullComputer.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btGeometryUtil.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btPolarDecomposition.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btQuickprof.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btReducedVector.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btSerializer.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btSerializer64.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btThreads.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\btVector3.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\TaskScheduler\btTaskScheduler.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\TaskScheduler\btThreadSupportPosix.cpp" />
-    <ClCompile Include="Pluguins\Bullet\LinearMath\TaskScheduler\btThreadSupportWin32.cpp" />
     <ClCompile Include="Pluguins\DirectXTex\BC.cpp" />
     <ClCompile Include="Pluguins\DirectXTex\BC4BC5.cpp" />
     <ClCompile Include="Pluguins\DirectXTex\BC6HBC7.cpp" />
@@ -954,9 +999,10 @@
     <ClCompile Include="Pluguins\DirectXTex\DirectXTexWIC.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameMath\Include\GameMath.inl" />
     <None Include="GameMath\Include\GMCollisionFunctions.inl" />
     <None Include="GameMath\Include\GMSimdFunctions.inl" />
+    <None Include="Pluguins\bullet3\Bullet3Collision\premake4.lua" />
+    <None Include="Pluguins\bullet3\Bullet3Common\premake4.lua" />
     <None Include="Pluguins\DirectXTex\DirectXTex.inl" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_EncodeBlockCS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC6HEncode_TryModeG10CS.inc" />
@@ -965,6 +1011,202 @@
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode02CS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode137CS.inc" />
     <None Include="Pluguins\DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS.inc" />
+    <None Include="Shader\Core\ShaderColor.hlsli" />
+    <None Include="Shader\Core\ShaderConstantBuffer2D.hlsli" />
+    <None Include="Shader\Core\ShaderConstantBuffer3D.hlsli" />
+    <None Include="Shader\Core\ShaderMath.hlsli" />
+    <None Include="Shader\Core\ShaderStaticSampler.hlsli" />
+    <None Include="Shader\Core\ShaderTexture.hlsli" />
+    <None Include="Shader\Effect\ShaderFog.hlsli" />
+    <None Include="Shader\Lighting\ShaderBRDF.hlsli" />
+    <None Include="Shader\Lighting\ShaderF0Config.hlsli" />
+    <None Include="Shader\Lighting\ShaderLambertPhong.hlsli" />
+    <None Include="Shader\Core\ShaderBasicStruct.hlsli" />
+    <None Include="Shader\Lighting\ShaderLightType.hlsli" />
+    <None Include="Shader\Model\ShaderModelMaterial.hlsli" />
+    <None Include="Shader\Model\ShaderModelStruct.hlsli" />
+    <None Include="Shader\ShaderTest.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\Effect\ShaderBloom.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FinalBloom</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FinalBloom</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FinalBloom</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Effect\ShaderBlur.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FinalBlur</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FinalBlur</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FinalBlur</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\Effect\ShaderDof.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FinalBlur</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FinalBlur</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FinalBlur</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\EnvironmentMap\ShaderDynamicCubemap.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\EnvironmentMap\ShaderSkybox.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\EnvironmentMap\ShaderStaticCubemap.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Lighting\ShaderCascadeShadow.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PMX_PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PMX_PSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PMX_PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Lighting\ShaderGBuffer.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PMX_PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PMX_PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PMX_PSMain</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\Lighting\ShaderLightCulling.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LightCulling</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LightCulling</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LightCulling</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\Lighting\ShaderSSAO.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SSAO</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SSAO</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SSAO</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\Lighting\ShaderZPrepass.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PMX_PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PMX_PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PMX_PSMain</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\Model\ShaderModelRenderer.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PMD_VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PMD_VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PMD_VSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\ShaderDefault2D.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+    </FxCompile>
+    <FxCompile Include="Shader\ShaderTestPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PSMain</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="Shader\ShaderTestVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\MainGame</AdditionalIncludeDirectories>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -999,6 +1241,8 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -1050,46 +1294,75 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\MainGame;..\MainGame/Pluguins;..\MainGame/Pluguins/fbxsdk;..\MainGame/Pluguins/libxml2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.1</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>..\MainGame;..\MainGame/Pluguins;..\MainGame/Pluguins/fbxsdk;..\MainGame/Pluguins/libxml2;..\MainGame/Pluguins/Bullet</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\MainGame\Pluguins</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\MainGame\Pluguins;..\MainGame\Pluguins\fbxsdk\debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>
+      </StackReserveSize>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.1</ShaderModel>
+      <AdditionalIncludeDirectories>..\MainGame</AdditionalIncludeDirectories>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>..\MainGame</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MainGame;..\MainGame/Pluguins;..\MainGame/Pluguins/fbxsdk;..\MainGame/Pluguins/libxml2</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\MainGame\Pluguins;..\MainGame\Pluguins\fbxsdk\release</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMain</EntryPointSymbol>
+      <NoEntryPoint>false</NoEntryPoint>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <AdditionalIncludeDirectories>..\MainGame</AdditionalIncludeDirectories>
+      <ShaderModel>5.1</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -60,7 +60,8 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	gm::Transform& GetTransform ()        { return _transform; }
+	gm::Transform&       GetTransform()       { return _transform; }
+	const gm::Transform& GetTransform() const { return _transform; }
 	std::string    GetName      () const  { return _name; }
 	std::string    GetTag       () const  { return _tag; }
 	std::string    GetLayerName () const  { return _layerList[_layer]; }
@@ -68,7 +69,7 @@ public:
 	int            GetChildCount() const  { return static_cast<int>(_children.size()); }
 	
 	GameObject* GetChild(int index) { return (index < _children.size()) ? _children[index] : nullptr; }
-	static GameObject* GetGameObjectList(int index) { return _gameObjects[index].get(); }
+	static GameObject* GetGameObjectList(int index) { return _gameObjects[index]; }
 
 	bool RemoveChild(GameObject* child);
 	void ClearChildren();
@@ -95,7 +96,7 @@ public:
 	GameObject& operator=(const GameObject&) = default;
 	GameObject(GameObject&&)                 = default;
 	GameObject& operator=(GameObject&&)      = default;
-	~GameObject() {};
+	~GameObject();
 protected:
 	/****************************************************************************
 	**                Protected Function
@@ -129,8 +130,8 @@ protected:
 private:
 	int GetLayerBit(const std::string& layer);
 
-	static std::vector<std::unique_ptr<GameObject>> _gameObjects;
-	static std::vector<std::unique_ptr<GameObject>> _destroyGameObjects;
+	static std::vector<GameObject*> _gameObjects;
+	static std::vector<GameObject*> _destroyGameObjects;
 	static std::vector<std::string> _layerList;
 };
 

@@ -67,9 +67,8 @@ private:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	std::stack<SceneSharedPtr> _currentScene;
+	std::stack<SceneUniquePtr> _currentScene;
 	GameTimer* _gameTimer;
-	Fader _fader;
 };
 
 

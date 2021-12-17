@@ -16,7 +16,7 @@ subject to the following restrictions:
 ///btDbvtBroadphase implementation by Nathanael Presson
 #ifndef BT_DBVT_BROADPHASE_H
 #define BT_DBVT_BROADPHASE_H
-
+#pragma warning(disable: 26495)
 #include "BulletCollision/BroadphaseCollision/btDbvt.h"
 #include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
 

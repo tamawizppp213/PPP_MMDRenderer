@@ -39,48 +39,58 @@ public:
 	void CreateSpriteForTexture(
 		const gm::Float3& position,
 		const gm::Float2& rectSize,
-		const gm::Float4& uv);
+		const gm::Float4& uv,
+		float radian = 0.0f);
 	void CreateSpriteForTexture(
 		const gm::Float3& position,
 		const gm::Float2& rectSize,
 		const gm::Float2& u,
-		const gm::Float2& v);
+		const gm::Float2& v,
+		float radian = 0.0f);
 	void CreateSpriteForColor(
 		const gm::Float3& position,
 		const gm::Float2& rectSize,
-		const gm::Float4& color);
+		const gm::Float4& color,
+		float radian = 0.0f);
 	void CreateSprite(
 		const gm::Float3& position,
 		const gm::Float2& rectSize,
 		const gm::Float4& color,
-		const gm::Float4& uv);
+		const gm::Float4& uv,
+		float radian = 0.0f);
 	void CreateSprite(
 		const gm::Float3& position,
 		const gm::Float2& rectSize,
 		const gm::Float4& color,
 		const gm::Float2& u,
-		const gm::Float2& v);
+		const gm::Float2& v,
+		float radian = 0.0f);
 	bool UpdateSprite(
 		const gm::Float3& position,
 		const gm::Float4& color,
-		const gm::Float4& uv);
+		const gm::Float4& uv,
+		float radian = 0.0f);
 	bool UpdateSprite(
 		const gm::Float3& position,
 		const gm::Float4& color,
 		const gm::Float2& u,
-		const gm::Float2& v);
+		const gm::Float2& v,
+		float radian = 0.0f);
 	bool UpdateSpriteForColor(
 		const gm::Float3& position,
-		const gm::Float4& color);
+		const gm::Float4& color,
+		float radian = 0.0f);
 	bool UpdateSpriteForTexture(
 		const gm::Float3& position,
 		const gm::Float4& uv,
-		float alpha = 1.0f);
+		float alpha = 1.0f,
+		float radian = 0.0f);
 	bool UpdateSpriteForTexture(
 		const gm::Float3& position,
 		const gm::Float2& u,
 		const gm::Float2& v,
-		float alpha = 1.0f);
+		float alpha = 1.0f,
+		float radian = 0.0f);
 	
 	
 
@@ -112,10 +122,10 @@ private:
 	**                Private Function
 	*****************************************************************************/
 	void LoadTexture(const std::wstring& imagePath);
-	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, const gm::Float4& uv);
-	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float2& u    , const gm::Float2& v);
-	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, const gm::Float2& u, const gm::Float2& v);
-	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, const gm::Float4& uv, float radian = 0);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float2& u    , const gm::Float2& v, float radian = 0);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, const gm::Float2& u, const gm::Float2& v, float radian = 0);
+	void CreateRect(const gm::Float3& position, const gm::Float2& rectSize, const gm::Float4& color, float radian = 0);
 	
 	/****************************************************************************
 	**                Private Member Variables

@@ -15,7 +15,8 @@ subject to the following restrictions:
 
 #ifndef BT_TRIANGLE_INDEX_VERTEX_ARRAY_H
 #define BT_TRIANGLE_INDEX_VERTEX_ARRAY_H
-
+#pragma warning(disable: 26495)
+#pragma warning(disable: 26812)
 #include "btStridingMeshInterface.h"
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btScalar.h"

@@ -9,14 +9,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-//#include "../Lighting/ShaderLighting.hlsli"
+#include "../Lighting/ShaderLightType.hlsli"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define
 //////////////////////////////////////////////////////////////////////////////////
+#define NUM_DIRECTIONAL_LIGHT 4
+#define NUM_POINT_LIGHT 100
+#define NUM_SPOT_LIGHT  20
 cbuffer ObjectConstants : register(b0)
 {
 	matrix World;
+    int    TextureConfig;
+    int3   ObjectPadding;
 }
 
 cbuffer SceneConstants : register(b1)
@@ -25,8 +30,8 @@ cbuffer SceneConstants : register(b1)
     matrix InverseView;
     matrix Projection;
     matrix InverseProjection;
-    matrix ViewProjection;
-    matrix InverseViewProjection;
+    matrix ProjectionView;
+    matrix InverseProjectionView;
     float3 EyePosition;
     float  Padding1;
     float2 RenderTargetSize;
@@ -39,38 +44,29 @@ cbuffer SceneConstants : register(b1)
 
 cbuffer MaterialConstants : register(b2)
 {
-    float3 Diffuse;
-    float  Alpha;
-    float3 EmissiveColor;
-    float  EmissiveIntensity;
-    float3 Specular;
-    float  Metalness;
-    float2 UVScale;
-    float  Roughness;
-    int    TextureConfig;
-    
+    float4  Diffuse;
+    float3  Specular;
+    float   Roughness;
+    float3  EmissiveColor;
+    float   EmissiveIntensity;
+    float3  Ambient;
+    float   Metalness;
 }
 
-/*
-cbuffer SceneLightConstants : register(b3)
+
+cbuffer SceneLights : register(b3)
 {
-    int PointLightNum;// for lighting
+    int PointLightNum; // for lighting
     int SpotLightNum; // for lighting
-    int PointCaster;  // for shadowing
-    int SpotCaster;   // for shadowing
+    int2 Padding;
+    
+    DirectionalLight DirectionalLights[NUM_DIRECTIONAL_LIGHT];
+    PointLight       PointLights      [NUM_POINT_LIGHT];
+    SpotLight        SpotLights       [NUM_SPOT_LIGHT];
+    
+};
 
-    //------------------------------------------
-    DirectionalLight Directional;
-    matrix ShadowViewDirectional;
-    //------------------------------------------
-    PointLight PointLights [NUM_POINT_LIGHTS];
-    PointLight PointCasters[NUM_SHADOWING_POINT_LIGHTS];
-    //------------------------------------------
-    SpotLight SpotLights [NUM_SPOT_LIGHTS];
-    SpotLight SpotCasters[NUM_SHADOWING_SPOT_LIGHTS];
-    //------------------------------------------
-    matrix ShadowViews[NUM_SHADOWING_SPOT_LIGHTS];
-}
-*/
+
+//ConstantBuffer<SceneLights> SceneLightConstants : register(b3);
 
 #endif

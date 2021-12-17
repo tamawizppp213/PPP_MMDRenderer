@@ -39,13 +39,12 @@ AudioSource::AudioSource()
 *****************************************************************************/
 AudioSource::~AudioSource()
 {
-	if (IsExistedSourceVoice())
+	/*if (IsExistedSourceVoice() && _isLoop)
 	{
-		
 		_sourceVoice->FlushSourceBuffers();
 		_sourceVoice->DestroyVoice();
 
-	}
+	}*/
 }
 
 /****************************************************************************
@@ -415,8 +414,8 @@ void AudioSource::FlushAudioData()
 	memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
 	buffer.AudioBytes = static_cast<UINT32>(_audioClip->GetSoundSize());
 	buffer.pAudioData = _audioClip->GetSoundData().get();
-	buffer.LoopCount = IsLoop() ? XAUDIO2_LOOP_INFINITE : 0;
-	buffer.Flags = XAUDIO2_END_OF_STREAM;
+	buffer.LoopCount  = IsLoop() ? XAUDIO2_LOOP_INFINITE : 0;
+	buffer.Flags      = XAUDIO2_END_OF_STREAM;
 
 	// Nullptr check has been done in advance.
 	if(_sourceVoice)_sourceVoice->SubmitSourceBuffer(&buffer);

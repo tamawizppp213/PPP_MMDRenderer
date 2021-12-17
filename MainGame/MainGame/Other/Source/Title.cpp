@@ -34,7 +34,6 @@ void Title::Initialize(GameTimer& gameTimer)
 {
 	InitializeDirectX12(gameTimer);
 	InitializeCoordinates();
-	InitializeFader();
 	_directX12.CompleteInitialize();
 	_directX12.FlushCommandQueue();
 }
@@ -48,10 +47,6 @@ void Title::Draw()
 {
 	_directX12.ClearScreen();
 
-
-
-
-	_fader->Draw(*_gameTimer, g_ProjViewMatrix);
 	_directX12.CompleteRendering();
 }
 

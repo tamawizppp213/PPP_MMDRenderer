@@ -19,10 +19,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-class Fader;
 class SpriteRenderer;
 
-using FaderPtr = std::unique_ptr<Fader>;
 using SpriteRendererPtr = std::unique_ptr<SpriteRenderer>;
 //////////////////////////////////////////////////////////////////////////////////
 //                              SceneState
@@ -40,8 +38,8 @@ public:
 	Scene();
 	~Scene();
 	virtual void Initialize(GameTimer& gameTimer);
-	virtual void Draw()       = 0;
-	virtual void Update()     = 0;
+	virtual void Update();
+	virtual void Draw  ()     = 0;
 	virtual void Terminate()  = 0;
 
 	/****************************************************************************
@@ -53,9 +51,12 @@ protected:
 	**                Protected Function
 	*****************************************************************************/
 	bool InitializeDirectX12(GameTimer& gameTimer);
-	bool InitializeFader();
 	virtual bool LoadMaterials(GameTimer& gameTimer) = 0;
 
+	// input function
+	virtual void OnKeyboardInput();
+	virtual void OnMouseInput   ();
+	virtual void OnGamePadInput ();
 	/****************************************************************************
 	**                Protected Member Variables
 	*****************************************************************************/
@@ -64,14 +65,15 @@ protected:
 	CommandListComPtr _commandList    = nullptr;
 	GameInput&        _gameInput      = GameInput::Instance();
 	GameTimer*        _gameTimer      = nullptr;
-	FaderPtr          _fader          = nullptr;
 	SpriteRendererPtr _spriteRenderer = nullptr;
 	Screen            _screen;
+	bool              _hasExecutedSceneTransition = false;
+	bool              _hasExecutedBackScene = false;
 private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-
+	void OnGameInput();
 
 	/****************************************************************************
 	**                Private Member Variables

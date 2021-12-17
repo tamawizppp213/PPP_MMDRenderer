@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GameCore/Include/Core/GameObject.hpp"
 #include "GameCore/Include/Core/GameComponent.hpp"
-
+#include <iostream>
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -19,8 +19,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                   Implement
 //////////////////////////////////////////////////////////////////////////////////
-std::vector<std::unique_ptr<GameObject>> GameObject::_gameObjects;
-std::vector<std::unique_ptr<GameObject>> GameObject::_destroyGameObjects;
+std::vector<GameObject*> GameObject::_gameObjects;
+std::vector<GameObject*> GameObject::_destroyGameObjects;
 std::vector<std::string> GameObject::_layerList;
 bool GameObject::IsUpdating = false;
 
@@ -32,9 +32,13 @@ GameObject::GameObject()
 	_name     = "";
 	_isActive = true;
 	_parent   = nullptr;
-	
+
 }
 
+GameObject::~GameObject()
+{
+
+}
 
 /****************************************************************************
 *                          Find
@@ -51,7 +55,7 @@ GameObject* GameObject::Find(const std::string& name)
 		
 		if ((*it)->_name == name)
 		{
-			return it->get();
+			return (*it);
 		}
 	}
 	return nullptr;
@@ -96,7 +100,7 @@ std::vector<GameObject*> GameObject::GameObjectsWithTag(const std::string& tag)
 	{
 		if ((*it)->GetTag() == tag)
 		{
-			gameObjects.emplace_back(it->get());
+			gameObjects.emplace_back((*it));
 		}
 	}
 	return gameObjects;
@@ -124,12 +128,12 @@ bool GameObject::Destroy(GameObject* gameObject)
 	{
 		for (auto it = _gameObjects.begin(); it != _gameObjects.end(); ++it)
 		{
-			if (it->get() == gameObject)
+			if ((*it) == gameObject)
 			{
 				std::swap(*it, _gameObjects.back());
 				_gameObjects.pop_back(); 
 				_gameObjects.shrink_to_fit();         // memory free
-				//delete gameObject;                    // delete object
+				delete gameObject;                    // delete object
 				return true;
 			}
 		}
@@ -152,12 +156,12 @@ bool GameObject::DestroyImmediate(GameObject* gameObject)
 
 	for (auto it = _gameObjects.begin(); it != _gameObjects.end(); ++it)
 	{
-		if (it->get() == gameObject)
+		if (*it == gameObject)
 		{
 			std::swap(*it, _gameObjects.back());
 			_gameObjects.pop_back();
 			_gameObjects.shrink_to_fit();         // memory free
-			//delete gameObject;                    // delete object
+			delete gameObject;                    // delete object
 			return true;
 		}
 	}
@@ -178,17 +182,17 @@ void GameObject::DestroyAllTagObject(const std::string& tag)
 
 	for (auto it = _gameObjects.begin(); it != _gameObjects.end(); ++it)
 	{
-		if (it->get()->GetTag() == tag)
+		if (( *it)->GetTag() == tag)
 		{
 			if (IsUpdating)
 			{
 				_destroyGameObjects.emplace_back(std::move(*it));
-				it->get()->SetActive(false);
+				(*it)->SetActive(false);
 			}
 			else
 			{
 				_gameObjects.erase(it);
-				//delete *it;
+				delete *it;
 			}
 		}
 	}
@@ -218,7 +222,7 @@ void GameObject::ClearDestoyObjects()
 {
 	for (auto it = _destroyGameObjects.begin(); it != _destroyGameObjects.end(); ++it)
 	{
-		Destroy(it->get());
+		Destroy(*it);
 	}
 	_destroyGameObjects.clear();
 	_destroyGameObjects.shrink_to_fit();

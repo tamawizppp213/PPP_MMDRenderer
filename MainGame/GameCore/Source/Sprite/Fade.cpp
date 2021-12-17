@@ -15,25 +15,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
-namespace fade
-{
-	using namespace gm;
-	using MatrixBuffer = std::shared_ptr<UploadBuffer<Matrix4>>;
-	using VertexBuffer = std::shared_ptr<UploadBuffer<VertexPositionNormalColorTexture>>;
-
-	struct FadeBuffer
-	{
-		Texture                 Texture;
-		Matrix4                 ProjectionViewMatrix = MatrixIdentity();
-		MatrixBuffer            ConstantBuffer       = nullptr;
-		std::vector<MeshBuffer> MeshBuffer;
-		VertexBuffer            DynamicVertexBuffer[FRAME_BUFFER_COUNT];
-	};
-
-	static FadeBuffer g_FadeBuffer;
-	static float g_CurrentTime;
-	static bool  g_IsCreatedBuffer = false;
-}
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
@@ -47,7 +28,8 @@ Fader::Fader()
 
 Fader::~Fader()
 {
-
+	_meshBuffer.clear();
+	_meshBuffer.shrink_to_fit();
 }
 
 /****************************************************************************
@@ -62,13 +44,13 @@ bool Fader::Initialize()
 {
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
 	_currentFadeState = FadeState::FADE_STATE_NONE;
+	if (_isInitialized) { return true; }
 	if (!PrepareSprite())         { return false; }
-	if (fade::g_IsCreatedBuffer)  { return true; }
 	if (!LoadWhiteTexture())      { return false; }
 	if (!PrepareVertexBuffer())   { return false; }
 	if (!PrepareIndexBuffer())    { return false; }
 	if (!PrepareConstantBuffer()) { return false; }
-	fade::g_IsCreatedBuffer = true;
+	_isInitialized = true;
 	return true;
 }
 
@@ -88,23 +70,26 @@ bool Fader::Draw(const GameTimer& gameTimer, const Matrix4& projViewMatrix)
 	/*-------------------------------------------------------------------
 	-               Prepare variable
 	---------------------------------------------------------------------*/
-	using namespace fade;
 	DirectX12& directX12                      = DirectX12::Instance();
 	CommandList* commandList                  = directX12.GetCommandList();
 	SpritePSOManager& spriteManager           = SpritePSOManager::Instance();
 	int currentFrameIndex                     = directX12.GetCurrentFrameIndex();
 	DescriptorHeapComPtr textureDescHeap      = directX12.GetCbvSrvUavHeap();
 	SpriteType spriteType                     = SpriteType::TEXTURE;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = g_FadeBuffer.MeshBuffer[currentFrameIndex].VertexBufferView();
-	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = g_FadeBuffer.MeshBuffer[currentFrameIndex].IndexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = _meshBuffer[currentFrameIndex].VertexBufferView();
+	D3D12_INDEX_BUFFER_VIEW  indexBufferView  = _meshBuffer[currentFrameIndex].IndexBufferView();
 	
 	/*-------------------------------------------------------------------
 	-               Update fade
 	---------------------------------------------------------------------*/
-	g_FadeBuffer.ProjectionViewMatrix = projViewMatrix;
-	g_FadeBuffer.ConstantBuffer->CopyStart();
-	g_FadeBuffer.ConstantBuffer->CopyData(0, g_FadeBuffer.ProjectionViewMatrix);
-	g_FadeBuffer.ConstantBuffer->CopyEnd();
+	_constantBuffer->CopyStart();
+	_constantBuffer->CopyData(0, projViewMatrix);
+	_constantBuffer->CopyEnd();
+
+	/*-------------------------------------------------------------------
+	-               Add vertex data
+	---------------------------------------------------------------------*/
+	UpdateFade(gameTimer);
 
 	/*-------------------------------------------------------------------
 	-               Execute commandlist
@@ -113,17 +98,11 @@ bool Fader::Draw(const GameTimer& gameTimer, const Matrix4& projViewMatrix)
 	commandList->SetPipelineState(spriteManager.GetPipelineState(spriteType).Get());
 	ID3D12DescriptorHeap* heapList[] = { textureDescHeap.Get() };
 	commandList->SetDescriptorHeaps(_countof(heapList), heapList);
-	commandList->SetGraphicsRootDescriptorTable(0, directX12.GetGPUResourceView(HeapType::CBV, 0));
-	commandList->SetGraphicsRootDescriptorTable(1, g_FadeBuffer.Texture.GPUHandler);
+	commandList->SetGraphicsRootConstantBufferView(0, _constantBuffer.get()->Resource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(1, _texture.GPUHandler);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 	commandList->IASetIndexBuffer(&indexBufferView);
-
-
-	/*-------------------------------------------------------------------
-	-               Add vertex data
-	---------------------------------------------------------------------*/
-	UpdateFade(gameTimer);
 
 	/*-------------------------------------------------------------------
 	-               Draw vertex data
@@ -142,39 +121,50 @@ bool Fader::Draw(const GameTimer& gameTimer, const Matrix4& projViewMatrix)
 *  @param[in] float pauseTime
 *  @return bool
 *****************************************************************************/
-void Fader::StartFadeIn(float inOutTime, float pauseTime)
+void Fader::StartFadeInAndOut(float inTime, float outTime, float pauseTime)
 {
-	_inOutTime          = inOutTime;
+	_inTime             = inTime;
+	_outTime            = outTime;
 	_pauseTime          = pauseTime;
 	_color.w            = 0.0f;
-	fade::g_CurrentTime = 0.0f;
+	_localTimer         = 0.0f;
 	_currentFadeState = FadeState::FADE_STATE_IN;
+	_isInAndOutFade = true;
+}
+/****************************************************************************
+*                       StartFadeIn
+*************************************************************************//**
+*  @fn        void Fader::StartFadeIn(float inOutTime, float pauseTime)
+*  @brief     Fade in start
+*  @param[in] float inOutTime,
+*  @param[in] float pauseTime
+*  @return bool
+*****************************************************************************/
+void Fader::StartFadeIn(float inTime)
+{
+	_inTime           = inTime;
+	_color.w          = 0.0f;
+	_localTimer       = 0.0f;
+	_currentFadeState = FadeState::FADE_STATE_IN;
+	_isInAndOutFade   = false;
 }
 
 /****************************************************************************
-*                       AllowedGoToNextScene
+*                       StartFadeIn
 *************************************************************************//**
-*  @fn        bool Fader::AllowedGoToNextScene()
-*  @brief     return allowed go to next scene 
-*  @param[in] void
-*  @return 　　bool
+*  @fn        void Fader::StartFadeIn(float inOutTime, float pauseTime)
+*  @brief     Fade in start
+*  @param[in] float inOutTime,
+*  @param[in] float pauseTime
+*  @return bool
 *****************************************************************************/
-bool Fader::AllowedGoToNextScene()
+void Fader::StartFadeOut(float outTime)
 {
-	return _allowedNextScene;
-}
-
-/****************************************************************************
-*                       Finalize
-*************************************************************************//**
-*  @fn        bool Fader::Finalize()
-*  @brief     Finalize
-*  @param[in] void
-*  @return 　　bool
-*****************************************************************************/
-bool Fader::Finalize()
-{
-	return true;
+	_outTime          = outTime;
+	_color.w          = 1.0f;
+	_localTimer       = 0.0f;
+	_currentFadeState = FadeState::FADE_STATE_OUT;
+	_isInAndOutFade   = false;
 }
 
 /****************************************************************************
@@ -203,14 +193,13 @@ void Fader::SetColor(const Float3& color)
 *****************************************************************************/
 void Fader::SetSpriteSize(float width, float height)
 {
-	using namespace DirectX;
-	_color = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	_color = Float4(0.0f, 0.0f, 0.0f, 0.0f);
 	_sprite.CreateSprite(
-		XMFLOAT3(0.0f, 0.0f, 0.0f),
-		XMFLOAT2(width, height),
-		XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-		XMFLOAT2(0.0f, 1.0f),
-		XMFLOAT2(0.0f, 1.0f));
+		Float3(0.0f, 0.0f, 0.0f),
+		Float2(width, height),
+		Float4(0.0f, 0.0f, 0.0f, 0.0f),
+		Float2(0.0f, 1.0f),
+		Float2(0.0f, 1.0f));
 }
 #pragma endregion Public Function
 
@@ -226,7 +215,7 @@ void Fader::SetSpriteSize(float width, float height)
 bool Fader::LoadWhiteTexture()
 {
 	TextureLoader textureLoader;
-	textureLoader.LoadTexture(L"Resources/Texture/Default/White.png", fade::g_FadeBuffer.Texture);
+	textureLoader.LoadTexture(L"Resources/Texture/Default/White.png", _texture);
 	
 	return true;
 }
@@ -241,40 +230,39 @@ bool Fader::LoadWhiteTexture()
 *****************************************************************************/
 bool Fader::PrepareVertexBuffer()
 {
-	using namespace fade;
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
 	DirectX12& directX12            = DirectX12::Instance();
 
-	g_FadeBuffer.MeshBuffer.resize(FRAME_BUFFER_COUNT);
-	for (int i = 0; i < g_FadeBuffer.MeshBuffer.size(); ++i)
+	_meshBuffer.resize(FRAME_BUFFER_COUNT);
+	for (int i = 0; i < _meshBuffer.size(); ++i)
 	{
 		VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4];
-		g_FadeBuffer.DynamicVertexBuffer[i] = std::make_shared<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), 4, false);
+		_vertexBuffer[i] = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), 4, false);
 
 		/*-------------------------------------------------------------------
 		-			Vertex data initialize
 		---------------------------------------------------------------------*/
-		g_FadeBuffer.DynamicVertexBuffer[i]->CopyStart();
+		_vertexBuffer[i].get()->CopyStart();
 		for (int j = 0; j < 4; ++j)
 		{
 			vertices[j].Position = gm::Float3(0.0f, 0.0f, 0.0f);
 			vertices[j].Normal   = gm::Float3(0.0f, 0.0f, 0.0f);
 			vertices[j].Color    = gm::Float4(0.0f, 0.0f, 0.0f, 0.0f);
 			vertices[j].UV       = gm::Float2(0.0f, 0.0f);
-			g_FadeBuffer.DynamicVertexBuffer[i]->CopyData(j, vertices[j]);
+			_vertexBuffer[i].get()->CopyData(j, vertices[j]);
 		}
-		g_FadeBuffer.DynamicVertexBuffer[i]->CopyEnd();
+		_vertexBuffer[i].get()->CopyEnd();
 
 		const UINT vbByteSize = (UINT)4 * sizeof(VertexPositionNormalColorTexture);
 
 		/*-------------------------------------------------------------------
 		-			Build CPU / GPU Vertex Buffer
 		---------------------------------------------------------------------*/
-		g_FadeBuffer.MeshBuffer[i].BaseVertexLocation   = 0;
-		g_FadeBuffer.MeshBuffer[i].VertexBufferGPU      = g_FadeBuffer.DynamicVertexBuffer[i]->Resource();
-		g_FadeBuffer.MeshBuffer[i].VertexByteStride     = sizeof(VertexPositionNormalColorTexture);
-		g_FadeBuffer.MeshBuffer[i].VertexBufferByteSize = vbByteSize;
-		if (FAILED(D3DCreateBlob(vbByteSize, &g_FadeBuffer.MeshBuffer[i].VertexBufferCPU)))
+		_meshBuffer[i].BaseVertexLocation   = 0;
+		_meshBuffer[i].VertexBufferGPU      = _vertexBuffer[i]->Resource();
+		_meshBuffer[i].VertexByteStride     = sizeof(VertexPositionNormalColorTexture);
+		_meshBuffer[i].VertexBufferByteSize = vbByteSize;
+		if (FAILED(D3DCreateBlob(vbByteSize, &_meshBuffer[i].VertexBufferCPU)))
 		{
 			::OutputDebugString(L"Can't create blob data (vertex)");
 			return false;
@@ -295,7 +283,6 @@ bool Fader::PrepareVertexBuffer()
 *****************************************************************************/
 bool Fader::PrepareIndexBuffer()
 {
-	using namespace fade;
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
 	DirectX12& directX12 = DirectX12::Instance();
 
@@ -313,28 +300,28 @@ bool Fader::PrepareIndexBuffer()
 	-			Build CPU / GPU Index Buffer
 	---------------------------------------------------------------------*/
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(UINT16);
-	g_FadeBuffer.MeshBuffer[0].IndexBufferGPU = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, g_FadeBuffer.MeshBuffer[0].IndexBufferUploader).Resource();
-	g_FadeBuffer.MeshBuffer[0].IndexFormat = DXGI_FORMAT_R16_UINT;
-	g_FadeBuffer.MeshBuffer[0].IndexBufferByteSize = ibByteSize;
-	if (FAILED(D3DCreateBlob(ibByteSize, &g_FadeBuffer.MeshBuffer[0].IndexBufferCPU)))
+	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader).Resource();
+	_meshBuffer[0].IndexFormat         = DXGI_FORMAT_R16_UINT;
+	_meshBuffer[0].IndexBufferByteSize = ibByteSize;
+	if (FAILED(D3DCreateBlob(ibByteSize, &_meshBuffer[0].IndexBufferCPU)))
 	{
 		::OutputDebugString(L"Can't create blob data (index)");
 		return false;
 	}
-	CopyMemory(g_FadeBuffer.MeshBuffer[0].IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+	CopyMemory(_meshBuffer[0].IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
 	/*-------------------------------------------------------------------
 	-		Copy the index buffer by the amount of the frame buffer.
 	---------------------------------------------------------------------*/
-	for (int i = 1; i < g_FadeBuffer.MeshBuffer.size(); ++i)
+	for (int i = 1; i < _meshBuffer.size(); ++i)
 	{
-		g_FadeBuffer.MeshBuffer[i].IndexBufferCPU      = g_FadeBuffer.MeshBuffer[0].IndexBufferCPU;
-		g_FadeBuffer.MeshBuffer[i].IndexBufferGPU      = g_FadeBuffer.MeshBuffer[0].IndexBufferGPU;
-		g_FadeBuffer.MeshBuffer[i].IndexBufferUploader = g_FadeBuffer.MeshBuffer[0].IndexBufferUploader;
-		g_FadeBuffer.MeshBuffer[i].IndexCount          = g_FadeBuffer.MeshBuffer[0].IndexCount;
-		g_FadeBuffer.MeshBuffer[i].IndexFormat         = g_FadeBuffer.MeshBuffer[0].IndexFormat;
-		g_FadeBuffer.MeshBuffer[i].StartIndexLocation  = g_FadeBuffer.MeshBuffer[0].StartIndexLocation;
-		g_FadeBuffer.MeshBuffer[i].IndexBufferByteSize = g_FadeBuffer.MeshBuffer[0].IndexBufferByteSize;
+		_meshBuffer[i].IndexBufferCPU      = _meshBuffer[0].IndexBufferCPU;
+		_meshBuffer[i].IndexBufferGPU      = _meshBuffer[0].IndexBufferGPU;
+		_meshBuffer[i].IndexBufferUploader = _meshBuffer[0].IndexBufferUploader;
+		_meshBuffer[i].IndexCount          = _meshBuffer[0].IndexCount;
+		_meshBuffer[i].IndexFormat         = _meshBuffer[0].IndexFormat;
+		_meshBuffer[i].StartIndexLocation  = _meshBuffer[0].StartIndexLocation;
+		_meshBuffer[i].IndexBufferByteSize = _meshBuffer[0].IndexBufferByteSize;
 	}
 	return true;
 }
@@ -350,22 +337,21 @@ bool Fader::PrepareIndexBuffer()
 bool Fader::PrepareConstantBuffer()
 {
 	using namespace gm;
-	using namespace fade;
 	DirectX12& directX12 = DirectX12::Instance();
 
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	g_FadeBuffer.ConstantBuffer = std::make_shared<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
-	g_FadeBuffer.ConstantBuffer->CopyStart();
-	g_FadeBuffer.ConstantBuffer->CopyData(0, g_FadeBuffer.ProjectionViewMatrix);
-	g_FadeBuffer.ConstantBuffer->CopyEnd();
+	_constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
+	_constantBuffer->CopyStart();
+	_constantBuffer->CopyData(0, MatrixIdentity());
+	_constantBuffer->CopyEnd();
 
 	/*-------------------------------------------------------------------
 	-			Build Constant Buffer View descriptor
 	---------------------------------------------------------------------*/
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	cbvDesc.BufferLocation = g_FadeBuffer.ConstantBuffer->Resource()->GetGPUVirtualAddress();
+	cbvDesc.BufferLocation = _constantBuffer->Resource()->GetGPUVirtualAddress();
 	cbvDesc.SizeInBytes = CalcConstantBufferByteSize(sizeof(Matrix4));
 
 	/*-------------------------------------------------------------------
@@ -385,10 +371,9 @@ bool Fader::PrepareConstantBuffer()
 *****************************************************************************/
 bool Fader::PrepareSprite()
 {
-	using namespace DirectX;
 	_color = Float4(0.0f, 0.0f, 0.0f, 0.0f);
 	_sprite.CreateSprite(
-		Float3(0.0f, 0.0f, 0.0f),
+		Float3(0.5f, 0.0f, 0.0f),
 		Float2(2.0f, 2.0f),
 		Float4(0.0f, 0.0f, 0.0f, 0.0f),
 		Float2(0.0f, 1.0f), 
@@ -439,14 +424,14 @@ bool Fader::UpdateFade(const GameTimer& gameTimer)
 	/*-------------------------------------------------------------------
 	-			Copy Vertex Data
 	---------------------------------------------------------------------*/
-	fade::g_FadeBuffer.DynamicVertexBuffer[currentFrameIndex]->CopyStart();
+	_vertexBuffer[currentFrameIndex]->CopyStart();
 	for (int i = 0; i < 4; ++i)
 	{
 		_sprite.Vertices[i].Color = _color;
-		fade::g_FadeBuffer.DynamicVertexBuffer[currentFrameIndex]->CopyData(i, _sprite.Vertices[i]);
+		_vertexBuffer[currentFrameIndex]->CopyData(i, _sprite.Vertices[i]);
 	}
 
-	fade::g_FadeBuffer.DynamicVertexBuffer[currentFrameIndex]->CopyEnd();
+	_vertexBuffer[currentFrameIndex]->CopyEnd();
 	return true;
 }
 
@@ -468,13 +453,21 @@ bool Fader::FadeInAction(const GameTimer& gameTimer)
 	if (_color.w >= 1.0f)
 	{
 		_color.w = 1.0f;
-		_currentFadeState = FadeState::FADE_STATE_PAUSE;
+		if (_isInAndOutFade)
+		{
+			_currentFadeState = FadeState::FADE_STATE_PAUSE;
+		}
+		else
+		{
+			_currentFadeState = FadeState::FADE_STATE_NONE;
+		}
+		return true;
 	}
 
 	/*-------------------------------------------------------------------
 	-			 Update alpha
 	---------------------------------------------------------------------*/
-	_color.w += (2.0f / (_inOutTime)) * gameTimer.DeltaTime();
+	_color.w += (1.0f / (_inTime)) * gameTimer.DeltaTime();
 
 	return true;
 }
@@ -490,21 +483,21 @@ bool Fader::FadeInAction(const GameTimer& gameTimer)
 bool Fader::FadePauseAction(const GameTimer& gameTimer)
 {
 	if (_currentFadeState != FadeState::FADE_STATE_PAUSE) { return false; }
-	_allowedNextScene = true;
 
 	/*-------------------------------------------------------------------
 	-			 Check if the fade-pause is complete.
 	---------------------------------------------------------------------*/
-	if (fade::g_CurrentTime >= _pauseTime)
+	if (_localTimer >= _pauseTime)
 	{
-		fade::g_CurrentTime = 0.0f;
+		_localTimer = 0.0f;
 		_currentFadeState = FadeState::FADE_STATE_OUT;
+		return true;
 	}
 
 	/*-------------------------------------------------------------------
 	-			 Update alpha
 	---------------------------------------------------------------------*/
-	fade::g_CurrentTime += gameTimer.DeltaTime();
+	_localTimer += gameTimer.DeltaTime();
 
 	return true;
 }
@@ -528,12 +521,13 @@ bool Fader::FadeOutAction(const GameTimer& gameTimer)
 	{
 		_color.w = 0.0f;
 		_currentFadeState = FadeState::FADE_STATE_NONE;
+		return true;
 	}
 
 	/*-------------------------------------------------------------------
 	-			 Update alpha
 	---------------------------------------------------------------------*/
-	_color.w -= (2.0f / (_inOutTime)) * gameTimer.DeltaTime();
+	_color.w -= 1.0f / _outTime * gameTimer.DeltaTime();
 	return true;
 }
 #pragma endregion Private Function

@@ -12,7 +12,7 @@ subject to the following restrictions:
 
 #ifndef BT_VECTOR3_H
 #define BT_VECTOR3_H
-
+#pragma warning(disable: 26495)
 //#include <stdint.h>
 #include "btScalar.h"
 #include "btMinMax.h"

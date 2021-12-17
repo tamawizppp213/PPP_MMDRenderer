@@ -1343,3 +1343,37 @@ bool PMXData::ReadPMXIndex(FILE* filePtr, INT32* pmxIndex, UINT8 indexSize)
 }
 
 #pragma endregion Private Function
+PMXData::~PMXData()
+{
+	 _vertices.clear();
+	_indices.clear();
+	_texturePathList.clear();
+	_textures.clear();
+	_materials.clear();
+	_pbrMaterials.clear();
+	_materialNameList.clear();
+	_materialNameIndex.clear();
+	_boneNodeTable.clear();
+	_boneNames.clear();
+	_boneNodeAddress.clear();
+	_boneIKs.clear();
+	_morphingMap.clear();
+	_displayFrames.clear();
+	_rigidBodies.clear();
+	_joints.clear();
+	_softBodies.clear();
+	_vertices.shrink_to_fit();
+	_indices.shrink_to_fit();
+	_texturePathList.shrink_to_fit();
+	_textures.shrink_to_fit();
+	_materials.shrink_to_fit();
+	_pbrMaterials.shrink_to_fit();
+	_materialNameList.shrink_to_fit();
+	_boneNames.shrink_to_fit();
+	_boneNodeAddress.shrink_to_fit();
+	_boneIKs.shrink_to_fit();
+	_displayFrames.shrink_to_fit();
+	_rigidBodies.shrink_to_fit();
+	_joints.shrink_to_fit();
+	_softBodies.shrink_to_fit();
+}

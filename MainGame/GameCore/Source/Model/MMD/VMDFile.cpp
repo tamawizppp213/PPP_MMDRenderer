@@ -32,6 +32,28 @@ namespace
 	}
 }
 #pragma region Public Function
+VMDFile::~VMDFile()
+{
+	for (auto& motion : _motionMap)
+	{
+		motion.second.clear();
+		motion.second.shrink_to_fit();
+	}
+	for (auto& morph : _morphingMap)
+	{
+		morph.second.clear();
+		morph.second.shrink_to_fit();
+	}
+	_motionMap.clear();
+	_cameras.clear();
+	_cameras.shrink_to_fit();
+	_iks.clear();
+	_iks.shrink_to_fit();
+	_shadows.clear();
+	_shadows.shrink_to_fit();
+	_lights.clear();
+	_lights.shrink_to_fit();
+}
 /****************************************************************************
 *							LoadVMDFile
 *************************************************************************//**

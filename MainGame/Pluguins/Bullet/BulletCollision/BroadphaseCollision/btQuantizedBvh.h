@@ -17,7 +17,7 @@ subject to the following restrictions:
 #define BT_QUANTIZED_BVH_H
 
 class btSerializer;
-
+#pragma warning(disable: 26495)
 //#define DEBUG_CHECK_DEQUANTIZATION 1
 #ifdef DEBUG_CHECK_DEQUANTIZATION
 #ifdef __SPU__

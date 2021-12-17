@@ -9,7 +9,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
-#include "ShaderF0Config.hlsli"
+#include "../Lighting/ShaderF0Config.hlsli"
+#include "../Lighting/ShaderLightType.hlsli"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Define
@@ -22,16 +23,19 @@ struct BRDFSurface
     float3 Diffuse;
     float  Metalness;
     float3 Specular;
-    float3 EmissiveIntensity;
+    float  EmissiveIntensity;
+    float3 EmissiveColor;
+    float  Padding;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             BRDF Implement
 //////////////////////////////////////////////////////////////////////////////////
+
 /****************************************************************************
 *				  			Attenuation_BRDF
 *************************************************************************//**
-*  @class     float Attenuation_BRDF(float distance)
+*  @fn        float Attenuation_BRDF(float distance)
 *  @brief     Attenuated by distance
 *  @param[in] float distance
 *****************************************************************************/
@@ -43,7 +47,7 @@ float Attenuation_BRDF(float distance)
 /****************************************************************************
 *				  		Controlled_Attenuation_BRDF
 *************************************************************************//**
-*  @class     float Attenuation_BRDF(float distance)
+*  @fn        float Attenuation_BRDF(float distance)
 *  @brief     Attenuated by distance (enable coefficients)
 *  @param[in] float distance
 *  @param[in] in const float3 coefficients
@@ -58,7 +62,7 @@ float Controlled_Attenuation_BRDF(float distance, in const float3 coefficients)
 /****************************************************************************
 *				  			Calculate_F0
 *************************************************************************//**
-*  @class     float3 Calculate_F0(float refractive_1, float refractive_2 = 1.0f)
+*  @fn        float3 Calculate_F0(float refractive_1, float refractive_2 = 1.0f)
 *  @brief     Calculate F0
 *  @param[in] float refractive index
 *****************************************************************************/
@@ -74,25 +78,33 @@ float3 Calculate_F0(float refractive_1, float refractive_2 = 1.0f)
 /****************************************************************************
 *				  			NDF_GGX
 *************************************************************************//**
-*  @class     float NDF_GGX(float NormalDotHalf, float roughness)
+*  @fn        float NDF_GGX(float NormalDotHalf, float roughness)
 *  @brief     Calculate Specular D (normal distribution fuction)
 *  @param[in] float NormalDotHalf
 *  @param[in] float roughness
 *****************************************************************************/
 float NDF_GGX(float NormalDotHalf, float roughness)
 {
+    float result = 0.0f;
     const float alpha  = roughness * roughness;
     const float alpha2 = alpha * alpha;
     const float NDotH2 = pow(NormalDotHalf, 2);
-    const float denominator = (PI * pow((NDotH2 * (alpha2 - 1.0f) + 1.0f), 2)) + 0.000000000001f;
-    
-    return alpha2 / denominator;
+    const float denominator = (PI * pow((NDotH2 * (alpha2 - 1.0f) + 1.0f), 2));
+    if (denominator < 0.000001f)
+    {
+        result = 1.0f;
+    }
+    else
+    {
+        result = alpha2 / denominator;
+    }
+    return result;
 }
 
 /****************************************************************************
 *				  			Geometry_Smiths_Schlick_GGX
 *************************************************************************//**
-*  @class     float Geometry_Smiths_Schlick_GGX(float3 normal, float3 toEye, float roughness)
+*  @fn        float Geometry_Smiths_Schlick_GGX(float3 normal, float3 toEye, float roughness)
 *  @brief     Calculate Specular G
 *  @param[in] float3 normal
 *  @param[in] float3 toEye 
@@ -111,7 +123,7 @@ float Geometry_Smiths_Schlick_GGX(float3 normal, float3 toEye, float roughness)
 /****************************************************************************
 *				  	Geometry_Smiths_Schlick_GGX_EnvironmentMap
 *************************************************************************//**
-*  @class     float Geometry_Smiths_Schlick_GGX_EnvironmentMap(float3 normal, float3 toEye, float roughness)
+*  @fn        float Geometry_Smiths_Schlick_GGX_EnvironmentMap(float3 normal, float3 toEye, float roughness)
 *  @brief     Calculate Specular G
 *  @param[in] float3 normal
 *  @param[in] float3 toEye 
@@ -129,7 +141,7 @@ float Geometry_Smiths_Schlick_GGX_EnvironmentMap(float3 normal, float3 toEye, fl
 /****************************************************************************
 *				  		Masking_And_Shadowing_Function
 *************************************************************************//**
-*  @class     float Masking_And_Shadowing_Function(float3 normal, float3 toEye, float3 light, float roughness)
+*  @fn        float Masking_And_Shadowing_Function(float3 normal, float3 toEye, float3 light, float roughness)
 *  @brief     Masking, shadowing fuction
 *  @param[in] float3 F0 : ((n1 - n2) / (n1 + n2))^2 : n(refraction, default n2 = 1 (air))
 *  @param[in] float3 normal 
@@ -137,14 +149,15 @@ float Geometry_Smiths_Schlick_GGX_EnvironmentMap(float3 normal, float3 toEye, fl
 *****************************************************************************/
 float Masking_And_Shadowing_Function(float3 normal, float3 toEye, float3 light, float roughness)
 {
-    return Geometry_Smiths_Schlick_GGX(normal, toEye, roughness) * Geometry_Smiths_Schlick_GGX(normal, light, roughness);
+    return Geometry_Smiths_Schlick_GGX(normal, toEye, roughness)
+         * Geometry_Smiths_Schlick_GGX(normal, light, roughness);
 
 }
 
 /****************************************************************************
 *				  		Masking_Abd_Shadowing_Function_EnvironmentMap
 *************************************************************************//**
-*  @class     float Masking_Abd_Shadowing_Function_EnvironmentMap(float3 normal, float toEye, float3 light, float roughness)
+*  @fn        float Masking_Abd_Shadowing_Function_EnvironmentMap(float3 normal, float toEye, float3 light, float roughness)
 *  @brief     Masking, shadowing fuction
 *  @param[in] float3 F0 : ((n1 - n2) / (n1 + n2))^2 : n(refraction, default n2 = 1 (air))
 *  @param[in] float3 normal 
@@ -152,12 +165,13 @@ float Masking_And_Shadowing_Function(float3 normal, float3 toEye, float3 light, 
 *****************************************************************************/
 float Masking_Abd_Shadowing_Function_EnvironmentMap(float3 normal, float toEye, float3 light, float roughness)
 {
-    return Geometry_Smiths_Schlick_GGX_EnvironmentMap(normal, toEye, roughness) * Geometry_Smiths_Schlick_GGX_EnvironmentMap(normal, light, roughness);
+    return Geometry_Smiths_Schlick_GGX_EnvironmentMap(normal, toEye, roughness)
+         * Geometry_Smiths_Schlick_GGX_EnvironmentMap(normal, light, roughness);
 }
 /****************************************************************************
 *				  			Fresnel_Schlick
 *************************************************************************//**
-*  @class     float3 Fresnel_Schlick(float3 F0, float3 normal, float3 lightVector)
+*  @fn        float3 Fresnel_Schlick(float3 F0, float3 normal, float3 lightVector)
 *  @brief     Calcurate Reflectance
 *  @param[in] float3 F0 : ((n1 - n2) / (n1 + n2))^2 : n(refraction, default n2 = 1 (air))
 *  @param[in] float3 normal 
@@ -173,7 +187,7 @@ float3 Fresnel_Schlick(float3 F0, float3 normal, float3 lightVector)
 /****************************************************************************
 *				  			Fresnel_Gaussian
 *************************************************************************//**
-*  @class     float3 Fresnel_Gaussian(float3 F0, float3 H, float3 toEye)
+*  @fn        float3 Fresnel_Gaussian(float3 F0, float3 H, float3 toEye)
 *  @brief     Calcurate Fresnel Gaussian 
 *  @param[in] float3 F0
 *  @param[in] float3 H (half vector) 
@@ -192,7 +206,7 @@ float3 Fresnel_Gaussian(float3 F0, float3 H, float3 toEye)
 /****************************************************************************
 *				  			Fresnel_With_Roughness
 *************************************************************************//**
-*  @class     float3 Fresnel_With_Roughness(float3 F0, float cosTheta, float roughness)
+*  @fn        float3 Fresnel_With_Roughness(float3 F0, float cosTheta, float roughness)
 *  @brief     Calcurate Fresnel With Roughness
 *  @param[in] float3 F0
 *  @param[in] float  cosTheta
@@ -207,7 +221,7 @@ float3 Fresnel_With_Roughness(float3 F0, float cosTheta, float roughness)
 /****************************************************************************
 *				  			Fresnel_Schlick_F90
 *************************************************************************//**
-*  @class     float3 Fresnel_Schlick(float3 F0, float3 normal, float3 lightVector)
+*  @fn        float3 Fresnel_Schlick(float3 F0, float3 normal, float3 lightVector)
 *  @brief     Calcurate Reflectance
 *  @param[in] float3 F0 : ((n1 - n2) / (n1 + n2))^2 : n(refraction, default n2 = 1 (air))
 *  @param[in] float3 F90
@@ -224,7 +238,7 @@ float3 Fresnel_Schlick_F90(float3 F0, float3 F90, float3 normal, float3 lightVec
 /****************************************************************************
 *				  			Fresnel_LambertDiffuse
 *************************************************************************//**
-*  @class     float3 Fresnel_LambertDiffuse(float kd)
+*  @fn        float3 Fresnel_LambertDiffuse(float kd)
 *  @brief     Calcurate Lambert Diffuse
 *  @param[in] float cDiffuse
 *****************************************************************************/
@@ -289,7 +303,98 @@ float3 Lambert_Cook_Torrence_Model(in BRDFSurface surface, float3 light, float3 
     const float3 Id        = Fresnel_LambertDiffuse(kDiffuse);
     
     return Is + Id;
-
 }
 
+/****************************************************************************
+*				  		Calculate_Point_Light_Illumination
+*************************************************************************//**
+*  @class     float3 Calculate_Point_Light_Illumination(in const PointLight light, in BRDFSurface surface, const in float3 surfacePosition, const in float3 toEye )
+*  @brief     Calculate point light illumination
+*  @param[in] in const PointLight light
+*  @param[in] in BRDFSurface surface
+*  @param[in] const in float3 surfacePosition 
+*  @param[in] const in float3 toEye
+*****************************************************************************/
+float3 Calculate_Point_Light_Illumination(in const PointLight light, in BRDFSurface surface, const in float3 surfacePosition, const in float3 toEye )
+{
+    float3 IdIs = 0.0f.xxx;
+    
+    const float3 lightPostion   = light.Position;
+    const float3 lightVector    = normalize(light.Position - surfacePosition);
+    const float  distance       = length   (light.Position - surfacePosition);
+    const float  normalDotLight = saturate (dot(surface.Normal, lightVector));
+    const float3 radiance       = Attenuation_BRDF(distance) * light.Color * light.Brightness;
+    
+    IdIs += step(distance, light.Range) * Lambert_Cook_Torrence_Model(surface, lightVector, toEye) * radiance * normalDotLight;
+  
+    return IdIs;
+}
+/****************************************************************************
+*				  		SpotLight_Intensity
+*************************************************************************//**
+*  @class     float SpotLight_Intensity(in SpotLight light, in const float3 worldPosition)
+*  @brief     Calculate SpotLight Intensity
+*  @param[in] in SpotLight light
+*  @param[in] in const float3 worldPosition
+*****************************************************************************/
+float SpotLight_Intensity(in SpotLight light, in const float3 worldPosition)
+{
+    const float3 pixelDirectionInWorldSpace = normalize(worldPosition - light.Position);
+    const float3 spotLightDirection = normalize(light.Direction);
+#if 1
+    const float theta = acos(dot(pixelDirectionInWorldSpace, spotLightDirection));
+    return 1.0f - min(max(theta - light.InnerConeAngle, 0.0f), light.OuterConeAngle - light.InnerConeAngle) / (light.OuterConeAngle - light.InnerConeAngle);
+#else
+    
+    return step(cos(light.OuterConeAngle), dot(spotLightDirection, pixelDirectionInWorldSpace));
+#endif
+}
+
+/****************************************************************************
+*				  		Calculate_Spot_Light_Illumination
+*************************************************************************//**
+*  @class     float3 Calculate_Spot_Light_Illumination(in const SpotLight light, in BRDFSurface surface, const in float3 surfacePosition, const in float3 toEye)
+*  @brief     Calculate spot light illumination
+*  @param[in] in const SpotLight light
+*  @param[in] in BRDFSurface surface
+*  @param[in] const in float3 surfacePosition 
+*  @param[in] const in float3 toEye
+*****************************************************************************/
+float3 Calculate_Spot_Light_Illumination(in const SpotLight light, in BRDFSurface surface, const in float3 surfacePosition, const in float3 toEye)
+{
+    float3 IdIs = 0.0f.xxx;
+    
+    const float3 lightVector    = normalize(light.Position - surfacePosition);
+    const float3 radiance       = SpotLight_Intensity(light, surfacePosition) * light.Color 
+                                  * light.Brightness 
+                                  * Attenuation_BRDF(length(light.Position - surfacePosition));
+    const float  normalDotLight = saturate(dot(surface.Normal, lightVector));
+    IdIs += Lambert_Cook_Torrence_Model(surface, lightVector, toEye) * radiance * normalDotLight;
+    return IdIs;
+}
+
+/****************************************************************************
+*				  		Calculate_Directional_Light_Illumination
+*************************************************************************//**
+*  @class     float3 Calculate_Directional_Light_Illumination(in const PointLight light, in BRDFSurface surface, const in float3 surfacePosition, const in float3 toEye )
+*  @brief     Calculate directional light illumination
+*  @param[in] in const Directional;Light light
+*  @param[in] in BRDFSurface surface
+*  @param[in] const in float3 surfacePosition 
+*  @param[in] const in float3 toEye
+*****************************************************************************/
+float3 Calculate_Directional_Light_Illumination(in const DirectionalLight light, in BRDFSurface surface, const in float3 toEye)
+{
+    const float3 lightVector   = normalize(-light.Direction);
+    const float3 radiance      = light.Color * light.Brightness;
+    const float normalDotLight = saturate(dot(surface.Normal, lightVector));
+    return Lambert_Cook_Torrence_Model(surface, lightVector, toEye) * radiance * normalDotLight;
+}
+
+
+float3 Calculate_EnvironmentMap_Illumination()
+{
+    float3 a;
+    return a;
+}
 #endif

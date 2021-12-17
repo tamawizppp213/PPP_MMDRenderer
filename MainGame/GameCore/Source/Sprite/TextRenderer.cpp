@@ -107,7 +107,6 @@ bool TextRenderer::DrawNumber(FontType fontType, const TextNumber& num, const Fl
 	/*-------------------------------------------------------------------
 	-              Variable definition
 	---------------------------------------------------------------------*/
-	using namespace DirectX;
 	FontLoader           fontLoader;
 	std::vector<int>     values(num.Digit);
 	std::vector<Sprite>  spriteList(num.Digit);

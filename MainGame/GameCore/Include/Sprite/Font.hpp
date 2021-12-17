@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "DirectX12/Include/Core/DirectX12Texture.hpp"
 #include "GameMath/Include/GMVector.hpp"
+#include "FontType.hpp"
 #include <unordered_map>
 #pragma warning(disable : 26495)
 
@@ -23,12 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                            Font
 //////////////////////////////////////////////////////////////////////////////////
-enum class FontType
-{
-	GenNoKaku_Gothic_English,
-	GenNoKaku_Gothic_Number,
-};
-
 struct FontInfo
 {
 	FontType     FontType;

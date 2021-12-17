@@ -57,7 +57,7 @@ public:
 	PostEffect& operator=(const PostEffect&) = default;
 	PostEffect(PostEffect&&)                 = default;
 	PostEffect& operator=(PostEffect&&)      = default;
-	~PostEffect() = default;
+	~PostEffect() { _colorBuffer.clear(); _colorBuffer.shrink_to_fit(); };
 
 protected:
 	/****************************************************************************

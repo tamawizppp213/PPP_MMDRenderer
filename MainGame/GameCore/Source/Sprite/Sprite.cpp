@@ -30,10 +30,10 @@ const UINT16 Sprite::Indices[] = { 0,1,2,2,1,3 };
 *  @param[in] const Float4& uv        (u[0], v[0], u[1], v[1])
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateSpriteForTexture(const Float3& position, const Float2& rectSize, const Float4& uv)
+void Sprite::CreateSpriteForTexture(const Float3& position, const Float2& rectSize, const Float4& uv, float radian)
 {
 	_spriteType = SpriteType::TEXTURE;
-	CreateRect(position, rectSize, uv);
+	CreateRect(position, rectSize, uv, radian);
 }
 
 /****************************************************************************
@@ -47,10 +47,10 @@ void Sprite::CreateSpriteForTexture(const Float3& position, const Float2& rectSi
 *  @param[in] const Float2& v        (v[0], v[1])
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateSpriteForTexture(const Float3& position, const Float2& rectSize, const Float2& u, const Float2& v)
+void Sprite::CreateSpriteForTexture(const Float3& position, const Float2& rectSize, const Float2& u, const Float2& v, float radian)
 {
 	_spriteType = SpriteType::TEXTURE;
-	CreateRect(position, rectSize, u, v);
+	CreateRect(position, rectSize, u, v, radian);
 }
 
 /****************************************************************************
@@ -63,10 +63,10 @@ void Sprite::CreateSpriteForTexture(const Float3& position, const Float2& rectSi
 *  @param[in] const Float4& color     (R,G,B,Alpha)
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateSpriteForColor(const Float3& position, const Float2& rectSize, const Float4& color)
+void Sprite::CreateSpriteForColor(const Float3& position, const Float2& rectSize, const Float4& color, float radian)
 {
 	_spriteType = SpriteType::COLOR;
-	CreateRect(position, rectSize, color);
+	CreateRect(position, rectSize, color, radian);
 }
 
 /****************************************************************************
@@ -80,10 +80,10 @@ void Sprite::CreateSpriteForColor(const Float3& position, const Float2& rectSize
 *  @param[in] const Float4& uv        (u[0], v[0], u[1], v[1])
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateSprite(const Float3& position, const Float2& rectSize, const Float4& color, const Float4& uv)
+void Sprite::CreateSprite(const Float3& position, const Float2& rectSize, const Float4& color, const Float4& uv, float radian)
 {
 	_spriteType = SpriteType::TEXTURE;
-	CreateRect(position, rectSize, color, uv);
+	CreateRect(position, rectSize, color, uv, radian);
 }
 
 /****************************************************************************
@@ -98,10 +98,10 @@ void Sprite::CreateSprite(const Float3& position, const Float2& rectSize, const 
 *  @param[in] const Float2& v        (v[0], v[1])
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateSprite(const Float3& position, const Float2& rectSize, const Float4& color, const Float2& u, const Float2& v)
+void Sprite::CreateSprite(const Float3& position, const Float2& rectSize, const Float4& color, const Float2& u, const Float2& v, float radian)
 {
 	_spriteType = SpriteType::TEXTURE;
-	CreateRect(position, rectSize, color, u, v);
+	CreateRect(position, rectSize, color, u, v, radian);
 }
 #pragma endregion Public Function
 
@@ -115,7 +115,7 @@ void Sprite::CreateSprite(const Float3& position, const Float2& rectSize, const 
 *  @param[in] const Float4& uv        (u[0], v[0], u[1], v[1])
 *  @return 　　void
 *****************************************************************************/
-bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Float4& uv)
+bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Float4& uv, float radian)
 {
 	if (_spriteType != SpriteType::TEXTURE)
 	{
@@ -123,7 +123,7 @@ bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Flo
 		return false;
 	}
 
-	CreateRect(position, _size, color, uv);
+	CreateRect(position, _size, color, uv, radian);
 	return true;
 }
 
@@ -138,7 +138,7 @@ bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Flo
 *  @param[in] const Float2& v        (v[0], v[1])
 *  @return 　　void
 *****************************************************************************/
-bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Float2& u, const Float2& v)
+bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Float2& u, const Float2& v, float radian)
 {
 	if (_spriteType != SpriteType::TEXTURE)
 	{
@@ -146,7 +146,7 @@ bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Flo
 		return false;
 	}
 
-	CreateRect(position, _size, color, u, v);
+	CreateRect(position, _size, color, u, v, radian);
 	return true;
 }
 
@@ -159,7 +159,7 @@ bool Sprite::UpdateSprite(const Float3& position, const Float4& color, const Flo
 *  @param[in] const Float4& color    (R,G,B, Alpha)
 *  @return 　　bool
 *****************************************************************************/
-bool Sprite::UpdateSpriteForColor(const Float3& position, const Float4& color)
+bool Sprite::UpdateSpriteForColor(const Float3& position, const Float4& color, float radian)
 {
 	if (_spriteType != SpriteType::COLOR)
 	{
@@ -182,7 +182,7 @@ bool Sprite::UpdateSpriteForColor(const Float3& position, const Float4& color)
 *  @param[in] float alpha = 1.0f
 *  @return 　　bool
 ******************s***********************************************************/
-bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float4& uv, float alpha)
+bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float4& uv, float alpha, float radian)
 {
 	if (_spriteType != SpriteType::TEXTURE)
 	{
@@ -205,7 +205,7 @@ bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float4& uv, fl
 *  @param[in] float alpha = 1.0f
 *  @return 　　bool
 *****************************************************************************/
-bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float2& u, const Float2& v, float alpha)
+bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float2& u, const Float2& v, float alpha, float radian)
 {
 	if (_spriteType != SpriteType::TEXTURE)
 	{
@@ -213,7 +213,7 @@ bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float2& u, con
 		return false;
 	}
 
-	CreateRect(position, _size, Float4(1.0f, 1.0f, 1.0f, alpha), u, v);
+	CreateRect(position, _size, Float4(1.0f, 1.0f, 1.0f, alpha), u, v, radian);
 	return true;
 }
 #pragma region Private Function
@@ -228,21 +228,32 @@ bool Sprite::UpdateSpriteForTexture(const Float3& position, const Float2& u, con
 *  @param[in] const Float4& uv
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float4& color, const Float4& uv)
+void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float4& color, const Float4& uv, float radian)
 {
 	using Vertex = VertexPositionNormalColorTexture;
 
 	/*-------------------------------------------------------------------
-	-              Create RectPosition
+	-              Get rect info
 	-------------------------t-------------------------------------------*/
-	_size    = rectSize;
+	_size = rectSize;
 	float w2 = rectSize.x / 2;
 	float h2 = rectSize.y / 2;
+
+	/*-------------------------------------------------------------------
+	-              Get rotation info
+	-------------------------t-------------------------------------------*/
+	float fSin, fCos;
+	DirectX::XMScalarSinCos(&fSin, &fCos, radian);
+
+	/*-------------------------------------------------------------------
+	-              Create RectPosition
+	-------------------------t-------------------------------------------*/
 	std::array<Float3, 4> positions;
-	positions[0] = Float3(position.x - w2, position.y - h2, position.z);
-	positions[1] = Float3(position.x - w2, position.y + h2, position.z);
-	positions[2] = Float3(position.x + w2, position.y + h2, position.z);
-	positions[3] = Float3(position.x + w2, position.y - h2, position.z);
+	positions[0] = Float3(position.x - w2 * fCos - h2 * fSin, position.y + w2 * fSin - h2 * fCos, position.z);
+	positions[1] = Float3(position.x - w2 * fCos + h2 * fSin, position.y + w2 * fSin + h2 * fCos, position.z);
+	positions[2] = Float3(position.x + w2 * fCos + h2 * fSin, position.y - w2 * fSin + h2 * fCos, position.z);
+	positions[3] = Float3(position.x + w2 * fCos - h2 * fSin, position.y - w2 * fSin - h2 * fCos, position.z);
+
 
 	/*-------------------------------------------------------------------
 	-              Create Normal Vector
@@ -277,21 +288,31 @@ void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Fl
 *  @param[in] const Float2& v
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float2& u, const Float2& v)
+void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float2& u, const Float2& v, float radian)
 {
 	using Vertex = VertexPositionNormalColorTexture;
 
 	/*-------------------------------------------------------------------
-	-              Create RectPosition
+	-              Get rect info
 	-------------------------t-------------------------------------------*/
-	_size    = rectSize;
+	_size = rectSize;
 	float w2 = rectSize.x / 2;
 	float h2 = rectSize.y / 2;
-	std::array < Float3 , 4 > positions;
-	positions[0] = Float3(position.x - w2, position.y - h2, position.z);
-	positions[1] = Float3(position.x - w2, position.y + h2, position.z);
-	positions[2] = Float3(position.x + w2, position.y + h2, position.z);
-	positions[3] = Float3(position.x + w2, position.y - h2, position.z);
+
+	/*-------------------------------------------------------------------
+	-              Get rotation info
+	-------------------------t-------------------------------------------*/
+	float fSin, fCos;
+	DirectX::XMScalarSinCos(&fSin, &fCos, radian);
+
+	/*-------------------------------------------------------------------
+	-              Create RectPosition
+	-------------------------t-------------------------------------------*/
+	std::array<Float3, 4> positions;
+	positions[0] = Float3(position.x - w2 * fCos - h2 * fSin, position.y + w2 * fSin - h2 * fCos, position.z);
+	positions[1] = Float3(position.x - w2 * fCos + h2 * fSin, position.y + w2 * fSin + h2 * fCos, position.z);
+	positions[2] = Float3(position.x + w2 * fCos + h2 * fSin, position.y - w2 * fSin + h2 * fCos, position.z);
+	positions[3] = Float3(position.x + w2 * fCos - h2 * fSin, position.y - w2 * fSin - h2 * fCos, position.z);
 
 	/*-------------------------------------------------------------------
 	-              Create Normal Vector
@@ -321,6 +342,7 @@ void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Fl
 	}
 }
 
+
 /****************************************************************************
 *                       CreateRect
 *************************************************************************//**
@@ -333,21 +355,31 @@ void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Fl
 *  @param[in] const Float2& v
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float4& color, const Float2& u, const Float2& v)
+void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float4& color, const Float2& u, const Float2& v, float radian)
 {
 	using Vertex = VertexPositionNormalColorTexture;
 
 	/*-------------------------------------------------------------------
-	-              Create RectPosition
+	-              Get rect info
 	-------------------------t-------------------------------------------*/
 	_size    = rectSize;
 	float w2 = rectSize.x / 2;
 	float h2 = rectSize.y / 2;
+
+	/*-------------------------------------------------------------------
+	-              Get rotation info
+	-------------------------t-------------------------------------------*/
+	float fSin, fCos;
+	DirectX::XMScalarSinCos(&fSin, &fCos, radian);
+
+	/*-------------------------------------------------------------------
+	-              Create RectPosition
+	-------------------------t-------------------------------------------*/
 	std::array<Float3, 4> positions;
-	positions[0] = Float3(position.x - w2, position.y - h2, position.z);
-	positions[1] = Float3(position.x - w2, position.y + h2, position.z);
-	positions[2] = Float3(position.x + w2, position.y + h2, position.z);
-	positions[3] = Float3(position.x + w2, position.y - h2, position.z);
+	positions[0] = Float3(position.x - w2 * fCos - h2 * fSin, position.y + w2 * fSin - h2 * fCos, position.z);
+	positions[1] = Float3(position.x - w2 * fCos + h2 * fSin, position.y + w2 * fSin + h2 * fCos, position.z);
+	positions[2] = Float3(position.x + w2 * fCos + h2 * fSin, position.y - w2 * fSin + h2 * fCos, position.z);
+	positions[3] = Float3(position.x + w2 * fCos - h2 * fSin, position.y - w2 * fSin - h2 * fCos, position.z);
 
 	/*-------------------------------------------------------------------
 	-              Create Normal Vector
@@ -381,22 +413,32 @@ void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Fl
 *  @param[in] const Float4& color    ( R, G, B, Alpha)
 *  @return 　　void
 *****************************************************************************/
-void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float4& color)
+void Sprite::CreateRect(const Float3& position, const Float2& rectSize, const Float4& color, float radian)
 {
 	using namespace DirectX;
 	using Vertex = VertexPositionNormalColorTexture;
 
 	/*-------------------------------------------------------------------
-	-              Create RectPosition
+	-              Get rect info
 	-------------------------t-------------------------------------------*/
-	_size    = rectSize;
+	_size = rectSize;
 	float w2 = rectSize.x / 2;
 	float h2 = rectSize.y / 2;
+
+	/*-------------------------------------------------------------------
+	-              Get rotation info
+	-------------------------t-------------------------------------------*/
+	float fSin, fCos;
+	DirectX::XMScalarSinCos(&fSin, &fCos, radian);
+
+	/*-------------------------------------------------------------------
+	-              Create RectPosition
+	-------------------------t-------------------------------------------*/
 	std::array<Float3, 4> positions;
-	positions[0] = Float3(position.x - w2, position.y - h2, position.z);
-	positions[1] = Float3(position.x - w2, position.y + h2, position.z);
-	positions[2] = Float3(position.x + w2, position.y + h2, position.z);
-	positions[3] = Float3(position.x + w2, position.y - h2, position.z);
+	positions[0] = Float3(position.x - w2 * fCos - h2 * fSin, position.y + w2 * fSin - h2 * fCos, position.z);
+	positions[1] = Float3(position.x - w2 * fCos + h2 * fSin, position.y + w2 * fSin + h2 * fCos, position.z);
+	positions[2] = Float3(position.x + w2 * fCos + h2 * fSin, position.y - w2 * fSin + h2 * fCos, position.z);
+	positions[3] = Float3(position.x + w2 * fCos - h2 * fSin, position.y - w2 * fSin - h2 * fCos, position.z);
 
 	/*-------------------------------------------------------------------
 	-              Create Normal Vector

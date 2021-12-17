@@ -23,6 +23,7 @@ subject to the following restrictions:
 #include <memory.h>
 #endif
 #include <string.h>
+#pragma warning(disable: 26495)
 
 extern char sBulletDNAstr[];
 extern int sBulletDNAlen;

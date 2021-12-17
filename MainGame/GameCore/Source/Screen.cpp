@@ -77,3 +77,8 @@ float Screen::AspectRatio() const
 {
 	return (float)_width / (float)_height;
 }
+
+float Screen::GetAspectRatio()
+{
+	return (float)_width / (float)_height;
+}
