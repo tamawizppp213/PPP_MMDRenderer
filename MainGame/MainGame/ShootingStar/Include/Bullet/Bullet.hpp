@@ -60,6 +60,7 @@ public:
 	Collider2D&       GetColBox()       { return _colliderBox; }
 	const Collider2D& GetColBox() const { return _colliderBox; }
 	Texture&          GetTexture  ()  { return _texture; }
+	const Texture&    GetTexture() const { return _texture; }
 	Sprite &          GetSprite   ()  { return _sprite; }
 	BulletType        GetBulletType() { return _bulletType; }
 

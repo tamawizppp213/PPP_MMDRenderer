@@ -399,7 +399,21 @@ bool Skybox::Draw(SceneGPUAddress scene)
 *****************************************************************************/
 bool Skybox::Finalize()
 {
-	_sphere.clear();
+	/*-------------------------------------------------------------------
+	-                     Clear WorldInfomation
+	---------------------------------------------------------------------*/
+	_skyObject.get()->Resource()->Release();
+	_skyObject.reset();
+	/*-------------------------------------------------------------------
+	-                     Clear Material
+	---------------------------------------------------------------------*/
+	_material.get()->Resource()->Release();
+	_material.reset();
+	/*-------------------------------------------------------------------
+	-                     Clear Sphere Object
+	---------------------------------------------------------------------*/
+	for (auto& sphere : _sphere) { sphere->Dispose(); }
+	_sphere.clear(); _sphere.shrink_to_fit();
 	return true;
 }
 
@@ -457,7 +471,7 @@ bool Skybox::PrepareVertexAndIndexBuffer()
 		---------------------------------------------------------------------*/
 		ThrowIfFailed(D3DCreateBlob(vertexBufferByteSize, &sphere->VertexBufferCPU));
 		CopyMemory(sphere->VertexBufferCPU->GetBufferPointer(), sphereMesh.Vertices.data(), vertexBufferByteSize);
-		sphere->VertexBufferGPU      = DefaultBuffer(directX12.GetDevice(), commandList, sphereMesh.Vertices.data(), vertexBufferByteSize, sphere->VertexBufferUploader).Resource();
+		sphere->VertexBufferGPU      = DefaultBuffer(directX12.GetDevice(), commandList, sphereMesh.Vertices.data(), vertexBufferByteSize, sphere->VertexBufferUploader,L"Skybox::VertexBuffer").Resource();
 		sphere->VertexByteStride     = sizeof(VertexPositionNormalTexture);
 		sphere->VertexBufferByteSize = (UINT)vertexBufferByteSize;
 		sphere->BaseVertexLocation   = 0;
@@ -467,7 +481,7 @@ bool Skybox::PrepareVertexAndIndexBuffer()
 		---------------------------------------------------------------------*/
 		ThrowIfFailed(D3DCreateBlob(indexBufferByteSize, &sphere->IndexBufferCPU));
 		CopyMemory(sphere->IndexBufferCPU->GetBufferPointer(), sphereMesh.Indices.data(), indexBufferByteSize);
-		sphere->IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), commandList, sphereMesh.Indices.data(), indexBufferByteSize, sphere->IndexBufferUploader).Resource();
+		sphere->IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), commandList, sphereMesh.Indices.data(), indexBufferByteSize, sphere->IndexBufferUploader, L"Skybox::IndexBuffer").Resource();
 		sphere->IndexFormat         = DXGI_FORMAT_R16_UINT;
 		sphere->IndexBufferByteSize = (UINT)indexBufferByteSize;
 		sphere->StartIndexLocation  = 0;
@@ -497,7 +511,7 @@ bool Skybox::PrepareMaterialBuffer()
 	---------------------------------------------------------------------*/
 	DirectX12& directX12 = DirectX12::Instance();
 	Device* device       = directX12.GetDevice();
-	auto material        = std::make_unique<UploadBuffer<MaterialConstants>>(device, 1, true);
+	auto material        = std::make_unique<UploadBuffer<MaterialConstants>>(device, 1, true, L"Skybox::MaterialBuffer");
 	MaterialConstants    materialInfo; // sphere
 
 
@@ -531,7 +545,7 @@ bool Skybox::PrepareSkyObject()
 	---------------------------------------------------------------------*/
 	DirectX12& directX12 = DirectX12::Instance();
 	Device* device       = directX12.GetDevice();
-	auto skyObject       = std::make_unique<UploadBuffer<ObjectConstants>>(device, 1, true);
+	auto skyObject       = std::make_unique<UploadBuffer<ObjectConstants>>(device, 1, true, L"Skybox::SkyObjectConstants");
 
 	/*-------------------------------------------------------------------
 	-			Set Skydata

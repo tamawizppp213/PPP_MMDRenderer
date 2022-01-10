@@ -77,7 +77,14 @@ static RandomInt g_Random;
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
-
+/****************************************************************************
+*                      Initialize
+*************************************************************************//**
+*  @fn        void EnemyBoss::Initialize()
+*  @brief     Initialize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::Initialize()
 {
 	_actorType               = ActorType::Sprite;
@@ -93,7 +100,10 @@ void EnemyBoss::Initialize()
 	_isCharge        = false;
 	_enableShotLaser = false;
 	_hp = _defaultHP;
-	// Laser textureの読み込み
+
+	/*-------------------------------------------------------------------
+	-          Load Texture
+	---------------------------------------------------------------------*/
 	TextureLoader textureLoader;
 	textureLoader.LoadTexture(L"Resources/Texture/ShootingStar/EnemyBoss.png", _texture);
 	_sprite.CreateSpriteForTexture(_transform.LocalPosition.ToFloat3(), Float2(1.4f, 0.7f), Float2(135.0f / 3354.0f, 965.0f / 3354.0f), Float2(0.0f, 540.0f / 1598.0f), _rotation);
@@ -102,6 +112,9 @@ void EnemyBoss::Initialize()
 		Float2(g_LaserAnimation[_animationIndex].x, g_LaserAnimation[_animationIndex].x + 1.0f / 3.0f),
 		Float2(g_LaserAnimation[_animationIndex].y, g_LaserAnimation[_animationIndex].y + 1.0f / 10.0f));
 
+	/*-------------------------------------------------------------------
+	-          Load Sound
+	---------------------------------------------------------------------*/
 	_laserSound = std::make_unique<AudioSource>();
 	_chargeSound = std::make_unique<AudioSource>();
 	_laserSound.get()->LoadSound(L"Resources/Audio/ShootingStar/laserFire.wav", SoundType::SE, 1.0f);
@@ -110,17 +123,49 @@ void EnemyBoss::Initialize()
 	PushBackEnemy(this);
 	g_Random.SetRange(0, 4);
 }
+/****************************************************************************
+*                      Finalize
+*************************************************************************//**
+*  @fn        void EnemyBoss::Finalize()
+*  @brief     Finalize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void EnemyBoss::Finalize()
+{
+	_texture     .Resource = nullptr;
+	_laserTexture.Resource = nullptr;
 
+	_laserSound.reset();
+	_chargeSound.reset();
+}
+/****************************************************************************
+*                      Update 
+*************************************************************************//**
+*  @fn        void EnemyBoss::Update(GameTimer& gameTimer, const Player& player)
+*  @brief     Update enemy action
+*  @param[in] GameTimer& gameTimer
+*  @param[in] Player& player
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::Update(GameTimer& gameTimer, const Player& player)
 {
+	/*-------------------------------------------------------------------
+	-          Active Check
+	---------------------------------------------------------------------*/
 	if (!IsActive()) 
 	{
 		if (_enableShotLaser) { _enableShotLaser = false; }
 		if (_isCharge)        { _isCharge = false; }
 		return; 
 	}
-
+	/*-------------------------------------------------------------------
+	-          Update Local Timer
+	---------------------------------------------------------------------*/
 	_localTimer += gameTimer.DeltaTime();
+	/*-------------------------------------------------------------------
+	-          Decide Action State
+	---------------------------------------------------------------------*/
 	switch (_actionState)
 	{
 		case EnemyBossActionState::Appear:
@@ -161,16 +206,26 @@ void EnemyBoss::Update(GameTimer& gameTimer, const Player& player)
 		}
 		default: break;
 	}
-
+	/*-------------------------------------------------------------------
+	-          Update Collider Box
+	---------------------------------------------------------------------*/
 	_colliderBox.centerPosition = Float3(_transform.LocalPosition.GetX(), 0.5f, 0.0f);
+	/*-------------------------------------------------------------------
+	-          Update Sprite
+	---------------------------------------------------------------------*/
 	_sprite.UpdateSpriteForTexture(_transform.LocalPosition.ToFloat3(), Float2(135.0f / 3354.0f, 965.0f / 3354.0f), Float2(0.0f, 540.0f / 1598.0f), 1.0f, _rotation);
+	/*-------------------------------------------------------------------
+	-          Update charge action (in case Charge action state)
+	---------------------------------------------------------------------*/
 	if (_isCharge)
 	{
-		_laserSprite.CreateSprite(Float3(0.05f, 0.33f, 0.0f), Float2(0.8f, 0.8f), Float4(1, 1, 1, 0.7f),
+		_laserSprite.CreateSprite(Float3(0.042f, 0.33f, 0.0f), Float2(0.8f, 0.8f), Float4(1, 1, 1, 0.7f),
 			Float2(g_LaserAnimation[_animationIndex].x, g_LaserAnimation[_animationIndex].x + 1.0f / 3.0f),
 			Float2(g_LaserAnimation[_animationIndex].y, g_LaserAnimation[_animationIndex].y + 1.0f / 10.0f));
-
 	}
+	/*-------------------------------------------------------------------
+	-          Update Laser Action (in case Laser action state)
+	---------------------------------------------------------------------*/
 	if (_enableShotLaser)
 	{
 		_laserSprite.CreateSprite(Float3(0.1f, 0.0f, 0.0f), Float2(1.5f, 2.0f), Float4(1, 1, 1, 0.7f),
@@ -183,6 +238,14 @@ void EnemyBoss::Reset()
 {
 
 }
+/****************************************************************************
+*                      Generate
+*************************************************************************//**
+*  @fn        void EnemyBoss::Generate(const Vector3& position)
+*  @brief     Generate enemy
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 bool EnemyBoss::Generate(const Vector3& position)
 {
 	if (!IsActive())
@@ -199,12 +262,24 @@ bool EnemyBoss::Generate(const Vector3& position)
 		return false;
 	}
 }
-
+/****************************************************************************
+*                      Appear
+*************************************************************************//**
+*  @fn        void EnemyBoss::Appear(GameTimer& gameTimer)
+*  @brief     Appear action state
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::Appear(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Update enemy position
+	---------------------------------------------------------------------*/
 	_speed = Vector3(0.0f, DEFAULT_SPEED_Y, 0.0f);
 	_transform.LocalPosition -= _speed * gameTimer.DeltaTime();
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the Stop action state
+	---------------------------------------------------------------------*/
 	if (_transform.LocalPosition.GetY() <= 0.75f)
 	{
 		_transform.LocalPosition.SetY(0.75f);
@@ -212,10 +287,20 @@ void EnemyBoss::Appear(GameTimer& gameTimer)
 		_localTimer = 0.0f;
 	}
 }
+/****************************************************************************
+*                      Stop
+*************************************************************************//**
+*  @fn        void EnemyBoss::Stop(GameTimer& gameTimer)
+*  @brief     Stop action state
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::Stop(GameTimer& gameTimer)
 {
 	_speed = Vector3(0, 0, 0);
-
+	/*-------------------------------------------------------------------
+	-          Decide action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _waitTime)
 	{
 		g_Random.SetRange(0, 4);
@@ -227,15 +312,28 @@ void EnemyBoss::Stop(GameTimer& gameTimer)
 		_localTimer = 0.0f;
 	}
 }
+/****************************************************************************
+*                      LaserPrepare
+*************************************************************************//**
+*  @fn        void EnemyBoss::LaserPrepare(GameTimer& gameTimer)
+*  @brief     LaserPrepare action state
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::LaserPrepare(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Update Laser Animation
+	---------------------------------------------------------------------*/
 	if (_localTimer >= g_LaserPatternTable[_animationIndex])
 	{
 		_animationIndex++;
 		_localTimer = 0;
 	}
 
-	// 音声再生
+	/*-------------------------------------------------------------------
+	-          Proceed to the Laser action state
+	---------------------------------------------------------------------*/
 	if (_animationIndex >= 1)
 	{
 		_actionState     = EnemyBossActionState::Laser;
@@ -243,29 +341,51 @@ void EnemyBoss::LaserPrepare(GameTimer& gameTimer)
 		_isCharge        = false;
 		_enableShotLaser = true;
 		_laserLocalTimer = 0;
+		/*-------------------------------------------------------------------
+		-          Play laser sound
+		---------------------------------------------------------------------*/
 		_chargeSound.get()->Stop();
 		_laserSound.get()->Play();
 	}
 }
+/****************************************************************************
+*                      Laser
+*************************************************************************//**
+*  @fn        void EnemyBoss::Laser(GameTimer& gameTimer, const Player& player)
+*  @brief     Laser action state
+*  @param[in] GameTimer& gameTimer
+*  @param[in] Player& player
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::Laser(GameTimer& gameTimer, const Player& player)
 {
+	/*-------------------------------------------------------------------
+	-          Update Laser Animation
+	---------------------------------------------------------------------*/
 	if (_localTimer >= g_LaserPatternTable[_animationIndex])
 	{
 		_animationIndex++;
 		_localTimer = 0;
 	}
 
+	/*-------------------------------------------------------------------
+	-          Update Laser Collider
+	---------------------------------------------------------------------*/
 	if (_laserStartTime < _laserLocalTimer && _laserLocalTimer < _laserEndTime)
 	{
 		float t = (_laserLocalTimer - _laserStartTime) / (_laserEndTime - _laserStartTime);
 		_laserColBox.centerPosition = Lerp(Vector3(-0.7f, player.GetTransform().LocalPosition.GetY(), 0.0f), Vector3(0.7f, player.GetTransform().LocalPosition.GetY(), 0.0f), t).ToFloat3();
 	}
-
+	/*-------------------------------------------------------------------
+	-          Stop Laser Action in case exceed LaserEndTime
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _laserEndTime)
 	{
 		_enableShotLaser = false;
 	}
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the Stop action state
+	---------------------------------------------------------------------*/
 	if (_animationIndex >= _countof(g_LaserPatternTable))
 	{
 		_actionState = EnemyBossActionState::Stop;
@@ -275,16 +395,37 @@ void EnemyBoss::Laser(GameTimer& gameTimer, const Player& player)
 		_laserColBox.centerPosition = Float3(0, 0, 0);
 		_laserLocalTimer = 0;
 	}
+	/*-------------------------------------------------------------------
+	-          Update laser local timer
+	---------------------------------------------------------------------*/
 	_laserLocalTimer += gameTimer.DeltaTime();
 }
+/****************************************************************************
+*                      LaserAfter
+*************************************************************************//**
+*  @fn        void EnemyBoss::LaserAfter(GameTimer& gameTimer)
+*  @brief     LaserAfter action state
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::LaserAfter(GameTimer& gameTimer)
 {
 
 }
+/****************************************************************************
+*                      Shot
+*************************************************************************//**
+*  @fn        void EnemyBoss::Shot(GameTimer& gameTimer)
+*  @brief     Shot action state
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::Shot(GameTimer& gameTimer)
 {
 	float speed = 1.0f;
-
+	/*-------------------------------------------------------------------
+	-          Shot action 5way * 2
+	---------------------------------------------------------------------*/
 	for (int i = 0; i < 5; ++i)
 	{
 		Vector3 velocity;
@@ -293,15 +434,32 @@ void EnemyBoss::Shot(GameTimer& gameTimer)
 		Bullet::ActiveBullet(Vector3(0.25f, 0.5f, 0.0f), velocity, BulletType::EnemyBulletBlue);
 		Bullet::ActiveBullet(Vector3(-0.2f, 0.5f, 0.0f), velocity, BulletType::EnemyBulletBlue);
 	}
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the stop action state
+	---------------------------------------------------------------------*/
 	_actionState = EnemyBossActionState::Stop;
 	_localTimer  = 0.0f;
 }
+/****************************************************************************
+*                      ShotToPlayer
+*************************************************************************//**
+*  @fn        void EnemyBoss::ShotToPlayer(GameTimer& gameTimer, const Player& player)
+*  @brief     ShotToPlayer action state
+*  @param[in] GameTimer& gameTimer
+*  @param[in] Player& player
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::ShotToPlayer(GameTimer& gameTimer, const Player& player)
 {
+	/*-------------------------------------------------------------------
+	-          Look to the player 
+	---------------------------------------------------------------------*/
 	float speed     = 1.4f;
 	Vector3 temp    = Normalize(player.GetTransform().LocalPosition - _transform.LocalPosition);
 	float rotation  = -ATan2(temp.GetY(), temp.GetX()) + GM_PI / 2;
+	/*-------------------------------------------------------------------
+	-          Shot action 5way * 2
+	---------------------------------------------------------------------*/
 	for (int i = 0; i < 5; ++i)
 	{
 		Vector3 velocity;
@@ -310,50 +468,112 @@ void EnemyBoss::ShotToPlayer(GameTimer& gameTimer, const Player& player)
 		Bullet::ActiveBullet(Vector3(0.25f, 0.5f, 0.0f), velocity, BulletType::EnemyBulletGreen);
 		Bullet::ActiveBullet(Vector3(-0.2f, 0.5f, 0.0f), velocity, BulletType::EnemyBulletGreen);
 	}
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the stop action state
+	---------------------------------------------------------------------*/
 	_actionState = EnemyBossActionState::Stop;
+	/*-------------------------------------------------------------------
+	-          Update local timer
+	---------------------------------------------------------------------*/
 	_localTimer  = 0.0f;
 }
+/****************************************************************************
+*                      GenerateEnemy
+*************************************************************************//**
+*  @fn        void EnemyBoss::GenerateEnemy(GameTimer& gameTimer)
+*  @brief     Generate enemy action state
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::GenerateEnemy(GameTimer& gameTimer)
 {
+
 	g_Random.SetRange(0, (int)EnemyType::Red);
+	/*-------------------------------------------------------------------
+	-          Generate 2 enemies
+	---------------------------------------------------------------------*/
 	EnemyType type = static_cast<EnemyType>(g_Random.GetRandomValue());
 	EnemyManager::Instance().GenerateEnemy(type, Vector3(-0.5f, 1.5f, 0.0f));
 	type = static_cast<EnemyType>(g_Random.GetRandomValue());
 	EnemyManager::Instance().GenerateEnemy(type, Vector3(0.5f, 1.5f, 0.0f));
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the Stop action state
+	---------------------------------------------------------------------*/
 	_actionState = EnemyBossActionState::Stop;
 	_localTimer  = 0;
 }
-
+/****************************************************************************
+*                      ProceedPrepareLaser
+*************************************************************************//**
+*  @fn        void EnemyBoss::ProceedPrepareLaser()
+*  @brief     Proceed to the PrepareLaser action state
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::ProceedPrepareLaser()
 {
+	/*-------------------------------------------------------------------
+	-          Proceed to the LaserPrepare action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _waitTime)
 	{
 		_actionState = EnemyBossActionState::LaserPrepare;
 		_localTimer  = 0.0f;
 		_isCharge    = true;
-		// 音声の再生
+		_chargeSound.get()->Play();
 	}
 }
+/****************************************************************************
+*                      ProceedGenerateEnemy
+*************************************************************************//**
+*  @fn        void EnemyBoss::ProceedGenerateEnemy()
+*  @brief     Proceed to the GenerateEnemy action state
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::ProceedGenerateEnemy()
 {
+	/*-------------------------------------------------------------------
+	-          Proceed to the GenerateEnemy action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _waitTime)
 	{
 		_actionState = EnemyBossActionState::GenerateEnemy;
 		_localTimer  = 0.0f;
 	}
 }
+/****************************************************************************
+*                      ProceedShotToPlayer
+*************************************************************************//**
+*  @fn        void EnemyBoss::ProceedShotToPlayer()
+*  @brief     Proceed to the shot to player action state
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::ProceedShotToPlayer()
 {
+	/*-------------------------------------------------------------------
+	-          Proceed to the ShotToPlayer action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _waitTime)
 	{
 		_actionState = EnemyBossActionState::ShotToPlayer;
 		_localTimer  = 0;
 	}
 }
+/****************************************************************************
+*                      ProceedShot
+*************************************************************************//**
+*  @fn        void EnemyBoss::ProceedShot()
+*  @brief     Proceed to the shot action
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBoss::ProceedShot()
 {
+	/*-------------------------------------------------------------------
+	-          Proceed to the Shot action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _waitTime)
 	{
 		_actionState = EnemyBossActionState::Shot;

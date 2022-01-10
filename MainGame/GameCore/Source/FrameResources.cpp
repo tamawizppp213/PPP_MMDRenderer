@@ -26,13 +26,21 @@ FrameResource::FrameResource(const FrameResourceCounter& frameResourceCounter, c
 	DirectX12& directX12 = DirectX12::Instance();
 	Device*    device    = directX12.GetDevice();
 
-	this->ObjectConstantsBuffer     = std::make_unique<UploadBuffer<ObjectConstants>>    (device, frameResourceCounter.MaxObjectCount    , true);
-	this->SceneConstantsBuffer      = std::make_unique<UploadBuffer<SceneConstants>>     (device, frameResourceCounter.MaxSceneCount     , true);
-	this->MaterialConstantsBuffer   = std::make_unique<UploadBuffer<MaterialConstants>>  (device, frameResourceCounter.MaxMaterialCount  , true);
+	this->ObjectConstantsBuffer     = std::make_unique<UploadBuffer<ObjectConstants>>    (device, frameResourceCounter.MaxObjectCount    , true, L"FrameResource::ObjectConstants");
+	this->SceneConstantsBuffer      = std::make_unique<UploadBuffer<SceneConstants>>     (device, frameResourceCounter.MaxSceneCount     , true, L"FrameResource::SceneConstants");
+	this->MaterialConstantsBuffer   = std::make_unique<UploadBuffer<MaterialConstants>>  (device, frameResourceCounter.MaxMaterialCount  , true, L"FrameResource::MaterialConstants");
 	this->_gameTimer                = &gameTimer;
 	
 }
-
+void FrameResource::Finalize()
+{
+	ObjectConstantsBuffer.get()->Resource()->Release();
+	ObjectConstantsBuffer.reset();
+	SceneConstantsBuffer.get()->Resource()->Release();
+	SceneConstantsBuffer.reset();
+	MaterialConstantsBuffer.get()->Resource()->Release();
+	MaterialConstantsBuffer.reset();
+}
 void FrameResource::UpdateObjectConstants()
 {
 

@@ -31,6 +31,7 @@ inline Float3& operator+=(Float3& a, const Float3& b)
 }
 
 PMXModel::~PMXModel() {};
+
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
@@ -40,10 +41,11 @@ PMXModel::~PMXModel() {};
 *************************************************************************//**
 *  @fn        bool PMXModel::Initialize()
 *  @brief     Initialize (Load PMDData ...)
-*  @param[in] void
+*  @param[in] const std::wstring& filePath
+*  @param[in] const std::wstring& addDebugName
 *  @return 　　bool
 *****************************************************************************/
-bool PMXModel::Initialize(const std::wstring& filePath)
+bool PMXModel::Initialize(const std::wstring& filePath, const std::wstring& addName)
 {
 	SetActorType(ActorType::PMX);
 	/*-------------------------------------------------------------------
@@ -107,6 +109,48 @@ bool PMXModel::Update()
 	return true;
 }
 
+void PMXModel::Finalize()
+{
+	/*-------------------------------------------------------------------
+	-            Clear Map
+	---------------------------------------------------------------------*/
+	_boneMap.get()->clear();
+	_motionData.clear();
+
+	/*-------------------------------------------------------------------
+	-            Clear vector 
+	---------------------------------------------------------------------*/
+	_threads                     .clear(); _threads                     .shrink_to_fit();
+	_materialView                .clear(); _materialView                .shrink_to_fit();
+	_boneMatrices         .get()->clear(); _boneMatrices         .get()->shrink_to_fit();
+	_boneNodeAddress      .get()->clear(); _boneNodeAddress      .get()->shrink_to_fit();
+	_sortedBoneNodeAddress.get()->clear(); _sortedBoneNodeAddress.get()->shrink_to_fit();
+	_rootBoneNodeNames           .clear(); _rootBoneNodeNames           .shrink_to_fit();
+	_boneIKs              .get()->clear(); _boneIKs              .get()->shrink_to_fit();
+	_semiStandardBoneMap         .clear(); _semiStandardBoneMap         .shrink_to_fit();
+
+	/*-------------------------------------------------------------------
+	-            Release smart pointer (敢えて明示的に開放してます)
+	---------------------------------------------------------------------*/
+	_vertices             .reset();
+	_boneMatrices         .reset();
+	_bonePosition         .reset();
+	_boneQuaternion       .reset();
+	_boneMap              .reset();
+	_boneNodeAddress      .reset();
+	_sortedBoneNodeAddress.reset();
+	_boneIKs.reset();
+	_pmxData.reset();
+
+	/*-------------------------------------------------------------------
+	-            Release Buffer
+	---------------------------------------------------------------------*/
+	for (auto& vertexBuffer : _vertexBuffer) { vertexBuffer.get()->Resource()->Release(); }
+	_materialBuffer     .get()->Resource()->Release();
+	_boneBuffer          .get()->Resource()->Release();
+
+
+}
 /****************************************************************************
 *                       Draw
 *************************************************************************//**
@@ -686,6 +730,7 @@ void PMXModel::WriteBoneParameterToBuffer()
 	boneObject->CopyStart();
 	boneObject->CopyData(0, *boneParameter);
 	boneObject->CopyEnd();
+
 	delete boneParameter;
 }
 /****************************************************************************

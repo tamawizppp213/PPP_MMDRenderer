@@ -114,7 +114,9 @@ void GamePad::Update()
 *****************************************************************************/
 void GamePad::Finalize()
 {
-	
+	_currentStates.clear(); _currentStates.shrink_to_fit();
+	_previousStates.clear(); _previousStates.shrink_to_fit();
+	_vibrationStates.clear(); _vibrationStates.shrink_to_fit();
 }
 
 /****************************************************************************

@@ -19,6 +19,7 @@
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 using namespace gm;
+#define GBUFFER_COLORBUFFER_NAME L"GBuffer::ColorBuffer"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
@@ -26,15 +27,7 @@ using namespace gm;
 #pragma region Public Function
 GBuffer::~GBuffer()
 {
-	_rootSignatures.clear();
-	_shader.clear();
-	_pipelines.clear();
-	_actors.clear();
 
-	_rootSignatures.shrink_to_fit();
-	_shader   .shrink_to_fit();
-	_pipelines.shrink_to_fit();
-	_actors   .shrink_to_fit();
 }
 
 bool GBuffer::Initialize(int width, int height)
@@ -46,6 +39,31 @@ bool GBuffer::Initialize(int width, int height)
 	return true;
 }
 
+void GBuffer::Finalize()
+{
+	/*-------------------------------------------------------------------
+	-                      Clear ColorBuffer
+	---------------------------------------------------------------------*/
+	for (auto& colorBuffer : _colorBuffer) { colorBuffer.GetColorBuffer().Resource = nullptr; }
+	/*-------------------------------------------------------------------
+	-                      Clear RootSignature
+	---------------------------------------------------------------------*/
+	for (auto& rootSignature : _rootSignatures) { rootSignature = nullptr; }
+	_rootSignatures.clear(); _rootSignatures.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                      Clear PipelineState
+	---------------------------------------------------------------------*/
+	for (auto& pipeline : _pipelines) { pipeline = nullptr; }
+	_pipelines.clear(); _pipelines.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                      Clear Shader
+	---------------------------------------------------------------------*/
+	_shader.clear(); _shader.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                      Clear GameActors
+	---------------------------------------------------------------------*/
+	_actors.clear(); _actors.shrink_to_fit();
+}
 /****************************************************************************
 *                       OnResize
 *************************************************************************//**
@@ -91,7 +109,7 @@ bool GBuffer::Draw(D3D12_GPU_VIRTUAL_ADDRESS scene)
 		renderTargets[i] = colorRTV;
 	}
 	commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-	commandList->OMSetRenderTargets(_colorBuffer.size(), renderTargets, true, &dsv);
+	commandList->OMSetRenderTargets((UINT)_colorBuffer.size(), renderTargets, true, &dsv);
 	commandList->SetGraphicsRootConstantBufferView(1, scene);
 
 	/*-------------------------------------------------------------------
@@ -223,6 +241,7 @@ bool GBuffer::PreparePipelineState()
 	pipeLineState.BlendState = GetBlendDesc(BlendStateType::Normal);
 
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelines[0])));
+	_pipelines[0]->SetName(L"GBuffer::PMXModel::PipelineState");
 
 	// Primitve
 	pipeLineState.InputLayout = VertexPositionNormalTexture::InputLayout;
@@ -238,6 +257,7 @@ bool GBuffer::PreparePipelineState()
 		_shader[1].PixelShader->GetBufferSize()
 	};
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelines[1])));
+	_pipelines[1]->SetName(L"GBuffer::PrimitiveModel::PipelineState");
 	return true;
 }
 
@@ -260,7 +280,7 @@ bool GBuffer::PrepareResources(int width, int height)
 
 	for (int i = 0; i < _colorBuffer.size(); ++i)
 	{
-		if (!_colorBuffer[i].Create(width, height, DirectX12::Instance().GetBackBufferRenderFormat(), clearColor))
+		if (!_colorBuffer[i].Create(width, height, DirectX12::Instance().GetBackBufferRenderFormat(), clearColor, L"GBuffer"))
 		{
 			return false;
 		}

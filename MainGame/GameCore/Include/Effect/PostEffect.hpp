@@ -38,11 +38,13 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(PostEffectBlendStateType type);
+	bool Initialize(PostEffectBlendStateType type, const std::wstring& addName = L"");
 	virtual bool OnResize(int newWidth, int newHeight);
 	virtual bool Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState = D3D12_RESOURCE_STATE_COMMON);
 	virtual bool Draw(); //back buffer 
+	virtual void Finalize();
 
+	static void ClearDefaultPipelineState();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -57,7 +59,7 @@ public:
 	PostEffect& operator=(const PostEffect&) = default;
 	PostEffect(PostEffect&&)                 = default;
 	PostEffect& operator=(PostEffect&&)      = default;
-	~PostEffect() { _colorBuffer.clear(); _colorBuffer.shrink_to_fit(); };
+	~PostEffect();
 
 protected:
 	/****************************************************************************
@@ -76,6 +78,8 @@ protected:
 	/****************************************************************************
 	**                Protected Member Variables
 	*****************************************************************************/
+	std::wstring _addName = L"";
+	bool _hasInitialized = false;
 	Sprite              _sprite;
 	std::vector<ColorBuffer> _colorBuffer;
 	VertexBufferPtr     _vertexBuffer[FRAME_BUFFER_COUNT];

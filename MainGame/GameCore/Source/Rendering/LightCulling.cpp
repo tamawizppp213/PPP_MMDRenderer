@@ -28,11 +28,32 @@
 bool LightCulling::Initialize(ColorBuffer& zPrepass)
 {
 	_zPrepass = &zPrepass;
+	_pointLightList = std::make_unique<RWStructuredBuffer>();
+	_spotLightList  = std::make_unique<RWStructuredBuffer>();
 
 	if (!PrepareRootSignature()) { return false; }
 	if (!PreparePipelineState()) { return false; }
 	if (!PrepareResources())     { return false; }
 	return true;
+}
+
+void LightCulling::Finalize()
+{
+	_rootSignature = nullptr;
+	_pipeline      = nullptr;
+	_zPrepass      = nullptr;
+	_scene         = NULL;
+	_light         = NULL;
+	_pointLightList.get()->GetResource()->Release();
+	_spotLightList.get()->GetResource()->Release();
+	_pointLightList.reset();
+	_spotLightList.reset();
+	
+}
+LightCulling::~LightCulling()
+{
+
+
 }
 
 bool LightCulling::ExecuteCulling()
@@ -57,8 +78,8 @@ bool LightCulling::ExecuteCulling()
 	commandList->SetComputeRootConstantBufferView(1, _scene);
 	commandList->SetComputeRootConstantBufferView(2, _light);
 	commandList->SetComputeRootDescriptorTable(3, _zPrepass->GetGPUSRV());
-	commandList->SetComputeRootDescriptorTable(4, _pointLightList.GetGPUUAV());
-	commandList->SetComputeRootDescriptorTable(5, _spotLightList.GetGPUUAV());
+	commandList->SetComputeRootDescriptorTable(4, _pointLightList.get()->GetGPUUAV());
+	commandList->SetComputeRootDescriptorTable(5, _spotLightList.get()->GetGPUUAV());
 	commandList->Dispatch((UINT)(_zPrepass->GetColorBuffer().ImageSize.x / 16), (UINT)(_zPrepass->GetColorBuffer().ImageSize.y / 16), 1);
 
 	return true;
@@ -71,17 +92,17 @@ bool LightCulling::ExecuteCulling()
 bool LightCulling::OnResize()
 {
 	gm::Float2 textureSize = _zPrepass->GetTextureSize();
-	int tileCount          = (textureSize.x / TILE_WIDTH) * (textureSize.y / TILE_HEIGHT);
-	_pointLightList.OnResize(NUM_POINT_LIGHT * tileCount);
-	_spotLightList.OnResize(NUM_SPOT_LIGHT * tileCount);
+	int tileCount          = static_cast<int>((textureSize.x / TILE_WIDTH) * (textureSize.y / TILE_HEIGHT));
+	_pointLightList.get()->OnResize(NUM_POINT_LIGHT * tileCount);
+	_spotLightList.get()->OnResize(NUM_SPOT_LIGHT * tileCount);
 	return true;
 }
 bool LightCulling::PrepareResources()
 {
 	gm::Float2 textureSize = _zPrepass->GetTextureSize();
-	int tileCount          = (textureSize.x / TILE_WIDTH) * (textureSize.y / TILE_HEIGHT);
-	_pointLightList.Create(sizeof(int), NUM_POINT_LIGHT * tileCount); // pointlightの数 * タイルの数
-	_spotLightList.Create (sizeof(int), NUM_SPOT_LIGHT * tileCount);
+	int tileCount          = static_cast<int>((textureSize.x / TILE_WIDTH) * (textureSize.y / TILE_HEIGHT));
+	_pointLightList.get()->Create(sizeof(int), NUM_POINT_LIGHT * tileCount, L"LightCulling::PointLightList"); // pointlightの数 * タイルの数
+	_spotLightList.get()->Create (sizeof(int), NUM_SPOT_LIGHT * tileCount, L"LightCulling::SpotLightList");
 
 	return true;
 }
@@ -120,6 +141,7 @@ bool LightCulling::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"LightCulling::RootSignature");
 	return true;
 }
 
@@ -154,6 +176,7 @@ bool LightCulling::PreparePipelineState()
 	};
 
 	ThrowIfFailed(device->CreateComputePipelineState(&lightCullingPipeline, IID_PPV_ARGS(&_pipeline)));
+	_pipeline->SetName(L"LightCulling::PipelineState");
 	return true;
 }
 

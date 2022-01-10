@@ -53,7 +53,14 @@ DamageEffect::DamageEffect()
 
 	_damageEffects.push_back(this);
 }
-
+/****************************************************************************
+*                      CreateEffect
+*************************************************************************//**
+*  @fn        void DamageEffect::CreateEffects(int effectNum)
+*  @brief     Create effect
+*  @param[in] int effect num
+*  @return 　　void
+*****************************************************************************/
 void DamageEffect::CreateEffects(int effectNum)
 {
 	for (int i = 0; i < effectNum; ++i)
@@ -61,7 +68,14 @@ void DamageEffect::CreateEffects(int effectNum)
 		new DamageEffect(); // deleteはDestroy時に行う.
 	}
 }
-
+/****************************************************************************
+*                      AllEffectsUpdate
+*************************************************************************//**
+*  @fn        void DamageEffect::AllEffectsUpdate(GameTimer& gameTimer)
+*  @brief     AllEffectsUpdate
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void DamageEffect::AllEffectsUpdate(GameTimer& gameTimer)
 {
 	/*-------------------------------------------------------------------
@@ -72,7 +86,14 @@ void DamageEffect::AllEffectsUpdate(GameTimer& gameTimer)
 		(*it)->Update(gameTimer);
 	}
 }
-
+/****************************************************************************
+*                      Update
+*************************************************************************//**
+*  @fn        void DamageEffect::Update(GameTimer& gameTimer)
+*  @brief     Update 
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void DamageEffect::Update(GameTimer& gameTimer)
 {
 	if (!_isActive) { return; }
@@ -128,8 +149,8 @@ void DamageEffect::ClearAllEffects()
 {
 	for (int i = 0; i < _damageEffects.size(); ++i)
 	{
+		_damageEffects[i]->GetTexture().Resource = nullptr;
 		Destroy(_damageEffects[i]);
 	}
-	_damageEffects.clear();
-	_damageEffects.shrink_to_fit();
+	_damageEffects.clear(); _damageEffects.shrink_to_fit();
 }

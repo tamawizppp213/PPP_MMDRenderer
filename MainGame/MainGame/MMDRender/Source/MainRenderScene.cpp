@@ -20,6 +20,8 @@
 #include "GameMath/Include/GMDistribution.hpp"
 #include "GameCore/Include/Sprite/Text.hpp"
 #include "GameCore/Include/Audio/AudioSource.hpp"
+#include "GameCore/Include/Model/ModelLoader.hpp"
+#include "GameCore/Include/Model/MotionLoader.hpp"
 #include <iostream>
 using namespace gm;
 
@@ -37,8 +39,6 @@ namespace render
 {
 	static SceneConstants sceneParameter;
 	static gm::Matrix4 projView = gm::MatrixIdentity();
-	static Bloom bloom;
-	static std::vector<PostEffect> postEffects(5);
 	static AudioSource audio;
 	static bool isBloom = true;
 
@@ -54,6 +54,12 @@ MainRenderScene::MainRenderScene()
 	_stage  = std::make_unique<PMXModel>();
 	_skybox = std::make_unique<Skybox>();
 	_miku   = std::make_unique<Miku>();
+	_bloom  = std::make_unique<Bloom>();
+	_postEffects.resize(_postEffectTypes);
+	for (auto& postEffect : _postEffects)
+	{
+		postEffect = std::make_unique<PostEffect>();
+	}
 	
 }
 
@@ -72,12 +78,27 @@ MainRenderScene::~MainRenderScene()
 void MainRenderScene::Initialize(GameTimer& gameTimer)
 {
 	Scene::Initialize(gameTimer);
+	/*-------------------------------------------------------------------
+	-                    FrameResources
+	---------------------------------------------------------------------*/
 	InitializeFrameResources();
+	/*-------------------------------------------------------------------
+	-                    SceneParameter
+	---------------------------------------------------------------------*/
 	InitializeSceneParameters();
+	/*-------------------------------------------------------------------
+	-                    RenderingEngine
+	---------------------------------------------------------------------*/
 	InitializeRenderingEngine();
-	bloom.Initialize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
-	bloom.UpdateBloomPower(3);
-	for (int i = 0; i < postEffects.size(); ++i) { postEffects[i].Initialize((PostEffectBlendStateType)i); }
+	/*-------------------------------------------------------------------
+	-                    Bloom
+	---------------------------------------------------------------------*/
+	_bloom.get()->Initialize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
+	_bloom.get()->UpdateBloomPower(3);
+	/*-------------------------------------------------------------------
+	-                    PostEffect
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < _postEffects.size(); ++i) { _postEffects[i]->Initialize((PostEffectBlendStateType)i); }
 
 	_directX12.CompleteInitialize();
 	
@@ -136,10 +157,9 @@ void MainRenderScene::Draw()
 	---------------------------------------------------------------------*/
 	if (isBloom)
 	{
-		bloom.OnResize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
-		bloom.Draw();
+		_bloom.get()->OnResize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
+		_bloom.get()->Draw();
 	}
-	
 
 	//_fader.get()->Draw(*_gameTimer, projView);
 	/*-------------------------------------------------------------------
@@ -149,8 +169,8 @@ void MainRenderScene::Draw()
 
 	if (_postEffectIndex != (int)PostEffectBlendStateType::None)
 	{
-		postEffects[_postEffectIndex].OnResize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
-		postEffects[_postEffectIndex].Draw();
+		_postEffects[_postEffectIndex].get()->OnResize(_screen.GetScreenWidth(), _screen.GetScreenHeight());
+		_postEffects[_postEffectIndex].get()->Draw();
 	}
 
 
@@ -166,12 +186,53 @@ void MainRenderScene::Draw()
 *****************************************************************************/
 void MainRenderScene::Terminate()
 {
-	delete _frameResource;
+	/*-------------------------------------------------------------------
+	-           Clear 3DModel 
+	---------------------------------------------------------------------*/
+	_stage.get ()->Finalize(); _stage.reset();
+	_miku .get ()->Finalize(); _miku .reset();
+	_skybox.get()->Finalize(); _skybox.reset();
+	ModelTableManager ::Instance().Clear();
+	MotionTableManager::Instance().Clear();
+	
+	/*-------------------------------------------------------------------
+	-           Clear PostEffects
+	---------------------------------------------------------------------*/
+	_bloom.get()->Finalize(); _bloom.reset();
+	for (auto& postEffect : _postEffects)
+	{
+		postEffect.get()->Finalize();
+		postEffect.reset();
+	}
+	_postEffects.clear(); _postEffects.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-           Clear text
+	---------------------------------------------------------------------*/
+	_explainTexts.clear(); _explainTexts.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-           Reset Clear AllRendering Pass
+	---------------------------------------------------------------------*/
+	_renderingEngine.ClearAllRenderingPass();
+	/*-------------------------------------------------------------------
+	-           Clear GameObjects
+	---------------------------------------------------------------------*/
 	GameObject::ClearAllGameObjects();
 	//audio.Stop();
-	_renderingEngine.ClearAllRenderingPass();
-	_directX12.ResetCommandList();
+	/*-------------------------------------------------------------------
+	-           Clear texture table
+	---------------------------------------------------------------------*/
 	TextureTableManager::Instance().ClearTextureTable();
+	/*-------------------------------------------------------------------
+	-           Set Resource Nullptr
+	---------------------------------------------------------------------*/
+	_whiteTexture.Resource = nullptr;
+	_frameResource->Finalize();
+	delete _frameResource; _frameResource = nullptr;
+	/*-------------------------------------------------------------------
+	-           Reset CommandList
+	---------------------------------------------------------------------*/
+	_directX12.ResetCommandList();
+
 }
 
 #pragma region Private Function
@@ -261,6 +322,18 @@ bool MainRenderScene::LoadMaterials(GameTimer& gameTimer)
 	_miku.get()->SetWorldTimer(gameTimer);
 	_miku.get()->EnableAmbientOcculusionMap(true);
 	_miku.get()->SetPosition(0, 0, 10);
+
+	/*-------------------------------------------------------------------
+	-           Explain Text
+	---------------------------------------------------------------------*/
+	_explainTexts.resize(_explainRows);
+	_explainTexts[0] = L"WASD: Move";
+	_explainTexts[1] = L"Mouse: Rotate";
+	_explainTexts[2] = L"I: Bloom On and Off";
+	_explainTexts[3] = L"O: Dance";
+	_explainTexts[4] = L"P: Change PostEffect";
+	_explainTexts[5] = L"Enter: Back Title";
+	_explainTexts[6] = L"T: Hide text";
 	return true;
 }
 
@@ -275,6 +348,7 @@ bool MainRenderScene::LoadMaterials(GameTimer& gameTimer)
 *****************************************************************************/
 bool MainRenderScene::InitializeRenderingEngine()
 {
+	_renderingEngine.OnAfterSceneTransition();
 	_renderingEngine.SetSceneGPUAddress(_frameResource->SceneConstantsBuffer.get()->Resource()->GetGPUVirtualAddress());
 	_renderingEngine.AddObjectToForwardRenderer(*_stage.get());
 	_renderingEngine.AddObjectToForwardRenderer(*_miku.get());
@@ -298,8 +372,8 @@ bool MainRenderScene::InitializeLights()
 {
 	_renderingEngine.SetDirectionalLight(0, DirectionalLight(Float3(1.0f, -1.0f, 1), 1.15f, Float3(1.0f, 0.9f, 0.9f)));
 	_renderingEngine.SetDirectionalLight(1, DirectionalLight(Float3(-1.0f, -1.0f, 1), 1.15f, Float3(1.0f, 0.9f, 0.9f)));
-	//_renderingEngine.SetDirectionalLight(2, DirectionalLight(Float3(-1.0f, -1.0f, -1), 1.15f, Float3(1.0f, 0.9f, 0.9f)));
-	//_renderingEngine.SetDirectionalLight(3, DirectionalLight(Float3(1.0f, -1.0f, -1), 1.15f, Float3(1.0f, 0.9f, 0.9f)));
+	_renderingEngine.SetDirectionalLight(2, DirectionalLight(Float3(-1.0f, -1.0f, -1), 1.15f, Float3(1.0f, 0.9f, 0.9f)));
+	_renderingEngine.SetDirectionalLight(3, DirectionalLight(Float3(1.0f, -1.0f, -1), 1.15f, Float3(1.0f, 0.9f, 0.9f)));
 	return true;
 }
 #pragma endregion Initialize
@@ -317,50 +391,66 @@ void MainRenderScene::OnKeyboardInput()
 	const float deltaTime = _gameTimer->DeltaTime();
 
 	/*-------------------------------------------------------------------
-	-           Keyboad Input W
+	-           Keyboad Input W (Move Camera )
 	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsPress(DIK_W))
 	{
 		_fpsCamera.Walk(ACTION_SPEED * deltaTime);
 	}
-
+	/*-------------------------------------------------------------------
+	-           Keyboad Input S (Move Camera)
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsPress(DIK_S))
 	{
 		_fpsCamera.Walk(-ACTION_SPEED * deltaTime);
 	}
-	
+	/*-------------------------------------------------------------------
+	-           Keyboad Input D (Move Camera)
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsPress(DIK_D))
 	{
 		_fpsCamera.Strafe(ACTION_SPEED * deltaTime);
 	}
-
+	/*-------------------------------------------------------------------
+	-           Keyboad Input A (Move Camera)
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsPress(DIK_A))
 	{
 		_fpsCamera.Strafe(-ACTION_SPEED * deltaTime);
 	}
-
+	/*-------------------------------------------------------------------
+	-           Keyboad Input T (Shot Text)
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_T))
 	{
 		_enabledExplainText = _enabledExplainText ? false : true;
 	}
-	
+	/*-------------------------------------------------------------------
+	-           Keyboad Input P (Change Post Effect)
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_P))
 	{
-		_postEffectIndex = (_postEffectIndex + 1) % postEffects.size();
+		_postEffectIndex = (_postEffectIndex + 1) % _postEffects.size();
 	}
-
+	/*-------------------------------------------------------------------
+	-           Keyboad Input O (Pose)
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_O))
 	{
 		//audio.LoadSound(L"Resources/Audio/oddsends.wav", SoundType::BGM);
 		//audio.Play();
 		_miku.get()->StartAnimation(L"pose");
 	}
-
-	if (_gameInput.GetKeyboard().IsTrigger(DIK_1))
+	/*-------------------------------------------------------------------
+	-           Keyboad Input I (Bloom On or off)
+	---------------------------------------------------------------------*/
+	if (_gameInput.GetKeyboard().IsTrigger(DIK_I))
 	{
 		isBloom = isBloom ? false : true;
 	}
-
+	/*-------------------------------------------------------------------
+	-           Keyboad Input Return Key
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_RETURN))
 	{
 		_hasExecutedSceneTransition = true;
@@ -460,12 +550,10 @@ void MainRenderScene::DrawExplainText()
 		-           Draw Text
 		---------------------------------------------------------------------*/
 		_renderingEngine.DrawTextStart();
-		_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(L"WASD: Move"          , charSize, charDefaultPosition, 0.0f), Float4(1, 1, 1, 1));
-		_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(L"Mouse: Rotate"       , charSize, Float3(charDefaultPosition.x, charDefaultPosition.y - verticalSpace, charDefaultPosition.z), 0.0f), Float4(1, 1, 1, 1));
-		_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(L"O: Dance"            , charSize, Float3(charDefaultPosition.x, charDefaultPosition.y - 2 * verticalSpace, charDefaultPosition.z), 0.0f), Float4(1, 1, 1, 1));
-		_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(L"P: Change postEffect", charSize, Float3(charDefaultPosition.x, charDefaultPosition.y - 3 * verticalSpace, charDefaultPosition.z), 0.0f), Float4(1, 1, 1, 1));
-		_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(L"Enter: Back Title"   , charSize, Float3(charDefaultPosition.x, charDefaultPosition.y - 4 * verticalSpace, charDefaultPosition.z), 0.0f), Float4(1, 1, 1, 1));
-		_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(L"T: Hide text"        , charSize, Float3(charDefaultPosition.x, charDefaultPosition.y - 5 * verticalSpace, charDefaultPosition.z), 0.0f), Float4(1, 1, 1, 1));
+		for (int i = 0; i < _explainTexts.size(); ++i)
+		{
+			_renderingEngine.DrawString2D(FontType::GenNoKaku_Gothic_English, TextString(_explainTexts[i], charSize, Float3(charDefaultPosition.x, charDefaultPosition.y - i * verticalSpace, charDefaultPosition.z), 0.0f), Float4(1, 1, 1, 1));
+		}
 		_renderingEngine.DrawTextEnd();
 
 	}

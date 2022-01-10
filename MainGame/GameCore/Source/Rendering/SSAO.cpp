@@ -42,7 +42,7 @@ SSAO::SSAO()
 
 SSAO::~SSAO()
 {
-
+	
 }
 
 #pragma region Public Function
@@ -72,6 +72,39 @@ bool SSAO::Initialize(int width, int height, ColorBuffer& normalMap, ColorBuffer
 
 	_initialized = true;
 	return true; 
+}
+
+void SSAO::Finalize()
+{
+	/*-------------------------------------------------------------------
+	-               Clear blur
+	---------------------------------------------------------------------*/
+	_blur.get()->Finalize(); _blur.reset();
+	_parameterBuffer.get()->Resource()->Release();
+	_parameterBuffer.reset();
+	/*-------------------------------------------------------------------
+	-               Clear Random Map
+	---------------------------------------------------------------------*/
+	_randomMap.get()->GetColorBuffer().Resource = nullptr;
+	_randomMap.reset();
+	/*-------------------------------------------------------------------
+	-               Clear Upload buffer
+	---------------------------------------------------------------------*/
+	_uploadBuffer = nullptr;
+	/*-------------------------------------------------------------------
+	-               Clear PipelineState
+	---------------------------------------------------------------------*/
+	_rootSignature = nullptr;
+	_pipeline      = nullptr;
+	_vertexShader  = nullptr;
+	_pixelShader   = nullptr;
+	/*-------------------------------------------------------------------
+	-               Clear Color buffer
+	---------------------------------------------------------------------*/
+	_colorBuffer.GetColorBuffer().Resource         = nullptr;
+	_normalMap                                     = nullptr;
+	_depthMap                                      = nullptr;
+	_ambientMap.GetColorBuffer().Resource          = nullptr;
 }
 
 /****************************************************************************
@@ -190,6 +223,7 @@ bool SSAO::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)sampler.size(), sampler.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"SSAO::RootSignature");
 	return true;
 }
 
@@ -226,7 +260,8 @@ bool SSAO::PreparePipelineState()
 	pipelineState.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	pipelineState.DSVFormat = DXGI_FORMAT_UNKNOWN;
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipelineState, IID_PPV_ARGS(&_pipeline)));
-	
+	_pipeline->SetName(L"SSAO::PipelineState");
+
 	return true;
 }
 
@@ -246,8 +281,8 @@ bool SSAO::PrepareResources(int width, int height)
 	clearColor[1] = gm::color::SteelBlue.f[1];
 	clearColor[2] = gm::color::SteelBlue.f[2];
 	clearColor[3] = gm::color::SteelBlue.f[3];
-	_colorBuffer.Create(static_cast<int>(_normalMap->GetTextureSize().x), static_cast<int>(_normalMap->GetTextureSize().y), DirectX12::Instance().GetBackBufferRenderFormat(), clearColor);
-	_ambientMap .Create(static_cast<int>(_normalMap->GetTextureSize().x), static_cast<int>(_normalMap->GetTextureSize().y), DirectX12::Instance().GetBackBufferRenderFormat());
+	_colorBuffer.Create(static_cast<int>(_normalMap->GetTextureSize().x), static_cast<int>(_normalMap->GetTextureSize().y), DirectX12::Instance().GetBackBufferRenderFormat(), clearColor, L"SSAO::ColorBuffer");
+	_ambientMap .Create(static_cast<int>(_normalMap->GetTextureSize().x), static_cast<int>(_normalMap->GetTextureSize().y), DirectX12::Instance().GetBackBufferRenderFormat(), nullptr, L"SSAO::AmbientMap");
 	return true;
 }
 
@@ -296,7 +331,7 @@ bool SSAO::PrepareParameterBuffer(int width, int height)
 	}
 
 	_parameter = parameter;
-	auto parameterBuffer = std::make_unique<UploadBuffer<SSAOParameter>>(DirectX12::Instance().GetDevice(), 1, true);
+	auto parameterBuffer = std::make_unique<UploadBuffer<SSAOParameter>>(DirectX12::Instance().GetDevice(), 1, true, L"SSAO::SSAOParameter");
 	parameterBuffer.get()->CopyStart();
 	parameterBuffer.get()->CopyData(0, parameter);
 	parameterBuffer.get()->CopyEnd();
@@ -314,7 +349,7 @@ bool SSAO::PrepareParameterBuffer(int width, int height)
 *****************************************************************************/
 bool SSAO::PrepareRandomTexture()
 {
-	_randomMap.get()->Create(256, 256, DXGI_FORMAT_R8G8B8A8_UNORM);
+	_randomMap.get()->Create(256, 256, DXGI_FORMAT_R8G8B8A8_UNORM, nullptr , L"SSAO::RandomMap");
 
 	/*-------------------------------------------------------------------
 	-			 Prepare intermediate upload buffer

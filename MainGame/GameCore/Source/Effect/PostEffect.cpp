@@ -18,12 +18,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 RootSignatureComPtr PostEffect::_defaultRootSignature = nullptr;
 PipelineStateComPtr PostEffect::_defaultPipelineState = nullptr;
+#define POSTEFFECT_NAME L"PostEffect"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
 using namespace gm;
 
+PostEffect::~PostEffect()
+{
+	
+}
 /****************************************************************************
 *                       Initialize
 *************************************************************************//**
@@ -32,20 +37,105 @@ using namespace gm;
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool PostEffect::Initialize(PostEffectBlendStateType type)
+bool PostEffect::Initialize(PostEffectBlendStateType type, const std::wstring& addName)
 {
+	if (_hasInitialized) { return true; }
+
 	_colorBuffer.resize(1);
+	/*-------------------------------------------------------------------
+	-                 Set Addname
+	---------------------------------------------------------------------*/
+	if (addName != L"") { _addName = addName; _addName += L"::"; }
+	/*-------------------------------------------------------------------
+	-                 Prepare RootSignature
+	---------------------------------------------------------------------*/
 	if (!PrepareRootSignature(type))  { return false; } // empty rootSignature
+	/*-------------------------------------------------------------------
+	-                 Prepare PipelineState
+	---------------------------------------------------------------------*/
 	if (!PreparePipelineState(type))  { return false; } // empty pipelineState
+	/*-------------------------------------------------------------------
+	-                 Prepare VertexBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareVertexBuffer())   { return false; }
+	/*-------------------------------------------------------------------
+	-                 Prepare Index Buffer
+	---------------------------------------------------------------------*/
 	if (!PrepareIndexBuffer())    { return false; }
+	/*-------------------------------------------------------------------
+	-                 Prepare Constant Buffer
+	---------------------------------------------------------------------*/
 	if (!PrepareConstantBuffer()) { return false; }
+	/*-------------------------------------------------------------------
+	-                 Prepare Sprite
+	---------------------------------------------------------------------*/
 	if (!PrepareSprite())         { return false; }
+	/*-------------------------------------------------------------------
+	-                 Prepare Resource
+	---------------------------------------------------------------------*/
 	if (!PrepareResources())      { return false; }
+	/*-------------------------------------------------------------------
+	-                 Prepare Descriptor
+	---------------------------------------------------------------------*/
 	if (!PrepareDescriptors())    { return false; }
+
+	_hasInitialized = true;
 	return true;
 }
+/****************************************************************************
+*                       Finalize
+*************************************************************************//**
+*  @fn        bool PostEffect::Finalize()
+*  @brief     Post Effect Finalize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void PostEffect::Finalize()
+{
+	/*-------------------------------------------------------------------
+	-                      Clear ColorBuffer
+	---------------------------------------------------------------------*/
+	for (auto& colorBuffer : _colorBuffer) { colorBuffer.GetColorBuffer().Resource = nullptr; }
+	_colorBuffer.clear(); _colorBuffer.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                      Clear Vertex and Mesh Buffer
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i)
+	{
+		_vertexBuffer[i].get()->Resource()->Release();
+		_vertexBuffer[i].reset();
+		_meshBuffer[i].get()->Dispose();
+		_meshBuffer[i].reset();
+	}
+	/*-------------------------------------------------------------------
+	-                      Clear Matrix4Buffer
+	---------------------------------------------------------------------*/
+	_constantBuffer.get()->Resource()->Release();
+	_constantBuffer.reset();
+	/*-------------------------------------------------------------------
+	-                      Clear RootSignature
+	---------------------------------------------------------------------*/
+	_rootSignature = nullptr;
+	/*-------------------------------------------------------------------
+	-                      Clear PipelineState
+	---------------------------------------------------------------------*/
+	_pipelineState = nullptr;
 
+}
+void PostEffect::ClearDefaultPipelineState()
+{
+	_defaultPipelineState = nullptr;
+	_defaultRootSignature = nullptr;
+}
+/****************************************************************************
+*                       OnResize
+*************************************************************************//**
+*  @fn        bool PostEffect::OnResize(int newWidth, int newHeight)
+*  @brief     Resize post effect color buffer
+*  @param[in] int width
+*  @param[in] int height
+*  @return 　　bool
+*****************************************************************************/
 bool PostEffect::OnResize(int newWidth, int newHeight)
 {
 	if (_colorBuffer[0].GetColorBuffer().ImageSize.x != newWidth 
@@ -62,7 +152,8 @@ bool PostEffect::OnResize(int newWidth, int newHeight)
 *************************************************************************//**
 *  @fn        bool PostEffect::Draw()
 *  @brief     Post Effect Drawing
-*  @param[in] void
+*  @param[in,out] Resource* renderTarget
+*  @param[in] D3D12_RESOURCE_STATE renderTargetState
 *  @return 　　bool
 *****************************************************************************/
 bool PostEffect::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
@@ -111,7 +202,14 @@ bool PostEffect::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTarget
 	_vertexBuffer[currentFrameIndex].get()->CopyEnd();
 	return true;
 }
-
+/****************************************************************************
+*                       Draw
+*************************************************************************//**
+*  @fn        bool PostEffect::Draw()
+*  @brief     Post Effect Drawing
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool PostEffect::Draw()
 {
 	return Draw(DirectX12::Instance().GetCurrentRenderTarget(), D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -146,6 +244,11 @@ bool PostEffect::PrepareRootSignature(PostEffectBlendStateType type)
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_defaultRootSignature);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
 
+	/*-------------------------------------------------------------------
+	-			Set Name
+	---------------------------------------------------------------------*/
+	std::wstring name = _addName + POSTEFFECT_NAME + L"::RootSignature";
+	_rootSignature->SetName(name.c_str());
 	return true;
 }
 
@@ -177,8 +280,14 @@ bool PostEffect::PreparePipelineState(PostEffectBlendStateType type)
 		};
 		pipeLineState.BlendState = GetBlendDesc(PostEffectBlendStateType::None);
 		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_defaultPipelineState)));
+
+		std::wstring name = _addName + POSTEFFECT_NAME + L"DefaultPipelineState";
+		_defaultPipelineState->SetName(name.c_str());
 	}
 	
+	/*-------------------------------------------------------------------
+	-                   Set pipelineState
+	---------------------------------------------------------------------*/
 	pipeLineState.pRootSignature = _rootSignature.Get();
 	pipeLineState.VS =
 	{
@@ -192,6 +301,8 @@ bool PostEffect::PreparePipelineState(PostEffectBlendStateType type)
 	};
 	pipeLineState.BlendState = GetBlendDesc(type);
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelineState)));
+	std::wstring name = _addName + POSTEFFECT_NAME + L"PipelineState";
+	_pipelineState->SetName(name.c_str());
 	return true;
 }
 
@@ -210,7 +321,7 @@ bool PostEffect::PrepareVertexBuffer()
 	for (int i = 0; i < FRAME_BUFFER_COUNT; ++i)
 	{
 		VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4];
-		auto vertexBuffer = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), 4, false);
+		auto vertexBuffer = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), 4, false, _addName + L"PostEffect::VertexBuffer");
 		auto meshBuffer   = std::make_unique<MeshBuffer>();
 		/*-------------------------------------------------------------------
 		-			Vertex data initialize
@@ -252,7 +363,7 @@ bool PostEffect::PrepareVertexBuffer()
 /****************************************************************************
 *                       PrepareIndexBuffer
 *************************************************************************//**
-*  @fn        bool Fader::PrepareIndexBuffer()
+*  @fn        bool PostEffect::PrepareIndexBuffer()
 *  @brief     Prepare index buffer. (indexNum: 6)
 *  @param[in] void
 *  @return 　　bool
@@ -275,7 +386,7 @@ bool PostEffect::PrepareIndexBuffer()
 	-			Build CPU / GPU Index Buffer
 	---------------------------------------------------------------------*/
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(UINT16);
-	_meshBuffer[0].get()->IndexBufferGPU = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].get()->IndexBufferUploader).Resource();
+	_meshBuffer[0].get()->IndexBufferGPU = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].get()->IndexBufferUploader, _addName + L"PostEffect::IndexBuffer").Resource();
 	_meshBuffer[0].get()->IndexFormat = DXGI_FORMAT_R16_UINT;
 	_meshBuffer[0].get()->IndexBufferByteSize = ibByteSize;
 	if (FAILED(D3DCreateBlob(ibByteSize, &_meshBuffer[0].get()->IndexBufferCPU)))
@@ -316,7 +427,7 @@ bool PostEffect::PrepareConstantBuffer()
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	auto constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
+	auto constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true, _addName + L"PostEffect::Matrix4::UploadBuffer");
 	constantBuffer->CopyStart();
 	constantBuffer->CopyData(0, MatrixIdentity());
 	constantBuffer->CopyEnd();
@@ -336,7 +447,6 @@ bool PostEffect::PrepareConstantBuffer()
 	_constantBuffer = std::move(constantBuffer);
 	return true;
 }
-
 /****************************************************************************
 *                       PrepareSprite
 *************************************************************************//**
@@ -361,7 +471,7 @@ bool PostEffect::PrepareSprite()
 bool PostEffect::PrepareResources()
 {
 	Screen screen;
-	_colorBuffer[0].Create(screen.GetScreenWidth(), screen.GetScreenHeight(), DirectX12::Instance().GetBackBufferRenderFormat());
+	_colorBuffer[0].Create(screen.GetScreenWidth(), screen.GetScreenHeight(), DirectX12::Instance().GetBackBufferRenderFormat(),nullptr, L"PostEffect");
 	return true;
 }
 

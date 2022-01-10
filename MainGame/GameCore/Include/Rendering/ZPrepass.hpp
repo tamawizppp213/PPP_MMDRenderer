@@ -35,6 +35,7 @@ public:
 	bool Initialize(int width, int height);
 	bool OnResize(int newWidth, int newHeight);
 	bool Draw(D3D12_GPU_VIRTUAL_ADDRESS scene);
+	void Finalize();
 
 	bool ClearActors();
 	bool ClearActor(GameActor& actor);

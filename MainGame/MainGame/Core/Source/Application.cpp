@@ -68,9 +68,9 @@ void Application::Run()
 
 void Application::Terminate()
 {
+	_gameManager.Instance().GameEnd();
 	_gameAudio.Finalize();
 	_gameInput.Finalize();
-	_gameManager.Instance().GameEnd();
 }
 
 #pragma region Private Function

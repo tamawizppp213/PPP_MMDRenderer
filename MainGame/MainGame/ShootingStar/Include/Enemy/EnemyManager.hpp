@@ -41,7 +41,7 @@ public:
 	void Initialize();
 	void Update(GameTimer& gameTimer, const Player& player);
 	void GetDrawMaterial(EnemyType type, std::vector<Sprite>& sprite, Texture& texture);
-	void Terminal();
+	void Terminate();
 	void GenerateEnemy(EnemyType type, const gm::Vector3& position);
 
 	int GetEnemyDefaultCount() { return _enemyDefaultCount; }

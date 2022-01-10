@@ -44,6 +44,7 @@ public:
 	void Initialize() override;
 	void Update(GameTimer& gameTimer, const Player& player) override;
 	void Reset() override;
+	void Finalize() override;
 	bool Generate(const gm::Vector3& position) override;
 	/****************************************************************************
 	**                Public Member Variables
@@ -99,7 +100,7 @@ private:
 	gm::Vector3 _previousPlayerPosition;
 	gm::Vector3 _previousEnemyPosition;
 
-	const int _defaultHP = 100;
+	const int _defaultHP = 200;
 };
 
 #endif

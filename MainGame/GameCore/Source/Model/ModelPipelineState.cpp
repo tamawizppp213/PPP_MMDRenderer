@@ -49,6 +49,16 @@ ModelPSOManager::ModelPSOManager()
 	BuildModelPipelines();
 }
 #pragma region Public Function
+void ModelPSOManager::Clear()
+{
+	for (auto& model : _model)
+	{
+		model.Dispose();
+	}
+	_model.clear();
+	_model.shrink_to_fit();
+
+}
 /****************************************************************************
 *                            BuildCubemapPipelines
 *************************************************************************//**
@@ -279,6 +289,7 @@ namespace model
 			model.PixelShader->GetBufferSize()
 		};
 		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&model.PipeLineState)));
+		model.PipeLineState->SetName(L"PrimitiveModel::PipelineState");
 		return true;
 	}
 
@@ -333,6 +344,7 @@ namespace model
 		ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)(samplerDesc.size()), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 		rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &model.RootSignature);
+		model.RootSignature->SetName(L"PrimitiveModel::RootSignature");
 		return true;
 	}
 #pragma endregion Primitive
@@ -374,6 +386,7 @@ namespace model
 			model.PixelShader->GetBufferSize()
 		};
 		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&model.PipeLineState)));
+		model.PipeLineState->SetName(L"PMDModel::PipelineState");
 		return true;
 	}
 
@@ -414,6 +427,7 @@ namespace model
 			model.PixelShader->GetBufferSize()
 		};
 		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&model.PipeLineState)));
+		model.PipeLineState->SetName(L"PMXModel::PipelineState");
 		return true;
 	}
 
@@ -475,6 +489,7 @@ namespace model
 		ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 		rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &model.RootSignature);
+		model.RootSignature->SetName(L"PMDModel::RootSignature");
 		return true;
 	}
 
@@ -542,6 +557,7 @@ namespace model
 		ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)(samplerDesc.size()), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 		rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &model.RootSignature);
+		model.RootSignature->SetName(L"PMXModel::RootSignature");
 		return true;
 	}
 

@@ -153,7 +153,10 @@ public:
 	**                Constructor and Destructor
 	*****************************************************************************/
 	Skybox()  = default;
-	~Skybox() = default;
+	~Skybox()
+	{
+		_texture.~Texture();
+	}
 private:
 	/****************************************************************************
 	**                Private Function

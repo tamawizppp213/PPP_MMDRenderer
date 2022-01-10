@@ -46,7 +46,7 @@ public:
 	bool OnResize(int newWidth, int newHeight) override;
 	bool Draw()     override;
 	bool Draw(Resource* renderTarget, Resource* zPrepass, D3D12_RESOURCE_STATES renderTargetState = D3D12_RESOURCE_STATE_COMMON);
-
+	void Finalize() override;
 	
 	/****************************************************************************
 	**                Public Member Variables

@@ -24,6 +24,7 @@ using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //                          Implement
 //////////////////////////////////////////////////////////////////////////////////
+
 ShootingStarIntroduction::ShootingStarIntroduction()
 {
 	_spriteRenderer  = std::make_unique<SpriteRenderer>();
@@ -97,11 +98,24 @@ void ShootingStarIntroduction::Draw()
 *****************************************************************************/
 void ShootingStarIntroduction::Terminate()
 {
-	_audioSource.get()->Stop();
-	_directX12.ResetCommandList();
-	TextureTableManager::Instance().ClearTextureTable();
+	/*-------------------------------------------------------------------
+	-           Clear Audio Resource
+	---------------------------------------------------------------------*/
+	_audioSource.get()->Stop(); _audioSource.reset();
 	AudioTableManager::Instance().ClearAudioTable();
+	/*-------------------------------------------------------------------
+	-           Clear Texture Resource
+	---------------------------------------------------------------------*/
+	TextureTableManager::Instance().ClearTextureTable();
+	_spriteRenderer.get()->Finalize(); _spriteRenderer.reset();
+	_textRenderer  .get()->Finalize(); _textRenderer  .reset();
+	_backGround.Clear();
+	for (auto& how : _howToManipulate) { how.reset(); }
+	_howToManipulate.clear(); _howToManipulate.shrink_to_fit();
+	_title          .reset();
+	_clickButtonText.reset();
 
+	_directX12.ResetCommandList();
 }
 
 /****************************************************************************
@@ -131,8 +145,6 @@ bool ShootingStarIntroduction::LoadMaterials(GameTimer& gameTimer)
 	-           Audio Source
 	---------------------------------------------------------------------*/
 	_audioSource.get()->LoadSound(L"Resources/Audio/Default/Œˆ’è.wav", SoundType::SE);
-
-
 
 	return true;
 }

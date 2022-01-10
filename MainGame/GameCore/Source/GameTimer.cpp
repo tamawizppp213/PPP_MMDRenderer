@@ -31,6 +31,15 @@ GameTimer::GameTimer() :
 	_stopped = false;
 	
 }
+
+/****************************************************************************
+*                       TotalTime
+*************************************************************************//**
+*  @fn        float GameTimer::TotalTime() const 
+*  @brief     Return totalTime
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 float GameTimer::TotalTime() const
 {
 
@@ -61,12 +70,26 @@ float GameTimer::TotalTime() const
 		return (float)(((_currentTime - _pausedTime) - _baseTime) * _secondsPerCount);
 	}
 }
-
+/****************************************************************************
+*                       DeltaTime
+*************************************************************************//**
+*  @fn        float GameTimer::DeltaTime() const 
+*  @brief     Return deltaTime
+*  @param[in] void
+*  @return 　　float
+*****************************************************************************/
 float GameTimer::DeltaTime() const
 {
 	return static_cast<float>(_deltaTime);
 }
-
+/****************************************************************************
+*                       Reset
+*************************************************************************//**
+*  @fn        void GameTimer::Reset()
+*  @brief     Reset GameTimer
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void GameTimer::Reset()
 {
 	__int64 currentTime = 0;
@@ -78,7 +101,14 @@ void GameTimer::Reset()
 	_stopped      = false;
 
 }
-
+/****************************************************************************
+*                       Start
+*************************************************************************//**
+*  @fn        void GameTimer::Start()
+*  @brief     Start GameTimer
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void GameTimer::Start()
 {
 	__int64 startTime = 0;
@@ -93,7 +123,14 @@ void GameTimer::Start()
 		_stopped = false;
 	}
 }
-
+/****************************************************************************
+*                       Stop
+*************************************************************************//**
+*  @fn        void GameTimer& Stop()
+*  @brief     Stop timer
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void GameTimer::Stop()
 {
 	if (!_stopped)
@@ -106,7 +143,14 @@ void GameTimer::Stop()
 	}
 
 }
-
+/****************************************************************************
+*                       Tick
+*************************************************************************//**
+*  @fn        void GameTimer::Tick()
+*  @brief     Record deltaTime and previous frame 
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void GameTimer::Tick()
 {
 	if (_stopped)
@@ -119,10 +163,14 @@ void GameTimer::Tick()
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 	_currentTime = currentTime;
 
-	// Time difference between this frame and the previous.
+	/*-------------------------------------------------------------------
+	-            Time difference between this frame and the previous.
+	---------------------------------------------------------------------*/
 	_deltaTime = (_currentTime - _previousTime) * _secondsPerCount;
 
-	// Prepare for next frame.
+	/*-------------------------------------------------------------------
+	-              Prepare for next frame.
+	---------------------------------------------------------------------*/
 	_previousTime = _currentTime;
 
 	// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
@@ -134,21 +182,35 @@ void GameTimer::Tick()
 	}
 
 }
-
+/****************************************************************************
+*                       AvrageFrame
+*************************************************************************//**
+*  @fn        void GameTimer::Average(const HWND& hwnd)
+*  @brief     Show average fps
+*  @param[in] HWND& hwnd
+*  @return 　　void
+*****************************************************************************/
 void GameTimer::AverageFrame(const HWND &hwnd)
 {
-	// Show Average Frame
+	/*-------------------------------------------------------------------
+	-              Show Average Frame
+	---------------------------------------------------------------------*/
 	static int frameCount    = 0;
 	static float timeElapsed = 0.0f;
 
 	frameCount++;
 
-	// Compute averages over one second period
+	/*-------------------------------------------------------------------
+	-              Compute averages over one second period
+	---------------------------------------------------------------------*/
 	if ((TotalTime() - timeElapsed) >= 1.0f)
 	{
 		float fps  = (float)frameCount;
 		float mspf = 1000.0f / fps;
 
+		/*-------------------------------------------------------------------
+		-              Set fps and mspf string
+		---------------------------------------------------------------------*/
 		std::wstring fpsString  = std::to_wstring(fps);
 		std::wstring mspfString = std::to_wstring(mspf);
 
@@ -156,9 +218,14 @@ void GameTimer::AverageFrame(const HWND &hwnd)
 			L"    fps: " + fpsString +
 			L"   mspf: " + mspfString;
 
+		/*-------------------------------------------------------------------
+		-              Set WindowText
+		---------------------------------------------------------------------*/
 		SetWindowText(hwnd, windowText.c_str());
 
-		// Reset for next average
+		/*-------------------------------------------------------------------
+		-              Reset for next average
+		---------------------------------------------------------------------*/
 		frameCount   = 0;
 		timeElapsed += 1.0f;
 	}

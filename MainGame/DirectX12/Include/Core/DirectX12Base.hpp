@@ -32,6 +32,7 @@ public:
 	*****************************************************************************/
 	void Initialize(HWND hwnd);
 	void OnResize();
+	void Finalize();
 	void ClearScreen();
 	void CompleteInitialize();
 	void CopyTextureToBackBuffer(Resource* resource, D3D12_RESOURCE_STATES resourceState = D3D12_RESOURCE_STATE_COMMON);
@@ -74,6 +75,7 @@ public:
 	void SetHWND(HWND hwnd);
 	HWND GetHWND() const;
 
+	void ReportLiveObjects();
 #pragma endregion Property
 	// Constructor
 	//DirectX12() = default;
@@ -100,7 +102,7 @@ private:
 	**                Private Function
 	*****************************************************************************/
 	DirectX12()  = default;
-	~DirectX12() = default;
+	~DirectX12();
 	void LoadPipeLine();
 	void LoadAssets();
 	
@@ -130,7 +132,7 @@ private:
 #pragma region Debug
 	void EnabledDebugLayer();
 	void EnabledGPUBasedValidation();
-	
+
 	void LogAdapters();
 	void LogAdapterOutputs(Adapter* adapter);
 	void LogOutputDisplayModes(Output* output, DXGI_FORMAT format);

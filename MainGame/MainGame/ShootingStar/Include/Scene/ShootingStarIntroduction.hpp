@@ -12,7 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Core/Include/Scene.hpp"
-
+#include "RenderResource.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -29,16 +29,7 @@ class ShootingStarIntroduction final : public Scene
 	using AudioSourcePtr  = std::unique_ptr<AudioSource>;
 	using TextRendererPtr = std::unique_ptr<TextRenderer>;
 	using TextStringPtr   = std::unique_ptr<TextString>;
-	struct RenderResource
-	{
-		std::unique_ptr<Sprite>  SpritePtr;
-		std::unique_ptr<Texture> TexturePtr;
-		RenderResource()
-		{
-			SpritePtr = std::make_unique<Sprite>();
-			TexturePtr = std::make_unique<Texture>();
-		}
-	};
+
 public:
 
 	/****************************************************************************
@@ -65,7 +56,6 @@ protected:
 	/****************************************************************************
 	**                Private Member Variables
 	*****************************************************************************/
-	SpriteRendererPtr _spriteRenderer = nullptr;
 	TextRendererPtr   _textRenderer   = nullptr;
 	RenderResource    _backGround;
 	AudioSourcePtr    _audioSource    = nullptr;

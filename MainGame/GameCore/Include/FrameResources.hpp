@@ -46,6 +46,7 @@ public:
 	void UpdateSceneConstants(SceneConstants* scene, const Camera* camera);
 	void UpdateMaterialConstants();
 
+	void Finalize();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

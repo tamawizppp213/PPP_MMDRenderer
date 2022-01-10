@@ -18,6 +18,10 @@ using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //                             Implement
 //////////////////////////////////////////////////////////////////////////////////
+TextRenderer::~TextRenderer()
+{
+	
+}
 #pragma region Public Function
 /****************************************************************************
 *							Initialize
@@ -31,10 +35,16 @@ bool TextRenderer::Initialize()
 {
 	FontLoader fontLoader;
 	if (!fontLoader.Initialize())      { return false; }
-	if (!SpriteRenderer::Initialize()) { return false; }
+	if (!SpriteRenderer::Initialize(FastBlendStateType::Normal, L"TextRenderer")) { return false; }
 	return true;
 }
 
+bool TextRenderer::ReloadFont()
+{
+	FontLoader::Finalize();
+	FontLoader::Initialize();
+	return true;
+}
 bool TextRenderer::DrawStart()
 {
 	if (!SpriteRenderer::DrawStart()) { return false; }
@@ -170,6 +180,8 @@ bool TextRenderer::DrawEnd()
 bool TextRenderer::Finalize()
 {
 	FontLoader fontLoader;
-	if (!fontLoader.Finalize()) { return false; }
+	if (!fontLoader.Finalize()     ) { return false; }
+	if (!SpriteRenderer::Finalize()) { return false; }
+	
 	return true;
 }

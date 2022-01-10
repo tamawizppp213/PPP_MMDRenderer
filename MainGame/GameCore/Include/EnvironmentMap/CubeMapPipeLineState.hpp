@@ -34,6 +34,16 @@ struct CubemapPipeline
 	BlobComPtr          PixelShader    = nullptr;
 	BlobComPtr          GeometryShader = nullptr;
 	CubemapType         Type           = CubemapType::STATIC;
+
+	void Dispose()
+	{
+		PipeLineState = nullptr;
+		RootSignature = nullptr;
+		VertexShader = nullptr;
+		PixelShader = nullptr;
+		GeometryShader = nullptr;
+
+	}
 };
 /****************************************************************************
 *					 CubemapPSOManager
@@ -47,6 +57,7 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
+	void Clear();
 
 	/****************************************************************************
 	**                Public Member Variables

@@ -34,7 +34,8 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(const std::wstring& filePath) override;
+	bool Initialize(const std::wstring& filePath, const std::wstring& addName = L"") override;
+	void Finalize() override;
 
 	/****************************************************************************
 	**                Public Member Variables

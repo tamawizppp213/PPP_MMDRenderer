@@ -39,6 +39,14 @@ Bullet::Bullet(BulletType type, BulletColor color)
 	_bullets.push_back(this);
 
 }
+/****************************************************************************
+*                      Initialize
+*************************************************************************//**
+*  @fn        void Bullet::Initialize()
+*  @brief     Initialize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void Bullet::Initialize()
 {
 	TextureLoader textureLoader;
@@ -46,7 +54,16 @@ void Bullet::Initialize()
 	textureLoader.LoadTexture(L"Resources/Texture/ShootingStar/shootEnemy.png", _textureColorList[(int)BulletColor::Blue]);
 	textureLoader.LoadTexture(L"Resources/Texture/ShootingStar/shootGreen.png", _textureColorList[(int)BulletColor::Green]);
 }
-
+/****************************************************************************
+*                      GenerateBullets
+*************************************************************************//**
+*  @fn        void Bullet::GenerateBullets(int bulletNu,, BulletType type, BulletColor color)
+*  @brief     Generate 
+*  @param[in] int bulletNum
+*  @param[in] BulletType type
+*  @param[in] BulletColor color
+*  @return 　　void
+*****************************************************************************/
 void Bullet::GenerateBullets(int bulletNum, BulletType type, BulletColor color)
 {
 	for (int i = 0; i < bulletNum; ++i)
@@ -54,6 +71,14 @@ void Bullet::GenerateBullets(int bulletNum, BulletType type, BulletColor color)
 		new Bullet(type, color); //deleteはDestroyが担当する. (ちゃんと呼び出すこと.)
 	}
 }
+/****************************************************************************
+*                      AllBulletsUpdate
+*************************************************************************//**
+*  @fn        void Bullet::AllBulletsUpdate(GameTimer& gameTimer)
+*  @brief     Update all bullets
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void Bullet::AllBulletsUpdate(GameTimer& gameTimer)
 {
 	/*-------------------------------------------------------------------
@@ -64,6 +89,14 @@ void Bullet::AllBulletsUpdate(GameTimer& gameTimer)
 		(*it)->Update(gameTimer);
 	}
 }
+/****************************************************************************
+*                      AllActiveBullets
+*************************************************************************//**
+*  @fn        std::vector<Bullet*> Bullet::AllActiveBullets()
+*  @brief     Return AllActiveBullets
+*  @param[in] void
+*  @return 　　std::vector<Bullet*>
+*****************************************************************************/
 std::vector<Bullet*> Bullet::AllActiveBullets()
 {
 	std::vector<Bullet*> bullets;
@@ -76,6 +109,14 @@ std::vector<Bullet*> Bullet::AllActiveBullets()
 	}
 	return bullets;
 }
+/****************************************************************************
+*                      AllActivePlayerBullets
+*************************************************************************//**
+*  @fn        std::vector<Bullet*> Bullet::AllActivePlayerBullets
+*  @brief     return active player bullets
+*  @param[in] void
+*  @return 　 std::vector<Bullet*>
+*****************************************************************************/
 std::vector<Bullet*> Bullet::AllActivePlayerBullets()
 {
 	std::vector<Bullet*> bullets;
@@ -165,8 +206,14 @@ void Bullet::ClearAllBullets()
 {
 	for (int i = 0; i < _bullets.size(); ++i)
 	{
+		_bullets[i]->GetTexture().Resource = nullptr;
 		Destroy(_bullets[i]);
 	}
-	_bullets.clear();
-	_bullets.shrink_to_fit();
+	_bullets.clear(); _bullets.shrink_to_fit();
+	
+	for (auto& texture : _textureColorList)
+	{
+		texture.Resource = nullptr;
+	}
+
 }

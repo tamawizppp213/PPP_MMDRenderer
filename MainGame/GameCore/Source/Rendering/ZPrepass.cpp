@@ -25,6 +25,10 @@ using namespace gm;
 #pragma region Public Function
 ZPrepass::~ZPrepass()
 {
+	_rootSignature = nullptr;
+	for (auto& shader : _shader) { shader.VertexShader = nullptr;  shader.PixelShader = nullptr; }
+	for (auto& pipelineState : _pipelines) { pipelineState = nullptr; }
+
 	_shader     .clear();
 	_pipelines  .clear();
 	_actors     .clear();
@@ -51,6 +55,37 @@ bool ZPrepass::Initialize(int width, int height)
 	if (!PrepareResources(width, height)) { return false; }
 	_initialized = true;
 	return true;
+}
+
+void ZPrepass::Finalize()
+{
+	/*-------------------------------------------------------------------
+	-                       ClearColorBuffer
+	---------------------------------------------------------------------*/
+	for (auto& colorBuffer : _colorBuffer) { colorBuffer.GetColorBuffer().Resource = nullptr;}
+	_colorBuffer.clear(); _colorBuffer.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                       ClearRootSignature
+	---------------------------------------------------------------------*/
+	_rootSignature = nullptr;
+	/*-------------------------------------------------------------------
+	-                       Clear PipelineState
+	---------------------------------------------------------------------*/
+	for (auto& pipeline : _pipelines) { pipeline = nullptr; }
+	_pipelines.clear(); _pipelines.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                       ClearShader
+	---------------------------------------------------------------------*/
+	for (auto& shader : _shader)
+	{
+		shader.VertexShader = nullptr;
+		shader.PixelShader = nullptr;
+	}
+	_shader.clear(); _shader.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                       ClearActors
+	---------------------------------------------------------------------*/
+	_actors.clear(); _actors.shrink_to_fit();
 }
 
 bool ZPrepass::OnResize(int newWidth, int newHeight)
@@ -194,6 +229,7 @@ bool ZPrepass::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"ZPrepass::RootSignature");
 	return true;
 }
 
@@ -227,6 +263,7 @@ bool ZPrepass::PreparePipelineState()
 	pipeLineState.BlendState = GetBlendDesc(BlendStateType::Normal);
 
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelines[0])));
+	_pipelines[0]->SetName(L"ZPrepass::PMXModel::PipelineState");
 
 	pipeLineState.InputLayout   = VertexPositionNormalTexture::InputLayout;
 	pipeLineState.VS =
@@ -240,6 +277,7 @@ bool ZPrepass::PreparePipelineState()
 		_shader[1].PixelShader->GetBufferSize()
 	};
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelines[1])));
+	_pipelines[1]->SetName(L"ZPrepass::PrimitiveModel::PipelineState");
 	return true;
 }
 
@@ -258,7 +296,7 @@ bool ZPrepass::PrepareResources(int width, int height)
 	clearColor[1] = gm::color::SteelBlue.f[1];
 	clearColor[2] = gm::color::SteelBlue.f[2];
 	clearColor[3] = gm::color::SteelBlue.f[3];
-	return _colorBuffer[0].Create(width, height, DXGI_FORMAT_R32_FLOAT, clearColor);
+	return _colorBuffer[0].Create(width, height, DXGI_FORMAT_R32_FLOAT, clearColor, L"ZPrepass::ColorBuffer");
 }
 #pragma endregion Prepare
 /****************************************************************************

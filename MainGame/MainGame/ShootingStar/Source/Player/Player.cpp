@@ -43,6 +43,11 @@ void Player::Initialize()
 	_sprite.CreateSpriteForTexture(_transform.LocalPosition.ToFloat3(), Float2(PLAYER_SIZE, PLAYER_SIZE), Float2(0, 1), Float2(0, 1));
 }
 
+void Player::Finalize()
+{
+	_texture.Resource = nullptr;
+
+}
 void Player::Update(GameTimer& gameTimer)
 {
 	if (!IsActive()) { return; }

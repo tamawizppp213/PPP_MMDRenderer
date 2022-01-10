@@ -44,6 +44,7 @@ public:
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
+	Texture& GetTexture() { return _texture; }
 	const Texture& GetTexture() const { return _texture; };
 	const Sprite&  GetSprite () const { return _sprite; }
 	void SetPosition(const gm::Vector3& position) { _transform.LocalPosition = position; }

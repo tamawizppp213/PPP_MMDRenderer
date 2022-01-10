@@ -12,7 +12,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Core/Include/Scene.hpp"
-
+#include "RenderResource.hpp"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
@@ -26,16 +26,6 @@ class ShootingStarResult final : public Scene
 {
 	using AudioSourcePtr  = std::unique_ptr<AudioSource>;
 
-	struct RenderResource
-	{
-		std::unique_ptr<Sprite>  SpritePtr;
-		std::unique_ptr<Texture> TexturePtr;
-		RenderResource()
-		{
-			SpritePtr = std::make_unique<Sprite>();
-			TexturePtr = std::make_unique<Texture>();
-		}
-	};
 public:
 
 	/****************************************************************************

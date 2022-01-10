@@ -35,7 +35,7 @@ class CoreRendererTitle final : public Scene
 		std::unique_ptr<Texture> TexturePtr;
 		RenderResource()
 		{
-			SpritePtr = std::make_unique<Sprite>();
+			SpritePtr  = std::make_unique<Sprite>();
 			TexturePtr = std::make_unique<Texture>();
 		}
 	};
@@ -71,7 +71,6 @@ protected:
 	SpriteRendererPtr _spriteRenderer  = nullptr;
 	TextRendererPtr   _textRenderer    = nullptr;
 	RenderResource    _backGround;
-	RenderResource    _titleBack;
 	TextStringPtr     _creatorText = nullptr;
 	TextStringPtr     _titleText       = nullptr;
 	float             _localTimer      = 0;       // to use text animation

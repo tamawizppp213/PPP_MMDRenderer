@@ -40,6 +40,7 @@ public:
 	*****************************************************************************/
 	void Initialize() override;
 	void Update    (GameTimer& gameTimer,const Player& player) override;
+	void Finalize() override;
 	void Reset     () override;
 	bool Generate(const gm::Vector3& position) override;
 	/****************************************************************************

@@ -57,6 +57,8 @@ public:
 	bool Initialize(int width, int height);
 	bool OnResize(int newWidth, int newHeight);
 	bool Draw();
+	void Finalize();
+	void OnAfterSceneTransition();
 
 	/*-------------------------------------------------------------------
 	-               Text Renderer

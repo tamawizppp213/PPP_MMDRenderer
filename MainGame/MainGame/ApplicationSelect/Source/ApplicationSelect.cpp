@@ -102,13 +102,37 @@ void ApplicationSelect::Draw()
 *****************************************************************************/
 void ApplicationSelect::Terminate()
 {
-	_directX12.ResetCommandList();
 	TextureTableManager::Instance().ClearTextureTable();
 	AudioTableManager  ::Instance().ClearAudioTable();
 	_localTimer = 0.0f;
 
-	_titleScreen.clear();
-	_titleScreen.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-           Set Sound Resource Nullptr
+	---------------------------------------------------------------------*/
+	//_decisionSound.get()->Stop(); _decisionSound.reset();
+	for (auto& sound : _moveSound) { sound->Stop(); sound.reset(); }
+
+	/*-------------------------------------------------------------------
+	-           Set Texture Resource Nullptr
+	---------------------------------------------------------------------*/
+	_rightArrow.TexturePtr.get()->Resource = nullptr;
+	_leftArrow .TexturePtr.get()->Resource = nullptr;
+	for (auto& titleScreen : _titleScreen) { titleScreen.TexturePtr.get()->Resource = nullptr; }
+	_titleScreen.clear(); _titleScreen.shrink_to_fit();
+
+	/*-------------------------------------------------------------------
+	-           Call Finalize Function
+	---------------------------------------------------------------------*/
+	_spriteRenderer.get()->Finalize();
+	_textRenderer  .get()->Finalize();
+
+	/*-------------------------------------------------------------------
+	-           Call Destructor
+	---------------------------------------------------------------------*/
+	_spriteRenderer.get()->~SpriteRenderer();
+	_textRenderer  .get()->~TextRenderer();
+
+	_directX12.ResetCommandList();
 }
 
 /****************************************************************************
@@ -171,19 +195,28 @@ bool ApplicationSelect::LoadMaterials(GameTimer& gameTimer)
 *****************************************************************************/
 void ApplicationSelect::OnKeyboardInput()
 {
+	/*-------------------------------------------------------------------
+	-           Right Arrow
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_RIGHTARROW))
 	{
 		_stageSelectIndex = (_stageSelectIndex + 1) % (int)ApplicationTitle::CountOfTitle;
-		_moveSoundIndex = (_moveSoundIndex + 1) % _countof(_moveSound);
+		_moveSoundIndex = ((__int64)_moveSoundIndex + 1) % _countof(_moveSound);
 		_moveSound[_moveSoundIndex].get()->Play();
 	}
+	/*-------------------------------------------------------------------
+	-           Left Affow
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_LEFTARROW))
 	{
 		int stage = _stageSelectIndex - 1;
 		_stageSelectIndex = stage >= 0 ? stage % (int)ApplicationTitle::CountOfTitle : (int)ApplicationTitle::CountOfTitle - 1;
-		_moveSoundIndex = (_moveSoundIndex + 1) % _countof(_moveSound);
+		_moveSoundIndex = ((__int64)_moveSoundIndex + 1) % _countof(_moveSound);
 		_moveSound[_moveSoundIndex].get()->Play();
 	}
+	/*-------------------------------------------------------------------
+	-           Return key
+	---------------------------------------------------------------------*/
 	if (_gameInput.GetKeyboard().IsTrigger(DIK_RETURN))
 	{
 		_hasExecutedSceneTransition = true;

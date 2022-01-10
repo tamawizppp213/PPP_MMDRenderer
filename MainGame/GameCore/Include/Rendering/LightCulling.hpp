@@ -34,19 +34,19 @@ public:
 	*****************************************************************************/
 	bool Initialize(ColorBuffer& zPrepass);
 	bool ExecuteCulling(); // scene, light buffer
-
+	void Finalize();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
 	void SetSceneGPUAddress(D3D12_GPU_VIRTUAL_ADDRESS scene) { _scene = scene; }
 	void SetLightGPUAddress(D3D12_GPU_VIRTUAL_ADDRESS light) { _light = light; }
-	RWStructuredBuffer& GetPointLightList() { return _pointLightList; }
-	RWStructuredBuffer& GetSpotLightList() { return _spotLightList; }
+	RWStructuredBuffer& GetPointLightList() { return *_pointLightList.get(); }
+	RWStructuredBuffer& GetSpotLightList() { return *_spotLightList.get(); }
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
 	LightCulling()                                = default;
-	~LightCulling()                               = default;
+	~LightCulling();
 	LightCulling(const LightCulling&)             = default;
 	LightCulling& operator=(const LightCulling&)  = default;
 	LightCulling(LightCulling&&)                  = default;
@@ -70,8 +70,8 @@ private:
 	PipelineStateComPtr _pipeline      = nullptr;
 
 	ColorBuffer* _zPrepass = nullptr;
-	RWStructuredBuffer  _pointLightList;
-	RWStructuredBuffer  _spotLightList;
+	std::unique_ptr<RWStructuredBuffer>  _pointLightList;
+	std::unique_ptr<RWStructuredBuffer>  _spotLightList;
 };
 
 #endif

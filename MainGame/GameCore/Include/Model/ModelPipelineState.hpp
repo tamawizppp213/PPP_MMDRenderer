@@ -35,6 +35,14 @@ struct ModelPipeline
 	BlobComPtr          VertexShader   = nullptr;
 	BlobComPtr          PixelShader    = nullptr;
 	ModelType           Type;
+
+	void Dispose()
+	{
+		PipeLineState = nullptr;
+		RootSignature = nullptr;
+		VertexShader  = nullptr;
+		PixelShader    = nullptr;
+	}
 };
 /****************************************************************************
 *					 ModelPSOManager
@@ -48,6 +56,7 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
+	void Clear();
 
 	/****************************************************************************
 	**                Public Member Variables

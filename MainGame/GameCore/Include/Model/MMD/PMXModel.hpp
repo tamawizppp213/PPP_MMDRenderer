@@ -60,8 +60,6 @@ class PMXModel : public DefaultModel
 	using IndexBuffer          = std::unique_ptr<UploadBuffer<UINT32>>;
 	using MaterialBuffer       = std::unique_ptr<UploadBuffer<PBRMaterial>>;
 	using BoneBuffer           = std::unique_ptr<UploadBuffer<PMXBoneParameter>>;
-	using BoneQuaternionBuffer = std::unique_ptr<UploadBuffer<PMXBoneQuaternion>>;
-	using BonePositionBuffer   = std::unique_ptr<UploadBuffer<PMXBoneLocalPosition>>;
 	using BoneMatrix           = std::unique_ptr<std::vector<gm::Matrix4>>;
 	using AnimationList = std::unordered_map<std::wstring, std::shared_ptr<VMDFile>>;
 
@@ -70,9 +68,10 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	virtual bool Initialize(const std::wstring& filePath);
+	virtual bool Initialize(const std::wstring& filePath, const std::wstring& addName = L"");
 	virtual bool Update();
 	virtual bool Draw(SceneGPUAddress scene, LightGPUAddress light);
+	virtual void Finalize();
 
 	bool StartAnimation(const std::wstring& motionName);
 	bool PauseAnimation(); 
@@ -146,8 +145,6 @@ protected:
 	VertexBuffer              _vertexBuffer[FRAME_BUFFER_COUNT];
 	MaterialBuffer            _materialBuffer;
 	BoneBuffer                _boneBuffer;
-	BoneQuaternionBuffer      _boneQuaternionBuffer; // for sdef
-	BonePositionBuffer        _bonePositionBuffer;   // for sdef
 	std::vector<UINT>         _materialView;
 	int _currentFrameIndex = 0;
 	int _parallelUpdateCount = 0;

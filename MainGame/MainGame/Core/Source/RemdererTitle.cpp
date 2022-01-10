@@ -103,9 +103,30 @@ void CoreRendererTitle::Draw()
 *****************************************************************************/
 void CoreRendererTitle::Terminate()
 {
-	_directX12.ResetCommandList();
-	TextureTableManager::Instance().ClearTextureTable();
 	_localTimer = 0.0f;
+	/*-------------------------------------------------------------------
+	-           Clear Texture
+	---------------------------------------------------------------------*/
+	_backGround.TexturePtr.get()->Resource->Release();
+	_creatorText.reset();
+	_titleText.reset();
+
+	/*-------------------------------------------------------------------
+	-           Call Finalize
+	---------------------------------------------------------------------*/
+	TextureTableManager::Instance().ClearTextureTable();
+	_spriteRenderer->Finalize();
+	_textRenderer  ->Finalize();
+
+
+	/*-------------------------------------------------------------------
+	-           Call Destructor
+	---------------------------------------------------------------------*/
+	_faderPtr.get()->~Fader();
+	_spriteRenderer->~SpriteRenderer();
+	_textRenderer  ->~TextRenderer();
+	
+	_directX12.ResetCommandList();
 }
 
 /****************************************************************************

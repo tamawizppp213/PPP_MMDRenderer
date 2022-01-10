@@ -40,9 +40,9 @@ static inline UINT AlignmentValue(UINT size, UINT alignment)
 struct DefaultBuffer
 {
 public:
-	explicit DefaultBuffer(Device* device, CommandList* commandList, const void* initData, UINT64 totalByteSize, ResourceComPtr& uploadBuffer);
+	explicit DefaultBuffer(Device* device, CommandList* commandList, const void* initData, UINT64 totalByteSize, ResourceComPtr& uploadBuffer, const std::wstring& addName = L"");
 
-	inline ResourceComPtr Resource() const
+	inline ID3D12Resource1* Resource() const
 	{
 		return _defaultBuffer.Get();
 	}
@@ -66,7 +66,7 @@ template<typename T>
 struct UploadBuffer
 {
 public:
-	UploadBuffer(Device* device, UINT elementCount, bool isConstantBuffer) : _isConstantBuffer(isConstantBuffer)
+	UploadBuffer(Device* device, UINT elementCount, bool isConstantBuffer, const std::wstring& addName = L"") : _isConstantBuffer(isConstantBuffer)
 	{
 		_elementByteSize = sizeof(T);
 
@@ -86,11 +86,17 @@ public:
 			nullptr,
 			IID_PPV_ARGS(&_uploadBuffer)));
 
+		/*-------------------------------------------------------------------
+		-           Set Name
+		---------------------------------------------------------------------*/
+		std::wstring name = L""; if (addName != L"") { name += addName; name += L"::"; }
+		name += L"UploadBuffer";
+		_uploadBuffer->SetName(name.c_str());
 	}
 
 	UploadBuffer(const UploadBuffer& rhs)            = delete;
 	UploadBuffer& operator=(const UploadBuffer& rhs) = delete;
-	~UploadBuffer(){}
+	~UploadBuffer() {}
 
 	inline ID3D12Resource1* Resource() const
 	{
@@ -147,7 +153,7 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Create(int width, int height, DXGI_FORMAT colorFormat =DXGI_FORMAT_R8G8B8A8_UNORM, float clearColor[4]= nullptr);
+	bool Create(int width, int height, DXGI_FORMAT colorFormat =DXGI_FORMAT_R8G8B8A8_UNORM, float clearColor[4]= nullptr, const std::wstring& addName = L"");
 	bool OnResize(int newWidth, int newHeight);
 	bool ClearBuffer();
 	bool CopyToColorBuffer(Resource* source, D3D12_RESOURCE_STATES sourceState = D3D12_RESOURCE_STATE_COMMON);
@@ -193,8 +199,8 @@ private:
 	Texture _colorBuffer;
 	UINT    _resourceID[(int)ResourceID::CountOfResourceType]; 
 	DXGI_FORMAT _format;
-	float   _clearColor[4];
-	bool    _isInitialzed = false;
+	float       _clearColor[4];
+	bool        _isInitialzed = false;
 	D3D12_RESOURCE_STATES _usageState;
 };
 
@@ -217,7 +223,7 @@ public:
 	/**************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Create(int elementByteSize, int elementCount);
+	bool Create(int elementByteSize, int elementCount, const std::wstring& addName = L"");
 	bool OnResize(int elementCount);
 	inline void CopyStart()                                 { ThrowIfFailed(_buffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedData)));}
 	inline void CopyData(int elementIndex, const void* data){ std::memcpy(&_mappedData[elementIndex * _elementByteSize], data, _elementByteSize);}
@@ -236,7 +242,7 @@ public:
 	**                Constructor and Destructor
 	*****************************************************************************/
 	RWStructuredBuffer() = default;
-	~RWStructuredBuffer() {};
+	~RWStructuredBuffer() {  };
 	RWStructuredBuffer(const RWStructuredBuffer&)            = delete; // prohibit copy
 	RWStructuredBuffer& operator=(const RWStructuredBuffer&) = delete; // prohibit copy
 	RWStructuredBuffer(RWStructuredBuffer&&)                 = default;

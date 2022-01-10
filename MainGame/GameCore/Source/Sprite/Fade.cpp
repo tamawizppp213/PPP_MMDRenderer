@@ -28,6 +28,11 @@ Fader::Fader()
 
 Fader::~Fader()
 {
+	
+	for (auto& buffer : _meshBuffer) { buffer.Dispose(); }
+	for (auto& buffer : _vertexBuffer) { buffer.get()->Resource()->Release(); buffer.reset(); }
+	_constantBuffer.get()->Resource()->Release();
+	_constantBuffer.reset();
 	_meshBuffer.clear();
 	_meshBuffer.shrink_to_fit();
 }
@@ -237,7 +242,7 @@ bool Fader::PrepareVertexBuffer()
 	for (int i = 0; i < _meshBuffer.size(); ++i)
 	{
 		VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4];
-		_vertexBuffer[i] = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), 4, false);
+		_vertexBuffer[i] = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), 4, false, L"Fader::VertexBuffer");
 
 		/*-------------------------------------------------------------------
 		-			Vertex data initialize
@@ -300,7 +305,7 @@ bool Fader::PrepareIndexBuffer()
 	-			Build CPU / GPU Index Buffer
 	---------------------------------------------------------------------*/
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(UINT16);
-	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader).Resource();
+	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader, L"Fader::IndexBuffer").Resource();
 	_meshBuffer[0].IndexFormat         = DXGI_FORMAT_R16_UINT;
 	_meshBuffer[0].IndexBufferByteSize = ibByteSize;
 	if (FAILED(D3DCreateBlob(ibByteSize, &_meshBuffer[0].IndexBufferCPU)))
@@ -342,7 +347,7 @@ bool Fader::PrepareConstantBuffer()
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	_constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
+	_constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true, L"Fader::ConstantBuffer");
 	_constantBuffer->CopyStart();
 	_constantBuffer->CopyData(0, MatrixIdentity());
 	_constantBuffer->CopyEnd();

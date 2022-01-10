@@ -9,6 +9,7 @@
 //                             Include
 //////////////////////////////////////////////////////////////////////////////////
 #include "MainGame/Core/Include/GameManager.hpp"
+#include "GameCore/Include/Core/GameCorePipelineDeleter.hpp"
 #include <cassert>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,13 @@ void GameManager::GameMain()
 
 void GameManager::GameEnd()
 {
-	_directX12.ResetCommandList();
+	//_directX12.ResetCommandList();
+	_sceneManager.CallSceneTerminate();
+	_sceneManager.Finalize();
+	_renderingEngine.ClearAllRenderingPass();
+	_renderingEngine.Finalize();
+	GameCorePipelineDeleter::DeleteAllPipelineState();
+	_directX12.Finalize();
 }
 
 #pragma region Property

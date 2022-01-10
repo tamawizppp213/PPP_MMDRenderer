@@ -27,12 +27,20 @@ class SpriteRenderer;
 class PMXModel;
 class Miku;
 class Camera;
+class PostEffect;
+class Bloom;
 
 //////////////////////////////////////////////////////////////////////////////////
 //                           Title Class
 //////////////////////////////////////////////////////////////////////////////////
 class MainRenderScene final : public Scene
 {
+	using SkyboxPtr      = std::unique_ptr<Skybox>;
+	using StagePtr       = std::unique_ptr<PMXModel>;
+	using MikuPtr        = std::unique_ptr<Miku>;
+	using BloomPtr       = std::unique_ptr<Bloom>;
+	using PostEffectPtr  = std::unique_ptr<PostEffect>;
+	using PostEffectPtrs = std::vector<PostEffectPtr>;
 public:
 	/****************************************************************************
 	**                Public Function
@@ -74,20 +82,34 @@ private:
 	*****************************************************************************/
 	Camera _fpsCamera;
 	RenderingEngine& _renderingEngine = RenderingEngine::Instance();
-	std::unique_ptr<Skybox>         _skybox         = nullptr;
-	std::unique_ptr<PMXModel>       _stage          = nullptr;
-	std::unique_ptr<Miku>           _miku           = nullptr;
-	std::unique_ptr<SpriteRenderer> _spriteRenderer = nullptr;
-	std::unordered_map<std::string, std::unique_ptr<Texture>> _textures;
+	
+	/*-------------------------------------------------------------------
+	-          3DModel
+	---------------------------------------------------------------------*/
+	SkyboxPtr _skybox = nullptr;
+	StagePtr  _stage  = nullptr;
+	MikuPtr   _miku   = nullptr;
+	
 	FrameResource*                  _frameResource  = nullptr;
 	gm::Float3 _playerPosition = gm::Float3(0.0f, 0.0f, 0.0f);
 
-	// explain text
+	/*-------------------------------------------------------------------
+	-          ExplainText
+	---------------------------------------------------------------------*/
 	bool    _enabledExplainText = false;
 	Texture _whiteTexture;
 	Sprite  _backSprite;
+	std::vector<std::wstring> _explainTexts;
+	const int _explainRows = 7;
 
-	// postEffect Index
-	int _postEffectIndex = 0;
+	/*-------------------------------------------------------------------
+	-          Post Effect Infomation
+	---------------------------------------------------------------------*/
+	BloomPtr       _bloom;
+	PostEffectPtrs _postEffects;
+	int            _postEffectIndex = 0;
+	const int      _postEffectTypes = 5;
+
+	
 };
 #endif

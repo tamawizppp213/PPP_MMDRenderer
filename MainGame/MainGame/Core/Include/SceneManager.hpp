@@ -37,7 +37,7 @@ public:
 	void CallSceneTerminate()  const;
 	void PushScene(const ScenePtr scene);
 	void PopScene();
-
+	void Finalize();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

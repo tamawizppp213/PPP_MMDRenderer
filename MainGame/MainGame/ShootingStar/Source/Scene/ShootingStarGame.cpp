@@ -135,14 +135,28 @@ void ShootingStarGame::Draw()
 *****************************************************************************/
 void ShootingStarGame::Terminate()
 {
+	/*-------------------------------------------------------------------
+	-           Clear Audio
+	---------------------------------------------------------------------*/
+	_audioSource.get()->Stop(); _audioSource.reset();
+	AudioTableManager::Instance().ClearAudioTable();
+	/*-------------------------------------------------------------------
+	-           Clear 2DObject
+	---------------------------------------------------------------------*/
+	TextureTableManager::Instance().ClearTextureTable();
 	UIPlayerHP  ::ClearAllPlayerHP();
 	Bullet      ::ClearAllBullets();
 	DamageEffect::ClearAllEffects();
 	GameObject  ::ClearAllGameObjects();
-	_audioSource.get()->Stop();
+	EnemyManager::Instance().Terminate();
+	_player.get()->Finalize(); _player.reset();
+	_backGround.Clear();
+	_redArrow  .Clear();
+
+	_spriteRenderer.get()->Finalize();
+	_spriteRenderer.reset();
+
 	_directX12.ResetCommandList();
-	TextureTableManager::Instance().ClearTextureTable();
-	AudioTableManager::Instance().ClearAudioTable();
 
 }
 

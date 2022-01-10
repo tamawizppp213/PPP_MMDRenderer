@@ -105,9 +105,30 @@ void MMDRendererTitle::Draw()
 *****************************************************************************/
 void MMDRendererTitle::Terminate()
 {
-	_directX12.ResetCommandList();
 	TextureTableManager::Instance().ClearTextureTable();
 	AudioTableManager::Instance().ClearAudioTable();
+	/*-------------------------------------------------------------------
+	-           Set Resource nullptr
+	---------------------------------------------------------------------*/
+	_backGround.TexturePtr.get()->Resource = nullptr;
+	_backUI    .TexturePtr.get()->Resource = nullptr;
+	_titleBack .TexturePtr.get()->Resource = nullptr;
+	_click     .TexturePtr.get()->Resource = nullptr;
+	_pressButtonText.reset();
+	_titleText.reset();
+
+	/*-------------------------------------------------------------------
+	-           Call Finalize Function
+	---------------------------------------------------------------------*/
+	_spriteRenderer.get()->Finalize();
+	_textRenderer  .get()->Finalize();
+
+	/*-------------------------------------------------------------------
+	-           Call Destructor
+	---------------------------------------------------------------------*/
+	_spriteRenderer.get()->~SpriteRenderer();
+	_textRenderer  .get()->~TextRenderer();
+	_directX12.ResetCommandList();
 }
 
 /****************************************************************************
