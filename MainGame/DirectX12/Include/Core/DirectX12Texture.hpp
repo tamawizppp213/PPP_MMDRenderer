@@ -26,6 +26,7 @@ struct Texture
 	DXGI_FORMAT       Format;
 	GPU_DESC_HANDLER  GPUHandler;
 	gm::Float2        ImageSize;
+	~Texture();
 };
 
 enum class TextureType : UINT
@@ -69,13 +70,18 @@ public:
 	*****************************************************************************/
 	void ClearTextureTable()
 	{
-		TextureTable.clear(); ID = 0;
+		for (auto& table : TextureTable)
+		{
+			table.second.get()->Resource = nullptr;
+		}
+		TextureTable.clear(); 
+		ID = 0;
 	}
 
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
-	std::unordered_map<std::wstring, Texture> TextureTable;
+	std::unordered_map<std::wstring, std::unique_ptr<Texture>> TextureTable;
 	int ID = 0;
 	/****************************************************************************
 	**                Constructor and Destructor

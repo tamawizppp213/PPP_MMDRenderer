@@ -24,6 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 using namespace DirectX;
 
+Texture::~Texture()
+{
+	
+}
 /****************************************************************************
 *							  LoadTexture
 *************************************************************************//**
@@ -42,7 +46,7 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	---------------------------------------------------------------------*/
 	if (_textureTableManager.Instance().TextureTable.find(filePath) != _textureTableManager.Instance().TextureTable.end())
 	{
-		texture = _textureTableManager.Instance().TextureTable[filePath];
+		texture = *_textureTableManager.Instance().TextureTable[filePath].get();
 		return;
 	}
 
@@ -136,6 +140,8 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 		directX12.GetCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 		directX12.FlushCommandQueue();
 		directX12.ResetCommandList();
+
+		uploadBuffer = nullptr;
 	}
 
 	/*-------------------------------------------------------------------
@@ -178,11 +184,12 @@ void TextureLoader::LoadTexture(const std::wstring& filePath, Texture& texture, 
 	addTexture.Format     = texture.Resource.Get()->GetDesc().Format;
 	addTexture.GPUHandler = directX12.GetGPUResourceView(HeapType::SRV, _textureTableManager.Instance().ID);
 	addTexture.ImageSize  = DirectX::XMFLOAT2((float)image->width, (float)image->height);
+	addTexture.Resource->SetName(filePath.c_str());
 	/*-------------------------------------------------------------------
 	-                    Add texture table
 	---------------------------------------------------------------------*/
-	_textureTableManager.Instance().TextureTable[filePath] = addTexture;
-	texture = addTexture;
+	_textureTableManager.Instance().TextureTable[filePath] = std::make_unique<Texture>(addTexture);
+	texture = std::move(addTexture);
 }
 
 /****************************************************************************

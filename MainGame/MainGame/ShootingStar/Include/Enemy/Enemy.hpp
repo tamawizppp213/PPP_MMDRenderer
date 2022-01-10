@@ -37,6 +37,7 @@ public:
 	virtual void Initialize() = 0;
 	virtual bool Generate(const gm::Vector3& position) = 0;
 	virtual void Update(GameTimer& gameTimer, const Player& player) = 0;
+	virtual void Finalize() = 0;
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

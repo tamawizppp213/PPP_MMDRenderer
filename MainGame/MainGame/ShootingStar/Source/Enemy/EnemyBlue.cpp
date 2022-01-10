@@ -23,7 +23,14 @@ using namespace gm;
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
 static RandomInt g_Random;
-
+/****************************************************************************
+*                      Initialize
+*************************************************************************//**
+*  @fn        void EnemyBlue::Initialize()
+*  @brief     Initialize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyBlue::Initialize()
 {
 	_actorType = ActorType::Sprite;
@@ -37,7 +44,9 @@ void EnemyBlue::Initialize()
 	_enemyType   = EnemyType::Default;
 	_rotation    = GM_PI;
 	_hp = _defaultHP;
-
+	/*-------------------------------------------------------------------
+	-          Load Texture
+	---------------------------------------------------------------------*/
 	TextureLoader textureLoader;
 	textureLoader.LoadTexture(L"Resources/Texture/ShootingStar/enemy.png", _texture);
 	_sprite.CreateSprite(_transform.LocalPosition.ToFloat3(), Float2(_enemySize / Screen::GetAspectRatio(), _enemySize),Float4(0.4f,0.4f,1, 0), Float2(0, 1), Float2(0, 1), _rotation);
@@ -46,12 +55,40 @@ void EnemyBlue::Initialize()
 
 	PushBackEnemy(this);
 }
-
+/****************************************************************************
+*                      Finalize
+*************************************************************************//**
+*  @fn        void EnemyBlue::Finalize()
+*  @brief     Finalize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void EnemyBlue::Finalize()
+{
+	_texture.Resource = nullptr;
+}
+/****************************************************************************
+*                      Update 
+*************************************************************************//**
+*  @fn        void EnemyBlue::Update(GameTimer& gameTimer, const Player& player)
+*  @brief     Update
+*  @param[in] GameTimer& gameTimer
+*  @param[in] Player& player
+*  @return 　　void
+*****************************************************************************/
 void EnemyBlue::Update(GameTimer& gameTimer, const Player& player)
 {
+	/*-------------------------------------------------------------------
+	-          Active Check
+	---------------------------------------------------------------------*/
 	if (!IsActive()) { return; }
-
+	/*-------------------------------------------------------------------
+	-          Update Local Timer 
+	---------------------------------------------------------------------*/
 	_localTimer += gameTimer.DeltaTime();
+	/*-------------------------------------------------------------------
+	-          Decide action state
+	---------------------------------------------------------------------*/
 	switch (_actionState)
 	{
 		case EnemyBlueActionState::Appear:
@@ -72,14 +109,27 @@ void EnemyBlue::Update(GameTimer& gameTimer, const Player& player)
 
 		default: break;
 	}
-
+	/*-------------------------------------------------------------------
+	-          Update collider box
+	---------------------------------------------------------------------*/
 	_colliderBox.centerPosition = _transform.LocalPosition.ToFloat3();
+	/*-------------------------------------------------------------------
+	-          Update Sprite 
+	---------------------------------------------------------------------*/
 	_sprite.UpdateSprite(_transform.LocalPosition.ToFloat3(), Float4(0.4f, 0.4f, 1, 1.0f), Float2(0, 1), Float2(0, 1), _rotation);
 }
 void EnemyBlue::Reset()
 {
 
 }
+/****************************************************************************
+*                      Generate
+*************************************************************************//**
+*  @fn        void EnemyBlue::Generate(const Vector3& position)
+*  @brief     Generate enemy
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 bool EnemyBlue::Generate(const Vector3& position)
 {
 	if (!IsActive())
@@ -100,10 +150,23 @@ bool EnemyBlue::Generate(const Vector3& position)
 		return false;
 	}
 }
+/****************************************************************************
+*                      Appear
+*************************************************************************//**
+*  @fn        void EnemyBlue::Appear(GameTimer& gameTimer)
+*  @brief     Appear action state
+*  @param[in] GameTimer& gameTimer
+*  @return 　　void
+*****************************************************************************/
 void EnemyBlue::Appear(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Update enemy position
+	---------------------------------------------------------------------*/
 	_transform.LocalPosition -= _speed * gameTimer.DeltaTime();
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the Stop action state
+	---------------------------------------------------------------------*/
 	if (_transform.LocalPosition.GetY() <= 0.7f)
 	{
 		_transform.LocalPosition.SetY(0.7f);
@@ -121,7 +184,13 @@ void EnemyBlue::Appear(GameTimer& gameTimer)
 *****************************************************************************/
 void EnemyBlue::Stop(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Stop action
+	---------------------------------------------------------------------*/
 	_speed.SetY(0);
+	/*-------------------------------------------------------------------
+	-          Proceed to the shot action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= 1.5f)
 	{
 		_actionState = EnemyBlueActionState::Shot;
@@ -138,7 +207,13 @@ void EnemyBlue::Stop(GameTimer& gameTimer)
 *****************************************************************************/
 void EnemyBlue::Shot(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Bullet speed
+	---------------------------------------------------------------------*/
 	float speed = 0.7f;
+	/*-------------------------------------------------------------------
+	-          Shot action 5way
+	---------------------------------------------------------------------*/
 	for (int i = 0; i < 5; ++i)
 	{
 		Vector3 velocity;
@@ -146,6 +221,8 @@ void EnemyBlue::Shot(GameTimer& gameTimer)
 		velocity.SetY(speed * Sin(_rotation - 2 * GM_PI / 3 + i * GM_PI / 16));
 		Bullet::ActiveBullet(_transform.LocalPosition, velocity, BulletType::EnemyBulletBlue);
 	}
-	
+	/*-------------------------------------------------------------------
+	-          Proceed to the stop action state
+	---------------------------------------------------------------------*/
 	_actionState = EnemyBlueActionState::Stop;
 }

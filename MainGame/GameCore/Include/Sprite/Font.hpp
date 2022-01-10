@@ -30,6 +30,10 @@ struct FontInfo
 	gm::Float2   PixelSizePerChar;
 	float        ImagePixelWidth; 
 	Texture      Texture;
+	~FontInfo()
+	{
+		Texture.Resource = nullptr;
+	}
 };
 
 class FontLoader

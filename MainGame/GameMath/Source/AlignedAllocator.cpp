@@ -35,6 +35,7 @@ using namespace gm;
 static void* AllocatorDefault(size_t size)
 {
 	char* data = (char*)std::malloc(size);
+	if (data == NULL) { return nullptr; }
 	std::memset(data, 0, size);
 	return data;
 }
@@ -61,6 +62,7 @@ static inline void* AlignedAllocatorDefault(size_t size, int alignment)
 	{
 		result = (void*)(real);
 	}
+	if (result == NULL) { return nullptr; }
 	std::memset((char*)result, 0, size);
 	return result;
 }

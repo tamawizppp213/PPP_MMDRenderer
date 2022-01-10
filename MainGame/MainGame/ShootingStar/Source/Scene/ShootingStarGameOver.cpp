@@ -13,6 +13,7 @@
 #include "MainGame/Core/Include/SceneManager.hpp"
 #include "MainGame/ShootingStar/Include/Scene/ShootingStarTitle.hpp"
 #include "GameCore/Include/Audio/AudioSource.hpp"
+#include "GameCore/Include/Audio/AudioTable.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
@@ -23,6 +24,7 @@ using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //                          Implement
 //////////////////////////////////////////////////////////////////////////////////
+
 ShootingStarGameOver::ShootingStarGameOver()
 {
 	_spriteRenderer = std::make_unique<SpriteRenderer>();
@@ -94,11 +96,25 @@ void ShootingStarGameOver::Draw()
 *****************************************************************************/
 void ShootingStarGameOver::Terminate()
 {
-	_audioSource.get()->Stop();
-	_directX12.ResetCommandList();
-	TextureTableManager::Instance().ClearTextureTable();
-	// オーディオデータの削除処理を入れる.
+	/*-------------------------------------------------------------------
+	-           Clear Audio Resource
+	---------------------------------------------------------------------*/
+	_audioSource.get()->Stop(); _audioSource.reset();
+	AudioTableManager::Instance().ClearAudioTable();
 
+	/*-------------------------------------------------------------------
+	-           Clear Texture Resource
+	---------------------------------------------------------------------*/
+	TextureTableManager::Instance().ClearTextureTable();
+	_backGround.Clear();
+
+	/*-------------------------------------------------------------------
+	-           Clear Sprite Renderer
+	---------------------------------------------------------------------*/
+	_spriteRenderer.get()->Finalize();
+	_spriteRenderer.reset();
+
+	_directX12.ResetCommandList();
 }
 
 /****************************************************************************

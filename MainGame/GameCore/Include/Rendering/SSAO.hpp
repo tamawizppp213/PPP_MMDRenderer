@@ -50,7 +50,7 @@ public:
 	*****************************************************************************/
 	bool Initialize(int width, int height, ColorBuffer& normalMap, ColorBuffer& depthMap);
 	bool ExecuteSSAO(SceneGPUAddress scene);
-
+	void Finalize();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/

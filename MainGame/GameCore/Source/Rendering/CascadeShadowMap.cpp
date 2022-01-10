@@ -122,7 +122,6 @@ void CascadeShadowMapMatrix::CalculateLightViewProjectionCropMatrix(const Camera
 CascadeShadowMap::CascadeShadowMap()
 {
 	CameraPtr camera = std::make_unique<Camera>();
-
 	_lightCamera = std::move(camera);
 }
 
@@ -141,8 +140,39 @@ bool CascadeShadowMap::Initialize()
 	if (!PrepareResources())     { return false; }
 	if (!PrepareCamera())        { return false; }
 	if (!PrepareConstantBuffer()) { return false; }
+	for (auto& buffer : _shadowBuffers)
+	{
+		buffer = std::make_unique<UploadBuffer<shadow::ShadowCameraInfo>>(DirectX12::Instance().GetDevice(), 1, false, L"CascadeShadowMap::ShadowMatrixBuffer");
+	}
 	_isInitialized = true;
 	return true;
+}
+
+void CascadeShadowMap::Finalize()
+{
+	/*-------------------------------------------------------------------
+	-                       Clear ColorBuffer
+	---------------------------------------------------------------------*/
+	for (auto& colorBuffer : _colorBuffers) { colorBuffer.GetColorBuffer().Resource = nullptr; }
+	_colorBuffers.clear(); _colorBuffers.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-                       Clear ShadowBuffer
+	---------------------------------------------------------------------*/
+	for (int i = 0; i < _countof(_shadowBuffers); ++i) 
+	{ 
+		_shadowBuffers[i].get()->Resource()->Release();
+		_shadowBuffers[i].reset();
+	}
+	_lightCamera.reset();
+	/*-------------------------------------------------------------------
+	-                       Clear RootSignature
+	---------------------------------------------------------------------*/
+	_rootSignature = nullptr;
+	/*-------------------------------------------------------------------
+	-                       Clear PipelineState
+	---------------------------------------------------------------------*/
+	for (auto& pipeline : _pipelines) { pipeline = nullptr; }
+	_pipelines.clear(); _pipelines.shrink_to_fit();
 }
 
 void CascadeShadowMap::AddActor(GameActor* nearActor, GameActor* mediumActor, GameActor* farActor)
@@ -242,6 +272,7 @@ bool CascadeShadowMap::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"CascadeShadowMap::RootSignature");
 	return true;
 }
 
@@ -269,6 +300,7 @@ bool CascadeShadowMap::PreparePipelineState()
 	pipeLineState.DepthStencilState.StencilEnable = false;
 
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelines[0])));
+	_pipelines[0]->SetName(L"CascadeShadowMap::PMXModel::PipelineState");
 
 	// primitive
 	pipeLineState.InputLayout = VertexPositionNormalTexture::InputLayout;
@@ -283,6 +315,7 @@ bool CascadeShadowMap::PreparePipelineState()
 		_shader[1].PixelShader->GetBufferSize()
 	};
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelines[1])));
+	_pipelines[1]->SetName(L"CascadeShadowMap::PrimitiveModel::PipelineState");
 	return true;
 }
 
@@ -295,7 +328,7 @@ bool CascadeShadowMap::PrepareResources()
 	clearColor[3] = gm::color::SteelBlue.f[3];
 	for (int i = 0; i < (int)ShadowViewType::CountOfShadowViewType; ++i)
 	{
-		_colorBuffers[i].Create(g_Resolution[i], g_Resolution[i], DXGI_FORMAT_R32_FLOAT, clearColor);
+		_colorBuffers[i].Create(g_Resolution[i], g_Resolution[i], DXGI_FORMAT_R32_FLOAT, clearColor, L"CascadeShadowMap");
 	}
 	return true;
 }
@@ -387,7 +420,7 @@ bool CascadeShadowMap::PrepareConstantBuffer()
 	{
 		shadow::ShadowCameraInfo shadowInfo;
 		shadowInfo.ViewProjection = _cascadeShadowMapMatrix.GetLightViewProjectionCropMatrix(i);
-		_shadowBuffers[i] = std::make_unique<UploadBuffer<shadow::ShadowCameraInfo>>(DirectX12::Instance().GetDevice(), 1, true);
+		_shadowBuffers[i] = std::make_unique<UploadBuffer<shadow::ShadowCameraInfo>>(DirectX12::Instance().GetDevice(), 1, true, L"CascadeShadowMap");
 		_shadowBuffers[i].get()->CopyStart();
 		_shadowBuffers[i].get()->CopyData(0, shadowInfo);
 		_shadowBuffers[i].get()->CopyEnd();

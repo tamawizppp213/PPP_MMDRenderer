@@ -34,13 +34,24 @@ SpritePSOManager::SpritePSOManager()
 		_psoList[i].BuildRootSignature();
 		_psoList[i].BuildSpritePipeline();
 	}
+
+	_psoList[0].GetRootSignature()->SetName(LPCWSTR(L"SpriteManager::Texture"));
+	_psoList[0].GetPipelineState()->SetName(LPCWSTR(L"SpriteManager::Texture"));
 }
 
 SpritePSOManager::~SpritePSOManager()
 {
-	_psoList.clear();
 }
 
+void SpritePSOManager::Clear()
+{
+	for (auto& pso : _psoList)
+	{
+		pso.Dispose();
+	}
+	_psoList.clear(); 
+	_psoList.shrink_to_fit();
+}
 #pragma region Propety
 /****************************************************************************
 *                         GetPipelineState
@@ -73,6 +84,13 @@ const RootSignatureComPtr& SpritePSOManager::GetRootSignature(SpriteType type)
 
 #pragma region SpritePipelineStateDescriptor
 #pragma region Public Function
+void SpritePipelineStateDescriptor::Dispose()
+{
+	_pipeLineState = nullptr;
+	_rootSignature = nullptr;
+	_vertexShader = nullptr;
+	_pixelShader = nullptr;
+}
 /****************************************************************************
 *                            BuildSpritePipeline
 *************************************************************************//**
@@ -111,6 +129,7 @@ bool SpritePipelineStateDescriptor::BuildSpritePipeline()
 	};
 	pipeLineState.BlendState = BuildBlendDescriptor();
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipeLineState)));
+	_pipeLineState->SetName(L"Sprite::PipelineState");
 	return true;
 }
 
@@ -151,6 +170,7 @@ bool SpritePipelineStateDescriptor::BuildRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"Sprite::RootSignature");
 	return true;
 }
 

@@ -106,6 +106,15 @@ public:
 		VertexBufferUploader = nullptr;
 		IndexBufferUploader  = nullptr;
 	}
+	inline void Dispose()
+	{
+		VertexBufferCPU = nullptr;
+		IndexBufferCPU = nullptr;
+		VertexBufferGPU = nullptr;
+		IndexBufferGPU = nullptr;
+		VertexBufferUploader = nullptr;
+		IndexBufferUploader = nullptr;
+	}
 	/****************************************************************************
 	**                Constructor
 	*****************************************************************************/
@@ -114,6 +123,7 @@ public:
 	MeshGeometry& operator=(const MeshGeometry&) = default;
 	MeshGeometry(MeshGeometry&&)                 = default;
 	MeshGeometry& operator=(MeshGeometry&&)      = default;
+	~MeshGeometry() { Dispose(); }
 private:
 };
 

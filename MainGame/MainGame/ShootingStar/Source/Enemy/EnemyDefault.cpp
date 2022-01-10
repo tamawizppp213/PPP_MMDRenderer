@@ -46,6 +46,9 @@ void EnemyDefault::Initialize()
 	_enemyType               = EnemyType::Default;
 	_rotation = GM_PI ;
 
+	/*-------------------------------------------------------------------
+	-          Load Texture
+	---------------------------------------------------------------------*/
 	TextureLoader textureLoader;
 	textureLoader.LoadTexture(L"Resources/Texture/ShootingStar/enemy.png", _texture);
 	_sprite.CreateSpriteForTexture(_transform.LocalPosition.ToFloat3(), Float2(_enemySize / Screen::GetAspectRatio(), _enemySize), Float2(0, 1), Float2(0, 1), _rotation);
@@ -53,6 +56,18 @@ void EnemyDefault::Initialize()
 	g_Random.SetRange(0, 1);
 
 	PushBackEnemy(this);
+}
+/****************************************************************************
+*                      Finalize
+*************************************************************************//**
+*  @fn        void EnemyDefault::Finalize()
+*  @brief     Finalize
+*  @param[in] void
+*  @return Å@Å@void
+*****************************************************************************/
+void EnemyDefault::Finalize()
+{
+	_texture.Resource = nullptr;
 }
 
 /****************************************************************************
@@ -65,9 +80,17 @@ void EnemyDefault::Initialize()
 *****************************************************************************/
 void EnemyDefault::Update(GameTimer& gameTimer, const Player& player)
 {
+	/*-------------------------------------------------------------------
+	-          Active Check
+	---------------------------------------------------------------------*/
 	if (!IsActive()) { return; }
-
+	/*-------------------------------------------------------------------
+	-          Update Local Timer
+	---------------------------------------------------------------------*/
 	_localTimer += gameTimer.DeltaTime();
+	/*-------------------------------------------------------------------
+	-          Decide Action State
+	---------------------------------------------------------------------*/
 	switch (_actionState)
 	{
 		case EnemyDefaultActionState::Appear:
@@ -97,8 +120,13 @@ void EnemyDefault::Update(GameTimer& gameTimer, const Player& player)
 		}
 		default: break;
 	}
-
+	/*-------------------------------------------------------------------
+	-          Update Collider Box
+	---------------------------------------------------------------------*/
 	_colliderBox.centerPosition = _transform.LocalPosition.ToFloat3();
+	/*-------------------------------------------------------------------
+	-          Update Sprite
+	---------------------------------------------------------------------*/
 	_sprite.UpdateSpriteForTexture(_transform.LocalPosition.ToFloat3(), Float2(0, 1), Float2(0, 1), 1.0f, _rotation);
 }
 /****************************************************************************
@@ -158,7 +186,13 @@ bool EnemyDefault::Generate(const Vector3& position)
 *****************************************************************************/
 void EnemyDefault::Appear(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Update enemy position
+	---------------------------------------------------------------------*/
 	_transform.LocalPosition -= _speed * gameTimer.DeltaTime();
+	/*-------------------------------------------------------------------
+	-          Proceed to the Stop action state
+	---------------------------------------------------------------------*/
 	if (_transform.LocalPosition.GetY() <= 0.6f)
 	{
 		_transform.LocalPosition.SetY(0.6f);
@@ -188,9 +222,14 @@ void EnemyDefault::Stop(GameTimer& gameTimer)
 *****************************************************************************/
 void EnemyDefault::Accelerator(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Update enemy position
+	---------------------------------------------------------------------*/
 	_speed                   += _accel * gameTimer.DeltaTime();
 	_transform.LocalPosition -= _speed * gameTimer.DeltaTime();
-
+	/*-------------------------------------------------------------------
+	-          Proceed to the End action state
+	---------------------------------------------------------------------*/
 	if (_transform.LocalPosition.GetY() < -1.0f - _enemySize / 2.0f)
 	{
 		_actionState = EnemyDefaultActionState::End;
@@ -209,11 +248,16 @@ void EnemyDefault::Accelerator(GameTimer& gameTimer)
 *****************************************************************************/
 void EnemyDefault::IsProceedAccelerate(GameTimer& gameTimer)
 {
+	/*-------------------------------------------------------------------
+	-          Proceed to the Accelerate action state
+	---------------------------------------------------------------------*/
 	if (_localTimer >= _waitTime)
 	{
 		_actionState = EnemyDefaultActionState::Accelerate;
 		_localTimer = 0;
-		
+		/*-------------------------------------------------------------------
+		-         Decide Proceed Direction
+		---------------------------------------------------------------------*/
 		if (g_Random.GetRandomValue())
 		{
 			_speed =  Normalize(Vector3(-0.3f, 0.8f, 0.0f));

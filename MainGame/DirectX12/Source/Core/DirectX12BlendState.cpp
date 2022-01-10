@@ -167,6 +167,27 @@ void InitializeShaderBlendData()
 
 }
 
+void FinalizeShaderBlendData()
+{
+	for (int i = 0; i < (int)BlendStateType::CountOfBlendStateType; ++i)
+	{
+		g_ShaderData[i].VertexShader = nullptr;
+		g_ShaderData[i].PixelShader = nullptr;
+	}
+
+	for (int i = 0; i < (int)FastBlendStateType::CountOfFastBlendStateType; ++i)
+	{
+		g_FastShaderData[i].VertexShader = nullptr;
+		g_FastShaderData[i].PixelShader = nullptr;
+	}
+
+	for (int i = 0; i <= (int)PostEffectBlendStateType::Binary; ++i)
+	{
+		g_EffectShaderData[i].VertexShader = nullptr;
+		g_EffectShaderData[i].PixelShader = nullptr;
+	}
+}
+
 ShaderBlendData GetShaderBlendData(BlendStateType type)
 {
 	return g_ShaderData[(int)type];

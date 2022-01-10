@@ -2148,6 +2148,12 @@
     <ClInclude Include="MainGame\ShootingStar\Include\Scene\ShootingStarIntroduction.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="MainGame\ShootingStar\Include\Scene\RenderResource.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore\Include\Core\GameCorePipelineDeleter.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCore\Source\Camera.cpp">
@@ -2940,6 +2946,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MainGame\ShootingStar\Source\Scene\ShootingStarIntroduction.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame\ShootingStar\Source\Scene\RenderResource.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore\Source\Core\GameCorePipelineDeleter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

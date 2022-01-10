@@ -611,7 +611,13 @@ public:
 	**                Constructor and Destructor
 	*****************************************************************************/
 	PMXTexture()  = default;
-	~PMXTexture() = default;
+	~PMXTexture()
+	{
+		Texture.Resource = nullptr;
+		SphereMultiply.Resource = nullptr;
+		SphereAddition.Resource = nullptr;
+		ToonTexture.Resource = nullptr;
+	}
 
 private:
 	/****************************************************************************

@@ -15,6 +15,7 @@
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
 using namespace dof;
+#define DOF_COLORBUFFER_NAME L"DOF::ColorBuffer"
 
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
@@ -22,19 +23,67 @@ using namespace dof;
 #pragma region Public Function
 bool Dof::Initialize(int width, int height)
 {
+	if (_hasInitialized) { return true; }
+
 	_colorBuffer.resize(6);
+	/*-------------------------------------------------------------------
+	-                  Prepare RootSignature
+	---------------------------------------------------------------------*/
 	if (!PrepareRootSignature())  { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare PipelineState
+	---------------------------------------------------------------------*/
 	if(!PreparePipelineState())   { return false;}
+	/*-------------------------------------------------------------------
+	-                  Prepare VertexBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareVertexBuffer())   { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare IndexBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareIndexBuffer())    { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare ConstantBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareConstantBuffer()) { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare Sprite
+	---------------------------------------------------------------------*/
 	if (!PrepareSprite())         { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare Resource
+	---------------------------------------------------------------------*/
 	if (!PrepareResources(width, height)) { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare Descriptor
+	---------------------------------------------------------------------*/
 	if (!PrepareDescriptors()) { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare Blur Paramater
+	---------------------------------------------------------------------*/
 	if (!PrepareBlurConstantBuffer(width, height, 4.0f)) { return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare DofConfig
+	---------------------------------------------------------------------*/
 	if (!PrepareDofConfigBuffer(0.5f, 1.0f)) { return false; }
+	/*-------------------------------------------------------------------
+	-                 Set Resource Name
+	---------------------------------------------------------------------*/
+
+	_hasInitialized = true;
 	return true;
 
+}
+
+void Dof::Finalize()
+{
+	PostEffect::Finalize();
+	_verticalBlurPipeline = nullptr;
+	_rhomboidBlurPipeline = nullptr;
+	_blurBuffer.get()->Resource()->Release();
+	_blurBuffer.reset();
+	_dofBuffer.get()->Resource()->Release();
+	_dofBuffer.reset();
 }
 
 bool Dof::OnResize(int newWidth, int newHeight)
@@ -135,6 +184,7 @@ void Dof::UpdateBlurEffectParameter(int width, int height, float radius)
 	_blurBuffer.get()->CopyStart();
 	_blurBuffer.get()->CopyTotalData(&blurParameter, 1);
 	_blurBuffer.get()->CopyEnd();
+
 }
 
 /****************************************************************************
@@ -173,7 +223,7 @@ bool Dof::PrepareResources(int width, int height)
 {
 	for (int i = 0; i < _colorBuffer.size(); ++i)
 	{
-		if(!_colorBuffer[i].Create(width, height, DirectX12::Instance().GetBackBufferRenderFormat())){return false;}
+		if(!_colorBuffer[i].Create(width, height, DirectX12::Instance().GetBackBufferRenderFormat(), nullptr, L"Dof")) { return false; }
 	}
 	return true;
 }
@@ -227,6 +277,7 @@ bool Dof::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"Dof::RootSignature");
 	return true;
 }
 
@@ -260,6 +311,7 @@ bool Dof::PreparePipelineState()
 	};
 
 	ThrowIfFailed(device->CreateComputePipelineState(&verticalPipeline, IID_PPV_ARGS(&_verticalBlurPipeline)));
+	_verticalBlurPipeline->SetName(L"Dof::VerticalBlurPipeLine");
 
 	/*-------------------------------------------------------------------
 	-			Luminance pipelineState
@@ -273,18 +325,20 @@ bool Dof::PreparePipelineState()
 	};
 
 	ThrowIfFailed(device->CreateComputePipelineState(&rhomboidPipeline, IID_PPV_ARGS(&_rhomboidBlurPipeline)));
+	_rhomboidBlurPipeline->SetName(L"Dof::RhomboidBlurPipelineState");
 
 	/*-------------------------------------------------------------------
-	-			FinalBloom pipelineState
+	-			FinalDof pipelineState
 	---------------------------------------------------------------------*/
-	auto finalBloomPipeline = DirectX12::Instance().GetDefaultComputePSOConfig();
-	finalBloomPipeline.pRootSignature = _rootSignature.Get();
-	finalBloomPipeline.CS =
+	auto finalDofPipeline = DirectX12::Instance().GetDefaultComputePSOConfig();
+	finalDofPipeline.pRootSignature = _rootSignature.Get();
+	finalDofPipeline.CS =
 	{
 		reinterpret_cast<BYTE*>(finalBlurCS->GetBufferPointer()),
 		finalBlurCS->GetBufferSize()
 	};
-	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateComputePipelineState(&finalBloomPipeline, IID_PPV_ARGS(&_pipelineState)));
+	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateComputePipelineState(&finalDofPipeline, IID_PPV_ARGS(&_pipelineState)));
+	_pipelineState->SetName(L"Dof::FinalDofPipelineState");
 	return true;
 }
 
@@ -307,7 +361,7 @@ bool Dof::PrepareBlurConstantBuffer(int width, int height, float radius)
 	blurParameter.TextureSize[1] = (float)height;
 	blurParameter.Radius         = radius;
 
-	auto blurBuffer = std::make_unique < UploadBuffer<BlurParameter>>(device, 1, true);
+	auto blurBuffer = std::make_unique < UploadBuffer<BlurParameter>>(device, 1, true, L"Dof::BlurParameter");
 	blurBuffer.get()->CopyStart();
 	blurBuffer.get()->CopyTotalData(&blurParameter, 1);
 	blurBuffer.get()->CopyEnd();
@@ -334,7 +388,7 @@ bool Dof::PrepareDofConfigBuffer(float nearClip, float farClip)
 	dofClipSize.NearClip = nearClip;
 	dofClipSize.FarClip  = farClip;
 
-	auto dofBuffer = std::make_unique<UploadBuffer<DofClipSize>>(device, 1, true);
+	auto dofBuffer = std::make_unique<UploadBuffer<DofClipSize>>(device, 1, true, L"Dof::DofConfig");
 	dofBuffer.get()->CopyStart();
 	dofBuffer.get()->CopyTotalData(&dofClipSize, 1);
 	dofBuffer.get()->CopyEnd();

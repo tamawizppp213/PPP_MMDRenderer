@@ -35,7 +35,10 @@ enum class GPUVender
 	Intel,
 	CountOfGPUVender
 };
-
+DirectX12::~DirectX12()
+{
+	printf("DirectX12Finished\n");
+}
 //////////////////////////////////////////////////////////////////////////////////
 //                            Implement
 //////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +111,51 @@ void DirectX12::OnResize()
 }
 
 /****************************************************************************
+*							Finalize
+*************************************************************************//**
+*  @fn        void DirectX12::Finalize()
+*  @brief     Release DirectX12 All Memory
+*  @param[in] void
+*  @return @@void
+*****************************************************************************/
+void DirectX12::Finalize()
+{
+	FinalizeShaderBlendData();
+	if (_depthStencilBuffer) { _depthStencilBuffer = nullptr;}
+	for (auto& renderTarget : _renderTargetList) 
+	{ 
+		if (renderTarget)
+		{ 
+			renderTarget = nullptr;
+		}
+	}
+	if (_pipelineState) { _pipelineState= nullptr;}
+	if (_rtvHeap      ) { _rtvHeap      = nullptr; }
+	if (_dsvHeap      ) { _dsvHeap      = nullptr; }
+	if (_cbvSrvUavHeap) { _cbvSrvUavHeap=nullptr; }
+	if (_useAdapter   ) { _useAdapter   = nullptr; }
+	if (_swapchain    ) { _swapchain    = nullptr;}
+	for (auto& allocator : _commandAllocator) 
+	{
+		if (allocator) { allocator = nullptr; }
+	}
+	if (_fence)        { _fence       = nullptr;}
+	if (_fenceEvent)   { _fenceEvent = nullptr; }
+	if (_commandQueue) { _commandQueue= nullptr;}
+	if (_commandList ) { _commandList = nullptr;}
+	if (_dxgiFactory ) { _dxgiFactory = nullptr;}
+
+#ifdef _DEBUG
+	ReportLiveObjects();
+#endif
+	_hwnd = nullptr;
+
+	if (_device) { _device = nullptr; }
+
+	
+}
+
+/****************************************************************************
 *                     ClearScreen
 *************************************************************************//**
 *  @fn        void DirectX12::ClearScreen(void)
@@ -118,24 +166,33 @@ void DirectX12::OnResize()
 *****************************************************************************/
 void DirectX12::ClearScreen()
 {
-	// Reset Commmand 
+	/*-------------------------------------------------------------------
+	-                   Reset Commmand 
+	---------------------------------------------------------------------*/
 	ResetCommandList();
 
-	// Indicate a state transition (Present -> Render Target)
+	/*-------------------------------------------------------------------
+	-       Indicate a state transition (Present -> Render Target)
+	---------------------------------------------------------------------*/
 	auto barrier = BARRIER::Transition(GetCurrentRenderTarget(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	_commandList->ResourceBarrier(1, &barrier);
 
-	// Set the viewport and scissor rect. 
-	// This needs to be reset whenever the command list is reset.
+	/*-------------------------------------------------------------------
+	-          Set the viewport and scissor rect. 
+	-  This needs to be reset whenever the command list is reset.
+	---------------------------------------------------------------------*/
 	_commandList->RSSetViewports(1, &_screenViewport);
 	_commandList->RSSetScissorRects(1, &_scissorRect);
-
-	// Clear the back buffer and depth buffer.
+	/*-------------------------------------------------------------------
+	-               Clear the back buffer and depth buffer.
+	---------------------------------------------------------------------*/
 	_commandList->ClearRenderTargetView(_rtvAllocator.GetCPUDescHandler(_currentFrameIndex), gm::color::SteelBlue, 0, nullptr);
 	_commandList->ClearDepthStencilView(_dsvAllocator.GetCPUDescHandler(0), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-	// Set Render Target 
+	/*-------------------------------------------------------------------
+	-                   Set Render Target 
+	---------------------------------------------------------------------*/
 	auto rtv = _rtvAllocator.GetCPUDescHandler(_currentFrameIndex);
 	auto dsv = _dsvAllocator.GetCPUDescHandler(0);
 	_commandList->OMSetRenderTargets(1, &rtv, true, &dsv);
@@ -347,6 +404,9 @@ void DirectX12::FlushCommandQueuesOnResize()
 *****************************************************************************/
 void DirectX12::CreateDevice()
 {
+	/*-------------------------------------------------------------------
+	-                   Crate DXGIFactory
+	---------------------------------------------------------------------*/
 #ifdef _DEBUG
 	ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG,IID_PPV_ARGS(&_dxgiFactory)));
 #else
@@ -410,6 +470,7 @@ void DirectX12::CreateDevice()
 		_useAdapter.Get(),                // default adapter
 		D3D_FEATURE_LEVEL_11_0, // minimum feature level
 		IID_PPV_ARGS(&_device));
+	
 
 	/*-------------------------------------------------------------------
 	-                  Fallback to WARP Device 
@@ -426,6 +487,7 @@ void DirectX12::CreateDevice()
 			IID_PPV_ARGS(&_device)));
 		_isWarpAdapter = true;
 	}
+	_device->SetName(L"DirectX12::Device");
 
 	for (int i = 0; i < (int)GPUVender::CountOfGPUVender; ++i)
 	{
@@ -457,6 +519,7 @@ void DirectX12::CreateCommandObject()
 	cmdQDesc.Flags    = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
 	ThrowIfFailed(_device->CreateCommandQueue(&cmdQDesc, IID_PPV_ARGS(&_commandQueue)));
+	_commandQueue->SetName(L"DirectX12::CommandQueue");
 
 	/*-------------------------------------------------------------------
 	-                   Create Command Allocator
@@ -466,6 +529,7 @@ void DirectX12::CreateCommandObject()
 		ThrowIfFailed(_device->CreateCommandAllocator(
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(&_commandAllocator[i])));
+		_commandAllocator[i]->SetName(L"DirectX12::CommandAllocator");
 	}
 	
 
@@ -479,6 +543,7 @@ void DirectX12::CreateCommandObject()
 		_commandAllocator[_currentFrameIndex].Get(), // Associated command allocator
 		nullptr,                 // Initial PipeLine State Object
 		IID_PPV_ARGS(_commandList.GetAddressOf())));
+	_commandList->SetName(L"DirectX12::CommandList");
 
 	// Start off in a closed state.
 	// This is because the first time we refer to the command list when it is reset.
@@ -512,6 +577,7 @@ void DirectX12::CreateDescriptorHeap()
 	rtvHeapDesc.NodeMask       = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
+	_rtvHeap->SetName(L"DirectX12::RenderTargetHeap");
 
 	/*-------------------------------------------------------------------
 	-			     Set DSV Heap 
@@ -523,6 +589,7 @@ void DirectX12::CreateDescriptorHeap()
 	dsvHeapDesc.NodeMask       = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
+	_dsvHeap->SetName(L"DirectX12::DepthStencilViewHeap");
 
 	/*-------------------------------------------------------------------
 	-			     Set CBV, SRV, UAV Heap 
@@ -533,6 +600,7 @@ void DirectX12::CreateDescriptorHeap()
 	csuHeapDesc.Flags          = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	csuHeapDesc.NodeMask       = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(&csuHeapDesc, IID_PPV_ARGS(&_cbvSrvUavHeap)));
+	_cbvSrvUavHeap->SetName(L"DirectX12::CBV,SRV,UAVHeap");
 }
 
 /****************************************************************************
@@ -604,8 +672,8 @@ void DirectX12::BuildRenderTargetView()
 	{
 		ThrowIfFailed(_swapchain->GetBuffer(i, IID_PPV_ARGS(&_renderTargetList[i])));
 		_device->CreateRenderTargetView(_renderTargetList[i].Get(), nullptr, _rtvAllocator.GetCPUDescHandler(i));
+		_renderTargetList[i]->SetName(L"DirectX12::RenderTargetList");
 	}
-
 	
 }
 
@@ -1009,6 +1077,7 @@ void DirectX12::EnabledDebugLayer()
 	DebugComPtr debugController;
 	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
 	debugController->EnableDebugLayer();
+	debugController.Reset();
 }
 
 /****************************************************************************
@@ -1033,6 +1102,9 @@ void DirectX12::EnabledGPUBasedValidation()
 	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
 	ThrowIfFailed(debugController->QueryInterface(IID_PPV_ARGS(&debug3)));
 	debug3->SetEnableGPUBasedValidation(true);
+	debugController.Reset();
+	debug3.Reset();
+
 }
 
 /****************************************************************************
@@ -1153,6 +1225,16 @@ void DirectX12::LogOutputDisplayModes(Output* output, DXGI_FORMAT format)
 		::OutputDebugString(text.c_str());
 	}
 
+}
+
+void DirectX12::ReportLiveObjects()
+{
+	ID3D12DebugDevice2* debugInterface = nullptr;
+	if (SUCCEEDED(_device.Get()->QueryInterface(&debugInterface)))
+	{
+		debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL );
+		debugInterface->Release();
+	}
 }
 #pragma endregion Debug
 #pragma endregion Private Function

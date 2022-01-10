@@ -31,18 +31,24 @@ SpriteRenderer::SpriteRenderer()
 
 SpriteRenderer::~SpriteRenderer()
 {
-	this->Finalize();
+	
 }
 
 
-bool SpriteRenderer::Initialize(FastBlendStateType type)
+bool SpriteRenderer::Initialize(FastBlendStateType type, const std::wstring& addName)
 {
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
-	if (!PrepareRootSignature())      { return false; }
-	if (!PreparePipelineState(type))  { return false; }
-	if (!PrepareVertexBuffer())       { return false; }
-	if (!PrepareIndexBuffer())        { return false; }
-	if (!PrepareConstantBuffer())     { return false; }
+	
+	// set name
+	std::wstring name = L"";
+	if (addName != L"") { name += addName; name += L"::"; }
+	name += L"SpriteRenderer::";
+
+	if (!PrepareRootSignature (name + L"RootSignature"))          { return false; }
+	if (!PreparePipelineState (type, name + L"PipelineState"))    { return false; }
+	if (!PrepareVertexBuffer  (name + L"VertexBuffer"))           { return false; }
+	if (!PrepareIndexBuffer   (name + L"IndexBuffer"))            { return false; }
+	if (!PrepareConstantBuffer(name + L"Matrix4::ConsantBuffer")) { return false; }
 
 	return true;
 }
@@ -187,15 +193,48 @@ bool SpriteRenderer::DrawEnd()
 
 bool SpriteRenderer::Finalize()
 {
-	_textures.clear();
-	_vertices.clear();
-	_spriteCountList.clear();
-	_meshBuffer.clear();
+	/*-------------------------------------------------------------------
+	-           Clear MeshBuffer
+	---------------------------------------------------------------------*/
+	for (auto& buffer  : _meshBuffer) { buffer.Dispose(); }
+	_meshBuffer.clear(); _meshBuffer.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-           Clear texture resource
+	---------------------------------------------------------------------*/
+	for (auto& texture : _textures) 
+	{ 
+		if (texture.Resource)
+		{
+			texture.Resource = nullptr;
+		}
+	}
+	_textures.clear(); _textures.shrink_to_fit();
+	_textureDescHeap = nullptr;
+	/*-------------------------------------------------------------------
+	-           Clear Vertices
+	---------------------------------------------------------------------*/
+	_vertices.clear(); _vertices.shrink_to_fit();
+	for (auto& buffer : _dynamicVertexBuffer) 
+	{ 
+		buffer.get()->Resource()->Release();
+		buffer.reset();
+	}
+	
+	/*-------------------------------------------------------------------
+	-           Clear ConstantBuffer
+	---------------------------------------------------------------------*/
+	_constantBuffer.get()->Resource()->Release();
+	_constantBuffer.reset();
+	/*-------------------------------------------------------------------
+	-           Clear SpriteCountList
+	---------------------------------------------------------------------*/
+	_spriteCountList.clear(); _spriteCountList.shrink_to_fit();
 
-	_textures.shrink_to_fit();
-	_vertices.shrink_to_fit();
-	_spriteCountList.shrink_to_fit();
-	_meshBuffer.shrink_to_fit();
+	/*-------------------------------------------------------------------
+	-           Clear PipelineState
+	---------------------------------------------------------------------*/
+	_rootSignature = nullptr;
+	_pipelineState = nullptr;
 	return true;
 }
 #pragma endregion Public Function
@@ -212,7 +251,7 @@ bool SpriteRenderer::Finalize()
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool SpriteRenderer::PrepareVertexBuffer()
+bool SpriteRenderer::PrepareVertexBuffer(const std::wstring& name)
 {
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
 	DirectX12& directX12            = DirectX12::Instance();
@@ -221,7 +260,7 @@ bool SpriteRenderer::PrepareVertexBuffer()
 	for (int i = 0; i < _meshBuffer.size(); ++i)
 	{
 		VertexPositionNormalColorTexture* vertices = new VertexPositionNormalColorTexture[4 * MaxSpriteCount];
-		_dynamicVertexBuffer[i] = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), MaxSpriteCount * 4, false);
+		_dynamicVertexBuffer[i] = std::make_unique<UploadBuffer<VertexPositionNormalColorTexture>>(directX12.GetDevice(), MaxSpriteCount * 4, false,name);
 
 		_dynamicVertexBuffer[i]->CopyStart();
 		for (int j = 0; j < MaxSpriteCount * 4; ++j)
@@ -263,7 +302,7 @@ bool SpriteRenderer::PrepareVertexBuffer()
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool SpriteRenderer::PrepareIndexBuffer()
+bool SpriteRenderer::PrepareIndexBuffer(const std::wstring& name)
 {
 	SpritePSOManager& spriteManager = SpritePSOManager::Instance();
 	DirectX12& directX12 = DirectX12::Instance();
@@ -285,7 +324,7 @@ bool SpriteRenderer::PrepareIndexBuffer()
 	-			Build CPU / GPU Index Buffer
 	---------------------------------------------------------------------*/
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(UINT16);
-	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader).Resource();
+	_meshBuffer[0].IndexBufferGPU      = DefaultBuffer(directX12.GetDevice(), directX12.GetCommandList(), indices.data(), ibByteSize, _meshBuffer[0].IndexBufferUploader, name).Resource();
 	_meshBuffer[0].IndexFormat         = DXGI_FORMAT_R16_UINT;
 	_meshBuffer[0].IndexBufferByteSize = ibByteSize;
 	_meshBuffer[0].IndexCount          = (UINT)indices.size();
@@ -320,7 +359,7 @@ bool SpriteRenderer::PrepareIndexBuffer()
 *  @param[in] void
 *  @return 　　bool
 *****************************************************************************/
-bool SpriteRenderer::PrepareConstantBuffer()
+bool SpriteRenderer::PrepareConstantBuffer(const std::wstring& name)
 {
 	using namespace DirectX;
 	DirectX12& directX12 = DirectX12::Instance();
@@ -328,7 +367,8 @@ bool SpriteRenderer::PrepareConstantBuffer()
 	/*-------------------------------------------------------------------
 	-			Map Constant Buffer
 	---------------------------------------------------------------------*/
-	_constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true);
+
+	_constantBuffer = std::make_unique<UploadBuffer<Matrix4>>(directX12.GetDevice(), 1, true, name);
 	_constantBuffer->CopyStart();
 	_constantBuffer->CopyData(0, _projectionViewMatrix);
 	_constantBuffer->CopyEnd();
@@ -346,7 +386,7 @@ bool SpriteRenderer::PrepareConstantBuffer()
 	return true;
 }
 
-bool SpriteRenderer::PrepareRootSignature()
+bool SpriteRenderer::PrepareRootSignature(const std::wstring& name)
 {
 	/*-------------------------------------------------------------------
 	-			Build texture table
@@ -375,10 +415,11 @@ bool SpriteRenderer::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(name.c_str());
 	return true;
 }
 
-bool SpriteRenderer::PreparePipelineState(FastBlendStateType type)
+bool SpriteRenderer::PreparePipelineState(FastBlendStateType type, const std::wstring& name)
 {
 
 	/*-------------------------------------------------------------------
@@ -399,6 +440,8 @@ bool SpriteRenderer::PreparePipelineState(FastBlendStateType type)
 	};
 	pipeLineState.BlendState = GetBlendDesc(type);
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&_pipelineState)));
+
+	_pipelineState->SetName(name.c_str());
 
 	return true;
 

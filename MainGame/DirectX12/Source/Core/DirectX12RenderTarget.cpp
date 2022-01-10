@@ -18,7 +18,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 RenderTarget::~RenderTarget()
 {
-	
+	_renderTargetTexture.Resource = nullptr;
+	_depthStencilTexture.Resource = nullptr;
+	_renderTarget                 = nullptr;
+	_dsvHeap = nullptr;
+	_rtvHeap = nullptr;
 }
 
 #pragma region Public Function

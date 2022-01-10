@@ -14,25 +14,87 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+#define BLOOM_COLOR_BUFFER_NAME L"Bloom::ColorBuffer"
+/****************************************************************************
+*                          Initialize
+*************************************************************************//**
+*  @fn        bool Bloom::Initialize(int width, int height)
+*  @brief     Initialize Bloom Class
+*  @param[in] int screenPixelWidth
+*  @param[in] int screenPixelHeight
+*  @return 　　bool
+*****************************************************************************/
 bool Bloom::Initialize(int width, int height)
 {
 	/*0: renderTarget, 1～4: luminanceBufferSRV, 5*UAV final buffer*/
 	_colorBuffer.resize(3); 
+	/*-------------------------------------------------------------------
+	-               Prepare RootSignature
+	---------------------------------------------------------------------*/
 	if (!PrepareRootSignature())  { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare PipelineState
+	---------------------------------------------------------------------*/
 	if(!PreparePipelineState())   { return false;}
+	/*-------------------------------------------------------------------
+	-               Prepare VertexBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareVertexBuffer())   { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare IndexBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareIndexBuffer())    { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare ConstantBuffer
+	---------------------------------------------------------------------*/
 	if (!PrepareConstantBuffer()) { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare SpriteInfo
+	---------------------------------------------------------------------*/
 	if (!PrepareSprite())         { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Resources
+	---------------------------------------------------------------------*/
 	if (!PrepareResources(width, height)) { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Descriptors
+	---------------------------------------------------------------------*/
 	if (!PrepareDescriptors())    { return false; }
+	/*-------------------------------------------------------------------
+	-               Set Bloom Power
+	---------------------------------------------------------------------*/
 	UpdateBloomPower(_explosion);
 	return true;
 }
+/****************************************************************************
+*                       Finalize
+*************************************************************************//**
+*  @fn        void Bloom::Finalize
+*  @brief     Finalize 
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void Bloom::Finalize()
+{
+	PostEffect::Finalize();
 
+	_luminancePipeline = nullptr;
+	for (auto& blur : _blur)
+	{
+		blur.Finalize();
+	}
+}
+/****************************************************************************
+*                          Draw
+*************************************************************************//**
+*  @fn        bool Bloom::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
+*  @brief     Draw Bloom post effect
+*  @param[in,out] Resource* renderTarget
+*  @param[in] D3D12_RESOURCE_STATES renderTargetState
+*  @return 　　bool
+*****************************************************************************/
 bool Bloom::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
 {
-	
 	/*-------------------------------------------------------------------
 	-               Prepare variable
 	---------------------------------------------------------------------*/
@@ -75,7 +137,7 @@ bool Bloom::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState
 	-               Execute Addition synthesis
 	---------------------------------------------------------------------*/
 	commandList->SetComputeRootSignature(_rootSignature.Get());
-	commandList->SetPipelineState(_pipelineState.Get());
+	commandList->SetPipelineState       (_pipelineState.Get());
 	commandList->SetComputeRootDescriptorTable(0, _colorBuffer[0].GetGPUSRV());
 	for (int i = 0; i < _countof(_blur); ++i)
 	{
@@ -87,15 +149,29 @@ bool Bloom::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState
 	FinalCopyToResource(renderTarget, renderTargetState);
 	return true;
 }
-
+/****************************************************************************
+*                          Draw
+*************************************************************************//**
+*  @fn        bool Bloom::Draw()
+*  @brief     Draw Bloom post effect (Draw CurrentRenderTarget)
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool Bloom::Draw()
 {
 	return Draw(DirectX12::Instance().GetCurrentRenderTarget(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
+/****************************************************************************
+*                          OnResize
+*************************************************************************//**
+*  @fn        bool Bloom::OnResize(int newWidth, int newHeight)
+*  @brief     Resize screen
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 bool Bloom::OnResize(int newWidth, int newHeight)
 {
-	if (_colorBuffer[0].GetColorBuffer().ImageSize.x != newWidth
-		|| _colorBuffer[0].GetColorBuffer().ImageSize.y != newHeight)
+	if (_colorBuffer[0].GetColorBuffer().ImageSize.x != newWidth || _colorBuffer[0].GetColorBuffer().ImageSize.y != newHeight)
 	{
 		_blur[0].OnResize(newWidth, newHeight);
 		for (int i = 0; i < _countof(_blur); ++i)
@@ -109,7 +185,14 @@ bool Bloom::OnResize(int newWidth, int newHeight)
 	}
 	return true;
 }
-
+/****************************************************************************
+*                          UpdateBloomPower
+*************************************************************************//**
+*  @fn        void Bloom::UpdateBloomPower(float power)
+*  @brief     Update bloom power (Default value is 10)
+*  @param[in] void
+*  @return 　　bool
+*****************************************************************************/
 void Bloom::UpdateBloomPower(float power)
 {
 	for (int i = 0; i < _countof(_blur); ++i)
@@ -122,7 +205,7 @@ bool Bloom::PrepareResources(int width, int height)
 {
 	for (int i = 0; i < _colorBuffer.size(); ++i)
 	{
-		if (!_colorBuffer[i].Create(width, height, DirectX12::Instance().GetBackBufferRenderFormat())) { return false; }
+		if (!_colorBuffer[i].Create(width, height, DirectX12::Instance().GetBackBufferRenderFormat(), nullptr, BLOOM_COLOR_BUFFER_NAME)) { return false; }
 	}
 	if (!_blur[0].Initialize(width, height, DirectX12::Instance().GetBackBufferRenderFormat())) { return false; }
 	for (int i = 1; i < _countof(_blur); ++i)
@@ -171,6 +254,7 @@ bool Bloom::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"Bloom::RootSignature");
 	return true;
 }
 
@@ -195,6 +279,7 @@ bool Bloom::PreparePipelineState()
 	};
 	
 	ThrowIfFailed(device->CreateComputePipelineState(&luminancePipeline, IID_PPV_ARGS(&_luminancePipeline)));
+	_luminancePipeline->SetName(L"Bloom::LuminancePipeLineState");
 
 	/*-------------------------------------------------------------------
 	-			FinalBloom pipelineState
@@ -207,6 +292,7 @@ bool Bloom::PreparePipelineState()
 		finalBloomCS->GetBufferSize()
 	};
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateComputePipelineState(&finalBloomPipeline, IID_PPV_ARGS(&_pipelineState)));
+	_pipelineState->SetName(L"Bloom::FinalBloomPipelineState");
 	return true;
 }
 

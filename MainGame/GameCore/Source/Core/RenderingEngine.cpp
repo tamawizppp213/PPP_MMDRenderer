@@ -69,12 +69,7 @@ RenderingEngine::RenderingEngine()
 
 RenderingEngine::~RenderingEngine()
 {
-	_textRenderer.get()  ->Finalize();
-	_spriteRenderer.get()->Finalize();
-	_forwardRenderingActors.clear();
-	_differedRenderingActors.clear();
-	_forwardRenderingActors.shrink_to_fit();
-	_differedRenderingActors.shrink_to_fit();
+	
 }
 
 #pragma region Public Function
@@ -111,6 +106,30 @@ bool RenderingEngine::Initialize(int width, int height)
 	return true;
 }
 
+void RenderingEngine::OnAfterSceneTransition()
+{
+	_textRenderer.get()->ReloadFont();
+}
+
+void RenderingEngine::Finalize()
+{
+	for (int i = 0; i < _countof(_cascadeShadowMaps); ++i)
+	{
+		_cascadeShadowMaps[i].get()->Finalize();
+	}
+	_zPrepass      .get()->Finalize();
+	_lightCulling  .get()->Finalize();
+	_gBuffer       .get()->Finalize();
+	_ssao          .get()->Finalize();
+	_textRenderer  .get()->Finalize();
+	_spriteRenderer.get()->Finalize();
+	_sceneLights.reset();
+
+	_sceneLightsBuffer.reset();
+
+	_forwardRenderingActors.clear();  _forwardRenderingActors.shrink_to_fit();
+	_differedRenderingActors.clear(); _differedRenderingActors.shrink_to_fit();
+}
 /****************************************************************************
 *                       OnResize
 *************************************************************************//**
@@ -536,7 +555,7 @@ void RenderingEngine::SetSceneGPUAddress(D3D12_GPU_VIRTUAL_ADDRESS sceneAddress)
 void RenderingEngine::PrepareSceneLightsBuffer()
 {
 	SceneLightsBuffer sceneLightsBuffer = std::make_unique<UploadBuffer<SceneLightConstants>>
-		(DirectX12::Instance().GetDevice(), 1, true);
+		(DirectX12::Instance().GetDevice(), 1, true, L"RenderingEngine::SceneLightsBuffer");
 	sceneLightsBuffer.get()->CopyStart();
 	sceneLightsBuffer.get()->CopyData(0, *_sceneLights.get());
 	sceneLightsBuffer.get()->CopyEnd();

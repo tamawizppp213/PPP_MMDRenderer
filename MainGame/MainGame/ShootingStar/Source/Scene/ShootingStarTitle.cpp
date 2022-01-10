@@ -25,6 +25,7 @@ using namespace gm;
 //////////////////////////////////////////////////////////////////////////////////
 //                          Implement
 //////////////////////////////////////////////////////////////////////////////////
+
 ShootingStarTitle::ShootingStarTitle()
 {
 	_spriteRenderer = std::make_unique<SpriteRenderer>();
@@ -102,10 +103,22 @@ void ShootingStarTitle::Draw()
 *****************************************************************************/
 void ShootingStarTitle::Terminate()
 {
-	_audioSource.get()->Stop();
-	_directX12.ResetCommandList();
-	TextureTableManager::Instance().ClearTextureTable();
+	/*-------------------------------------------------------------------
+	-           Clear Audio Resource
+	---------------------------------------------------------------------*/
+	_audioSource.get()->Stop(); _audioSource.reset();
+	_pressSound .get()->Stop(); _pressSound .reset();
 	AudioTableManager::Instance().ClearAudioTable();
+	/*-------------------------------------------------------------------
+	-           Clear Texture Resource
+	---------------------------------------------------------------------*/
+	TextureTableManager::Instance().ClearTextureTable();
+	_spriteRenderer.get()->Finalize();
+	_spriteRenderer.reset();
+	_backGround.Clear();
+	_backUI    .Clear();
+
+	_directX12.ResetCommandList();
 }
 
 /****************************************************************************

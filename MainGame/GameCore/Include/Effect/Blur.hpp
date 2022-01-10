@@ -47,7 +47,7 @@ public:
 	bool OnResize(int newWidth, int newHeight) override;
 	bool Draw()     override;
 	bool Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState = D3D12_RESOURCE_STATE_COMMON);
-
+	void Finalize() override;
 	void UpdateWeightsTable(float sigma);
 	void UpdateBlurSampling(int xBlurWidthDivision, int xBlurHeightDivision, int yBlurWidthDivision, int yBlurHeightDivision); // substitute for division count;
 	/****************************************************************************
@@ -63,7 +63,7 @@ public:
 	Blur& operator=(const Blur&) = default;
 	Blur(Blur&&)                 = default;
 	Blur& operator=(Blur&&)      = default;
-	~Blur() = default;
+	~Blur() {  }
 
 protected:
 	/****************************************************************************

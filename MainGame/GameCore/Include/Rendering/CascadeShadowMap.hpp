@@ -54,6 +54,11 @@ namespace shadow
 	struct ShadowCameraInfo
 	{
 		gm::Matrix4 ViewProjection;
+		ShadowCameraInfo()
+		{
+			ViewProjection = gm::MatrixIdentity();
+		}
+		~ShadowCameraInfo() {};
 	};
 }
 
@@ -78,6 +83,7 @@ public:
 	bool Initialize();
 	void AddActor(GameActor* nearActor, GameActor* mediumActor, GameActor* farActor); // near, medium, far
 	bool Execute(const gm::Vector3& lightDirection);
+	void Finalize();
 
 	/****************************************************************************
 	**                Public Member Variables

@@ -103,6 +103,11 @@ struct ShaderBlendData
 	BlendStateType Type;
 	BlobComPtr     VertexShader;
 	BlobComPtr     PixelShader;
+
+	~ShaderBlendData()
+	{
+		
+	}
 };
 
 struct FastShaderBlendData
@@ -110,6 +115,10 @@ struct FastShaderBlendData
 	FastBlendStateType Type;
 	BlobComPtr         VertexShader;
 	BlobComPtr         PixelShader;
+	~FastShaderBlendData()
+	{
+		
+	}
 };
 
 struct PostEffectShaderBlendData
@@ -117,10 +126,15 @@ struct PostEffectShaderBlendData
 	PostEffectBlendStateType Type;
 	BlobComPtr VertexShader;
 	BlobComPtr PixelShader;
+	~PostEffectShaderBlendData()
+	{
+		
+	}
 };
 
 
 void InitializeShaderBlendData();
+void FinalizeShaderBlendData();
 
 ShaderBlendData           GetShaderBlendData(BlendStateType           type);
 FastShaderBlendData       GetShaderBlendData(FastBlendStateType       type);

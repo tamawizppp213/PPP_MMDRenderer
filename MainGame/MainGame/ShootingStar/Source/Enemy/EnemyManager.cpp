@@ -52,12 +52,12 @@ static EnemyEmitterConfig g_EnemyEmitterTable[] =
 
 	{ 40.0f, {-0.30f, 1.5f, 0.0f},  EnemyType::Blue },
 	{ 40.0f, {0.33f, 1.5f, 0.0f},  EnemyType::Blue },
-	{ 40.0f, {0.60f, 1.5f, 0.0f},  EnemyType::Blue },
+	{ 40.0f, {0.00f, 1.5f, 0.0f},  EnemyType::Blue },
 	{ 42.5f, {0.80f, 1.5f, 0.0f}, EnemyType::Purple },
 	{ 42.5f, {-0.80f, 1.5f, 0.0f}, EnemyType::Red },
 	{ 53.0f, {-0.50f, 1.5f, 0.0f}, EnemyType::Default },
-	{ 54.0f, {0.00f, 1.5f, 0.0f}, EnemyType::Default },
-	{ 55.0f, {0.40f, 1.5f, 0.0f}, EnemyType::Default },
+	{ 54.0f, {0.33f, 1.5f, 0.0f}, EnemyType::Default },
+	{ 55.0f, {0.50f, 1.5f, 0.0f}, EnemyType::Default },
 
 
 	{ 63.0f, {-0.33f, 1.5f, 0.0f},  EnemyType::Blue },
@@ -97,6 +97,14 @@ namespace enemy
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
+/****************************************************************************
+*                      Initialize
+*************************************************************************//**
+*  @fn        void EnemyManager::Initialize()
+*  @brief     Initialize
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
 void EnemyManager::Initialize()
 {
 	_localTimer   = 0.0f;
@@ -135,7 +143,15 @@ void EnemyManager::Initialize()
 	}
 
 }
-
+/****************************************************************************
+*                      Update
+*************************************************************************//**
+*  @fn        void EnemyManager::Update(GameTimer& gameTimer, const Player& player)
+*  @brief     Update action 
+*  @param[in] GameTimer& gameTimer
+*  @param[in] Player& player
+*  @return 　　void
+*****************************************************************************/
 void EnemyManager::Update(GameTimer& gameTimer, const Player& player)
 {
 	if (_emitterCount < _countof(g_EnemyEmitterTable)) 
@@ -180,17 +196,38 @@ void EnemyManager::Update(GameTimer& gameTimer, const Player& player)
 	}
 	_localTimer += gameTimer.DeltaTime();
 }
-
-void EnemyManager::Terminal()
+/****************************************************************************
+*                      Terminate
+*************************************************************************//**
+*  @fn        void EnemyManager::Terminate()
+*  @brief     Terminate
+*  @param[in] void
+*  @return 　　void
+*****************************************************************************/
+void EnemyManager::Terminate()
 {
-	g_enemies      .clear();
-	g_blueEnemies  .clear();
-	g_bossEnemies  .clear();
-	g_greenEnemies .clear();
-	g_purpleEnemies.clear();
-	g_redEnemies   .clear();
+	for (auto& enemy : g_enemies    )   { enemy.Finalize(); }
+	for (auto& enemy : g_blueEnemies)   { enemy.Finalize(); }
+	for (auto& enemy : g_bossEnemies)   { enemy.Finalize(); }
+	for (auto& enemy : g_greenEnemies)  { enemy.Finalize(); }
+	for (auto& enemy : g_purpleEnemies) { enemy.Finalize(); }
+	for (auto& enemy : g_redEnemies) { enemy.Finalize(); }
+	g_enemies      .clear(); g_enemies      .shrink_to_fit();
+	g_blueEnemies  .clear(); g_blueEnemies  .shrink_to_fit();
+	g_bossEnemies  .clear(); g_bossEnemies  .shrink_to_fit();
+	g_greenEnemies .clear(); g_greenEnemies .shrink_to_fit();
+	g_purpleEnemies.clear(); g_purpleEnemies.shrink_to_fit();
+	g_redEnemies   .clear(); g_redEnemies   .shrink_to_fit();
 }
-
+/****************************************************************************
+*                      GenerateEnemy
+*************************************************************************//**
+*  @fn        void EnemyManager::GenerateEnemy(EnemyType type, const gm::Vector3& position)
+*  @brief     GenerateEnemy
+*  @param[in] EnemyType type
+*  @param[in] const gm::Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void EnemyManager::GenerateEnemy(EnemyType type, const gm::Vector3& position)
 {
 	switch (type)
@@ -228,7 +265,15 @@ void EnemyManager::GenerateEnemy(EnemyType type, const gm::Vector3& position)
 	}
 	_emitterCount++;
 }
-
+/****************************************************************************
+*                      GetEnemy
+*************************************************************************//**
+*  @fn        Enemy* EnemyManager::GetEnemy(EnemyType type, int index)
+*  @brief     Get enemy
+*  @param[in] EnemyType type,
+*  @param[in] int index
+*  @return 　　Enemy* 
+*****************************************************************************/
 Enemy* EnemyManager::GetEnemy(EnemyType type, int index)
 {
 	switch (type)
@@ -267,7 +312,16 @@ Enemy* EnemyManager::GetEnemy(EnemyType type, int index)
 	_emitterCount++;
 	return nullptr;
 }
-
+/****************************************************************************
+*                      GetDrawMaterial
+*************************************************************************//**
+*  @fn        void EnemyManager::GetDrawMaterial(EnemyType type, std::vector<Sprite>& sprite, Texture& texture)
+*  @brief     Get Draw Material
+*  @param[in] EnemyType type
+*  @param[in] std::vector<Sprite>& sprite
+*  @param[in] Texture& texture
+*  @return 　　void
+*****************************************************************************/
 void EnemyManager::GetDrawMaterial(EnemyType type, std::vector<Sprite>& sprite, Texture& texture)
 {
 	sprite.clear();
@@ -348,7 +402,14 @@ void EnemyManager::GetDrawMaterial(EnemyType type, std::vector<Sprite>& sprite, 
 	}
 	
 }
-
+/****************************************************************************
+*                      GetActiveEnemies
+*************************************************************************//**
+*  @fn        std::vector<Enemy*> EnemyManager::GetActiveEnemies()
+*  @brief     Return active enemies
+*  @param[in] void
+*  @return 　　std::vector<Enemy*>
+*****************************************************************************/
 std::vector<Enemy*> EnemyManager::GetActiveEnemies()
 {
 	std::vector<Enemy*> enemies;
@@ -400,7 +461,14 @@ std::vector<Enemy*> EnemyManager::GetActiveEnemies()
 	}
 	return enemies;
 }
-
+/****************************************************************************
+*                      GenerateEnemyDefault
+*************************************************************************//**
+*  @fn        void enemy::GenerateEnemyDefault(const Vector3& position)
+*  @brief     Generate enemy default
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void enemy::GenerateEnemyDefault(const Vector3& position)
 {
 	for (auto& enemy : g_enemies)
@@ -408,7 +476,14 @@ void enemy::GenerateEnemyDefault(const Vector3& position)
 		if (enemy.Generate(position)) { break; }
 	}
 }
-
+/****************************************************************************
+*                      GenerateEnemyBlue
+*************************************************************************//**
+*  @fn        void enemy::GenerateEnemyBlue(const Vector3& position)
+*  @brief     Generate enemy blue
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void enemy::GenerateEnemyBlue(const Vector3& position)
 {
 	for (auto& enemy : g_blueEnemies)
@@ -416,7 +491,14 @@ void enemy::GenerateEnemyBlue(const Vector3& position)
 		if (enemy.Generate(position)) { break; }
 	}
 }
-
+/****************************************************************************
+*                      GenerateEnemyLightGreen
+*************************************************************************//**
+*  @fn        void enemy::GenerateEnemyLightGreen(const Vector3& position)
+*  @brief     Generate enemy light green
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void enemy::GenerateEnemyLightGreen(const Vector3& position)
 {
 	for (auto& enemy : g_greenEnemies)
@@ -424,7 +506,14 @@ void enemy::GenerateEnemyLightGreen(const Vector3& position)
 		if (enemy.Generate(position)) { break; }
 	}
 }
-
+/****************************************************************************
+*                      GenerateEnemyPurple
+*************************************************************************//**
+*  @fn        void enemy::GenerateEnemyPurple(const Vecto3& position)
+*  @brief     Generate enemy purple
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void enemy::GenerateEnemyPurple(const Vector3& position)
 {
 	for (auto& enemy : g_purpleEnemies)
@@ -432,7 +521,14 @@ void enemy::GenerateEnemyPurple(const Vector3& position)
 		if (enemy.Generate(position)) { break; }
 	}
 }
-
+/****************************************************************************
+*                      GenerateEnemyRed
+*************************************************************************//**
+*  @fn        void enemy::GenerateEnemyRed(const Vector3& position)
+*  @brief     Generate enemy red
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void enemy::GenerateEnemyRed(const Vector3& position)
 {
 	for (auto& enemy : g_redEnemies)
@@ -440,6 +536,14 @@ void enemy::GenerateEnemyRed(const Vector3& position)
 		if (enemy.Generate(position)) { break; }
 	}
 }
+/****************************************************************************
+*                      GenerateEnemyBoss
+*************************************************************************//**
+*  @fn        void enemy::GenerateEnemyBoss(const Vector3& position)
+*  @brief     Generate EnemyBoss
+*  @param[in] Vector3& position
+*  @return 　　void
+*****************************************************************************/
 void enemy::GenerateEnemyBoss(const Vector3& position)
 {
 	for (auto& enemy : g_bossEnemies)

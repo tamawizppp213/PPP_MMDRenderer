@@ -18,26 +18,64 @@
 using namespace blur;
 using namespace gm;
 
+#define BLUR_COLORBUFFER_NAME L"Blur::ColorBuffer"
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
 bool Blur::Initialize(int width, int height, DXGI_FORMAT format)
 {
 	_colorBuffer.resize(4);
+	/*-------------------------------------------------------------------
+	-               Prepare RootSignature
+	---------------------------------------------------------------------*/
 	if (!PrepareRootSignature())     { return false;}
+	/*-------------------------------------------------------------------
+	-               Prepare PipelineState
+	---------------------------------------------------------------------*/
 	if (!PreparePipelineState())     { return false;}
+	/*-------------------------------------------------------------------
+	-               Prepare Vertex Buffer
+	---------------------------------------------------------------------*/
 	if (!PrepareVertexBuffer())      { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Index Buffer
+	---------------------------------------------------------------------*/
 	if (!PrepareIndexBuffer())       { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Constant Buffer
+	---------------------------------------------------------------------*/
 	if (!PrepareConstantBuffer())    { return false; }
+	/*-------------------------------------------------------------------
+	-               Set Blur Parameter
+	---------------------------------------------------------------------*/
 	if (!PrepareBlurParameters())    { return false; }
-	if (!PrepareTextureSizeBuffer(width, height))
-	{ return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Texture Size Buffer
+	---------------------------------------------------------------------*/
+	if (!PrepareTextureSizeBuffer(width, height)) { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Sprite
+	---------------------------------------------------------------------*/
 	if (!PrepareSprite())            { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Resources
+	---------------------------------------------------------------------*/
 	if (!PrepareResources(width, height, format)) { return false; }
+	/*-------------------------------------------------------------------
+	-               Prepare Descriptor
+	---------------------------------------------------------------------*/
 	if (!PrepareDescriptors())       { return false; }
 	return true;
 }
 
+void Blur::Finalize()
+{
+	PostEffect::Finalize();
+	_weightBuffer     .get()->Resource()->Release();
+	_textureSizeBuffer.get()->Resource()->Release();
+	_xBlurPipeline = nullptr;
+	_yBlurPipeline = nullptr;
+}
 bool Blur::Draw(Resource* renderTarget, D3D12_RESOURCE_STATES renderTargetState)
 {
 	/*-------------------------------------------------------------------
@@ -149,6 +187,7 @@ void Blur::UpdateWeightsTable(float sigma)
 	_weightBuffer.get()->CopyStart();
 	_weightBuffer.get()->CopyTotalData(&parameter, 1);
 	_weightBuffer.get()->CopyEnd();
+
 }
 
 /****************************************************************************
@@ -187,10 +226,10 @@ void Blur::UpdateBlurSampling(int xBlurWidthDivision, int xBlurHeightDivision, i
 *****************************************************************************/
 bool Blur::PrepareResources(int width, int height, DXGI_FORMAT format)
 {
-	_colorBuffer[0].Create(width, height, format);
-	_colorBuffer[1].Create(width / 2, height, format);
-	_colorBuffer[2].Create(width / 2, height / 2, format);
-	_colorBuffer[3].Create(width, height , format);
+	_colorBuffer[0].Create(width    , height    , format, nullptr, BLUR_COLORBUFFER_NAME);
+	_colorBuffer[1].Create(width / 2, height    , format, nullptr, BLUR_COLORBUFFER_NAME);
+	_colorBuffer[2].Create(width / 2, height / 2, format, nullptr, BLUR_COLORBUFFER_NAME);
+	_colorBuffer[3].Create(width    , height    , format, nullptr, BLUR_COLORBUFFER_NAME);
 
 	return true;
 }
@@ -224,7 +263,7 @@ bool Blur::PrepareBlurParameters()
 	parameter.Weights[0] = gm::Float4(0, 0, 0, 0);
 	parameter.Weights[1] = gm::Float4(0, 0, 0, 0);
 
-	auto weights = std::make_unique<UploadBuffer<BlurParameter>>(directX12.GetDevice(), 1, true);
+	auto weights = std::make_unique<UploadBuffer<BlurParameter>>(directX12.GetDevice(), 1, true, L"Blur::BlurParameterUploadBuffer");
 	weights->CopyStart();
 	weights->CopyTotalData(&parameter, 1);
 	weights->CopyEnd();
@@ -255,7 +294,7 @@ bool Blur::PrepareTextureSizeBuffer(int width, int height)
 	parameter.YBlurTexture[1]    = height / 2;
 	_textureSizeParameter = parameter;
 
-	auto textureSizeBuffer = std::make_unique<UploadBuffer<TextureSizeParameter>>(directX12.GetDevice(), 1, true);
+	auto textureSizeBuffer = std::make_unique<UploadBuffer<TextureSizeParameter>>(directX12.GetDevice(), 1, true, L"Blur::TextureSizeParameter");
 
 	textureSizeBuffer.get()->CopyStart();
 	textureSizeBuffer.get()->CopyTotalData(&parameter, 1);
@@ -295,6 +334,7 @@ bool Blur::PrepareRootSignature()
 	ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, (UINT)samplerDesc.size(), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &_rootSignature);
+	_rootSignature->SetName(L"Blur::RootSignature");
 	return true;
 }
 
@@ -320,6 +360,7 @@ bool Blur::PreparePipelineState()
 	};
 	
 	ThrowIfFailed(device->CreateComputePipelineState(&xBlurPipeline, IID_PPV_ARGS(&_xBlurPipeline)));
+	_xBlurPipeline->SetName(L"Blur::XBlurPipelineState");
 
 	/*-------------------------------------------------------------------
 	-			YBlur pipelineState
@@ -332,6 +373,7 @@ bool Blur::PreparePipelineState()
 		yBlurCS->GetBufferSize()
 	};
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateComputePipelineState(&yBlurPipeline, IID_PPV_ARGS(&_yBlurPipeline)));
+	_yBlurPipeline->SetName(L"Blur::YBlurPipelineState");
 
 	/*-------------------------------------------------------------------
 	-			FinalBlur pipelineState
@@ -344,6 +386,7 @@ bool Blur::PreparePipelineState()
 		finalBlurCS->GetBufferSize()
 	};
 	ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateComputePipelineState(&finalBlurPipeline, IID_PPV_ARGS(&_pipelineState)));
+	_pipelineState->SetName(L"Blur::FinalBlurPipelineState");
 	return true;
 }
 

@@ -35,7 +35,7 @@ public:
 	*****************************************************************************/
 	void Initialize();
 	void Update(GameTimer& gameTimer);
-
+	void Finalize();
 	void Damage();
 
 

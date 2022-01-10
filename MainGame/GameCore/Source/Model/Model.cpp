@@ -17,7 +17,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Implement
 //////////////////////////////////////////////////////////////////////////////////
-DefaultModel::~DefaultModel() {};
+DefaultModel::~DefaultModel() 
+{
+	_vertexShader = nullptr;
+	_pixelShader = nullptr;
+	for (auto& buffer : _meshBuffer) { _meshBuffer->Dispose(); }
+	_modelObject.get()->Resource()->Release();
+};
 MeshBuffer& DefaultModel::GetCurrentMeshBuffer()
 {
 	int frame = DirectX12::Instance().GetCurrentFrameIndex();

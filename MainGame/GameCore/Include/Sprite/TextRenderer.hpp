@@ -43,8 +43,8 @@ public:
 	bool DrawString(FontType fontType, const TextString& text,   const gm::Float4& color, const gm::Matrix4& matrix);
 	bool DrawNumber(FontType fontType, const TextNumber& number, const gm::Float4& color, const gm::Matrix4& matrix);
 	bool DrawEnd();
-	bool Finalize();
-
+	bool Finalize() override;
+	bool ReloadFont();
 	/****************************************************************************
 	**                Public Member Variables
 	*****************************************************************************/
@@ -52,6 +52,7 @@ public:
 	/****************************************************************************
 	**                Constructor and Destructor
 	*****************************************************************************/
+	~TextRenderer();
 private:
 	/****************************************************************************
 	**                Private Function

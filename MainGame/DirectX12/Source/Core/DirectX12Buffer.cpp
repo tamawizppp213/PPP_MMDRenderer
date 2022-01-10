@@ -15,11 +15,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 //                              Define
 //////////////////////////////////////////////////////////////////////////////////
+#define COLOR_BUFFER_NAME L"ColorBuffer"
+#define DEFAULT_BUFFER_NAME L"DefaultBuffer"
+#define RWSTRUCTURED_BUFFER_NAME L"RWStructuredBuffer"
 /****************************************************************************
 *							Constructor
 *************************************************************************//**
 *****************************************************************************/
-DefaultBuffer::DefaultBuffer(Device* device, CommandList* commandList, const void* initData, UINT64 totalByteSize, ResourceComPtr& uploadBuffer)
+DefaultBuffer::DefaultBuffer(Device* device, CommandList* commandList, const void* initData, UINT64 totalByteSize, ResourceComPtr& uploadBuffer, const std::wstring& addName)
 {
 	_totalByteSize = totalByteSize;
 
@@ -35,6 +38,13 @@ DefaultBuffer::DefaultBuffer(Device* device, CommandList* commandList, const voi
 		D3D12_RESOURCE_STATE_COMMON,
 		nullptr,
 		IID_PPV_ARGS(_defaultBuffer.GetAddressOf())));
+
+	/*-------------------------------------------------------------------
+	-           Set Name
+	---------------------------------------------------------------------*/
+	std::wstring name = L""; if (addName != L"") { name += addName; name += L"::"; }
+	name += DEFAULT_BUFFER_NAME;
+	_defaultBuffer->SetName(name.c_str());
 
 	/*-------------------------------------------------------------------
 	-          Copy CPU memory data into our dafault buffer, 
@@ -70,7 +80,7 @@ DefaultBuffer::DefaultBuffer(Device* device, CommandList* commandList, const voi
 
 DefaultBuffer::~DefaultBuffer()
 {
-	
+	_defaultBuffer = nullptr;
 }
 
 #pragma region Color Buffer
@@ -80,32 +90,76 @@ ColorBuffer::~ColorBuffer()
 }
 
 #pragma region Public Function
-bool ColorBuffer::Create(int width, int height, DXGI_FORMAT colorFormat, float clearColor[4])
+/****************************************************************************
+*				  			Create
+*************************************************************************//**
+*  @fn     bool ColorBuffer::Create(int width, int height, DXGI_FORMAT colorFormat, float clearColor[4], const std::wstring& addName)
+*  @brief     Create Color Buffer
+*  @param[in] int width
+*  @param[in] int height
+*  @param[in] DXGI_FORMAT colorFormat
+*  @param[in] float clearColor[4]
+*  @param[in] addName
+*****************************************************************************/
+bool ColorBuffer::Create(int width, int height, DXGI_FORMAT colorFormat, float clearColor[4], const std::wstring& addName)
 {
+	/*-------------------------------------------------------------------
+	-           Check Initialize
+	---------------------------------------------------------------------*/
 	if (_isInitialzed) { return true; }
-
+	/*-------------------------------------------------------------------
+	-           Issue Color Buffer View ID
+	---------------------------------------------------------------------*/
 	if (!IssueViewID()) { MessageBox(NULL, L"Failed to issue view ID.", L"Warning", MB_ICONWARNING); return false; }
+	/*-------------------------------------------------------------------
+	-           Create Color Buffer
+	---------------------------------------------------------------------*/
 	if (!CreateTexture(width, height, colorFormat, clearColor))
 	{
 		MessageBox(NULL, L"Failed to create texture resource.", L"Warning", MB_ICONWARNING);
 		return false;
 	}
+	/*-------------------------------------------------------------------
+	-           Create Descriptor
+	---------------------------------------------------------------------*/
 	if (!CreateDescriptor(colorFormat))
 	{
 		MessageBox(NULL, L"Failed to create descriptor.", L"Warning", MB_ICONWARNING);
 		return false;
 	}
-	_format = colorFormat;
+	/*-------------------------------------------------------------------
+	-           Set Resource Name
+	---------------------------------------------------------------------*/
+	std::wstring name = L""; if (addName != L"") { name += addName; name += L"::"; }
+	name += COLOR_BUFFER_NAME;
+	_colorBuffer.Resource->SetName(name.c_str());
+	/*-------------------------------------------------------------------
+	-           Finalize Process
+	---------------------------------------------------------------------*/
+	_format       = colorFormat;
 	_isInitialzed = true;
+
 	return true;
 }
-
+/****************************************************************************
+*				  			ClearBuffer
+*************************************************************************//**
+*  @fn     ColorBuffer::ClearBuffer()
+*  @brief     Clear Buffer (未実装)
+*  @param[in] void
+*****************************************************************************/
 bool ColorBuffer::ClearBuffer()
 {
-	
 	return true;
 }
-
+/****************************************************************************
+*				  			OnResize
+*************************************************************************//**
+*  @fn    OnResize(int newWidth, int newHeight)
+*  @brief     Resize buffer
+*  @param[in] int width
+*  @param[in] int height
+*****************************************************************************/
 bool ColorBuffer::OnResize(int newWidth, int newHeight)
 {
 	if (_colorBuffer.ImageSize.x != newWidth ||
@@ -116,7 +170,14 @@ bool ColorBuffer::OnResize(int newWidth, int newHeight)
 	}
 	return true;
 }
-
+/****************************************************************************
+*				  			CopyToColorBuffer
+*************************************************************************//**
+*  @fn     bool ColorBuffer::CopyToColorBuffer(Resource* source, D3D12_RESOURCE_STATES sourceState)
+*  @brief     Copy to color buffer
+*  @param[in,out] Resource* source
+*  @param[in] D3D12_RESOURCE_STATES sourceState
+*****************************************************************************/
 bool ColorBuffer::CopyToColorBuffer(Resource* source, D3D12_RESOURCE_STATES sourceState)
 {
 	CommandList* commandList = DirectX12::Instance().GetCommandList();
@@ -142,7 +203,14 @@ bool ColorBuffer::CopyToColorBuffer(Resource* source, D3D12_RESOURCE_STATES sour
 	commandList->ResourceBarrier(_countof(barrier2), barrier2);
 	return true;
 }
-
+/****************************************************************************
+*				  			TransitionResourceState
+*************************************************************************//**
+*  @fn     bool ColorBuffer::TransitionResourceState(D3D12_RESOURCE_STATES after)
+*  @brief     Transition Resource State
+*  @param[in] D3D12_RESOURCE_STATES afterState
+*  @return    true
+*****************************************************************************/
 bool ColorBuffer::TransitionResourceState(D3D12_RESOURCE_STATES after)
 {
 	if (after == _usageState) { return false; }
@@ -157,28 +225,74 @@ bool ColorBuffer::TransitionResourceState(D3D12_RESOURCE_STATES after)
 	_usageState = after;
 	return true;
 }
-
+/****************************************************************************
+*                       GetCPUSRV
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetCPUSRV() const
+*  @brief     Get CPU Shader Resource View
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
 D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetCPUSRV() const
 {
 	return DirectX12::Instance().GetCPUResourceView(HeapType::SRV, _resourceID[(int)ResourceID::SRV]);
 }
-
+/****************************************************************************
+*                       GetCPURTV
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetCPURTV() const
+*  @brief     Get CPU Render Target View
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
 D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetCPURTV() const
 {
 	return DirectX12::Instance().GetCPUResourceView(HeapType::RTV, _resourceID[(int)ResourceID::RTV]);
 }
+/****************************************************************************
+*                       GetCPUUAV
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetCPUUAV() const
+*  @brief     Get CPU Unordered Access View
+*  @param[in] void
+*  @return 　　D3D12_CPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
 D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetCPUUAV() const
 {
 	return DirectX12::Instance().GetCPUResourceView(HeapType::UAV, _resourceID[(int)ResourceID::UAV]);
 }
+/****************************************************************************
+*                       GetGPUSRV
+*************************************************************************//**
+*  @fn        D3D12_CPU_DESCRIPTOR_HANDLE ColorBuffer::GetGPUSRV() const
+*  @brief     Get GPU Shader Resource View
+*  @param[in] void
+*  @return 　　D3D12_GPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
 D3D12_GPU_DESCRIPTOR_HANDLE ColorBuffer::GetGPUSRV() const
 {
 	return DirectX12::Instance().GetGPUResourceView(HeapType::SRV, _resourceID[(int)ResourceID::SRV]);
 }
+/****************************************************************************
+*                       GetGPURTV
+*************************************************************************//**
+*  @fn        D3D12_GPU_DESCRIPTOR_HANDLE ColorBuffer::GetGPURTV() const
+*  @brief     Get GPU Render Target View
+*  @param[in] void
+*  @return 　　D3D12_GPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
 D3D12_GPU_DESCRIPTOR_HANDLE ColorBuffer::GetGPURTV() const
 {
 	return DirectX12::Instance().GetGPUResourceView(HeapType::RTV, _resourceID[(int)ResourceID::RTV]);
 }
+/****************************************************************************
+*                       GetGPUUAV
+*************************************************************************//**
+*  @fn        D3D12_GPU_DESCRIPTOR_HANDLE ColorBuffer::GetGPUUAV() const
+*  @brief     Get GPU Unordered Access View
+*  @param[in] void
+*  @return 　　D3D12_GPU_DESCRIPTOR_HANDLE
+*****************************************************************************/
 D3D12_GPU_DESCRIPTOR_HANDLE ColorBuffer::GetGPUUAV() const
 {
 	return DirectX12::Instance().GetGPUResourceView(HeapType::UAV, _resourceID[(int)ResourceID::UAV]);
@@ -306,24 +420,41 @@ bool ColorBuffer::CreateDescriptor(DXGI_FORMAT format)
 #pragma endregion Color Buffer
 #pragma region RWStructuredBuffer
 #pragma region Public Function
-bool RWStructuredBuffer::Create(int elementByteSize, int elementCount)
+bool RWStructuredBuffer::Create(int elementByteSize, int elementCount, const std::wstring& addName)
 {
+	/*-------------------------------------------------------------------
+	-                  Check Initialize
+	---------------------------------------------------------------------*/
 	if (_isInitialized) { return true; }
 
 	_elementByteSize = elementByteSize;
 	_elementCount    = elementCount;
-
+	/*-------------------------------------------------------------------
+	-                  Issue Buffer View ID
+	---------------------------------------------------------------------*/
 	if (!IssueViewID()) { MessageBox(NULL, L"Failed to issue view ID.", L"Warning", MB_ICONWARNING); return false; }
+	/*-------------------------------------------------------------------
+	-                  Prepare Resource
+	---------------------------------------------------------------------*/
 	if (!PrepareResource())
 	{
 		MessageBox(NULL, L"Failed to prepare resource buffer.", L"Warning", MB_ICONWARNING);
 		return false;
 	}
+	/*-------------------------------------------------------------------
+	-                  Prepare Descriptor
+	---------------------------------------------------------------------*/
 	if (!PrepareDescriptor())
 	{
 		MessageBox(NULL, L"Failed to create descriptor.", L"Warning", MB_ICONWARNING);
 		return false;
 	}
+	/*-------------------------------------------------------------------
+	-                  Set Name
+	---------------------------------------------------------------------*/
+	std::wstring name; if (addName != L"") { name += addName; name += L"::"; }
+	name += RWSTRUCTURED_BUFFER_NAME;
+	_buffer->SetName(name.c_str());
 
 	_isInitialized = true;
 	return true;

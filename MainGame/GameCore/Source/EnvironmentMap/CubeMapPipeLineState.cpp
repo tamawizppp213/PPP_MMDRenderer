@@ -45,6 +45,16 @@ CubemapPSOManager::CubemapPSOManager()
 	BuildCubemapRootSignatures();
 	BuildCubemapPipelines();
 }
+
+void CubemapPSOManager::Clear()
+{
+	for (auto& cubemap : _cubemap)
+	{
+		cubemap.Dispose();
+	}
+	_cubemap.clear(); 
+	_cubemap.shrink_to_fit();
+}
 #pragma region Public Function
 /****************************************************************************
 *                            BuildCubemapPipelines
@@ -229,6 +239,7 @@ namespace cubemap
 		};
 		pipeLineState.BlendState = BLEND_DESC(D3D12_DEFAULT);
 		ThrowIfFailed(DirectX12::Instance().GetDevice()->CreateGraphicsPipelineState(&pipeLineState, IID_PPV_ARGS(&cubemap.PipeLineState)));
+		cubemap.PipeLineState->SetName(L"CubeMap::PipelineState");
 		return true;
 	}
 
@@ -275,6 +286,7 @@ namespace cubemap
 		ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 		rootSignatureDesc.Init((UINT)_countof(rootParameter), rootParameter, static_cast<UINT>(samplerDesc.size()), samplerDesc.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 		rootSignatureDesc.Create(DirectX12::Instance().GetDevice(), &cubemap.RootSignature);
+		cubemap.RootSignature->SetName(L"Cubemap::RootSignature");
 		return true;
 	}
 

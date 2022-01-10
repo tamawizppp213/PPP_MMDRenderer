@@ -37,12 +37,12 @@ public:
 	/****************************************************************************
 	**                Public Function
 	*****************************************************************************/
-	bool Initialize(FastBlendStateType type = FastBlendStateType::Normal);
+	bool Initialize(FastBlendStateType type = FastBlendStateType::Normal, const std::wstring& addName = L"");
 	bool DrawStart();
 	bool Draw(const std::vector<Sprite>& spriteList, const Texture& texture, const gm::Matrix4& matrix);
 	
 	bool DrawEnd();
-	bool Finalize();
+	virtual bool Finalize();
 
 	/****************************************************************************
 	**                Public Member Variables
@@ -61,11 +61,11 @@ private:
 	/****************************************************************************
 	**                Private Function
 	*****************************************************************************/
-	bool PrepareRootSignature();
-	bool PreparePipelineState(FastBlendStateType type);
-	bool PrepareVertexBuffer();
-	bool PrepareIndexBuffer();
-	bool PrepareConstantBuffer();
+	bool PrepareRootSignature(const std::wstring& name);
+	bool PreparePipelineState(FastBlendStateType type, const std::wstring& name);
+	bool PrepareVertexBuffer(const std::wstring& name);
+	bool PrepareIndexBuffer(const std::wstring& name);
+	bool PrepareConstantBuffer(const std::wstring& name);
 
 	/****************************************************************************
 	**                Private Member Variables

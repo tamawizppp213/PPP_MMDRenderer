@@ -71,6 +71,16 @@ public:
 		VertexBufferUploader = nullptr;
 		IndexBufferUploader  = nullptr;
 	}
+
+	inline void Dispose()
+	{
+		if (VertexBufferCPU) { VertexBufferCPU = nullptr; }
+		if (IndexBufferCPU)  { IndexBufferCPU  = nullptr; }
+		if (VertexBufferGPU) { VertexBufferGPU = nullptr; }
+		if (IndexBufferGPU)  { IndexBufferGPU  = nullptr; }
+		if (VertexBufferUploader) { VertexBufferUploader = nullptr; }
+		if (IndexBufferUploader) { IndexBufferUploader   = nullptr; }
+	}
 	/****************************************************************************
 	**                Constructor
 	*****************************************************************************/
@@ -79,6 +89,7 @@ public:
 	MeshBuffer& operator=(const MeshBuffer&) = default;
 	MeshBuffer(MeshBuffer&&)                 = default;
 	MeshBuffer& operator=(MeshBuffer&&)      = default;
+	~MeshBuffer() { }
 private:
 };
 

@@ -41,6 +41,7 @@ public:
 	**                Public Function
 	*****************************************************************************/
 	void Initialize() override;
+	void Finalize() override;
 	bool Generate(const gm::Vector3& position) override;
 	void Update(GameTimer& gameTimer, const Player& player) override;
 

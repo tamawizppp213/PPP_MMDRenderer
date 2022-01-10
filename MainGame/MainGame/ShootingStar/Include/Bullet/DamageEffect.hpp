@@ -45,6 +45,7 @@ public:
 	**                Public Member Variables
 	*****************************************************************************/
 	Texture& GetTexture() { return _texture; }
+	const Texture& GetTexture() const { return _texture; }
 	Sprite & GetSprite() { return _sprite; }
 
 	/****************************************************************************
